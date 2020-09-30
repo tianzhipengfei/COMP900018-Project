@@ -9,6 +9,8 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+//请勿更改extends AppCompatActivity,不然navigation无法工作
+//清implement需要的interface
 public class Capsule extends AppCompatActivity {
 
     @Override
@@ -16,6 +18,8 @@ public class Capsule extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capsule);
 
+
+        //bottom navigation bar相关
         //Initialize and assign variable
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
 
