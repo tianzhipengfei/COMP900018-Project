@@ -28,14 +28,14 @@ public class Capsule extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.discover:
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        overridePendingTransition(0,0);
+                        startActivity(new Intent(getApplicationContext(), Discover.class));
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         return true;
                     case R.id.capsule:
                         return true;
                     case R.id.account:
                         startActivity(new Intent(getApplicationContext(), Account.class));
-                        overridePendingTransition(0,0);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         return true;
                 }
 

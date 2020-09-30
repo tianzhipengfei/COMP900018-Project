@@ -31,11 +31,11 @@ public class Discover extends AppCompatActivity {
                         return true;
                     case R.id.capsule:
                         startActivity(new Intent(getApplicationContext(), Capsule.class));
-                        overridePendingTransition(0,0);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         return true;
                     case R.id.account:
                         startActivity(new Intent(getApplicationContext(), Account.class));
-                        overridePendingTransition(0,0);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         return true;
                 }
 
