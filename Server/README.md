@@ -3,3 +3,179 @@
 ## Requirements
 * python==3.x (Let's move on to python 3 if you still use python 2)
 * web.py==0.61
+
+## Front-end attention
+1. Please validate the form before sending request. E.g. email validation, old pass != new pass
+2. Avoid repeat post submission in a very short time
+
+## API
+
+### 1. SignUp
+* Route: /signUp
+* Method: POST
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| usr | string | yes | username |
+| pwd | string | yes | password |
+| email | string | yes | email |
+| dob | string | yes | date of birth |
+| avatar | string | no | avatar |
+* Returns:
+	* Success: {'success': True, 'token': '02dd1f8b946fea41f2377480e43aeb235cf2dba0', 'userInfo': {'uusr': 'test4', 'uavatar': None, 'uemail': 'test4@gmail.com'}}
+	* Fail:
+		* if username or email exists, return {'error': 'userExist - user already exist'}
+		* if form is invalid,return web.badrequest()
+
+### 2. SignIn
+* Route: /signIn
+* Method: POST
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| usr | string | yes | username |
+| pwd | string | yes | password |
+* Returns:
+	* Success: {'success': True, 'token': '48185039ab0b7cb57072bfcf64b0702c4eb5249b', 'userInfo': {'uusr': 'test', 'uavatar': None, 'uemail': 'test@gmail.com'}}
+	* Fail:
+		* if username doesn't exists, return {'error': 'userNotExist - user does not exist'}
+		* if password is incorrect, return {'error': 'invalidPass - invalid password, try again'}
+		* if form is invalid,return web.badrequest()
+		* Other fails: return {'error':'loginError - cannot login'}
+		
+### 3. SignOut
+* Route: /signOut
+* Method: POST
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+* Returns:
+	* Success: {'success':True}
+	* Fail:
+		* if username has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
+
+### 4. ModifyProfile
+* Route: /modifyProfile
+* Method: POST
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+| email | string | yes | email |
+| dob | string | yes | date of birth |
+| avatar | string | yes | avatar |
+* Returns:
+	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com'}}
+	* Fail:
+		* if new email exists, return {'error': 'emailExist - email already exist'}
+		* if username has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
+
+### 5. ChangePassword
+* Route: /changePassword
+* Method: POST
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+| oldpass | string | yes | old password |
+| newpass | string | yes | new password |
+* Returns:
+	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com'}}
+	* Fail:
+		* if old password is incorrect, return {'error': 'invalidPass - invalid password, try again'}
+		* if username has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
+		
+### 6. GetProfile
+* Route: /getProfile
+* Method: GET
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+* Returns:
+	* Success: {"success": true, "userInfo": {"uusr": "test", "uavatar": "test_avatar", "uemail": "test@qq.com"}}
+	* Fail:
+		* if username has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
+
+### 7. CreateCapsule
+* Route: /createCapsule
+* Method: POST
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+| content | string | yes | capsule's content |
+| lat | double | yes | latitude |
+| lon | double | yes | longitude |
+| time | string | yes | when create the capsule |
+| permission | int | yes | Public or private |
+| img | string | no | image's URL |
+| audio | string | no | audio's URL |
+* Returns:
+	* Success: {'success': True}
+	* Fail:
+		* if username has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
+
+### 8. DiscoverCapsule
+* Route: /discoverCapsule
+* Method: GET
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+| lat | double | yes | latitude |
+| lon | double | yes | longitude |
+| max_distance | int | no | maximum distance allowed to discover capsules (default 5) |
+| num_capsules | int | no | maximum number of capsules can be found (default 20) |
+* Returns:
+	* Success: {"sucess": true, "capsules": [{"cid": 2, "cusr": "test1", "ccontent": "Test content1", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}, {"cid": 3, "cusr": "test1", "ccontent": "Test content2", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}]}
+	* Fail:
+		* if username has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
+
+### 9. OpenCapsule
+* Route: /openCapsule
+* Method: POST
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+| cid | string | yes | capsule's id |
+| lat | double | yes | latitude |
+| lon | double | yes | longitude |
+| time | string | yes | when open the capsule |capsules can be found (default 20) |
+* Returns:
+	* Success: {'sucess': True}
+	* Fail:
+		* if username has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
+
+
+### 10. GetCapsuleHistory
+* Route: /getCapsuleHistory
+* Method: GET
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+* Returns:
+	* Success: {"sucess": true, "hisotry": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "cimage": null, "caudio": null, "ccount": 2, "cavatar": "test_avatar"}, {"cid": 2, "cusr": "test1", "ccontent": "Test content1", "cimage": null, "caudio": null, "ccount": 2, "cavatar": null}]}
+	* Fail:
+		* if username has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
