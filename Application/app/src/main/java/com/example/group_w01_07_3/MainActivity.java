@@ -12,8 +12,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        
         /*
         For the final version, app will follow three steps on launch
         Step1: Paper OnBoarding Screen(Slider picture feature introduction)
