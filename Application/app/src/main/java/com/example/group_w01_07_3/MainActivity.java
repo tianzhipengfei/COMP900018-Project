@@ -5,9 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
-
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,12 +16,10 @@ public class MainActivity extends AppCompatActivity {
         Step1: Paper OnBoarding Screen(Slider picture feature introduction)
         Step2: Login(Authentication successfully)
         Step3: Discover Page(Homepage)
-         */
+        */
 
-
-        // jump to Discover On start
-        Intent intent = new Intent(MainActivity.this, Discover.class);
+        // jump to Welcome On start
+        Intent intent = new Intent(MainActivity.this, Welcome.class);
         startActivity(intent);
-
     }
 }
