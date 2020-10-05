@@ -1,20 +1,22 @@
 package com.example.group_w01_07_3;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 //请勿更改extends AppCompatActivity,不然navigation无法工作
 //清implement需要的interface
 public class Account extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,19 +45,42 @@ public class Account extends AppCompatActivity {
                     case R.id.account:
                         return true;
                 }
-
                 return false;
             }
         });
 
-        Button sign_in_sign_up_sign_out_button = (Button) findViewById(R.id.button_sign_in_sign_up_sign_out);
-        sign_in_sign_up_sign_out_button.setOnClickListener(new View.OnClickListener() {
+        Button signOutButton = (Button) findViewById(R.id.button_sign_out);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Account.this, SignIn.class);
-                startActivity(intent);
+                AlertDialog.Builder builder = new AlertDialog.Builder(Account.this);
+                builder.setIcon(R.drawable.warning);
+                builder.setTitle("Warning");
+                builder.setMessage("Do you want to sign out?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(Account.this, "Sign out successfully!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Account.this, Welcome.class);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.setNeutralButton("Skip to Welcome", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        Intent intent = new Intent(Account.this, Welcome.class);
+                        startActivity(intent);
+                    }
+                });
+                builder.show();
             }
         });
-
     }
 }

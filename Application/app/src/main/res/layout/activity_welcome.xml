@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/capsule_welcome"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#00ff00"
+        android:textSize="28sp"
+        android:text="Welcome to Memory Capsule!" />
+
+    <Button
+        android:id="@+id/button_go_to_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign in" />
+
+    <Button
+        android:id="@+id/button_go_to_sign_up"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New user? -> Sign up" >
+    </Button>
+
+    <Button
+        android:id="@+id/button_skip_to_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Skip to account" >
+    </Button>
+
+</LinearLayout>
