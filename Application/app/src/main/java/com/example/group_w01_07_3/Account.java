@@ -49,6 +49,23 @@ public class Account extends AppCompatActivity {
             }
         });
 
+        Button goToChangeAvatarButton = (Button) findViewById(R.id.button_go_to_change_avatar);
+        goToChangeAvatarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        Button goToChangePasswordButton = (Button) findViewById(R.id.button_go_to_change_password);
+        goToChangePasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Account.this, ChangePassword.class);
+                startActivity(intent);
+            }
+        });
+
         Button signOutButton = (Button) findViewById(R.id.button_sign_out);
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +82,7 @@ public class Account extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

@@ -59,14 +59,7 @@
             android:text="Remember username and password" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button_sign_in"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sign in" />
-
     <TextView
-        android:id="@+id/textview_forget_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -79,6 +72,12 @@
         android:layout_height="wrap_content"
         android:text="Send username to email">
     </Button>
+
+    <Button
+        android:id="@+id/button_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign in" />
 
     <!--做不了忘记密码重置，API收费
     <TextView
@@ -96,5 +95,33 @@
         android:text="Reset password">
     </Button>
     -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="New user? -> Create account">
+    </TextView>
+
+    <Button
+        android:id="@+id/button_create_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create account" >
+    </Button>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Skip to account">
+    </TextView>
+
+    <Button
+        android:id="@+id/button_skip_to_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Skip to account" >
+    </Button>
 
 </LinearLayout>
