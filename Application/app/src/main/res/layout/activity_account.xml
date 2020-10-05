@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".Account">
 
+    <Button
+        android:id="@+id/button_sign_in_sign_up_sign_out"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="sign in / sign up / sign out"
+        tools:ignore="MissingConstraints" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
