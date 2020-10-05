@@ -7,10 +7,15 @@
     tools:context=".Account">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints">
+
         <Button
             android:id="@+id/button_go_to_change_avatar"
             android:layout_width="130dp"
@@ -36,13 +41,27 @@
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:text="Sign out" />
+
     </LinearLayout>
+
+    <Button
+        android:id="@+id/button_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="History"
+
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Account info edit, Capsule related summary statistics + logout"
+        android:text="Account info edit, Opened capsule history + logout"
         android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"

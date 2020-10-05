@@ -99,5 +99,14 @@ public class Account extends AppCompatActivity {
                 builder.show();
             }
         });
+
+        Button historyButton = (Button) findViewById(R.id.button_history);
+        historyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Account.this, History.class);
+                startActivity(intent);
+            }
+        });
     }
 }

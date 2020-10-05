@@ -49,14 +49,5 @@ public class Capsule extends AppCompatActivity {
             }
         });
 
-        Button historyButton = (Button) findViewById(R.id.button_history);
-        historyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Capsule.this, History.class);
-                startActivity(intent);
-            }
-        });
-
     }
 }
