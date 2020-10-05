@@ -18,10 +18,24 @@
         android:maxLines="1" />
 
     <EditText
-        android:id="@+id/exittext_sign_up_password"
+        android:id="@+id/edittext_sign_up_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter password"
+        android:maxLines="1" />
+
+    <EditText
+        android:id="@+id/edittext_sign_up_re-enter_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Re-enter password"
+        android:maxLines="1" />
+
+    <EditText
+        android:id="@+id/edittext_sign_up_dob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter date of birth"
         android:maxLines="1" />
 
     <Button

@@ -21,23 +21,5 @@ public class Welcome extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        Button goToSignUpButton = (Button) findViewById(R.id.button_go_to_sign_up);
-        goToSignUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Welcome.this, SignUp.class);
-                startActivity(intent);
-            }
-        });
-
-        Button skipToAccountButton = (Button) findViewById(R.id.button_skip_to_account);
-        skipToAccountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Welcome.this, Account.class);
-                startActivity(intent);
-            }
-        });
     }
 }
