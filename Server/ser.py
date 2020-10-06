@@ -507,7 +507,7 @@ class UploadImage:
             format_name = filename.split(".")[-1]
             if format_name not in ['jpg', 'jpeg', 'png', 'gif', 'tif', 'psd', 'dng', 'cr2', 'nef']:
                 return {'error': 'Invalid format'}
-            target_folder = '/home/sudokuServer/static/'
+            target_folder = '/home/sudokuServer/static/mobile/'
             target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
             target_dir = os.path.join(target_folder, target_filename)
             f = open(target_dir, 'wb')
@@ -515,10 +515,11 @@ class UploadImage:
             f.close()
             static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
             return {"success": True, "file": static_url}
-        except e:
-            print(e)
+        except AttributeError as err:
+            print("AttributeError: {0}".format(err))
             return web.badrequest()
-
+        except:
+            return web.badrequest()
         
 
 class UploadAudio:
@@ -541,7 +542,7 @@ class UploadAudio:
             format_name = filename.split(".")[-1]
             if format_name not in ['wav', 'mp3', 'aac', 'amr']:
                 return {'error': 'Invalid format'}
-            target_folder = '/home/sudokuServer/static/'
+            target_folder = '/home/sudokuServer/static/mobile/'
             target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
             target_dir = os.path.join(target_folder, target_filename)
             f = open(target_dir, 'wb')
@@ -549,8 +550,10 @@ class UploadAudio:
             f.close()
             static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
             return {"success": True, "file": static_url}
-        except e:
-            print(e)
+        except AttributeError as err:
+            print("AttributeError: {0}".format(err))
+            return web.badrequest()
+        except:
             return web.badrequest()
 
 if __name__=='__main__':
