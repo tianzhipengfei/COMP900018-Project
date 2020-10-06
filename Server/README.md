@@ -181,7 +181,7 @@
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
-### 11. UploadIamge
+### 11. UploadImage
 * URL: https://www.tianzhipengfei.xin/mobile/uploadImage
 * Method: POST
 * Header: {"enctype": "multipart/form-data", "Content-Type": "multipart/form-data"}
@@ -213,4 +213,20 @@
 	* Fail:
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if file format is invalid, return {'error': 'Invalid format'}
+		* if form is invalid,return web.badrequest()
+
+### 13. UploadAvatar
+* URL: https://www.tianzhipengfei.xin/mobile/uploadImage
+* Method: POST
+* Header: {"enctype": "multipart/form-data", "Content-Type": "multipart/form-data"}
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| usr | string | yes | username |
+| myfile | file | yes |file to upload |
+* Returns:
+	* Success: {'success': True, 'file': 'https://www.tianzhipengfei.xin/static/mobile/test1-1601945632.png'}
+	* Fail:
+		* if username or email exists, return {'error': 'userExist - user already exist'}		* if file format is invalid, return {'error': 'Invalid format'}
 		* if form is invalid,return web.badrequest()
