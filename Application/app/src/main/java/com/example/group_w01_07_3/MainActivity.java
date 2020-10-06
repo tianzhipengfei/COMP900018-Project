@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         */
 
         // jump to Welcome On start
-        Intent intent = new Intent(MainActivity.this, Welcome.class);
+        Intent intent = new Intent(MainActivity.this, SignIn.class);
         startActivity(intent);
     }
 }

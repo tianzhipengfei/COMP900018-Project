@@ -78,7 +78,7 @@ public class Account extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(Account.this, "Sign out successfully!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(Account.this, Welcome.class);
+                        Intent intent = new Intent(Account.this, SignIn.class);
                         startActivity(intent);
                     }
                 });
@@ -86,14 +86,6 @@ public class Account extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                });
-                builder.setNeutralButton("Skip to Welcome", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        Intent intent = new Intent(Account.this, Welcome.class);
-                        startActivity(intent);
                     }
                 });
                 builder.show();

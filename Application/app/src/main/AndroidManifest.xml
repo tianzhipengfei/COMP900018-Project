@@ -10,7 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ChangePassword"></activity>
-        <activity android:name=".Welcome" />
         <activity android:name=".SignUp" />
         <activity android:name=".History" />
         <activity android:name=".SignIn" />
