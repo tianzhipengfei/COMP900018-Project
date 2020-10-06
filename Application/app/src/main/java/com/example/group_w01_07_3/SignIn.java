@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.SigningInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -80,6 +81,8 @@ public class SignIn extends AppCompatActivity {
                         View root = pageLayout.getRootView();
                         root.setBackgroundColor(ContextCompat.getColor(SignIn.this, R.color.colorResetWhite));
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                        Toast.makeText(SignIn.this, "checked state and implement logic accordingly", Toast.LENGTH_SHORT).show();
                     }
                 }, 3000);
 

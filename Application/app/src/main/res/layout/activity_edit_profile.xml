@@ -7,7 +7,7 @@
     tools:context=".EditProfile">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+        android:id="@+id/appBarLayout_edit_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorResetWhite"
@@ -37,7 +37,7 @@
         android:id="@+id/edit_profile_avatar_Layout"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="88dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

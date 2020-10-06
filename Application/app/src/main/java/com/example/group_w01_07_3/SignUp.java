@@ -88,6 +88,8 @@ public class SignUp extends AppCompatActivity {
                         View root = pageLayout.getRootView();
                         root.setBackgroundColor(ContextCompat.getColor(SignUp.this, R.color.colorResetWhite));
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                        Toast.makeText(SignUp.this, "checked state and implement logic accordingly", Toast.LENGTH_SHORT).show();
                     }
                 }, 3000);
             }
