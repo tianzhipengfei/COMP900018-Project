@@ -4,6 +4,7 @@ import json
 import hashlib
 import random as rand
 from math import sin, cos, sqrt, atan2
+import os
 
 '''
  TODO:
@@ -23,7 +24,9 @@ urls = [
     '/createCapsule', 'CreateCapsule',
     '/discoverCapsule', 'DiscoverCapsule',
     '/openCapsule', 'OpenCapsule',
-    '/getCapsuleHistory', 'GetCapsuleHistory'
+    '/getCapsuleHistory', 'GetCapsuleHistory',
+    '/uploadImage', 'UploadImage',
+    '/uploadAudio', 'UploadAudio'
 ]
 
 app = web.application(urls, globals())
@@ -483,6 +486,72 @@ class GetCapsuleHistory:
             cur_capsule = db.query("SELECT * FROM capsules WHERE cid = '{}'".format(cur_cid))[0]
             res.append(getCapsuleInfo(cur_capsule))
         return {'sucess': True, 'hisotry': res}
+
+class UploadImage:
+    def POST(self):
+        i = web.input(myfile={})
+        try:
+            tkn = i['tkn']
+            user = getUser(None, tkn)
+            # Check whether the user has logged in
+            if not user:
+                return {'error':'Not logged in'}
+
+            if not checkToken(user):
+                return {'error':'Token expired'}
+
+            usr = user.get('uusr')
+
+            # filename
+            filename = i['myfile'].filename 
+            format_name = filename.split(".")[-1]
+            if format_name not in ['jpg', 'jpeg', 'png', 'gif', 'tif', 'psd', 'dng', 'cr2', 'nef']:
+                return {'error': 'Invalid format'}
+            target_folder = '/home/sudokuServer/static/'
+            target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
+            target_dir = os.path.join(target_folder, target_filename)
+            f = open(target_dir, 'wb')
+            f.write(i['myfile'].value)
+            f.close()
+            static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
+            return {"success": True, "file": static_url}
+        except e:
+            print(e)
+            return web.badrequest()
+
+        
+
+class UploadAudio:
+    def POST(self):
+        i = web.input(myfile={})
+        try:
+            tkn = i['tkn']
+            user = getUser(None, tkn)
+            # Check whether the user has logged in
+            if not user:
+                return {'error':'Not logged in'}
+
+            if not checkToken(user):
+                return {'error':'Token expired'}
+
+            usr = user.get('uusr')
+
+            # filename
+            filename = i['myfile'].filename 
+            format_name = filename.split(".")[-1]
+            if format_name not in ['wav', 'mp3', 'aac', 'amr']:
+                return {'error': 'Invalid format'}
+            target_folder = '/home/sudokuServer/static/'
+            target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
+            target_dir = os.path.join(target_folder, target_filename)
+            f = open(target_dir, 'wb')
+            f.write(i['myfile'].value)
+            f.close()
+            static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
+            return {"success": True, "file": static_url}
+        except e:
+            print(e)
+            return web.badrequest()
 
 if __name__=='__main__':
     app.run()

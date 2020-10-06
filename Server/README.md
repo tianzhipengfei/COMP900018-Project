@@ -7,11 +7,12 @@
 ## Front-end attention
 1. Please validate the form before sending request. E.g. email validation, old pass != new pass
 2. Avoid repeat post submission in a very short time
+3. check file format before uploading
 
 ## API
 
 ### 1. SignUp
-* Route: /signUp
+* URL: https://www.tianzhipengfei.xin/mobile/signUp
 * Method: POST
 * Parameters:
 
@@ -29,7 +30,7 @@
 		* if form is invalid,return web.badrequest()
 
 ### 2. SignIn
-* Route: /signIn
+* URL: https://www.tianzhipengfei.xin/mobile/signIn
 * Method: POST
 * Parameters:
 
@@ -46,7 +47,7 @@
 		* Other fails: return {'error':'loginError - cannot login'}
 		
 ### 3. SignOut
-* Route: /signOut
+* URL: https://www.tianzhipengfei.xin/mobile/signOut
 * Method: POST
 * Parameters:
 
@@ -56,11 +57,11 @@
 * Returns:
 	* Success: {'success':True}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 4. ModifyProfile
-* Route: /modifyProfile
+* URL: https://www.tianzhipengfei.xin/mobile/modifyProfile
 * Method: POST
 * Parameters:
 
@@ -74,11 +75,11 @@
 	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com'}}
 	* Fail:
 		* if new email exists, return {'error': 'emailExist - email already exist'}
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 5. ChangePassword
-* Route: /changePassword
+* URL: https://www.tianzhipengfei.xin/mobile/changePassword
 * Method: POST
 * Parameters:
 
@@ -91,11 +92,11 @@
 	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com'}}
 	* Fail:
 		* if old password is incorrect, return {'error': 'invalidPass - invalid password, try again'}
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 		
 ### 6. GetProfile
-* Route: /getProfile
+* URL: https://www.tianzhipengfei.xin/mobile/getProfile
 * Method: GET
 * Parameters:
 
@@ -105,11 +106,11 @@
 * Returns:
 	* Success: {"success": true, "userInfo": {"uusr": "test", "uavatar": "test_avatar", "uemail": "test@qq.com"}}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 7. CreateCapsule
-* Route: /createCapsule
+* URL: https://www.tianzhipengfei.xin/mobile/createCapsule
 * Method: POST
 * Parameters:
 
@@ -126,11 +127,11 @@
 * Returns:
 	* Success: {'success': True}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 8. DiscoverCapsule
-* Route: /discoverCapsule
+* URL: https://www.tianzhipengfei.xin/mobile/discoverCapsule
 * Method: GET
 * Parameters:
 
@@ -144,11 +145,11 @@
 * Returns:
 	* Success: {"sucess": true, "capsules": [{"cid": 2, "cusr": "test1", "ccontent": "Test content1", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}, {"cid": 3, "cusr": "test1", "ccontent": "Test content2", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}]}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 9. OpenCapsule
-* Route: /openCapsule
+* URL: https://www.tianzhipengfei.xin/mobile/openCapsule
 * Method: POST
 * Parameters:
 
@@ -162,12 +163,12 @@
 * Returns:
 	* Success: {'sucess': True}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 
 ### 10. GetCapsuleHistory
-* Route: /getCapsuleHistory
+* URL: https://www.tianzhipengfei.xin/mobile/getCapsuleHistory
 * Method: GET
 * Parameters:
 
@@ -177,5 +178,39 @@
 * Returns:
 	* Success: {"sucess": true, "hisotry": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "cimage": null, "caudio": null, "ccount": 2, "cavatar": "test_avatar"}, {"cid": 2, "cusr": "test1", "ccontent": "Test content1", "cimage": null, "caudio": null, "ccount": 2, "cavatar": null}]}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
+
+### 11. UploadIamge
+* URL: https://www.tianzhipengfei.xin/mobile/uploadImage
+* Method: POST
+* Header: {"enctype": "multipart/form-data", "Content-Type": "multipart/form-data"}
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+| myfile | file | yes |file to upload |
+* Returns:
+	* Success: {'success': True, 'file': 'https://www.tianzhipengfei.xin/static/mobile/test1-1601945632.png'}
+	* Fail:
+		* if user has not logged in, return {'error':'Not logged in'}
+		* if file format is invalid, return {'error': 'Invalid format'}
+		* if form is invalid,return web.badrequest()
+
+### 12. UploadAudio
+* URL: https://www.tianzhipengfei.xin/mobile/uploadAudio
+* Method: POST
+* Header: {"enctype": "multipart/form-data", "Content-Type": "multipart/form-data"}
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+| myfile | file | yes |file to upload |
+* Returns:
+	* Success: {'success': True, 'file': 'https://www.tianzhipengfei.xin/static/mobile/test1-1601945632.wav'}
+	* Fail:
+		* if user has not logged in, return {'error':'Not logged in'}
+		* if file format is invalid, return {'error': 'Invalid format'}
 		* if form is invalid,return web.badrequest()
