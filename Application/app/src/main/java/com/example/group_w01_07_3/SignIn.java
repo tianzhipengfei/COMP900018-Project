@@ -63,7 +63,10 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SignIn.this, SignUp.class);
+                //kill SinIn Activity
+                finish();
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         });
 
@@ -72,7 +75,11 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SignIn.this, Account.class);
+
+                //kill SinIn Activity
+                finish();
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         });
 

@@ -21,5 +21,9 @@ public class MainActivity extends AppCompatActivity {
         // jump to Welcome On start
         Intent intent = new Intent(MainActivity.this, SignIn.class);
         startActivity(intent);
+
+        //kill MainActivity
+        finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }
