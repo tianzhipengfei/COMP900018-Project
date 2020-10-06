@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/sign_in_imageView"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:layout_gravity="center_horizontal"
@@ -20,13 +20,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/sign_in_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_imageView">
 
 
         <com.google.android.material.textview.MaterialTextView
@@ -94,11 +94,11 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/sing_in_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_linearLayout">
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/checkbox_sign_in_remember"
@@ -172,7 +172,7 @@
         android:layout_height="wrap_content"
         android:background="#6ac5de"
         android:gravity="center"
-        android:text="Skip to account"
+        android:text="Place Holder for testing: Skip to account"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -184,13 +184,14 @@
         android:id="@+id/button_sign_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="32dp"
         android:text="Sign In"
+        app:cornerRadius="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/sing_in_constraintLayout" />
 
     <com.google.android.material.progressindicator.ProgressIndicator
         android:id="@+id/progressCircleDeterminate_signin"

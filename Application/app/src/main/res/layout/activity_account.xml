@@ -1,81 +1,110 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".Account">
-
-<LinearLayout
-    android:id="@+id/linearLayout"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:orientation="horizontal"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    tools:ignore="MissingConstraints">
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Button
-        android:id="@+id/button_go_to_change_avatar"
-        android:layout_width="130dp"
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/img_account_avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:contentDescription="not update button, but update this image src from server"
+        android:src="@drawable/avatar_sample"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/circleImageView"
+        app:strokeWidth="2dp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/account_constraintLayout1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Change avatar" />
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_account_avatar">
 
-    <TextView
-        android:layout_width="5dp"
-        android:layout_height="wrap_content" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_acct_edit_profile"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edit Profile"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_baseline_account_circle_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/button_go_to_change_password"
-        android:layout_width="130dp"
+        <View
+            android:id="@+id/account_view_divider_1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_acct_edit_profile" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_acct_view_opened_capsule_history"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Opened Capsule History"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_history"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/account_view_divider_1">
+
+
+        </com.google.android.material.button.MaterialButton>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Change password" />
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-    <TextView
-        android:layout_width="5dp"
-        android:layout_height="wrap_content" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_acct_sign_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorWarning"
+            android:text="Sign Out"
+            android:textAllCaps="true"
+            app:cornerRadius="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/button_sign_out"
-        android:layout_width="130dp"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        style="@style/Widget.MaterialComponents.BottomNavigationView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign out" />
+        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/menu_navigation" />
 
-</LinearLayout>
 
-<Button
-    android:id="@+id/button_history"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="History"
-
-    android:textAllCaps="false"
-    app:layout_constraintBottom_toTopOf="@+id/textView"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-    tools:ignore="MissingConstraints" />
-
-<TextView
-    android:id="@+id/textView"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Account info edit, Opened capsule history + logout"
-    android:textSize="20dp"
-    android:textStyle="bold"
-    app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
-
-<com.google.android.material.bottomnavigation.BottomNavigationView
-    android:id="@+id/bottom_navigation"
-    style="@style/Widget.MaterialComponents.BottomNavigationView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:menu="@menu/menu_navigation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

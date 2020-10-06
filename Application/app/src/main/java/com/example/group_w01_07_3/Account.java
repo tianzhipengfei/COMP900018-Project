@@ -49,24 +49,7 @@ public class Account extends AppCompatActivity {
             }
         });
 
-        Button goToChangeAvatarButton = (Button) findViewById(R.id.button_go_to_change_avatar);
-        goToChangeAvatarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        Button goToChangePasswordButton = (Button) findViewById(R.id.button_go_to_change_password);
-        goToChangePasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Account.this, ChangePassword.class);
-                startActivity(intent);
-            }
-        });
-
-        Button signOutButton = (Button) findViewById(R.id.button_sign_out);
+        Button signOutButton = (Button) findViewById(R.id.button_acct_sign_out);
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,13 +75,5 @@ public class Account extends AppCompatActivity {
             }
         });
 
-        Button historyButton = (Button) findViewById(R.id.button_history);
-        historyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Account.this, History.class);
-                startActivity(intent);
-            }
-        });
     }
 }
