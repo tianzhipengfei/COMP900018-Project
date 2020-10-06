@@ -18,7 +18,8 @@ import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClic
 
 public class SignUp extends AppCompatActivity {
 
-    private TextView mSelecteDateText;
+    private MaterialDatePicker<Long> picker;
+    private Button dobPicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +42,9 @@ public class SignUp extends AppCompatActivity {
 
         builder.setCalendarConstraints(constraintsBuilder.build());
 
-        final MaterialDatePicker<Long> picker = builder.build();
+        picker = builder.build();
 
-        TextView dobPicker = (TextView) findViewById(R.id.edittext_sign_up_dob);
+        dobPicker = (Button) findViewById(R.id.button_sign_up_birthday);
         dobPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,11 +52,10 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        mSelecteDateText = findViewById(R.id.sign_up_dob_result);
         picker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener() {
             @Override
             public void onPositiveButtonClick(Object selection) {
-                mSelecteDateText.setText("Selected Date: "+ picker.getHeaderText());
+                dobPicker.setText(picker.getHeaderText());
             }
         });
 
@@ -72,6 +72,15 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+            }
+        });
+
+        TextView backToSignInText = (TextView) findViewById(R.id.text_back_sign_in);
+        backToSignInText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SignUp.this, SignIn.class);
+                startActivity(intent);
             }
         });
     }
