@@ -2,16 +2,22 @@ package com.example.group_w01_07_3;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.progressindicator.ProgressIndicator;
 
 public class SignIn extends AppCompatActivity {
 
@@ -54,6 +60,28 @@ public class SignIn extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signin);
+                progress.show();
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                View pageLayout = findViewById(R.id.sign_in_mega_layout);
+                View root = pageLayout.getRootView();
+                root.setBackgroundColor(ContextCompat.getColor(SignIn.this, R.color.colorGreyOut));
+
+                //Replace this part to login successful or fail, which hide progress bar and display message
+                //will change background to indicate the process
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Do something here
+                        ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signin);
+                        progress.hide();
+                        View pageLayout = findViewById(R.id.sign_in_mega_layout);
+                        View root = pageLayout.getRootView();
+                        root.setBackgroundColor(ContextCompat.getColor(SignIn.this, R.color.colorResetWhite));
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    }
+                }, 3000);
 
             }
         });

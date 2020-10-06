@@ -1,12 +1,16 @@
 package com.example.group_w01_07_3;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +19,7 @@ import android.widget.Toast;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.progressindicator.ProgressIndicator;
 
 public class SignUp extends AppCompatActivity {
 
@@ -63,7 +68,28 @@ public class SignUp extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signup);
+                progress.show();
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                View pageLayout = findViewById(R.id.sign_up_mega_layout);
+                View root = pageLayout.getRootView();
+                root.setBackgroundColor(ContextCompat.getColor(SignUp.this, R.color.colorGreyOut));
 
+                //Replace this part to login successful or fail, which hide progress bar and display message
+                //will change background to indicate the process
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Do something here
+                        ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signup);
+                        progress.hide();
+                        View pageLayout = findViewById(R.id.sign_up_mega_layout);
+                        View root = pageLayout.getRootView();
+                        root.setBackgroundColor(ContextCompat.getColor(SignUp.this, R.color.colorResetWhite));
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    }
+                }, 3000);
             }
         });
 
