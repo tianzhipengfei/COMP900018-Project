@@ -26,7 +26,8 @@ urls = [
     '/openCapsule', 'OpenCapsule',
     '/getCapsuleHistory', 'GetCapsuleHistory',
     '/uploadImage', 'UploadImage',
-    '/uploadAudio', 'UploadAudio'
+    '/uploadAudio', 'UploadAudio',
+    '/uploadAvatar', 'UploadAvatar'
 ]
 
 app = web.application(urls, globals())
@@ -555,6 +556,35 @@ class UploadAudio:
             return web.badrequest()
         except:
             return web.badrequest()
+
+class UploadAvatar:
+    def POST(self):
+        i = web.input(myfile={})
+        try:
+            usr = i['usr']
+            if getUser(usr):
+                return {'error': 'userExist - user already exist'}
+
+            # filename
+            filename = i['myfile'].filename 
+            format_name = filename.split(".")[-1]
+            if format_name not in ['jpg', 'jpeg', 'png', 'gif', 'tif', 'psd', 'dng', 'cr2', 'nef']:
+                return {'error': 'Invalid format'}
+            target_folder = '/home/sudokuServer/static/mobile/'
+            target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
+            target_dir = os.path.join(target_folder, target_filename)
+            f = open(target_dir, 'wb')
+            f.write(i['myfile'].value)
+            f.close()
+            static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
+            return {"success": True, "file": static_url}
+        except AttributeError as err:
+            print("AttributeError: {0}".format(err))
+            return web.badrequest()
+        except:
+            return web.badrequest()
+        
+
 
 if __name__=='__main__':
     app.run()
