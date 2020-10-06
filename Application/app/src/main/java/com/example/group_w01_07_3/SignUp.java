@@ -9,9 +9,11 @@ import android.icu.util.TimeZone;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,10 +23,21 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.progressindicator.ProgressIndicator;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
+
 public class SignUp extends AppCompatActivity {
 
     private MaterialDatePicker<Long> picker;
     private Button dobPicker;
+    private EditText usernameE;
+    private EditText emailE;
+    private EditText passwordE;
+    private EditText reEnterPasswordE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +77,11 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
+        usernameE = (EditText) findViewById(R.id.edittext_sign_up_username);
+        emailE = (EditText) findViewById(R.id.edittext_sign_up_email);
+        passwordE = (EditText) findViewById(R.id.edittext_sign_up_password);
+        reEnterPasswordE = (EditText) findViewById(R.id.edittext_sign_up_re_enter_password);
+
         Button signUpButton = (Button) findViewById(R.id.button_sign_up);
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +110,30 @@ public class SignUp extends AppCompatActivity {
                         Toast.makeText(SignUp.this, "checked state and implement logic accordingly", Toast.LENGTH_SHORT).show();
                     }
                 }, 3000);
+
+                String username = (String) usernameE.getText().toString();
+                Log.d("SIGNUP", "username: " + username);
+                String email = (String) emailE.getText().toString();
+                Log.d("SIGNUP", "email: " + email);
+                String password = (String) passwordE.getText().toString();
+                Log.d("SIGNUP", "password: " + password);
+                String reEnterPassword = (String) reEnterPasswordE.getText().toString();
+                Log.d("SIGNUP", "reEnterPassword: " + reEnterPassword);
+                String dob = (String) dobPicker.getText();
+                Log.d("SIGNUP", "dob: " + dob);
+
+                HttpUtil.signUp(new String[] {"c", "c", "c@c.c", "2020-10-06", null}, new okhttp3.Callback() {
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        String responseData = response.body().string();
+                        Log.d("SIGNUP", responseData);
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+                    }
+                });
             }
         });
 
