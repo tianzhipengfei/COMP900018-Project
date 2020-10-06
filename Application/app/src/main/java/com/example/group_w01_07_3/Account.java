@@ -75,5 +75,14 @@ public class Account extends AppCompatActivity {
             }
         });
 
+        Button editProfileButton = (Button) findViewById(R.id.button_acct_edit_profile);
+        editProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Account.this, EditProfile.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }
