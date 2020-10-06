@@ -6,18 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".Capsule">
 
-    <Button
-        android:id="@+id/button_history"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="history"
-        tools:ignore="MissingConstraints" />
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create capsule + Display opened capsule information + Capsule History"
+        android:text="Create capsule + Display current single opened capsule information"
         android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"

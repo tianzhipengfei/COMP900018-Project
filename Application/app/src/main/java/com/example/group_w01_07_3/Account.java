@@ -49,24 +49,7 @@ public class Account extends AppCompatActivity {
             }
         });
 
-        Button goToChangeAvatarButton = (Button) findViewById(R.id.button_go_to_change_avatar);
-        goToChangeAvatarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        Button goToChangePasswordButton = (Button) findViewById(R.id.button_go_to_change_password);
-        goToChangePasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Account.this, ChangePassword.class);
-                startActivity(intent);
-            }
-        });
-
-        Button signOutButton = (Button) findViewById(R.id.button_sign_out);
+        Button signOutButton = (Button) findViewById(R.id.button_acct_sign_out);
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,7 +61,7 @@ public class Account extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(Account.this, "Sign out successfully!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(Account.this, Welcome.class);
+                        Intent intent = new Intent(Account.this, SignIn.class);
                         startActivity(intent);
                     }
                 });
@@ -88,16 +71,18 @@ public class Account extends AppCompatActivity {
 
                     }
                 });
-                builder.setNeutralButton("Skip to Welcome", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        Intent intent = new Intent(Account.this, Welcome.class);
-                        startActivity(intent);
-                    }
-                });
                 builder.show();
             }
         });
+
+        Button editProfileButton = (Button) findViewById(R.id.button_acct_edit_profile);
+        editProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Account.this, EditProfile.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }
