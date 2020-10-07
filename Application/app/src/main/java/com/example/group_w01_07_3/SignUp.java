@@ -1,37 +1,33 @@
 package com.example.group_w01_07_3;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.group_w01_07_3.util.DensityUtil;
+import com.example.group_w01_07_3.util.HttpUtil;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-import com.google.android.material.progressindicator.ProgressIndicator;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -200,7 +196,7 @@ public class SignUp extends AppCompatActivity {
                     });
                 }
 
-//                HttpUtil.uploadAvatar("t", new File("/data/data/com.example.group_w01_07_3/email.png"), new okhttp3.Callback() {
+//                HttpUtil.uploadAvatar("t", new File(""), new okhttp3.Callback() {
 //                    @Override
 //                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
 //                        Log.d("SIGNUP", "aaaaa");
@@ -226,7 +222,7 @@ public class SignUp extends AppCompatActivity {
         avatarImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // https://github.com/jianjunxiao/BottomDialog
+                // From: https://github.com/jianjunxiao/BottomDialog
                 Dialog bottomDialog = new Dialog(SignUp.this, R.style.BottomDialog);
                 View contentView = LayoutInflater.from(SignUp.this).inflate(R.layout.dialog_content_circle, null);
                 bottomDialog.setContentView(contentView);

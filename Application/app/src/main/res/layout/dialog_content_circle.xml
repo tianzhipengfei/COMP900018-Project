@@ -1,48 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- From: https://github.com/jianjunxiao/BottomDialog -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/shape_dialog"
+    android:background="@drawable/dialog_shape"
     android:orientation="vertical">
 
-    <!-- https://github.com/jianjunxiao/BottomDialog -->
-
     <TextView
+        android:id="@+id/dialog_camera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
-        android:drawableLeft="@drawable/ic_edit"
+        android:drawableLeft="@drawable/camera"
         android:drawablePadding="16dp"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="Camera"
         android:textColor="#666666"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
     <TextView
+        android:id="@+id/dialog_gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
-        android:drawableLeft="@drawable/ic_edit"
+        android:drawableLeft="@drawable/gallery"
         android:drawablePadding="16dp"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="Gallery"
         android:textColor="#666666"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
 
     <TextView
+        android:id="@+id/dialog_cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
-        android:drawableLeft="@drawable/ic_edit"
+        android:drawableLeft="@drawable/cancel"
         android:drawablePadding="16dp"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="Cancel"
         android:textColor="#666666"
-        android:textSize="14sp"/>
+        android:textSize="14sp" />
+
 </LinearLayout>
