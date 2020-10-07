@@ -3,6 +3,7 @@ package com.example.group_w01_07_3;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
@@ -10,7 +11,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -222,7 +226,18 @@ public class SignUp extends AppCompatActivity {
         avatarImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // https://github.com/jianjunxiao/BottomDialog
+                Dialog bottomDialog = new Dialog(SignUp.this, R.style.BottomDialog);
+                View contentView = LayoutInflater.from(SignUp.this).inflate(R.layout.dialog_content_circle, null);
+                bottomDialog.setContentView(contentView);
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) contentView.getLayoutParams();
+                params.width = getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(SignUp.this, 16f);
+                params.bottomMargin = DensityUtil.dp2px(SignUp.this, 8f);
+                contentView.setLayoutParams(params);
+                bottomDialog.setCanceledOnTouchOutside(true);
+                bottomDialog.getWindow().setGravity(Gravity.BOTTOM);
+                bottomDialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
+                bottomDialog.show();
             }
         });
 
