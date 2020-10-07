@@ -1,9 +1,17 @@
 package com.example.group_w01_07_3;
 
+import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -51,6 +59,8 @@ public class SignUp extends AppCompatActivity {
     private EditText passwordET;
     private EditText reEnterPasswordET;
     private Button signUpButton;
+    private ImageView avatarImageBtn;
+    private BottomDialog bottomDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,20 +227,20 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        ImageView avatarImageBtn = (ImageView) findViewById(R.id.sign_up_avatar);
+        avatarImageBtn = (ImageView) findViewById(R.id.sign_up_avatar);
         avatarImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // (Modified) From: https://github.com/jianjunxiao/BottomDialog
-                BottomDialog bd = new BottomDialog(SignUp.this);
-                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bd.getContentView().getLayoutParams();
+                bottomDialog = new BottomDialog(SignUp.this);
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomDialog.getContentView().getLayoutParams();
                 params.width = getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(SignUp.this, 16f);
                 params.bottomMargin = DensityUtil.dp2px(SignUp.this, 8f);
-                bd.getContentView().setLayoutParams(params);
-                bd.setCanceledOnTouchOutside(true);
-                bd.getWindow().setGravity(Gravity.BOTTOM);
-                bd.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
-                bd.show();
+                bottomDialog.getContentView().setLayoutParams(params);
+                bottomDialog.setCanceledOnTouchOutside(true);
+                bottomDialog.getWindow().setGravity(Gravity.BOTTOM);
+                bottomDialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
+                bottomDialog.show();
             }
         });
 
@@ -320,6 +330,82 @@ public class SignUp extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, BottomDialog.CHOOSE_PHOTO);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openAlbum();
+                } else {
+                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case BottomDialog.CHOOSE_PHOTO:
+                handleImageOnKitKat(data);
+            default:
+                break;
+        }
+    }
+
+    private void handleImageOnKitKat(Intent data) {
+        String imagePath = null;
+        Uri uri = data.getData();
+        if (DocumentsContract.isDocumentUri(this, uri)) {
+            String docId = DocumentsContract.getDocumentId(uri);
+            if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                String id = docId.split(":")[1];
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = getImagePath(uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = uri.getPath();
+        }
+        displayImage(imagePath);
+    }
+
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
+    private void displayImage(String imagePath) {
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            avatarImageBtn.setImageBitmap(bitmap);
+            bottomDialog.dismiss();
+            Toast.makeText(this, "Select the image successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
