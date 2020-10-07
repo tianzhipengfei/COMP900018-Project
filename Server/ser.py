@@ -54,6 +54,7 @@ db.query('''
         cpermission INTEGER NOT NULL,   -- Public or private
         clat REAL NOT NULL,             -- Latitude 
         clon REAL NOT NULL,             -- Longitude
+        ctitle TEXT NOT NULL,         -- Capsule title
         ccontent TEXT NOT NULL,         -- Capsule content
         cimage TEXT,                    -- Capsule image URI
         caudio TEXT,                    -- Capsule audio URI
@@ -116,7 +117,7 @@ def checkToken(user):
 
 def getUserInfo(user):
     res = {}
-    keys = ['uusr', 'uavatar', 'uemail']
+    keys = ['uusr', 'uavatar', 'uemail', 'udob']
     for key in keys:
         res[key] = user[key]
     return res
@@ -125,7 +126,7 @@ def getCapsuleInfo(capsule):
     res = {}
     usr = capsule['cusr']
     user = getUser(usr)
-    keys = ['cid', 'cusr', 'ccontent', 'cimage', 'caudio', 'ccount']
+    keys = ['cid', 'cusr', 'ccontent', 'ctitle', 'cimage', 'caudio', 'ccount']
     for key in keys:
         res[key] = capsule[key]
     res['cavatar'] = user['uavatar']
@@ -338,7 +339,7 @@ class CreateCapsule:
         # Check whether request contain token 
         if not i.get('tkn') or not i.get('content') or \
         not i.get('lat') or not i.get('lon') or not i.get('time')\
-        or (i.get('permission') is None):
+        or (i.get('permission') is None) or not i.get('title'):
             return web.badrequest()
         tkn = i.get('tkn')
         user = getUser(None, tkn)
@@ -352,6 +353,7 @@ class CreateCapsule:
 
         usr = user.get('uusr')
         content = i.get('content') 
+        title = i.get('title') 
         lat = i.get('lat') 
         lon = i.get('lon') 
         tim = i.get('time') 
@@ -361,7 +363,8 @@ class CreateCapsule:
 
         # Add new capsule into database
         res = db.insert('capsules', cusr=usr, ctime=tim, cpermission=permission, \
-            clat=lat, clon=lon, ccontent=content, cimage=img, caudio=audio, ccount=0)
+            clat=lat, clon=lon, ccontent=content, ctitle=title, cimage=img, \
+            caudio=audio, ccount=0)
         return {'success': True}
 
 class DiscoverCapsule:
@@ -452,7 +455,9 @@ class OpenCapsule:
         # Update table capsules_history
         res = db.insert('capsules_history', husr=usr, hcap=cid, \
             hlat=lat, hlon=lon, htime=tim)
-        return {'success': True}
+
+        cur_capsule = db.query("SELECT * FROM capsules WHERE cid = '{}'".format(cid))[0]
+        return {'success': True, 'capsule': getCapsuleInfo(cur_capsule)}
 
 class GetCapsuleHistory:
     @json_response
