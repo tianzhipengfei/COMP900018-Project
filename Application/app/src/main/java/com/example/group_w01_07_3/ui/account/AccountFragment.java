@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.example.group_w01_07_3.Account;
+import com.example.group_w01_07_3.EditProfile;
 import com.example.group_w01_07_3.History;
 import com.example.group_w01_07_3.HomeActivity;
 import com.example.group_w01_07_3.R;
@@ -60,7 +60,7 @@ public class AccountFragment extends Fragment {
         editProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AccountFragment.this.getContext(), HomeActivity.class);
+                Intent intent = new Intent(AccountFragment.this.getContext(), EditProfile.class);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(AccountFragment.this.getActivity()).toBundle());
             }
         });
