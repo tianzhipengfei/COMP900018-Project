@@ -143,7 +143,7 @@ public class SignIn extends AppCompatActivity {
         skipToAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SignIn.this, Account.class);
+                Intent intent = new Intent(SignIn.this, HomeActivity.class);
 
                 //kill SinIn Activity
                 finish();
