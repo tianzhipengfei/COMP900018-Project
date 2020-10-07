@@ -25,6 +25,7 @@ import com.example.group_w01_07_3.History;
 import com.example.group_w01_07_3.HomeActivity;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.SignIn;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class AccountFragment extends Fragment {
 
