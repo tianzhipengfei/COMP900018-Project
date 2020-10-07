@@ -84,5 +84,14 @@ public class Account extends AppCompatActivity {
             }
         });
 
+        Button openedCapsuleHistory = (Button) findViewById(R.id.button_acct_view_opened_capsule_history);
+        openedCapsuleHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Account.this, History.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }
