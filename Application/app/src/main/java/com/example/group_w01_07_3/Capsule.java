@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -48,7 +50,7 @@ public class Capsule extends AppCompatActivity {
     //send request to database to store the dataInformation
     public void SendRequest(View view) {
         RequestSend request=new RequestSend();
-        request.execute("48185039ab0b7cb57072bfcf64b0702c4eb5249b"," the beach is as hot as the microwave just turned off after heating a big, red, spicy sauce. "
-        ,"Holiday","37.8136","144.9631","0");
+        request.execute("59c43e5670cfd24da97c607a5759aa33d88fdbc5"," the beach is as hot as the microwave just turned off after heating a big, red, spicy sauce. "
+        ,"Holiday","2020/10/07","37.8136","144.9631","0");
     }
 }
