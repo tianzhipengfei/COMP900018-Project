@@ -5,8 +5,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,28 +16,21 @@ public class History extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        //set status bar background to transparent
-        Window w = getWindow();
-        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-
         //setup recycleView with adapter
-        RecyclerView recyclerView = findViewById(R.id.rv_list);
-        List<Item> mlist = new ArrayList<>();
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        mlist.add(new Item(R.drawable.email, "Cities", R.drawable.avatar_sample, 2500));
-        Adapter adapter = new Adapter(this, mlist);
-        recyclerView.setAdapter(adapter);
+        //这里我是手动添加的几个样本数据供测试layout用,写代码是请删除
+        RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
+        List<OpenedCapsule> testingList = new ArrayList<>();
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule_welcome));
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule_welcome));
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule_welcome));
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule_welcome));
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule_welcome));
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule_welcome));
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule_welcome));
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule_welcome));
+
+        OpenedCapsuleAdapter openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList);
+        recyclerView.setAdapter(openedCapsuleAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 }

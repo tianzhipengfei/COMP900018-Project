@@ -4,102 +4,107 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="240dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/history_opened_capsule_card"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/colorPrimary"
-
-
-        android:layout_margin="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="240dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
 
-        app:cardPreventCornerOverlap="false">
+        app:strokeColor="@color/colorPrimary"
+        app:strokeWidth="1dp"
+        >
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+            <!-- Capsule image -->
 
-                <!-- Title, secondary and supporting text -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Title of Opened Capsule"
-                    android:textAppearance="?attr/textAppearanceHeadline6" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:src="@drawable/avatar_sample"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="secondary_text: username"
-                        android:textAppearance="?attr/textAppearanceBody2"
-                        android:textColor="?android:attr/textColorSecondary" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-
-            <!-- Media -->
             <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/history_capsule_card_background"
                 android:layout_width="match_parent"
-                android:layout_height="96dp"
+                android:layout_height="128dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 android:contentDescription="image slider goes here"
                 android:scaleType="centerInside"
                 app:shapeAppearance="?attr/shapeAppearanceMediumComponent"
-                app:srcCompat="@drawable/capsule_welcome" />
+                app:srcCompat="@drawable/capsule_welcome"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:text="supporting_text: Content"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="116dp"
+                android:background="@color/colorGreyOut">
 
-            <!-- Buttons -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:orientation="horizontal">
+                <!-- user icon -->
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/history_capsule_original_user_avatar"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_title"
+                    app:srcCompat="@drawable/avatar_sample" />
+
+                <!-- Title and supporting text -->
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/history_opened_capsule_title"
+                    android:layout_width="250dp"
+
+                    android:layout_height="48dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Title of Opened Capsule"
+                    android:textColor="@color/material_on_background_emphasis_high_type"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                </com.google.android.material.textview.MaterialTextView>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/history_opened_capsule_openDate"
+                    android:layout_width="210dp"
+
+                    android:layout_height="31dp"
+                    android:layout_marginStart="8dp"
+                    android:alpha="0.6"
+                    android:fontFamily="sans-serif-medium"
+
+                    android:text="Opened at 2020/11/1"
+                    android:textColor="#000000"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/history_capsule_original_user_avatar"
+                    app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_title" />
 
                 <com.google.android.material.button.MaterialButton
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:textAllCaps="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="View"
+                    android:textAllCaps="false"
                     app:cornerRadius="16dp"
-                    android:text="View" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </LinearLayout>
+
 
     </com.google.android.material.card.MaterialCardView>
 
