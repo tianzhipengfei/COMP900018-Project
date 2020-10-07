@@ -1,21 +1,19 @@
-package com.example.group_w01_07_3;
+package com.example.group_w01_07_3.util;
 
 import android.content.Context;
 import android.util.TypedValue;
 
-// https://github.com/jianjunxiao/BottomDialog
-
 /**
- * Created by XiaoJianjun on 2016/9/1.
- * 像素转换工具类.
+ * From: https://github.com/jianjunxiao/BottomDialog
+ * Created by XiaoJianjun on 2016/9/1
+ * Pixel conversion util class
  */
 public class DensityUtil {
+
     /**
-     * dp转px
-     *
+     * dp -> px
      * @param context
      * @param dpVal
-     * @return
      */
     public static int dp2px(Context context, float dpVal) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal,
@@ -23,11 +21,9 @@ public class DensityUtil {
     }
 
     /**
-     * sp转px
-     *
+     * sp -> px
      * @param context
      * @param spVal
-     * @return
      */
     public static int sp2px(Context context, float spVal) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spVal,
@@ -35,11 +31,9 @@ public class DensityUtil {
     }
 
     /**
-     * px转dp
-     *
+     * px -> dp
      * @param context
      * @param pxVal
-     * @return
      */
     public static float px2dp(Context context, float pxVal) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -47,13 +41,12 @@ public class DensityUtil {
     }
 
     /**
-     * px转sp
-     *
+     * px -> sp
+     * @param context
      * @param pxVal
-     * @param pxVal
-     * @return
      */
     public static float px2sp(Context context, float pxVal) {
         return (pxVal / context.getResources().getDisplayMetrics().scaledDensity);
     }
+
 }
