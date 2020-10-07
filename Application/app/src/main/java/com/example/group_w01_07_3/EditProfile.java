@@ -5,8 +5,11 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.transition.Slide;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 
 public class EditProfile extends AppCompatActivity {
@@ -14,6 +17,15 @@ public class EditProfile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //set transition
+        // make sure to do this before setContentView or else the app will crash
+        Window window = getWindow();
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        window.setEnterTransition(new Slide());
+        window.setExitTransition(new Slide());
+
+
         setContentView(R.layout.activity_edit_profile);
 
         mToolbar = findViewById(R.id.edit_profile_back_toolbar);

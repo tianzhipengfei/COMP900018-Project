@@ -173,7 +173,7 @@
         android:layout_height="wrap_content"
         android:background="#6ac5de"
         android:gravity="center"
-        android:text="Place Holder for testing: Skip to account"
+        android:text="Place Holder for testing: Skip to main UI"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
