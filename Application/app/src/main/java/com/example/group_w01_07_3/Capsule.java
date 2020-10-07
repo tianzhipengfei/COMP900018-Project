@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -17,8 +18,6 @@ public class Capsule extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capsule);
-
-
         //bottom navigation bar相关
         //Initialize and assign variable
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -42,9 +41,14 @@ public class Capsule extends AppCompatActivity {
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         return true;
                 }
-
                 return false;
             }
         });
+    }
+    //send request to database to store the dataInformation
+    public void SendRequest(View view) {
+        RequestSend request=new RequestSend();
+        request.execute("48185039ab0b7cb57072bfcf64b0702c4eb5249b"," the beach is as hot as the microwave just turned off after heating a big, red, spicy sauce. "
+        ,"Holiday","37.8136","144.9631","0");
     }
 }
