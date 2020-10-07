@@ -7,3 +7,4 @@
 .Trashes
 ./Server/test.db
 ./Server/__pycache__/*
+./Server/__Pycache__
