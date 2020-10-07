@@ -24,7 +24,7 @@
 | dob | string | yes | date of birth |
 | avatar | string | no | avatar |
 * Returns:
-	* Success: {'success': True, 'token': '02dd1f8b946fea41f2377480e43aeb235cf2dba0', 'userInfo': {'uusr': 'test4', 'uavatar': None, 'uemail': 'test4@gmail.com', 'udob': '2020-01-01'}}
+	* Success: {'success': True}
 	* Fail:
 		* if username or email exists, return {'error': 'userExist - user already exist'}
 		* if form is invalid,return web.badrequest()
@@ -118,10 +118,11 @@
 |---|---|---|---|
 | tkn | string | yes | token |
 | content | string | yes | capsule's content |
+| title | string | yes | capsule's title |
 | lat | double | yes | latitude |
 | lon | double | yes | longitude |
 | time | string | yes | when create the capsule |
-| permission | int | yes | Public or private |
+| permission | int | yes | Public(1) or private(0) |
 | img | string | no | image's URL |
 | audio | string | no | audio's URL |
 * Returns:
@@ -161,8 +162,7 @@
 | lon | double | yes | longitude |
 | time | string | yes | when open the capsule |capsules can be found (default 20) |
 * Returns:
-	* Success: {'sucess': True}
-	* Fail:
+	* Success: {'success': True, 'capsule': {'cid': 1, 'cusr': 'test', 'ccontent': 'test content', 'ctitle': 'test title', 'cimage': None, 'caudio': None, 'ccount': 2, 'cavatar': None}}		* Fail:
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
