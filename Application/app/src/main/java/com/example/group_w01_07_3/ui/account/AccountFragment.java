@@ -96,5 +96,13 @@ public class AccountFragment extends Fragment {
             }
         });
 
+        Button testSwitchActivity = view.findViewById(R.id.testing_switch_activity);
+        testSwitchActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navController.navigate(R.id.action_accountFragment_to_changePassword2);
+            }
+        });
+
     }
 }

@@ -22,9 +22,16 @@
         <action
             android:id="@+id/action_accountFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_accountFragment_to_changePassword2"
+            app:destination="@id/changePassword2" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.example.group_w01_07_3.EditProfileFragment"
         android:label="EditProfileFragment" />
+    <activity
+        android:id="@+id/changePassword2"
+        android:name="com.example.group_w01_07_3.ChangePassword"
+        android:label="ChangePassword" />
 </navigation>

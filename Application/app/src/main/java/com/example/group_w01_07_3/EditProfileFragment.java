@@ -72,7 +72,7 @@ public class EditProfileFragment extends Fragment {
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         mToolbar = (Toolbar) view.findViewById(R.id.edit_profile_back_toolbar);
-//        mToolbar.setTitle("Edit Profile");
+        mToolbar.setTitle("Edit Profile");
         mToolbar.setNavigationIcon(R.drawable.ic_back);
         activity.setSupportActionBar(mToolbar);
 //        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
