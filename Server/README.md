@@ -24,7 +24,7 @@
 | dob | string | yes | date of birth |
 | avatar | string | no | avatar |
 * Returns:
-	* Success: {'success': True, 'token': '02dd1f8b946fea41f2377480e43aeb235cf2dba0', 'userInfo': {'uusr': 'test4', 'uavatar': None, 'uemail': 'test4@gmail.com'}}
+	* Success: {'success': True}
 	* Fail:
 		* if username or email exists, return {'error': 'userExist - user already exist'}
 		* if form is invalid,return web.badrequest()
@@ -39,7 +39,7 @@
 | usr | string | yes | username |
 | pwd | string | yes | password |
 * Returns:
-	* Success: {'success': True, 'token': '48185039ab0b7cb57072bfcf64b0702c4eb5249b', 'userInfo': {'uusr': 'test', 'uavatar': None, 'uemail': 'test@gmail.com'}}
+	* Success: {'success': True, 'token': '48185039ab0b7cb57072bfcf64b0702c4eb5249b', 'userInfo': {'uusr': 'test', 'uavatar': None, 'uemail': 'test@gmail.com', 'udob': '2020-01-01'}}
 	* Fail:
 		* if username doesn't exists, return {'error': 'userNotExist - user does not exist'}
 		* if password is incorrect, return {'error': 'invalidPass - invalid password, try again'}
@@ -72,7 +72,7 @@
 | dob | string | yes | date of birth |
 | avatar | string | yes | avatar |
 * Returns:
-	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com'}}
+	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com', 'udob': '2020-01-01'}}
 	* Fail:
 		* if new email exists, return {'error': 'emailExist - email already exist'}
 		* if user has not logged in, return {'error':'Not logged in'}
@@ -89,7 +89,7 @@
 | oldpass | string | yes | old password |
 | newpass | string | yes | new password |
 * Returns:
-	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com'}}
+	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com', 'udob': '2020-01-01'}}
 	* Fail:
 		* if old password is incorrect, return {'error': 'invalidPass - invalid password, try again'}
 		* if user has not logged in, return {'error':'Not logged in'}
@@ -104,7 +104,7 @@
 |---|---|---|---|
 | tkn | string | yes | token |
 * Returns:
-	* Success: {"success": true, "userInfo": {"uusr": "test", "uavatar": "test_avatar", "uemail": "test@qq.com"}}
+	* Success: {"success": true, "userInfo": {"uusr": "test", "uavatar": "test_avatar", "uemail": "test@qq.com", 'udob': '2020-01-01'}}
 	* Fail:
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
@@ -118,10 +118,11 @@
 |---|---|---|---|
 | tkn | string | yes | token |
 | content | string | yes | capsule's content |
+| title | string | yes | capsule's title |
 | lat | double | yes | latitude |
 | lon | double | yes | longitude |
 | time | string | yes | when create the capsule |
-| permission | int | yes | Public or private |
+| permission | int | yes | Public(1) or private(0) |
 | img | string | no | image's URL |
 | audio | string | no | audio's URL |
 * Returns:
@@ -143,7 +144,7 @@
 | max_distance | int | no | maximum distance allowed to discover capsules (default 5) |
 | num_capsules | int | no | maximum number of capsules can be found (default 20) |
 * Returns:
-	* Success: {"sucess": true, "capsules": [{"cid": 2, "cusr": "test1", "ccontent": "Test content1", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}, {"cid": 3, "cusr": "test1", "ccontent": "Test content2", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}]}
+	* Success: {"sucess": true, "capsules": [{"cid": 2, "cusr": "test1", "ccontent": "Test content1", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}, {"cid": 3, "cusr": "test1", "ccontent": "Test content2", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}]}
 	* Fail:
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
@@ -161,8 +162,7 @@
 | lon | double | yes | longitude |
 | time | string | yes | when open the capsule |capsules can be found (default 20) |
 * Returns:
-	* Success: {'sucess': True}
-	* Fail:
+	* Success: {'success': True, 'capsule': {'cid': 1, 'cusr': 'test', 'ccontent': 'test content', 'ctitle': 'test title', 'cimage': None, 'caudio': None, 'ccount': 2, 'cavatar': None}}		* Fail:
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
@@ -176,7 +176,7 @@
 |---|---|---|---|
 | tkn | string | yes | token |
 * Returns:
-	* Success: {"sucess": true, "hisotry": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "cimage": null, "caudio": null, "ccount": 2, "cavatar": "test_avatar"}, {"cid": 2, "cusr": "test1", "ccontent": "Test content1", "cimage": null, "caudio": null, "ccount": 2, "cavatar": null}]}
+	* Success: {"sucess": true, "hisotry": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 2, "cavatar": "test_avatar"}, {"cid": 2, "cusr": "test1", "ccontent": "Test content1", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 2, "cavatar": null}]}
 	* Fail:
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
@@ -216,7 +216,7 @@
 		* if form is invalid,return web.badrequest()
 
 ### 13. UploadAvatar
-* URL: https://www.tianzhipengfei.xin/mobile/uploadImage
+* URL: https://www.tianzhipengfei.xin/mobile/uploadAvatar
 * Method: POST
 * Header: {"enctype": "multipart/form-data", "Content-Type": "multipart/form-data"}
 * Parameters:
