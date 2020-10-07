@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.TypedValue;
 
 /**
- * From: https://github.com/jianjunxiao/BottomDialog
+ * (Modified) From: https://github.com/jianjunxiao/BottomDialog
  * Created by XiaoJianjun on 2016/9/1
  * Pixel conversion util class
  */
