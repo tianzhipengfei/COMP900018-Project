@@ -37,7 +37,7 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         holder.capsule_image.setImageResource(mData.get(position).getCapsule_image());
         holder.original_user_avatar.setImageResource(mData.get(position).getAvatar());
         holder.capsule_title.setText(mData.get(position).getCapsule_title());
-        holder.opened_date.setText(mData.get(position).getOpened_date() + "Followers");
+        holder.opened_date.setText(mData.get(position).getOpened_date());
     }
 
     @Override
