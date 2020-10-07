@@ -3,24 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home"
-    tools:ignore="UnusedNavigation">
-
+    tools:ignore="UnusedNavigation"
+    app:startDestination="@id/discoverCapsuleFragment">
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.group_w01_07_3.ui.create.CreateCapsuleFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_create_capsule" />
-
-    <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/discoverCapsuleFragment"
         android:name="com.example.group_w01_07_3.ui.discover.DiscoverCapsuleFragment"
-        android:label="@string/title_dashboard"
+        android:label="fragment_discover_capsule"
         tools:layout="@layout/fragment_discover_capsule" />
-
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/createCapsuleFragment"
+        android:name="com.example.group_w01_07_3.ui.create.CreateCapsuleFragment"
+        android:label="fragment_create_capsule"
+        tools:layout="@layout/fragment_create_capsule" />
+    <fragment
+        android:id="@+id/accountFragment"
         android:name="com.example.group_w01_07_3.ui.account.AccountFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_account" />
+        android:label="AccountFragment" >
+        <action
+            android:id="@+id/action_accountFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.group_w01_07_3.EditProfileFragment"
+        android:label="EditProfileFragment" />
 </navigation>
