@@ -1,15 +1,11 @@
 package com.example.group_w01_07_3;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Dialog;
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,6 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
@@ -67,7 +65,7 @@ public class SignUp extends AppCompatActivity {
         cStart.set(1920, 1, 1);
 
         Calendar cEnd = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cEnd.set(cEnd.get(Calendar.YEAR), cEnd.get(Calendar.MONTH),cEnd.get(Calendar.DATE));
+        cEnd.set(cEnd.get(Calendar.YEAR), cEnd.get(Calendar.MONTH), cEnd.get(Calendar.DATE));
         CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder();
 
         constraintsBuilder.setStart(cStart.getTimeInMillis());
@@ -102,6 +100,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 signUpButton.setEnabled(false);
+
 //                ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signup);
 //                progress.show();
 //                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -138,8 +137,8 @@ public class SignUp extends AppCompatActivity {
                 String dob = (String) dobPicker.getText();
                 Log.d("SIGNUP", "dob: " + dob);
 
-                if (allRequiredFinished(username, email, password, reEnterPassword, dob)){
-                    HttpUtil.signUp(new String[] {username, password, email, dob, null}, new okhttp3.Callback() {
+                if (allRequiredFinished(username, email, password, reEnterPassword, dob)) {
+                    HttpUtil.signUp(new String[]{username, password, email, dob, null}, new okhttp3.Callback() {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             String responseData = response.body().string();
@@ -222,23 +221,21 @@ public class SignUp extends AppCompatActivity {
         avatarImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // From: https://github.com/jianjunxiao/BottomDialog
-                Dialog bottomDialog = new Dialog(SignUp.this, R.style.BottomDialog);
-                View contentView = LayoutInflater.from(SignUp.this).inflate(R.layout.dialog_content_circle, null);
-                bottomDialog.setContentView(contentView);
-                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) contentView.getLayoutParams();
+                // (Modified) From: https://github.com/jianjunxiao/BottomDialog
+                BottomDialog bd = new BottomDialog(SignUp.this);
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bd.getContentView().getLayoutParams();
                 params.width = getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(SignUp.this, 16f);
                 params.bottomMargin = DensityUtil.dp2px(SignUp.this, 8f);
-                contentView.setLayoutParams(params);
-                bottomDialog.setCanceledOnTouchOutside(true);
-                bottomDialog.getWindow().setGravity(Gravity.BOTTOM);
-                bottomDialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
-                bottomDialog.show();
+                bd.getContentView().setLayoutParams(params);
+                bd.setCanceledOnTouchOutside(true);
+                bd.getWindow().setGravity(Gravity.BOTTOM);
+                bd.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
+                bd.show();
             }
         });
 
         TextView backToSignInText = (TextView) findViewById(R.id.text_back_sign_in);
-        backToSignInText.setOnClickListener(new View.OnClickListener(){
+        backToSignInText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SignUp.this, SignIn.class);
