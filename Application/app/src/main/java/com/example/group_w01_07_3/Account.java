@@ -80,7 +80,7 @@ public class Account extends AppCompatActivity {
         editProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Account.this, EditProfile.class);
+                Intent intent = new Intent(Account.this, HomeActivity.class);
                 startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(Account.this).toBundle());
             }
         });
