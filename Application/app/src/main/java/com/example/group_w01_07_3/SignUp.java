@@ -56,14 +56,25 @@ public class SignUp extends AppCompatActivity {
 
     private MaterialDatePicker<Long> picker;
     private Button dobPicker;
+    private String dob;
+
     private EditText usernameET;
+    private String username;
+
     private EditText emailET;
+    private String email;
+
     private EditText passwordET;
+    private String password;
+
     private EditText reEnterPasswordET;
-    private Button signUpButton;
+    private String reEnterPassword;
+
     private ImageView avatarImageBtn;
     private BottomDialog bottomDialog;
-    private File avatarFile;
+    private Button signUpButton;
+
+    private File avatarFile = null;
     private String avatarFileLink = null;
 
     @Override
@@ -140,93 +151,81 @@ public class SignUp extends AppCompatActivity {
 //                    }
 //                }, 3000);
 
-                String username = (String) usernameET.getText().toString().toLowerCase();
-                Log.d("SIGNUP", "username: " + username);
-                String email = (String) emailET.getText().toString();
-                Log.d("SIGNUP", "email: " + email);
-                String password = (String) passwordET.getText().toString();
-                Log.d("SIGNUP", "password: " + password);
-                String reEnterPassword = (String) reEnterPasswordET.getText().toString();
-                Log.d("SIGNUP", "reEnterPassword: " + reEnterPassword);
-                String dob = (String) dobPicker.getText();
-                Log.d("SIGNUP", "dob: " + dob);
+                username = usernameET.getText().toString().toLowerCase();
+                email = emailET.getText().toString();
+                password = passwordET.getText().toString();
+                reEnterPassword = reEnterPasswordET.getText().toString();
+                dob = dobPicker.getText().toString();
 
                 if (allRequiredFinished(username, email, password, reEnterPassword, dob)) {
-                    HttpUtil.uploadAvatar(username, avatarFile, new okhttp3.Callback() {
-                        @Override
-                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            Log.d("SIGNUP", "aaaaa");
-                            String r = response.body().string();
-                            Log.d("SIGNUP", r);
-//                            try {
-//                                String w = new JSONObject(r).getString("file");
-//                                Log.d("SIGNUP", w);
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-                        }
+                    Log.d("SIGNUP", "username: " + username);
+                    Log.d("SIGNUP", "email: " + email);
+                    Log.d("SIGNUP", "password: " + password);
+                    Log.d("SIGNUP", "reEnterPassword: " + reEnterPassword);
+                    Log.d("SIGNUP", "dob: " + dob);
+                    if (avatarFile != null) {
+                        HttpUtil.uploadAvatar(username, avatarFile, new okhttp3.Callback() {
+                            @Override
+                            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                Log.d("SIGNUP", "***** uploadAvatar onResponse *****");
+                                String responseData = response.body().string();
+                                Log.d("SIGNUP", "uploadAvatar: " + responseData);
+                                try {
+                                    JSONObject responseJSON = new JSONObject(responseData);
+                                    if (responseJSON.has("success")) {
+                                        String status = responseJSON.getString("success");
+                                        Log.d("SIGNUP", "uploadAvatar success: " + status);
+                                        avatarFileLink = responseJSON.getString("file");
+                                        Log.d("SIGNUP", "avatarFileLink: " + avatarFileLink);
+                                        onSignUp();
+                                    } else if (responseJSON.has("error")) {
+                                        String status = responseJSON.getString("error");
+                                        Log.d("SIGNUP", "uploadAvatar error: " + status);
+                                        if (status.equalsIgnoreCase("userExist - user already exist")) {
+                                            runOnUiThread(new Runnable() {
+                                                              @Override
+                                                              public void run() {
+                                                                  usernameET.setText("");
+                                                                  Toast.makeText(SignUp.this, "Username exists, please change it", Toast.LENGTH_SHORT).show();
+                                                                  signUpButton.setEnabled(true);
+                                                              }
+                                                          }
+                                            );
+                                        } else if (status.equalsIgnoreCase("Invalid format")) {
+                                            Log.d("SIGNUP", "uploadAvatar error: " + status);
+                                            runOnUiThread(new Runnable() {
+                                                              @Override
+                                                              public void run() {
+                                                                  Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                                  signUpButton.setEnabled(true);
+                                                              }
+                                                          }
+                                            );
+                                        }
+                                    } else {
+                                        Log.d("SIGNUP", "uploadAvatar: Invalid form");
+                                        runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                              signUpButton.setEnabled(true);
+                                                          }
+                                                      }
+                                        );
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
 
-                        @Override
-                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-//                    HttpUtil.signUp(new String[]{username, password, email, dob, avatarFileLink}, new okhttp3.Callback() {
-//                        @Override
-//                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//                            String responseData = response.body().string();
-//                            Log.d("SIGNUP", responseData);
-//                            try {
-//                                JSONObject responseJSON = new JSONObject(responseData);
-//                                if (responseJSON.has("success")) {
-//                                    String status = responseJSON.getString("success");
-//                                    Log.d("SIGNUP", status);
-//                                    runOnUiThread(new Runnable() {
-//                                                      @Override
-//                                                      public void run() {
-//                                                          Toast.makeText(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
-//                                                          Intent intent = new Intent(SignUp.this, SignIn.class);
-//                                                          SignUp.super.finish();
-//                                                          startActivity(intent);
-//                                                          overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//                                                      }
-//                                                  }
-//                                    );
-//                                } else if (responseJSON.has("error")) {
-//                                    String status = responseJSON.getString("error");
-//                                    Log.d("SIGNUP", status);
-//                                    runOnUiThread(new Runnable() {
-//                                                      @Override
-//                                                      public void run() {
-//                                                          usernameET.setText("");
-//                                                          emailET.setText("");
-//                                                          Toast.makeText(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT).show();
-//                                                          signUpButton.setEnabled(true);
-//                                                      }
-//                                                  }
-//                                    );
-//                                } else {
-//                                    runOnUiThread(new Runnable() {
-//                                                      @Override
-//                                                      public void run() {
-//                                                          Log.d("SIGNUP", "Invalid form");
-//                                                          Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
-//                                                          signUpButton.setEnabled(true);
-//                                                      }
-//                                                  }
-//                                    );
-//                                }
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//
-//                        }
-//                    });
+                            @Override
+                            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    } else {
+                        onSignUp();
+                    }
                 }
             }
         });
@@ -347,7 +346,7 @@ public class SignUp extends AppCompatActivity {
                         avatarImageBtn.setImageBitmap(bitmap);
                         avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "output_photo_compressed.jpg");
                         bottomDialog.dismiss();
-                        Toast.makeText(this, "take the photo successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Take the photo successfully", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -427,6 +426,65 @@ public class SignUp extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void onSignUp() {
+        HttpUtil.signUp(new String[]{username, password, email, dob, avatarFileLink}, new okhttp3.Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.d("SIGNUP", "***** signUp onResponse *****");
+                String responseData = response.body().string();
+                Log.d("SIGNUP", "signUp: " + responseData);
+                try {
+                    JSONObject responseJSON = new JSONObject(responseData);
+                    if (responseJSON.has("success")) {
+                        String status = responseJSON.getString("success");
+                        Log.d("SIGNUP", "signUp success: " + status);
+                        runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              Toast.makeText(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
+                                              Intent intent = new Intent(SignUp.this, SignIn.class);
+                                              SignUp.super.finish();
+                                              startActivity(intent);
+                                              overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                          }
+                                      }
+                        );
+                    } else if (responseJSON.has("error")) {
+                        String status = responseJSON.getString("error");
+                        Log.d("SIGNUP", "signUp error: " + status);
+                        runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              usernameET.setText("");
+                                              emailET.setText("");
+                                              Toast.makeText(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT).show();
+                                              signUpButton.setEnabled(true);
+                                          }
+                                      }
+                        );
+                    } else {
+                        Log.d("SIGNUP", "signUp: Invalid form");
+                        runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                              signUpButton.setEnabled(true);
+                                          }
+                                      }
+                        );
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }
