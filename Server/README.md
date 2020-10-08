@@ -7,11 +7,12 @@
 ## Front-end attention
 1. Please validate the form before sending request. E.g. email validation, old pass != new pass
 2. Avoid repeat post submission in a very short time
+3. check file format before uploading
 
 ## API
 
 ### 1. SignUp
-* Route: /signUp
+* URL: https://www.tianzhipengfei.xin/mobile/signUp
 * Method: POST
 * Parameters:
 
@@ -23,13 +24,13 @@
 | dob | string | yes | date of birth |
 | avatar | string | no | avatar |
 * Returns:
-	* Success: {'success': True, 'token': '02dd1f8b946fea41f2377480e43aeb235cf2dba0', 'userInfo': {'uusr': 'test4', 'uavatar': None, 'uemail': 'test4@gmail.com'}}
+	* Success: {'success': True}
 	* Fail:
 		* if username or email exists, return {'error': 'userExist - user already exist'}
 		* if form is invalid,return web.badrequest()
 
 ### 2. SignIn
-* Route: /signIn
+* URL: https://www.tianzhipengfei.xin/mobile/signIn
 * Method: POST
 * Parameters:
 
@@ -38,7 +39,7 @@
 | usr | string | yes | username |
 | pwd | string | yes | password |
 * Returns:
-	* Success: {'success': True, 'token': '48185039ab0b7cb57072bfcf64b0702c4eb5249b', 'userInfo': {'uusr': 'test', 'uavatar': None, 'uemail': 'test@gmail.com'}}
+	* Success: {'success': True, 'token': '48185039ab0b7cb57072bfcf64b0702c4eb5249b', 'userInfo': {'uusr': 'test', 'uavatar': None, 'uemail': 'test@gmail.com', 'udob': '2020-01-01'}}
 	* Fail:
 		* if username doesn't exists, return {'error': 'userNotExist - user does not exist'}
 		* if password is incorrect, return {'error': 'invalidPass - invalid password, try again'}
@@ -46,7 +47,7 @@
 		* Other fails: return {'error':'loginError - cannot login'}
 		
 ### 3. SignOut
-* Route: /signOut
+* URL: https://www.tianzhipengfei.xin/mobile/signOut
 * Method: POST
 * Parameters:
 
@@ -56,11 +57,11 @@
 * Returns:
 	* Success: {'success':True}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 4. ModifyProfile
-* Route: /modifyProfile
+* URL: https://www.tianzhipengfei.xin/mobile/modifyProfile
 * Method: POST
 * Parameters:
 
@@ -71,14 +72,14 @@
 | dob | string | yes | date of birth |
 | avatar | string | yes | avatar |
 * Returns:
-	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com'}}
+	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com', 'udob': '2020-01-01'}}
 	* Fail:
 		* if new email exists, return {'error': 'emailExist - email already exist'}
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 5. ChangePassword
-* Route: /changePassword
+* URL: https://www.tianzhipengfei.xin/mobile/changePassword
 * Method: POST
 * Parameters:
 
@@ -88,14 +89,14 @@
 | oldpass | string | yes | old password |
 | newpass | string | yes | new password |
 * Returns:
-	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com'}}
+	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com', 'udob': '2020-01-01'}}
 	* Fail:
 		* if old password is incorrect, return {'error': 'invalidPass - invalid password, try again'}
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 		
 ### 6. GetProfile
-* Route: /getProfile
+* URL: https://www.tianzhipengfei.xin/mobile/getProfile
 * Method: GET
 * Parameters:
 
@@ -103,13 +104,13 @@
 |---|---|---|---|
 | tkn | string | yes | token |
 * Returns:
-	* Success: {"success": true, "userInfo": {"uusr": "test", "uavatar": "test_avatar", "uemail": "test@qq.com"}}
+	* Success: {"success": true, "userInfo": {"uusr": "test", "uavatar": "test_avatar", "uemail": "test@qq.com", 'udob': '2020-01-01'}}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 7. CreateCapsule
-* Route: /createCapsule
+* URL: https://www.tianzhipengfei.xin/mobile/createCapsule
 * Method: POST
 * Parameters:
 
@@ -117,20 +118,21 @@
 |---|---|---|---|
 | tkn | string | yes | token |
 | content | string | yes | capsule's content |
+| title | string | yes | capsule's title |
 | lat | double | yes | latitude |
 | lon | double | yes | longitude |
 | time | string | yes | when create the capsule |
-| permission | int | yes | Public or private |
+| permission | int | yes | Public(1) or private(0) |
 | img | string | no | image's URL |
 | audio | string | no | audio's URL |
 * Returns:
 	* Success: {'success': True}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 8. DiscoverCapsule
-* Route: /discoverCapsule
+* URL: https://www.tianzhipengfei.xin/mobile/discoverCapsule
 * Method: GET
 * Parameters:
 
@@ -142,13 +144,13 @@
 | max_distance | int | no | maximum distance allowed to discover capsules (default 5) |
 | num_capsules | int | no | maximum number of capsules can be found (default 20) |
 * Returns:
-	* Success: {"sucess": true, "capsules": [{"cid": 2, "cusr": "test1", "ccontent": "Test content1", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}, {"cid": 3, "cusr": "test1", "ccontent": "Test content2", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}]}
+	* Success: {"sucess": true, "capsules": [{"cid": 2, "cusr": "test1", "ccontent": "Test content1", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}, {"cid": 3, "cusr": "test1", "ccontent": "Test content2", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}]}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 ### 9. OpenCapsule
-* Route: /openCapsule
+* URL: https://www.tianzhipengfei.xin/mobile/openCapsule
 * Method: POST
 * Parameters:
 
@@ -160,14 +162,13 @@
 | lon | double | yes | longitude |
 | time | string | yes | when open the capsule |capsules can be found (default 20) |
 * Returns:
-	* Success: {'sucess': True}
-	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+	* Success: {'success': True, 'capsule': {'cid': 1, 'cusr': 'test', 'ccontent': 'test content', 'ctitle': 'test title', 'cimage': None, 'caudio': None, 'ccount': 2, 'cavatar': None}}		* Fail:
+		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
 
 ### 10. GetCapsuleHistory
-* Route: /getCapsuleHistory
+* URL: https://www.tianzhipengfei.xin/mobile/getCapsuleHistory
 * Method: GET
 * Parameters:
 
@@ -175,7 +176,57 @@
 |---|---|---|---|
 | tkn | string | yes | token |
 * Returns:
-	* Success: {"sucess": true, "hisotry": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "cimage": null, "caudio": null, "ccount": 2, "cavatar": "test_avatar"}, {"cid": 2, "cusr": "test1", "ccontent": "Test content1", "cimage": null, "caudio": null, "ccount": 2, "cavatar": null}]}
+	* Success: {"sucess": true, "hisotry": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 2, "cavatar": "test_avatar"}, {"cid": 2, "cusr": "test1", "ccontent": "Test content1", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 2, "cavatar": null}]}
 	* Fail:
-		* if username has not logged in, return {'error':'Not logged in'}
+		* if user has not logged in, return {'error':'Not logged in'}
+		* if form is invalid,return web.badrequest()
+
+### 11. UploadImage
+* URL: https://www.tianzhipengfei.xin/mobile/uploadImage
+* Method: POST
+* Header: {"enctype": "multipart/form-data", "Content-Type": "multipart/form-data"}
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+| myfile | file | yes |file to upload |
+* Returns:
+	* Success: {'success': True, 'file': 'https://www.tianzhipengfei.xin/static/mobile/test1-1601945632.png'}
+	* Fail:
+		* if user has not logged in, return {'error':'Not logged in'}
+		* if file format is invalid, return {'error': 'Invalid format'}
+		* if form is invalid,return web.badrequest()
+
+### 12. UploadAudio
+* URL: https://www.tianzhipengfei.xin/mobile/uploadAudio
+* Method: POST
+* Header: {"enctype": "multipart/form-data", "Content-Type": "multipart/form-data"}
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| tkn | string | yes | token |
+| myfile | file | yes |file to upload |
+* Returns:
+	* Success: {'success': True, 'file': 'https://www.tianzhipengfei.xin/static/mobile/test1-1601945632.wav'}
+	* Fail:
+		* if user has not logged in, return {'error':'Not logged in'}
+		* if file format is invalid, return {'error': 'Invalid format'}
+		* if form is invalid,return web.badrequest()
+
+### 13. UploadAvatar
+* URL: https://www.tianzhipengfei.xin/mobile/uploadAvatar
+* Method: POST
+* Header: {"enctype": "multipart/form-data", "Content-Type": "multipart/form-data"}
+* Parameters:
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| usr | string | yes | username |
+| myfile | file | yes |file to upload |
+* Returns:
+	* Success: {'success': True, 'file': 'https://www.tianzhipengfei.xin/static/mobile/test1-1601945632.png'}
+	* Fail:
+		* if username or email exists, return {'error': 'userExist - user already exist'}		* if file format is invalid, return {'error': 'Invalid format'}
 		* if form is invalid,return web.badrequest()

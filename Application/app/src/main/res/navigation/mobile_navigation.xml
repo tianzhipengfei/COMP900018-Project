@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    tools:ignore="UnusedNavigation"
+    app:startDestination="@id/discoverCapsuleFragment">
+    <fragment
+        android:id="@+id/discoverCapsuleFragment"
+        android:name="com.example.group_w01_07_3.ui.discover.DiscoverCapsuleFragment"
+        android:label="fragment_discover_capsule"
+        tools:layout="@layout/fragment_discover_capsule" />
+    <fragment
+        android:id="@+id/createCapsuleFragment"
+        android:name="com.example.group_w01_07_3.ui.create.CreateCapsuleFragment"
+        android:label="fragment_create_capsule"
+        tools:layout="@layout/fragment_create_capsule" />
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.example.group_w01_07_3.ui.account.AccountFragment"
+        android:label="AccountFragment" >
+        <action
+            android:id="@+id/action_accountFragment_to_editProfile"
+            app:destination="@id/editProfile" />
+    </fragment>
+    <activity
+        android:id="@+id/editProfile"
+        android:name="com.example.group_w01_07_3.EditProfile"
+        android:label="activity_edit_profile"
+        tools:layout="@layout/activity_edit_profile" />
+</navigation>
