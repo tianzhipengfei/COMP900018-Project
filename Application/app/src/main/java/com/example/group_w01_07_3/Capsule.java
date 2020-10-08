@@ -50,4 +50,9 @@ public class Capsule extends AppCompatActivity {
         });
 
     }
+    public void openCreateCapsulePage(View v){
+        startActivity(new Intent(getApplicationContext(),CreateCapsule.class));
+    }
+
+
 }

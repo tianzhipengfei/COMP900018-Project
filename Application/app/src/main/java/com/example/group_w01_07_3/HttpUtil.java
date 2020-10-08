@@ -44,4 +44,14 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
+    public static void createCapsule(JSONObject capsuleInfo,okhttp3.Callback callback){
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(capsuleInfo.toString(), HttpUtil.JSON);
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "createCapsule")
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
 }
