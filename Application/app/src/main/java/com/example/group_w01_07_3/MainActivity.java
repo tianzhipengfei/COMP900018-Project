@@ -19,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
         */
 
         // jump to Welcome On start
+        /**
+         * If token exists, jump to HomeActivity, else SignIn
+         */
         Intent intent = new Intent(MainActivity.this, SignIn.class);
         startActivity(intent);
 

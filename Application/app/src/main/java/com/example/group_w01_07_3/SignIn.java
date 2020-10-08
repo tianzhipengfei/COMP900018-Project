@@ -34,7 +34,7 @@ public class SignIn extends AppCompatActivity {
         boolean isRemember = pref.getBoolean("remember", false);
         if (isRemember) {
             String username = CaesarCipherUtil.decrypt(pref.getString("username", ""), 9);
-            String password = CaesarCipherUtil.decrypt(pref.getString("password", ""), 9);
+            String password = CaesarCipherUtil.decrypt(pref.getString("password", ""), 4);
             usernameET.setText(username);
             passwordET.setText(password);
             rememberCB.setChecked(true);
@@ -73,7 +73,7 @@ public class SignIn extends AppCompatActivity {
 //                }, 3000);
 
                 String username = CaesarCipherUtil.encrypt((String) usernameET.getText().toString(), 9);
-                String password = CaesarCipherUtil.encrypt((String) passwordET.getText().toString(), 9);
+                String password = CaesarCipherUtil.encrypt((String) passwordET.getText().toString(), 4);
 
                 editor = pref.edit();
                 if (rememberCB.isChecked()) {
@@ -92,8 +92,6 @@ public class SignIn extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SignIn.this, SignUp.class);
-                //kill SinIn Activity
-                finish();
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
