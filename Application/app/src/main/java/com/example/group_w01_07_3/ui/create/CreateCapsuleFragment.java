@@ -18,7 +18,10 @@ import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.ui.account.AccountFragment;
 
 public class CreateCapsuleFragment extends Fragment {
-    private int count = 0;
+
+    //这里都是测试用的code.清自行创建CreateCapsuleFragment按这个object以及其constructor
+
+    private int count = 0; //供测试是不是不会新建fragment(当切换底部导航的时候)--》数字没有被重置
     private TextView text;
     public CreateCapsuleFragment() {
     }

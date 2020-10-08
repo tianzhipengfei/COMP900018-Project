@@ -39,12 +39,6 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-//        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-//        NavController navController = Navigation.findNavController(this,R.id.nav_host_fragment);
-//
-//        NavigationUI.setupWithNavController(bottomNavigationView, navController);
-
-
         //hide bottom navigation view according to ID of layout
 //        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
 //            @Override
