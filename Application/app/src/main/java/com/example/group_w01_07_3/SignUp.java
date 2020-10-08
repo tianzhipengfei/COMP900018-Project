@@ -6,10 +6,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
@@ -28,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.ImageUtil;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
@@ -36,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,6 +63,8 @@ public class SignUp extends AppCompatActivity {
     private Button signUpButton;
     private ImageView avatarImageBtn;
     private BottomDialog bottomDialog;
+    private File avatarFile;
+    private String avatarFileLink = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,82 +152,82 @@ public class SignUp extends AppCompatActivity {
                 Log.d("SIGNUP", "dob: " + dob);
 
                 if (allRequiredFinished(username, email, password, reEnterPassword, dob)) {
-                    HttpUtil.signUp(new String[]{username, password, email, dob, null}, new okhttp3.Callback() {
+                    HttpUtil.uploadAvatar(username, avatarFile, new okhttp3.Callback() {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            String responseData = response.body().string();
-                            Log.d("SIGNUP", responseData);
-                            try {
-                                JSONObject responseJSON = new JSONObject(responseData);
-                                if (responseJSON.has("success")) {
-                                    String status = responseJSON.getString("success");
-                                    Log.d("SIGNUP", status);
-                                    runOnUiThread(new Runnable() {
-                                                      @Override
-                                                      public void run() {
-                                                          Toast.makeText(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
-                                                          Intent intent = new Intent(SignUp.this, SignIn.class);
-                                                          SignUp.super.finish();
-                                                          startActivity(intent);
-                                                          overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                                                      }
-                                                  }
-                                    );
-                                } else if (responseJSON.has("error")) {
-                                    String status = responseJSON.getString("error");
-                                    Log.d("SIGNUP", status);
-                                    runOnUiThread(new Runnable() {
-                                                      @Override
-                                                      public void run() {
-                                                          usernameET.setText("");
-                                                          emailET.setText("");
-                                                          Toast.makeText(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT).show();
-                                                          signUpButton.setEnabled(true);
-                                                      }
-                                                  }
-                                    );
-                                } else {
-                                    runOnUiThread(new Runnable() {
-                                                      @Override
-                                                      public void run() {
-                                                          Log.d("SIGNUP", "Invalid form");
-                                                          Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
-                                                          signUpButton.setEnabled(true);
-                                                      }
-                                                  }
-                                    );
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            Log.d("SIGNUP", "aaaaa");
+                            String r = response.body().string();
+                            Log.d("SIGNUP", r);
+//                            try {
+//                                String w = new JSONObject(r).getString("file");
+//                                Log.d("SIGNUP", w);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
                         }
 
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
+                            e.printStackTrace();
                         }
                     });
-                }
 
-//                HttpUtil.uploadAvatar("t", new File(""), new okhttp3.Callback() {
-//                    @Override
-//                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//                        Log.d("SIGNUP", "aaaaa");
-//                        String r = response.body().string();
-//                        Log.d("SIGNUP", r);
-//                        try {
-//                            String w = new JSONObject(r).getString("file");
-//                            Log.d("SIGNUP", w);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
+//                    HttpUtil.signUp(new String[]{username, password, email, dob, avatarFileLink}, new okhttp3.Callback() {
+//                        @Override
+//                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+//                            String responseData = response.body().string();
+//                            Log.d("SIGNUP", responseData);
+//                            try {
+//                                JSONObject responseJSON = new JSONObject(responseData);
+//                                if (responseJSON.has("success")) {
+//                                    String status = responseJSON.getString("success");
+//                                    Log.d("SIGNUP", status);
+//                                    runOnUiThread(new Runnable() {
+//                                                      @Override
+//                                                      public void run() {
+//                                                          Toast.makeText(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
+//                                                          Intent intent = new Intent(SignUp.this, SignIn.class);
+//                                                          SignUp.super.finish();
+//                                                          startActivity(intent);
+//                                                          overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+//                                                      }
+//                                                  }
+//                                    );
+//                                } else if (responseJSON.has("error")) {
+//                                    String status = responseJSON.getString("error");
+//                                    Log.d("SIGNUP", status);
+//                                    runOnUiThread(new Runnable() {
+//                                                      @Override
+//                                                      public void run() {
+//                                                          usernameET.setText("");
+//                                                          emailET.setText("");
+//                                                          Toast.makeText(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT).show();
+//                                                          signUpButton.setEnabled(true);
+//                                                      }
+//                                                  }
+//                                    );
+//                                } else {
+//                                    runOnUiThread(new Runnable() {
+//                                                      @Override
+//                                                      public void run() {
+//                                                          Log.d("SIGNUP", "Invalid form");
+//                                                          Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+//                                                          signUpButton.setEnabled(true);
+//                                                      }
+//                                                  }
+//                                    );
+//                                }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
 //                        }
-//                    }
 //
-//                    @Override
-//                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                });
+//                        @Override
+//                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+//
+//                        }
+//                    });
+                }
             }
         });
 
@@ -343,8 +345,7 @@ public class SignUp extends AppCompatActivity {
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(BottomDialog.imageUri));
                         avatarImageBtn.setImageBitmap(bitmap);
-                        // 不能旋转，一直有bug
-                        // avatarImageBtn.setImageBitmap(rotatePhotoIfRequired(bitmap, BottomDialog.imageUri));
+                        avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "output_photo_compressed.jpg");
                         bottomDialog.dismiss();
                         Toast.makeText(this, "take the photo successfully", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -353,35 +354,14 @@ public class SignUp extends AppCompatActivity {
                 }
                 break;
             case BottomDialog.CHOOSE_PHOTO:
-                handleImageOnKitKat(data);
+                if (resultCode == RESULT_OK) {
+                    handleImageOnKitKat(data);
+                }
                 break;
             default:
                 break;
         }
     }
-
-//    private Bitmap rotatePhotoIfRequired(Bitmap bitmap, Uri imageUri) throws IOException {
-//        ExifInterface ei = new ExifInterface(imageUri.getPath());
-//        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-//        switch (orientation) {
-//            case ExifInterface.ORIENTATION_ROTATE_90:
-//                return rotatePhoto(bitmap, 90);
-//            case ExifInterface.ORIENTATION_ROTATE_180:
-//                return rotatePhoto(bitmap, 180);
-//            case ExifInterface.ORIENTATION_ROTATE_270:
-//                return rotatePhoto(bitmap, 270);
-//            default:
-//                return bitmap;
-//        }
-//    }
-//
-//    private Bitmap rotatePhoto(Bitmap bitmap, int degree) {
-//        Matrix matrix = new Matrix();
-//        matrix.postRotate(degree);
-//        Bitmap rotatedPhoto = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-//        bitmap.recycle();
-//        return rotatedPhoto;
-//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -440,6 +420,7 @@ public class SignUp extends AppCompatActivity {
     private void displayImage(String imagePath) {
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "image_compressed.jpg");
             avatarImageBtn.setImageBitmap(bitmap);
             bottomDialog.dismiss();
             Toast.makeText(this, "Select the image successfully", Toast.LENGTH_SHORT).show();
