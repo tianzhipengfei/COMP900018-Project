@@ -62,7 +62,10 @@
                 android:layout_marginBottom="8dp"
 
                 android:hint="Enter Username"
-                app:endIconMode="clear_text">
+                app:errorEnabled="true"
+                app:counterEnabled="true"
+                app:counterMaxLength="20"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edittext_sign_up_username"
@@ -123,7 +126,11 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="16dp"
                 android:hint="Enter password"
-                app:endIconMode="password_toggle">
+                app:endIconMode="password_toggle"
+
+                app:errorEnabled="true"
+                app:counterEnabled="true"
+                app:counterMaxLength="20">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edittext_sign_up_password"
@@ -153,7 +160,10 @@
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="16dp"
                 android:hint="Re-enter Password"
-                app:endIconMode="password_toggle">
+                app:endIconMode="password_toggle"
+                app:errorEnabled="true"
+                app:counterEnabled="true"
+                app:counterMaxLength="20">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edittext_sign_up_re_enter_password"
