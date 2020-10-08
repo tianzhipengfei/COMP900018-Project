@@ -532,4 +532,12 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        // go back to sign in, as it is single instance, we are not creating a new one
+        finish();
+        startActivity(new Intent(SignUp.this, SignIn.class));
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
 }
