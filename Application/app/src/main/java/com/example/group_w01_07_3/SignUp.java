@@ -49,7 +49,7 @@ import okhttp3.Response;
 2. 3 <= username <= 20，只能由字母数字_组成，只能以字母开头，字母不区分大小写,不能重复
 3. email满足基本格式
 4. password至少8个字符，至少1个大写字母，1个小写字母，1个数字和1个特殊字符
-5. 处理疯狂点击的问题
+5. 处理疯狂点击的问题：dobPicker（解决）
 6. 处理没网的情况
 */
 
@@ -105,6 +105,23 @@ public class SignUp extends AppCompatActivity {
         dobPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dobPicker.setEnabled(false);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dobPicker.setEnabled(true);
+                            }
+                        });
+                    }
+                }).start();
                 picker.show(getSupportFragmentManager(), picker.toString());
             }
         });
@@ -283,9 +300,7 @@ public class SignUp extends AppCompatActivity {
         backToSignInText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SignUp.this, SignIn.class);
-                SignUp.super.finish();
-                startActivity(intent);
+                finish();
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         });
@@ -476,9 +491,7 @@ public class SignUp extends AppCompatActivity {
                                           @Override
                                           public void run() {
                                               Toast.makeText(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
-                                              Intent intent = new Intent(SignUp.this, SignIn.class);
-                                              SignUp.super.finish();
-                                              startActivity(intent);
+                                              finish();
                                               overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                           }
                                       }
