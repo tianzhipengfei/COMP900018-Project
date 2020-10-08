@@ -1,9 +1,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sign_in_mega_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#FFFFFF"
     android:orientation="vertical">
 
     <ImageView
@@ -12,12 +13,27 @@
         android:layout_height="96dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:src="@drawable/capsule"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/logo_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bilbo_swash_caps"
+        android:text="Memory Cpasule for Surprise"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:typeface="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_imageView"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <LinearLayout
         android:id="@+id/sign_in_linearLayout"
@@ -26,7 +42,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_imageView">
+        app:layout_constraintTop_toBottomOf="@+id/logo_title">
 
 
         <com.google.android.material.textview.MaterialTextView
@@ -57,7 +73,8 @@
                 android:id="@+id/edittext_sign_in_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                app:endIconMode="clear_text"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -108,7 +125,6 @@
             android:layout_marginStart="24dp"
             android:buttonTint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/materialTextView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
