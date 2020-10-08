@@ -532,4 +532,13 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        // your code.
+        // do what you want to do when the "back" button is pressed.
+        finish();
+        startActivity(new Intent(SignUp.this, SignIn.class));
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
 }
