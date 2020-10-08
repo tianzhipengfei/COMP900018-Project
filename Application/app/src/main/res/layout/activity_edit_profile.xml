@@ -101,11 +101,12 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/edit_profile_username_display"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-
             android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxWidth="160dp"
             android:text="User Name Display Here"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -156,10 +157,11 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/edit_profile_email_display"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxWidth="160dp"
             android:layout_marginEnd="16dp"
             android:text="Email Display Here"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -210,10 +212,11 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/edit_profile_dob_display"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxWidth="160dp"
             android:layout_marginEnd="16dp"
             android:text="Birthday Display Here"
             app:layout_constraintBottom_toBottomOf="parent"

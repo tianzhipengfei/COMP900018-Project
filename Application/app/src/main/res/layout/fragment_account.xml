@@ -113,27 +113,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/menu_navigation" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/testing_switch_activity"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="testing switch activity"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-    </com.google.android.material.button.MaterialButton>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/testing_switch_fragment"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:text="testing switch fragment"
-        app:layout_constraintBottom_toTopOf="@+id/testing_switch_activity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-    </com.google.android.material.button.MaterialButton>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

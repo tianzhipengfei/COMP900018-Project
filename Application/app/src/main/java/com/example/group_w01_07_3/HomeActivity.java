@@ -34,19 +34,19 @@ public class HomeActivity extends AppCompatActivity {
 
 
         //hide bottom navigation view according to ID of layout
-        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController controller,
-                                             @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
-
-                if(destination.getId() == R.id.editProfileFragment) {
-                    bottomNavigationView.setVisibility(View.GONE);
-                } else {
-                    bottomNavigationView.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+//        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+//            @Override
+//            public void onDestinationChanged(@NonNull NavController controller,
+//                                             @NonNull NavDestination destination, @Nullable Bundle arguments) {
+//                BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+//
+//                if(destination.getId() == R.id.editProfile) {
+//                    bottomNavigationView.setVisibility(View.GONE);
+//                } else {
+//                    bottomNavigationView.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
 
 
 

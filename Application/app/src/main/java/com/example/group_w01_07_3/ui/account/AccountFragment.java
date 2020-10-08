@@ -86,24 +86,5 @@ public class AccountFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        final NavController navController = Navigation.findNavController(view);
-
-        Button testSwitchFragment = view.findViewById(R.id.testing_switch_fragment);
-        testSwitchFragment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navController.navigate(R.id.action_accountFragment_to_editProfileFragment);
-            }
-        });
-
-        Button testSwitchActivity = view.findViewById(R.id.testing_switch_activity);
-        testSwitchActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navController.navigate(R.id.action_accountFragment_to_changePassword2);
-            }
-        });
-
     }
 }
