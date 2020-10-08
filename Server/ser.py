@@ -4,6 +4,7 @@ import json
 import hashlib
 import random as rand
 from math import sin, cos, sqrt, atan2
+import os
 
 '''
  TODO:
@@ -23,7 +24,10 @@ urls = [
     '/createCapsule', 'CreateCapsule',
     '/discoverCapsule', 'DiscoverCapsule',
     '/openCapsule', 'OpenCapsule',
-    '/getCapsuleHistory', 'GetCapsuleHistory'
+    '/getCapsuleHistory', 'GetCapsuleHistory',
+    '/uploadImage', 'UploadImage',
+    '/uploadAudio', 'UploadAudio',
+    '/uploadAvatar', 'UploadAvatar'
 ]
 
 app = web.application(urls, globals())
@@ -50,6 +54,7 @@ db.query('''
         cpermission INTEGER NOT NULL,   -- Public or private
         clat REAL NOT NULL,             -- Latitude 
         clon REAL NOT NULL,             -- Longitude
+        ctitle TEXT NOT NULL,         -- Capsule title
         ccontent TEXT NOT NULL,         -- Capsule content
         cimage TEXT,                    -- Capsule image URI
         caudio TEXT,                    -- Capsule audio URI
@@ -112,7 +117,7 @@ def checkToken(user):
 
 def getUserInfo(user):
     res = {}
-    keys = ['uusr', 'uavatar', 'uemail']
+    keys = ['uusr', 'uavatar', 'uemail', 'udob']
     for key in keys:
         res[key] = user[key]
     return res
@@ -121,7 +126,7 @@ def getCapsuleInfo(capsule):
     res = {}
     usr = capsule['cusr']
     user = getUser(usr)
-    keys = ['cid', 'cusr', 'ccontent', 'cimage', 'caudio', 'ccount']
+    keys = ['cid', 'cusr', 'ccontent', 'ctitle', 'cimage', 'caudio', 'ccount']
     for key in keys:
         res[key] = capsule[key]
     res['cavatar'] = user['uavatar']
@@ -334,7 +339,7 @@ class CreateCapsule:
         # Check whether request contain token 
         if not i.get('tkn') or not i.get('content') or \
         not i.get('lat') or not i.get('lon') or not i.get('time')\
-        or (i.get('permission') is None):
+        or (i.get('permission') is None) or not i.get('title'):
             return web.badrequest()
         tkn = i.get('tkn')
         user = getUser(None, tkn)
@@ -348,6 +353,7 @@ class CreateCapsule:
 
         usr = user.get('uusr')
         content = i.get('content') 
+        title = i.get('title') 
         lat = i.get('lat') 
         lon = i.get('lon') 
         tim = i.get('time') 
@@ -357,7 +363,8 @@ class CreateCapsule:
 
         # Add new capsule into database
         res = db.insert('capsules', cusr=usr, ctime=tim, cpermission=permission, \
-            clat=lat, clon=lon, ccontent=content, cimage=img, caudio=audio, ccount=0)
+            clat=lat, clon=lon, ccontent=content, ctitle=title, cimage=img, \
+            caudio=audio, ccount=0)
         return {'success': True}
 
 class DiscoverCapsule:
@@ -448,7 +455,9 @@ class OpenCapsule:
         # Update table capsules_history
         res = db.insert('capsules_history', husr=usr, hcap=cid, \
             hlat=lat, hlon=lon, htime=tim)
-        return {'success': True}
+
+        cur_capsule = db.query("SELECT * FROM capsules WHERE cid = '{}'".format(cid))[0]
+        return {'success': True, 'capsule': getCapsuleInfo(cur_capsule)}
 
 class GetCapsuleHistory:
     @json_response
@@ -483,6 +492,104 @@ class GetCapsuleHistory:
             cur_capsule = db.query("SELECT * FROM capsules WHERE cid = '{}'".format(cur_cid))[0]
             res.append(getCapsuleInfo(cur_capsule))
         return {'sucess': True, 'hisotry': res}
+
+class UploadImage:
+    def POST(self):
+        i = web.input(myfile={})
+        try:
+            tkn = i['tkn']
+            user = getUser(None, tkn)
+            # Check whether the user has logged in
+            if not user:
+                return {'error':'Not logged in'}
+
+            if not checkToken(user):
+                return {'error':'Token expired'}
+
+            usr = user.get('uusr')
+
+            # filename
+            filename = i['myfile'].filename 
+            format_name = filename.split(".")[-1]
+            if format_name not in ['jpg', 'jpeg', 'png', 'gif', 'tif', 'psd', 'dng', 'cr2', 'nef']:
+                return {'error': 'Invalid format'}
+            target_folder = '/home/sudokuServer/static/mobile/'
+            target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
+            target_dir = os.path.join(target_folder, target_filename)
+            f = open(target_dir, 'wb')
+            f.write(i['myfile'].value)
+            f.close()
+            static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
+            return {"success": True, "file": static_url}
+        except AttributeError as err:
+            print("AttributeError: {0}".format(err))
+            return web.badrequest()
+        except:
+            return web.badrequest()
+        
+
+class UploadAudio:
+    def POST(self):
+        i = web.input(myfile={})
+        try:
+            tkn = i['tkn']
+            user = getUser(None, tkn)
+            # Check whether the user has logged in
+            if not user:
+                return {'error':'Not logged in'}
+
+            if not checkToken(user):
+                return {'error':'Token expired'}
+
+            usr = user.get('uusr')
+
+            # filename
+            filename = i['myfile'].filename 
+            format_name = filename.split(".")[-1]
+            if format_name not in ['wav', 'mp3', 'aac', 'amr']:
+                return {'error': 'Invalid format'}
+            target_folder = '/home/sudokuServer/static/mobile/'
+            target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
+            target_dir = os.path.join(target_folder, target_filename)
+            f = open(target_dir, 'wb')
+            f.write(i['myfile'].value)
+            f.close()
+            static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
+            return {"success": True, "file": static_url}
+        except AttributeError as err:
+            print("AttributeError: {0}".format(err))
+            return web.badrequest()
+        except:
+            return web.badrequest()
+
+class UploadAvatar:
+    def POST(self):
+        i = web.input(myfile={})
+        try:
+            usr = i['usr']
+            if getUser(usr):
+                return {'error': 'userExist - user already exist'}
+
+            # filename
+            filename = i['myfile'].filename 
+            format_name = filename.split(".")[-1]
+            if format_name not in ['jpg', 'jpeg', 'png', 'gif', 'tif', 'psd', 'dng', 'cr2', 'nef']:
+                return {'error': 'Invalid format'}
+            target_folder = '/home/sudokuServer/static/mobile/'
+            target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
+            target_dir = os.path.join(target_folder, target_filename)
+            f = open(target_dir, 'wb')
+            f.write(i['myfile'].value)
+            f.close()
+            static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
+            return {"success": True, "file": static_url}
+        except AttributeError as err:
+            print("AttributeError: {0}".format(err))
+            return web.badrequest()
+        except:
+            return web.badrequest()
+        
+
 
 if __name__=='__main__':
     app.run()
