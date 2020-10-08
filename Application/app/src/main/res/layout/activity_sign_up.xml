@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,6 +54,7 @@
             </com.google.android.material.textview.MaterialTextView>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/sign_up_username_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,7 +63,10 @@
                 android:layout_marginBottom="8dp"
 
                 android:hint="Enter Username"
-                app:endIconMode="clear_text">
+                app:errorEnabled="true"
+                app:counterEnabled="true"
+                app:counterMaxLength="20"
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edittext_sign_up_username"
@@ -85,6 +89,7 @@
             </com.google.android.material.textview.MaterialTextView>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/sign_up_email_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -93,7 +98,8 @@
                 android:layout_marginBottom="8dp"
 
                 android:hint="Enter Email Address"
-                app:endIconMode="clear_text">
+                app:endIconMode="clear_text"
+                app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edittext_sign_up_email"
@@ -116,14 +122,17 @@
             </com.google.android.material.textview.MaterialTextView>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/sign_up_password_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:hint="Enter password"
-                app:endIconMode="password_toggle">
+                app:endIconMode="password_toggle"
+
+                app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edittext_sign_up_password"
@@ -146,14 +155,16 @@
             </com.google.android.material.textview.MaterialTextView>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/sign_up_reenter_password_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:hint="Re-enter Password"
-                app:endIconMode="password_toggle">
+                app:endIconMode="password_toggle"
+                app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edittext_sign_up_re_enter_password"
@@ -197,7 +208,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="8dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_sign_up"

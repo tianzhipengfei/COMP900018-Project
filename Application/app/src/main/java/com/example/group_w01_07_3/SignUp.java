@@ -30,6 +30,7 @@ import com.example.group_w01_07_3.util.ImageUtil;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -173,6 +174,37 @@ public class SignUp extends AppCompatActivity {
                 password = passwordET.getText().toString();
                 reEnterPassword = reEnterPasswordET.getText().toString();
                 dob = dobPicker.getText().toString();
+
+                //This part is validate input and set error message if any error occurred
+                TextInputLayout usernameWrapper = (TextInputLayout) findViewById(R.id.sign_up_username_input_layout);
+                TextInputLayout emailWrapper = (TextInputLayout) findViewById(R.id.sign_up_email_input_layout);
+                TextInputLayout passwordWrapper = (TextInputLayout) findViewById(R.id.sign_up_password_input_layout);
+                TextInputLayout rePasswordWrapper = (TextInputLayout) findViewById(R.id.sign_up_reenter_password_input_layout);
+
+                if (!isValidUsername(username)){
+                    usernameWrapper.setError("Not a valid username"); //请更改下这个error message,尽量简短
+                }
+                else {
+                    usernameWrapper.setErrorEnabled(false);
+                }
+                if (!isValidEmail(email)){
+                    emailWrapper.setError("Not a valid email address");//请更改下这个error message,尽量简短
+                }
+                else{
+                    emailWrapper.setErrorEnabled(false);
+                }
+                if (!isValidPassword(password)){
+                    passwordWrapper.setError("Not a valid password");//请更改下这个error message,尽量简短
+                }
+                else {
+                    passwordWrapper.setErrorEnabled(false);
+                }
+                if (!password.equals(reEnterPassword)) {
+                    rePasswordWrapper.setError(("Password does not match with previous input"));//请更改下这个error message,尽量简短
+                }
+                else {
+                    rePasswordWrapper.setErrorEnabled(false);
+                }
 
                 if (allRequiredFinished(username, email, password, reEnterPassword, dob)) {
                     Log.d("SIGNUP", "username: " + username);
@@ -498,6 +530,14 @@ public class SignUp extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        // go back to sign in, as it is single instance, we are not creating a new one
+        finish();
+        startActivity(new Intent(SignUp.this, SignIn.class));
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
 }
