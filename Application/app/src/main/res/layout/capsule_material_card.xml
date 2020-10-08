@@ -41,7 +41,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearance="?attr/shapeAppearanceMediumComponent"
-                app:srcCompat="@drawable/capsule_welcome" />
+                app:srcCompat="@drawable/capsule" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

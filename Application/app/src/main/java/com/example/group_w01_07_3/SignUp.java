@@ -1,33 +1,41 @@
 package com.example.group_w01_07_3;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
+import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.group_w01_07_3.util.DensityUtil;
+import com.example.group_w01_07_3.util.HttpUtil;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-import com.google.android.material.progressindicator.ProgressIndicator;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,6 +61,8 @@ public class SignUp extends AppCompatActivity {
     private EditText passwordET;
     private EditText reEnterPasswordET;
     private Button signUpButton;
+    private ImageView avatarImageBtn;
+    private BottomDialog bottomDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +77,7 @@ public class SignUp extends AppCompatActivity {
         cStart.set(1920, 1, 1);
 
         Calendar cEnd = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-        cEnd.set(cEnd.get(Calendar.YEAR), cEnd.get(Calendar.MONTH),cEnd.get(Calendar.DATE));
+        cEnd.set(cEnd.get(Calendar.YEAR), cEnd.get(Calendar.MONTH), cEnd.get(Calendar.DATE));
         CalendarConstraints.Builder constraintsBuilder = new CalendarConstraints.Builder();
 
         constraintsBuilder.setStart(cStart.getTimeInMillis());
@@ -102,6 +112,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 signUpButton.setEnabled(false);
+
 //                ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signup);
 //                progress.show();
 //                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -138,8 +149,8 @@ public class SignUp extends AppCompatActivity {
                 String dob = (String) dobPicker.getText();
                 Log.d("SIGNUP", "dob: " + dob);
 
-                if (allRequiredFinished(username, email, password, reEnterPassword, dob)){
-                    HttpUtil.signUp(new String[] {username, password, email, dob, null}, new okhttp3.Callback() {
+                if (allRequiredFinished(username, email, password, reEnterPassword, dob)) {
+                    HttpUtil.signUp(new String[]{username, password, email, dob, null}, new okhttp3.Callback() {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             String responseData = response.body().string();
@@ -196,7 +207,7 @@ public class SignUp extends AppCompatActivity {
                     });
                 }
 
-//                HttpUtil.uploadAvatar("t", new File("/data/data/com.example.group_w01_07_3/email.png"), new okhttp3.Callback() {
+//                HttpUtil.uploadAvatar("t", new File(""), new okhttp3.Callback() {
 //                    @Override
 //                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
 //                        Log.d("SIGNUP", "aaaaa");
@@ -218,16 +229,25 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        ImageView avatarImageBtn = (ImageView) findViewById(R.id.sign_up_avatar);
+        avatarImageBtn = (ImageView) findViewById(R.id.sign_up_avatar);
         avatarImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // (Modified) From: https://github.com/jianjunxiao/BottomDialog
+                bottomDialog = new BottomDialog(SignUp.this);
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomDialog.getContentView().getLayoutParams();
+                params.width = getResources().getDisplayMetrics().widthPixels - DensityUtil.dp2px(SignUp.this, 16f);
+                params.bottomMargin = DensityUtil.dp2px(SignUp.this, 8f);
+                bottomDialog.getContentView().setLayoutParams(params);
+                bottomDialog.setCanceledOnTouchOutside(true);
+                bottomDialog.getWindow().setGravity(Gravity.BOTTOM);
+                bottomDialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
+                bottomDialog.show();
             }
         });
 
         TextView backToSignInText = (TextView) findViewById(R.id.text_back_sign_in);
-        backToSignInText.setOnClickListener(new View.OnClickListener(){
+        backToSignInText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SignUp.this, SignIn.class);
@@ -312,6 +332,120 @@ public class SignUp extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case BottomDialog.TAKE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(BottomDialog.imageUri));
+                        avatarImageBtn.setImageBitmap(bitmap);
+                        // 不能旋转，一直有bug
+                        // avatarImageBtn.setImageBitmap(rotatePhotoIfRequired(bitmap, BottomDialog.imageUri));
+                        bottomDialog.dismiss();
+                        Toast.makeText(this, "take the photo successfully", Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case BottomDialog.CHOOSE_PHOTO:
+                handleImageOnKitKat(data);
+                break;
+            default:
+                break;
+        }
+    }
+
+//    private Bitmap rotatePhotoIfRequired(Bitmap bitmap, Uri imageUri) throws IOException {
+//        ExifInterface ei = new ExifInterface(imageUri.getPath());
+//        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+//        switch (orientation) {
+//            case ExifInterface.ORIENTATION_ROTATE_90:
+//                return rotatePhoto(bitmap, 90);
+//            case ExifInterface.ORIENTATION_ROTATE_180:
+//                return rotatePhoto(bitmap, 180);
+//            case ExifInterface.ORIENTATION_ROTATE_270:
+//                return rotatePhoto(bitmap, 270);
+//            default:
+//                return bitmap;
+//        }
+//    }
+//
+//    private Bitmap rotatePhoto(Bitmap bitmap, int degree) {
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(degree);
+//        Bitmap rotatedPhoto = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+//        bitmap.recycle();
+//        return rotatedPhoto;
+//    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openAlbum();
+                } else {
+                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, BottomDialog.CHOOSE_PHOTO);
+    }
+
+    private void handleImageOnKitKat(Intent data) {
+        String imagePath = null;
+        Uri uri = data.getData();
+        if (DocumentsContract.isDocumentUri(this, uri)) {
+            String docId = DocumentsContract.getDocumentId(uri);
+            if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                String id = docId.split(":")[1];
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = getImagePath(uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = uri.getPath();
+        }
+        displayImage(imagePath);
+    }
+
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
+    private void displayImage(String imagePath) {
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            avatarImageBtn.setImageBitmap(bitmap);
+            bottomDialog.dismiss();
+            Toast.makeText(this, "Select the image successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
