@@ -12,6 +12,9 @@ import com.example.group_w01_07_3.R;
 
 public class DiscoverCapsuleFragment extends Fragment {
 
+    public DiscoverCapsuleFragment() {
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 

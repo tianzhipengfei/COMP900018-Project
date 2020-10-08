@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class EditProfile extends AppCompatActivity {
     private Toolbar mToolbar;
@@ -38,6 +39,7 @@ public class EditProfile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+//                onBackPressed();
             }
         });
 
@@ -49,6 +51,14 @@ public class EditProfile extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        TextView username = (TextView) findViewById(R.id.edit_profile_username_display);
+        username.setText("Seems like the username changed during onCreate");
+        TextView email = (TextView) findViewById(R.id.edit_profile_email_display);
+        email.setText("Seems like the email changed during onCreate");
+        TextView DOB = (TextView) findViewById(R.id.edit_profile_dob_display);
+        DOB.setText("Seems like the dob changed during onCreate");
+
     }
 
 }

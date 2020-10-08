@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigation_discover"
+        android:id="@+id/discoverCapsuleFragment"
         android:title="Discover"
         android:icon="@drawable/ic_baseline_explore_24"/>
     <item
-        android:id="@+id/navigation_capsule"
+        android:id="@+id/createCapsuleFragment"
         android:title="Capsule"
         android:icon="@drawable/ic_baseline_add_circle_24"/>
     <item
-        android:id="@+id/navigation_account"
+        android:id="@+id/accountFragment"
         android:title="Account"
         android:icon="@drawable/ic_baseline_account_circle_24"/>
 </menu>
