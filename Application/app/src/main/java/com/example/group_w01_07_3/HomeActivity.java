@@ -76,11 +76,11 @@ public class HomeActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            if (accountFragment == null) {
-                accountFragment = new AccountFragment();
+            if (discoverCapsuleFragment == null) {
+                discoverCapsuleFragment = new DiscoverCapsuleFragment();
             }
-            isFragment = accountFragment;
-            ft.replace(R.id.nav_host_fragment, accountFragment).commit();
+            isFragment = discoverCapsuleFragment;
+            ft.replace(R.id.nav_host_fragment, discoverCapsuleFragment).commit();
         }
     }
 
