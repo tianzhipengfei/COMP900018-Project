@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.ImageUtil;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,6 +52,8 @@ import okhttp3.Response;
 4. password至少8个字符，至少1个大写字母，1个小写字母，1个数字和1个特殊字符
 5. 处理疯狂点击的问题
 6. 处理没网的情况
+7. gallery返回bug
+8. camera photo旋转问题
 */
 
 public class SignUp extends AppCompatActivity {
@@ -343,6 +347,7 @@ public class SignUp extends AppCompatActivity {
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(BottomDialog.imageUri));
                         avatarImageBtn.setImageBitmap(bitmap);
+                        File file = ImageUtil.compressImage(SignUp.this, bitmap, "output_photo_compressed.jpg");
                         // 不能旋转，一直有bug
                         // avatarImageBtn.setImageBitmap(rotatePhotoIfRequired(bitmap, BottomDialog.imageUri));
                         bottomDialog.dismiss();
@@ -440,6 +445,7 @@ public class SignUp extends AppCompatActivity {
     private void displayImage(String imagePath) {
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            File file = ImageUtil.compressImage(SignUp.this, bitmap, "image_compressed.jpg");
             avatarImageBtn.setImageBitmap(bitmap);
             bottomDialog.dismiss();
             Toast.makeText(this, "Select the image successfully", Toast.LENGTH_SHORT).show();

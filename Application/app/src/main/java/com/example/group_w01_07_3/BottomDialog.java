@@ -43,7 +43,7 @@ public class BottomDialog extends Dialog implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.dialog_camera:
-                File outputImage = new File(this.context.getExternalCacheDir(), "output_image.jpg");
+                File outputImage = new File(this.context.getExternalCacheDir(), "output_photo.jpg");
                 try {
                     if (outputImage.exists()) {
                         outputImage.delete();
