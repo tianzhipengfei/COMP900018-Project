@@ -80,6 +80,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -111,7 +112,5 @@
         android:layout_alignParentBottom="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/menu_navigation" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
