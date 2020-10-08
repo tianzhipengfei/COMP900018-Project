@@ -6,8 +6,10 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
@@ -332,11 +334,54 @@ public class SignUp extends AppCompatActivity {
         return true;
     }
 
-    private void openAlbum() {
-        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-        intent.setType("image/*");
-        startActivityForResult(intent, BottomDialog.CHOOSE_PHOTO);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case BottomDialog.TAKE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(BottomDialog.imageUri));
+                        avatarImageBtn.setImageBitmap(bitmap);
+                        // 不能旋转，一直有bug
+                        // avatarImageBtn.setImageBitmap(rotatePhotoIfRequired(bitmap, BottomDialog.imageUri));
+                        bottomDialog.dismiss();
+                        Toast.makeText(this, "take the photo successfully", Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case BottomDialog.CHOOSE_PHOTO:
+                handleImageOnKitKat(data);
+                break;
+            default:
+                break;
+        }
     }
+
+//    private Bitmap rotatePhotoIfRequired(Bitmap bitmap, Uri imageUri) throws IOException {
+//        ExifInterface ei = new ExifInterface(imageUri.getPath());
+//        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+//        switch (orientation) {
+//            case ExifInterface.ORIENTATION_ROTATE_90:
+//                return rotatePhoto(bitmap, 90);
+//            case ExifInterface.ORIENTATION_ROTATE_180:
+//                return rotatePhoto(bitmap, 180);
+//            case ExifInterface.ORIENTATION_ROTATE_270:
+//                return rotatePhoto(bitmap, 270);
+//            default:
+//                return bitmap;
+//        }
+//    }
+//
+//    private Bitmap rotatePhoto(Bitmap bitmap, int degree) {
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(degree);
+//        Bitmap rotatedPhoto = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+//        bitmap.recycle();
+//        return rotatedPhoto;
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -353,15 +398,10 @@ public class SignUp extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case BottomDialog.CHOOSE_PHOTO:
-                handleImageOnKitKat(data);
-            default:
-                break;
-        }
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, BottomDialog.CHOOSE_PHOTO);
     }
 
     private void handleImageOnKitKat(Intent data) {
