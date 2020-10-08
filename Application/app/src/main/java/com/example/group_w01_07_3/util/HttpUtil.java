@@ -1,7 +1,5 @@
 package com.example.group_w01_07_3.util;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,7 +61,6 @@ public class HttpUtil {
                 .header("Content-Type", "multipart/form-data")
                 .post(requestBody)
                 .build();
-        Log.d("SIGNUP", "hahaha");
         client.newCall(request).enqueue(callback);
     }
 
