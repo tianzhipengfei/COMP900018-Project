@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.group_w01_07_3.ChangePassword;
 import com.example.group_w01_07_3.EditProfile;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.ui.account.AccountFragment;
@@ -23,6 +24,12 @@ public class CreateCapsuleFragment extends Fragment {
 
     private int count = 0; //供测试是不是不会新建fragment(当切换底部导航的时候)--》数字没有被重置
     private TextView text;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     public CreateCapsuleFragment() {
     }
 
