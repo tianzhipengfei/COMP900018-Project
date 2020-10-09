@@ -46,10 +46,10 @@ import okhttp3.Response;
 
 /*
 1. dob不能是今天以后的日期
-2. 3 <= username <= 20，只能由字母数字_组成，只能以字母开头，字母不区分大小写,不能重复
+2. 3 <= username <= 20，只能由字母数字_组成，只能以字母开头，字母不区分大小写，不能重复
 3. email满足基本格式
 4. password至少8个字符，至少1个大写字母，1个小写字母，1个数字和1个特殊字符
-5. 处理疯狂点击的问题：dobPicker（解决）
+5. 处理疯狂点击的问题：dobPicker（解决）......
 6. 处理没网的情况
 */
 
@@ -181,28 +181,24 @@ public class SignUp extends AppCompatActivity {
                 TextInputLayout passwordWrapper = (TextInputLayout) findViewById(R.id.sign_up_password_input_layout);
                 TextInputLayout rePasswordWrapper = (TextInputLayout) findViewById(R.id.sign_up_reenter_password_input_layout);
 
-                if (!isValidUsername(username)){
-                    usernameWrapper.setError("Not a valid username"); //请更改下这个error message,尽量简短
-                }
-                else {
+                if (username.isEmpty() || !isValidUsername(username)){
+                    usernameWrapper.setError("Not a valid Username");
+                } else {
                     usernameWrapper.setErrorEnabled(false);
                 }
-                if (!isValidEmail(email)){
-                    emailWrapper.setError("Not a valid email address");//请更改下这个error message,尽量简短
-                }
-                else{
+                if (email.isEmpty() || !isValidEmail(email)){
+                    emailWrapper.setError("Not a valid Email Address");
+                } else{
                     emailWrapper.setErrorEnabled(false);
                 }
-                if (!isValidPassword(password)){
-                    passwordWrapper.setError("Not a valid password");//请更改下这个error message,尽量简短
-                }
-                else {
+                if (password.isEmpty() || !isValidPassword(password)){
+                    passwordWrapper.setError("Not a valid Password");
+                } else {
                     passwordWrapper.setErrorEnabled(false);
                 }
-                if (!password.equals(reEnterPassword)) {
-                    rePasswordWrapper.setError(("Password does not match with previous input"));//请更改下这个error message,尽量简短
-                }
-                else {
+                if (reEnterPassword.isEmpty() || !password.equals(reEnterPassword)) {
+                    rePasswordWrapper.setError(("Re-enter Password does not match with previous input"));
+                } else {
                     rePasswordWrapper.setErrorEnabled(false);
                 }
 
@@ -308,19 +304,19 @@ public class SignUp extends AppCompatActivity {
 
     private boolean allRequiredFinished(String username, String email, String password, String reEnterPassword, String dob) {
         if (username.isEmpty()) {
-            Toast.makeText(SignUp.this, "Username is required", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Username is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (email.isEmpty()) {
-            Toast.makeText(SignUp.this, "Email Address is required", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Email Address is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (password.isEmpty()) {
-            Toast.makeText(SignUp.this, "Password is required", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Password is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (reEnterPassword.isEmpty()) {
-            Toast.makeText(SignUp.this, "Re-enter Password is required", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Re-enter Password is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (dob.equalsIgnoreCase("Select Birthday")) {
@@ -339,7 +335,7 @@ public class SignUp extends AppCompatActivity {
             signUpButton.setEnabled(true);
             return false;
         } else if (!password.equals(reEnterPassword)) {
-            Toast.makeText(SignUp.this, "Re-enter Password does not match Password", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Re-enter Password does not match Password", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         }
@@ -349,14 +345,14 @@ public class SignUp extends AppCompatActivity {
 
     private boolean isValidUsername(String username) {
         if (username.length() < 3 || username.length() > 20) {
-            Toast.makeText(SignUp.this, "3 <= the length of Username <= 20", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "3 <= the length of Username <= 20", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         Pattern p = Pattern.compile("[a-z][0-9a-z_]{2,}");
         Matcher m = p.matcher(username);
         if (!m.matches()) {
-            Toast.makeText(SignUp.this, "Username: alphanumeric_, starts with alpha, not case sensitive", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Username: alphanumeric_, starts with alpha, not case sensitive", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -366,7 +362,7 @@ public class SignUp extends AppCompatActivity {
         Pattern p = Pattern.compile("\\w+@\\w+(\\.\\w+)+");
         Matcher m = p.matcher(email);
         if (!m.matches()) {
-            Toast.makeText(SignUp.this, "Check your Email Address format", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Check your Email Address format", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -376,7 +372,7 @@ public class SignUp extends AppCompatActivity {
         Pattern p = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\\.#?!@$%^&*-]).{8,}$");
         Matcher m = p.matcher(password);
         if (!m.matches()) {
-            Toast.makeText(SignUp.this, "Invalid Password", Toast.LENGTH_SHORT).show(); // remind user
+            //Toast.makeText(SignUp.this, "Invalid Password", Toast.LENGTH_SHORT).show(); // remind user
             return false;
         }
         return true;

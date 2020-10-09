@@ -126,7 +126,7 @@
                 android:layout_height="70dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
-                android:hint="Enter password"
+                android:hint="Enter Password"
                 app:endIconMode="password_toggle"
 
                 app:errorEnabled="true">
