@@ -38,7 +38,7 @@ public class SignIn extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.testing_sign_in);
+        setContentView(R.layout.activity_sign_in);
 
         pref = getSharedPreferences("remember", MODE_PRIVATE);
         usernameET = (EditText) findViewById(R.id.edittext_sign_in_username);
