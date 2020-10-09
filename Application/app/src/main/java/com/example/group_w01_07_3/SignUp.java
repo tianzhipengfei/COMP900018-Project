@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -85,6 +86,11 @@ public class SignUp extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        //don't pop uo keyboard when entering the screen.
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
 
         //implemented Material Date Picker, with constrained set with bound [1920/1/1, today]
         MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
@@ -342,7 +348,16 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+            }
+        });
+
+        ImageView sideBackShape = (ImageView) findViewById(R.id.sign_up_side_back);
+        sideBackShape.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                finish();
+                overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
             }
         });
     }
@@ -578,7 +593,9 @@ public class SignUp extends AppCompatActivity {
         // go back to sign in, as it is single instance, we are not creating a new one
         finish();
         startActivity(new Intent(SignUp.this, SignIn.class));
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
+        //(destination, origion)
+        overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
     }
 
 }
