@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.group_w01_07_3.util.CaesarCipherUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.UserUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -117,7 +118,10 @@ public class SignIn extends AppCompatActivity {
                                 if (responseJSON.has("success")) {
                                     String status = responseJSON.getString("success");
                                     Log.d("SIGNIN", "signIn success: " + status);
-                                    // ------------------------------ *** get user_info *** ------------------------------
+                                    // token
+                                    String token = responseJSON.getString("token");
+                                    Log.d("SIGNIN", "signIn token: " + token);
+                                    UserUtil.setToken(SignIn.this, token);
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -204,9 +208,8 @@ public class SignIn extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SignIn.this, HomeActivity.class);
                 //kill SinIn Activity
-
                 //不用再kIll了,现在sign in是singleInstance(manifest-->launchmode--》singleInstance)
-//                finish();
+                //finish();
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }

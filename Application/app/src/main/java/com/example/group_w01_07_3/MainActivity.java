@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.group_w01_07_3.ui.discover.DiscoverCapsuleFragment;
+import com.example.group_w01_07_3.util.UserUtil;
+
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,15 +21,21 @@ public class MainActivity extends AppCompatActivity {
         Step3: Discover Page(Homepage)
         */
 
-        // jump to Welcome On start
         /**
          * If token exists, jump to HomeActivity, else SignIn
          */
-        Intent intent = new Intent(MainActivity.this, SignIn.class);
-        startActivity(intent);
-
-        //kill MainActivity
-        finish();
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        if (UserUtil.getToken(MainActivity.this).isEmpty()) {
+            Intent intent = new Intent(MainActivity.this, SignIn.class);
+            startActivity(intent);
+            //kill MainActivity
+            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        } else {
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
+            //kill MainActivity
+            finish();
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        }
     }
 }
