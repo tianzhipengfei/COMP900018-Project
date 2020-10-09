@@ -59,4 +59,5 @@ public class CreateCapsuleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
     }
+
 }
