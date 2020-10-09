@@ -19,7 +19,6 @@
         <activity android:name=".EditProfile" />
         <activity android:name=".ChangePassword" />
         <activity android:name=".SignUp" />
-        <activity android:name=".History" />
         <activity android:name=".SignIn"
             android:launchMode="singleInstance"/>
         <activity android:name=".Account" />
