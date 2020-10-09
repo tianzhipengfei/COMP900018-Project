@@ -53,4 +53,9 @@ public class Capsule extends AppCompatActivity {
         request.execute("59c43e5670cfd24da97c607a5759aa33d88fdbc5"," the beach is as hot as the microwave just turned off after heating a big, red, spicy sauce. "
         ,"Holiday","2020/10/07","37.8136","144.9631","0");
     }
+    public void openCreateCapsulePage(View v){
+        startActivity(new Intent(getApplicationContext(),CreateCapsule.class));
+    }
+
+
 }

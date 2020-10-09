@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.group_w01_07_3">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -23,6 +25,7 @@
         <activity android:name=".SignIn" />
         <activity android:name=".Account" />
         <activity android:name=".Capsule" />
+        <activity android:name=".CreateCapsule" />
         <activity android:name=".Discover" />
         <activity android:name=".MainActivity">
             <intent-filter>

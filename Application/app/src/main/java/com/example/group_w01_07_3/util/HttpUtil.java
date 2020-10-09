@@ -1,14 +1,9 @@
-package com.example.group_w01_07_3.util;
-
-import android.util.Log;
+package com.example.group_w01_07_3;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -16,7 +11,6 @@ import okhttp3.RequestBody;
 public class HttpUtil {
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static final MediaType FORM_DATA = MediaType.parse("multipart/form-data");
     private static String address = "https://www.tianzhipengfei.xin/mobile/";
 
     public static void signUp(String[] paras, okhttp3.Callback callback) {
@@ -50,20 +44,13 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
-    public static void uploadAvatar(String username, File avatarFile, okhttp3.Callback callback) {
+    public static void createCapsule(JSONObject capsuleInfo,okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("usr", username)
-                .addFormDataPart("myfile", avatarFile.getName(), RequestBody.create(avatarFile, FORM_DATA))
-                .build();
+        RequestBody requestBody = RequestBody.create(capsuleInfo.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
-                .url(HttpUtil.address + "uploadAvatar")
-                .header("enctype", "multipart/form-data")
-                .header("Content-Type", "multipart/form-data")
+                .url(HttpUtil.address + "createCapsule")
                 .post(requestBody)
                 .build();
-        Log.d("SIGNUP", "hahaha");
         client.newCall(request).enqueue(callback);
     }
 
