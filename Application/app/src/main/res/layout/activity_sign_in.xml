@@ -229,7 +229,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/ic_side_bg"
+        android:background="@drawable/sidebar_bar"
         app:layout_constraintEnd_toEndOf="parent"
         tools:layout_editor_absoluteY="20dp" />
 
@@ -239,7 +239,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/ic_add_img"
+        android:src="@drawable/sidebar_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
