@@ -305,6 +305,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/sign_up_side_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

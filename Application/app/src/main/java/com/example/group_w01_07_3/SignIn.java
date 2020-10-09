@@ -7,9 +7,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +41,11 @@ public class SignIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        //don't pop uo keyboard when entering the screen.
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
 
         pref = getSharedPreferences("remember", MODE_PRIVATE);
         usernameET = (EditText) findViewById(R.id.edittext_sign_in_username);
@@ -198,7 +205,7 @@ public class SignIn extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SignIn.this, SignUp.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.stay);
             }
         });
 
@@ -212,6 +219,16 @@ public class SignIn extends AppCompatActivity {
                 //finish();
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+        });
+
+        ImageView sideAddShape = (ImageView) findViewById(R.id.sign_in_side_add);
+        sideAddShape.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SignIn.this, SignUp.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.stay);
             }
         });
 
