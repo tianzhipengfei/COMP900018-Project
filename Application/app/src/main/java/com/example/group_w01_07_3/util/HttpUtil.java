@@ -64,4 +64,21 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
+    public static void signIn(String username, String password, okhttp3.Callback callback) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("usr", username);
+            json.put("pwd", password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "signIn")
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
 }
