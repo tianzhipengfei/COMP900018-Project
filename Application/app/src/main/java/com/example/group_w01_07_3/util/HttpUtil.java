@@ -81,4 +81,20 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
+    public static void signOut(String token, okhttp3.Callback callback) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("tkn", token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "signOut")
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
 }

@@ -1,42 +1,44 @@
 package com.example.group_w01_07_3.ui.account;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.example.group_w01_07_3.EditProfile;
 import com.example.group_w01_07_3.History;
-import com.example.group_w01_07_3.HomeActivity;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.SignIn;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.UserUtil;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class AccountFragment extends Fragment {
 
-    public AccountFragment() {
-    }
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_account, container, false);
 
-        Button signOutButton = (Button) root.findViewById(R.id.button_acct_sign_out);
+        final Button signOutButton = (Button) root.findViewById(R.id.button_acct_sign_out);
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,15 +49,76 @@ public class AccountFragment extends Fragment {
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(AccountFragment.this.getContext(), "Sign out successfully!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(AccountFragment.this.getContext(), SignIn.class);
-                        startActivity(intent);
+                        signOutButton.setEnabled(false);
+                        String token = UserUtil.getToken(AccountFragment.this.getContext());
+                        if (token.isEmpty()) {
+                            Log.d("SIGNOUT", "Error: no token");
+                            Toast.makeText(AccountFragment.this.getContext(), "Error: no token", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(AccountFragment.this.getContext(), SignIn.class);
+                            startActivity(intent);
+                        } else {
+                            HttpUtil.signOut(token, new okhttp3.Callback() {
+                                @Override
+                                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                    Log.d("SIGNOUT", "***** signOut onResponse *****");
+                                    String responseData = response.body().string();
+                                    Log.d("SIGNOUT", "signOut: " + responseData);
+                                    try {
+                                        JSONObject responseJSON = new JSONObject(responseData);
+                                        if (responseJSON.has("success")) {
+                                            String status = responseJSON.getString("success");
+                                            Log.d("SIGNOUT", "signOut success: " + status);
+                                            ((Activity) AccountFragment.this.getContext()).runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    UserUtil.clearToken(AccountFragment.this.getContext());
+                                                    Toast.makeText(AccountFragment.this.getContext(), "Sign out successfully", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(AccountFragment.this.getContext(), SignIn.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                        } else if (responseJSON.has("error")) {
+                                            String status = responseJSON.getString("success");
+                                            Log.d("SIGNOUT", "signOut error: " + status);
+                                            ((Activity) AccountFragment.this.getContext()).runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    UserUtil.clearToken(AccountFragment.this.getContext());
+                                                    Toast.makeText(AccountFragment.this.getContext(), "Not logged in", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(AccountFragment.this.getContext(), SignIn.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                        } else {
+                                            Log.d("SIGNOUT", "signOut: Invalid form");
+                                            ((Activity) AccountFragment.this.getContext()).runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    UserUtil.clearToken(AccountFragment.this.getContext());
+                                                    Toast.makeText(AccountFragment.this.getContext(), "Invalid form", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(AccountFragment.this.getContext(), SignIn.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        }
+                        dialog.dismiss();
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        dialog.dismiss();
                     }
                 });
                 builder.show();
@@ -87,4 +150,5 @@ public class AccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
+
 }
