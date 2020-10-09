@@ -5,13 +5,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.group_w01_07_3.util.CaesarCipherUtil;
+import com.example.group_w01_07_3.util.HttpUtil;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class SignIn extends AppCompatActivity {
 
@@ -72,18 +84,107 @@ public class SignIn extends AppCompatActivity {
 //                    }
 //                }, 3000);
 
-                String username = CaesarCipherUtil.encrypt((String) usernameET.getText().toString(), 9);
-                String password = CaesarCipherUtil.encrypt((String) passwordET.getText().toString(), 4);
+                signInButton.setEnabled(false);
 
-                editor = pref.edit();
-                if (rememberCB.isChecked()) {
-                    editor.putBoolean("remember", true);
-                    editor.putString("username", username);
-                    editor.putString("password", password);
+                String username = usernameET.getText().toString();
+                String password = passwordET.getText().toString();
+
+                if (username.isEmpty()) {
+                    Toast.makeText(SignIn.this, "Username is required", Toast.LENGTH_SHORT).show();
+                    signInButton.setEnabled(true);
+                } else if (password.isEmpty()) {
+                    Toast.makeText(SignIn.this, "Password is required", Toast.LENGTH_SHORT).show();
+                    signInButton.setEnabled(true);
                 } else {
-                    editor.clear();
+                    editor = pref.edit();
+                    if (rememberCB.isChecked()) {
+                        editor.putBoolean("remember", true);
+                        editor.putString("username", CaesarCipherUtil.encrypt(username, 9));
+                        editor.putString("password", CaesarCipherUtil.encrypt(password, 4));
+                    } else {
+                        editor.clear();
+                    }
+                    editor.apply();
+
+                    HttpUtil.signIn(username.toLowerCase(), password, new okhttp3.Callback() {
+                        @Override
+                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                            Log.d("SIGNIN", "***** signIn onResponse *****");
+                            String responseData = response.body().string();
+                            Log.d("SIGNIN", "signIn: " + responseData);
+                            try {
+                                JSONObject responseJSON = new JSONObject(responseData);
+                                if (responseJSON.has("success")) {
+                                    String status = responseJSON.getString("success");
+                                    Log.d("SIGNIN", "signIn success: " + status);
+                                    // ------------------------------ *** get user_info *** ------------------------------
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(SignIn.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(SignIn.this, HomeActivity.class);
+                                            finish();
+                                            startActivity(intent);
+                                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                        }
+                                    });
+                                } else if (responseJSON.has("error")) {
+                                    String status = responseJSON.getString("error");
+                                    Log.d("SIGNIN", "signIn error: " + status);
+                                    if (status.equalsIgnoreCase("userNotExist - user does not exist")) {
+                                        runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              usernameET.setText("");
+                                                              passwordET.setText("");
+                                                              Toast.makeText(SignIn.this, "userNotExist - user does not exist", Toast.LENGTH_SHORT).show();
+                                                              signInButton.setEnabled(true);
+                                                          }
+                                                      }
+                                        );
+                                    } else if (status.equalsIgnoreCase("invalidPass - invalid password, try again")) {
+                                        Log.d("SIGNIN", "signIn error: " + status);
+                                        runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              passwordET.setText("");
+                                                              Toast.makeText(SignIn.this, "invalidPass - invalid password, try again", Toast.LENGTH_SHORT).show();
+                                                              signInButton.setEnabled(true);
+                                                          }
+                                                      }
+                                        );
+                                    } else if (status.equalsIgnoreCase("loginError - cannot login")) {
+                                        Log.d("SIGNIN", "signIn error: " + status);
+                                        runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              Toast.makeText(SignIn.this, "loginError - cannot login", Toast.LENGTH_SHORT).show();
+                                                              signInButton.setEnabled(true);
+                                                          }
+                                                      }
+                                        );
+                                    }
+                                } else {
+                                    Log.d("SIGNIN", "signIn: Invalid form");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(SignIn.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                            signInButton.setEnabled(true);
+                                        }
+                                    });
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
                 }
-                editor.apply();
             }
         });
 
