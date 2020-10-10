@@ -36,7 +36,9 @@ public class HomeActivity extends AppCompatActivity implements
 
 //    private BottomNavigationView bottomNavigationView;
     //定义Fragment
-    private AccountFragment accountFragment;
+//    private AccountFragment accountFragment;
+    private AccountMegaFragment accountMegaFragment;
+
     private CreateCapsuleFragment createCapsuleFragment;
     private DiscoverCapsuleFragment discoverCapsuleFragment;
     //记录当前正在使用的fragment
@@ -101,10 +103,10 @@ public class HomeActivity extends AppCompatActivity implements
 
             switch (id) {
                 case R.id.account:
-                    if (accountFragment == null) {
-                        accountFragment = new AccountFragment();
+                    if (accountMegaFragment == null) {
+                        accountMegaFragment = new AccountMegaFragment();
                     }
-                    switchContent(isFragment, accountFragment);
+                    switchContent(isFragment, accountMegaFragment);
                     return true;
                 case R.id.capsule:
                     if (createCapsuleFragment == null) {
