@@ -564,16 +564,18 @@ class UploadAudio:
 
 class UploadAvatar:
     def POST(self):
-        print(type(web.input()))
         i = web.input(myfile={})
         try:
             usr = i['usr']
+            print(usr)
             if getUser(usr):
                 return {'error': 'userExist - user already exist'}
 
             # filename
             filename = i['myfile'].filename 
+            print(filename)
             format_name = filename.split(".")[-1]
+            print(format_name)
             if format_name not in ['jpg', 'jpeg', 'png', 'gif', 'tif', 'psd', 'dng', 'cr2', 'nef']:
                 return {'error': 'Invalid format'}
             target_folder = '/Users/eric/Desktop/'
