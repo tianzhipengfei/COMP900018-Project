@@ -1,7 +1,5 @@
 package com.example.group_w01_07_3.util;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -63,7 +61,49 @@ public class HttpUtil {
                 .header("Content-Type", "multipart/form-data")
                 .post(requestBody)
                 .build();
-        Log.d("SIGNUP", "hahaha");
+        client.newCall(request).enqueue(callback);
+    }
+
+    public static void signIn(String username, String password, okhttp3.Callback callback) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("usr", username);
+            json.put("pwd", password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "signIn")
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
+    public static void signOut(String token, okhttp3.Callback callback) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("tkn", token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "signOut")
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
+    public static void createCapsule(JSONObject capsuleInfo,okhttp3.Callback callback){
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(capsuleInfo.toString(), HttpUtil.JSON);
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "createCapsule")
+                .post(requestBody)
+                .build();
         client.newCall(request).enqueue(callback);
     }
 

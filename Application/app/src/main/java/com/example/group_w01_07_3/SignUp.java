@@ -1,6 +1,7 @@
 package com.example.group_w01_07_3;
 
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -16,12 +17,15 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.group_w01_07_3.util.DensityUtil;
@@ -30,6 +34,7 @@ import com.example.group_w01_07_3.util.ImageUtil;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -45,10 +50,10 @@ import okhttp3.Response;
 
 /*
 1. dob不能是今天以后的日期
-2. 3 <= username <= 20，只能由字母数字_组成，只能以字母开头，字母不区分大小写,不能重复
+2. 3 <= username <= 20，只能由字母数字_组成，只能以字母开头，字母不区分大小写，不能重复
 3. email满足基本格式
 4. password至少8个字符，至少1个大写字母，1个小写字母，1个数字和1个特殊字符
-5. 处理疯狂点击的问题
+5. 处理疯狂点击的问题：dobPicker（解决）......
 6. 处理没网的情况
 */
 
@@ -56,20 +61,36 @@ public class SignUp extends AppCompatActivity {
 
     private MaterialDatePicker<Long> picker;
     private Button dobPicker;
+    private String dob;
+
     private EditText usernameET;
+    private String username;
+
     private EditText emailET;
+    private String email;
+
     private EditText passwordET;
+    private String password;
+
     private EditText reEnterPasswordET;
-    private Button signUpButton;
+    private String reEnterPassword;
+
     private ImageView avatarImageBtn;
     private BottomDialog bottomDialog;
-    private File avatarFile;
+    private Button signUpButton;
+
+    private File avatarFile = null;
     private String avatarFileLink = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        //don't pop uo keyboard when entering the screen.
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
 
         //implemented Material Date Picker, with constrained set with bound [1920/1/1, today]
         MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
@@ -93,6 +114,23 @@ public class SignUp extends AppCompatActivity {
         dobPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dobPicker.setEnabled(false);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dobPicker.setEnabled(true);
+                            }
+                        });
+                    }
+                }).start();
                 picker.show(getSupportFragmentManager(), picker.toString());
             }
         });
@@ -101,6 +139,48 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onPositiveButtonClick(Object selection) {
                 dobPicker.setText(picker.getHeaderText());
+            }
+        });
+
+        ImageButton imageButton = (ImageButton) findViewById(R.id.imageButton_sign_up_question);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog dialog = new AlertDialog.Builder(SignUp.this)
+                        .setIcon(R.drawable.sign_up_rules)
+                        .setTitle("Sign Up Rules")
+                        .setMessage("1. Username (required)\n" +
+                                "   * 3 <= the length of username <= 20\n" +
+                                "   * accept letter, number and \"_\" symbol\n" +
+                                "   * begin with a letter\n" +
+                                "   * letter case insensitive\n" +
+                                "\n" +
+                                "2. Email Address (required)\n" +
+                                "   * username@domainName\n" +
+                                "\n" +
+                                "3. Password (required) [can change]\n" +
+                                "   * the length of password >= 8\n" +
+                                "   * consist of at least 1 lowercase letter,\n" +
+                                "     1 uppercase letter, 1 number\n" +
+                                "     and 1 special character\n" +
+                                "\n" +
+                                "4. Re-enter Password (required)\n" +
+                                "   * match with previous input\n" +
+                                "\n" +
+                                "5. Date of Birth (required)\n" +
+                                "   * cannot be a date after today\n" +
+                                "\n" +
+                                "6. Avatar (optional) [can change]\n" +
+                                "   * take a photo\n" +
+                                "     or choose an image from the gallery")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).create();
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
             }
         });
 
@@ -140,93 +220,108 @@ public class SignUp extends AppCompatActivity {
 //                    }
 //                }, 3000);
 
-                String username = (String) usernameET.getText().toString().toLowerCase();
-                Log.d("SIGNUP", "username: " + username);
-                String email = (String) emailET.getText().toString();
-                Log.d("SIGNUP", "email: " + email);
-                String password = (String) passwordET.getText().toString();
-                Log.d("SIGNUP", "password: " + password);
-                String reEnterPassword = (String) reEnterPasswordET.getText().toString();
-                Log.d("SIGNUP", "reEnterPassword: " + reEnterPassword);
-                String dob = (String) dobPicker.getText();
-                Log.d("SIGNUP", "dob: " + dob);
+                username = usernameET.getText().toString().toLowerCase();
+                email = emailET.getText().toString();
+                password = passwordET.getText().toString();
+                reEnterPassword = reEnterPasswordET.getText().toString();
+                dob = dobPicker.getText().toString();
+
+                //This part is validate input and set error message if any error occurred
+                TextInputLayout usernameWrapper = (TextInputLayout) findViewById(R.id.sign_up_username_input_layout);
+                TextInputLayout emailWrapper = (TextInputLayout) findViewById(R.id.sign_up_email_input_layout);
+                TextInputLayout passwordWrapper = (TextInputLayout) findViewById(R.id.sign_up_password_input_layout);
+                TextInputLayout rePasswordWrapper = (TextInputLayout) findViewById(R.id.sign_up_reenter_password_input_layout);
+
+                if (username.isEmpty() || !isValidUsername(username)){
+                    usernameWrapper.setError("Not a valid Username");
+                } else {
+                    usernameWrapper.setErrorEnabled(false);
+                }
+                if (email.isEmpty() || !isValidEmail(email)){
+                    emailWrapper.setError("Not a valid Email Address");
+                } else{
+                    emailWrapper.setErrorEnabled(false);
+                }
+                if (password.isEmpty() || !isValidPassword(password)){
+                    passwordWrapper.setError("Not a valid Password");
+                } else {
+                    passwordWrapper.setErrorEnabled(false);
+                }
+                if (reEnterPassword.isEmpty() || !password.equals(reEnterPassword)) {
+                    rePasswordWrapper.setError(("Re-enter Password does not match with previous input"));
+                } else {
+                    rePasswordWrapper.setErrorEnabled(false);
+                }
 
                 if (allRequiredFinished(username, email, password, reEnterPassword, dob)) {
-                    HttpUtil.uploadAvatar(username, avatarFile, new okhttp3.Callback() {
-                        @Override
-                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            Log.d("SIGNUP", "aaaaa");
-                            String r = response.body().string();
-                            Log.d("SIGNUP", r);
-//                            try {
-//                                String w = new JSONObject(r).getString("file");
-//                                Log.d("SIGNUP", w);
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-                        }
+                    Log.d("SIGNUP", "username: " + username);
+                    Log.d("SIGNUP", "email: " + email);
+                    Log.d("SIGNUP", "password: " + password);
+                    Log.d("SIGNUP", "reEnterPassword: " + reEnterPassword);
+                    Log.d("SIGNUP", "dob: " + dob);
+                    if (avatarFile != null) {
+                        HttpUtil.uploadAvatar(username, avatarFile, new okhttp3.Callback() {
+                            @Override
+                            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                Log.d("SIGNUP", "***** uploadAvatar onResponse *****");
+                                String responseData = response.body().string();
+                                Log.d("SIGNUP", "uploadAvatar: " + responseData);
+                                try {
+                                    JSONObject responseJSON = new JSONObject(responseData);
+                                    if (responseJSON.has("success")) {
+                                        String status = responseJSON.getString("success");
+                                        Log.d("SIGNUP", "uploadAvatar success: " + status);
+                                        avatarFileLink = responseJSON.getString("file");
+                                        Log.d("SIGNUP", "avatarFileLink: " + avatarFileLink);
+                                        onSignUp();
+                                    } else if (responseJSON.has("error")) {
+                                        String status = responseJSON.getString("error");
+                                        Log.d("SIGNUP", "uploadAvatar error: " + status);
+                                        if (status.equalsIgnoreCase("userExist - user already exist")) {
+                                            runOnUiThread(new Runnable() {
+                                                              @Override
+                                                              public void run() {
+                                                                  usernameET.setText("");
+                                                                  Toast.makeText(SignUp.this, "Username exists, please change it", Toast.LENGTH_SHORT).show();
+                                                                  signUpButton.setEnabled(true);
+                                                              }
+                                                          }
+                                            );
+                                        } else if (status.equalsIgnoreCase("Invalid format")) {
+                                            Log.d("SIGNUP", "uploadAvatar error: " + status);
+                                            runOnUiThread(new Runnable() {
+                                                              @Override
+                                                              public void run() {
+                                                                  Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                                  signUpButton.setEnabled(true);
+                                                              }
+                                                          }
+                                            );
+                                        }
+                                    } else {
+                                        Log.d("SIGNUP", "uploadAvatar: Invalid form");
+                                        runOnUiThread(new Runnable() {
+                                                          @Override
+                                                          public void run() {
+                                                              Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                              signUpButton.setEnabled(true);
+                                                          }
+                                                      }
+                                        );
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
 
-                        @Override
-                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-//                    HttpUtil.signUp(new String[]{username, password, email, dob, avatarFileLink}, new okhttp3.Callback() {
-//                        @Override
-//                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//                            String responseData = response.body().string();
-//                            Log.d("SIGNUP", responseData);
-//                            try {
-//                                JSONObject responseJSON = new JSONObject(responseData);
-//                                if (responseJSON.has("success")) {
-//                                    String status = responseJSON.getString("success");
-//                                    Log.d("SIGNUP", status);
-//                                    runOnUiThread(new Runnable() {
-//                                                      @Override
-//                                                      public void run() {
-//                                                          Toast.makeText(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
-//                                                          Intent intent = new Intent(SignUp.this, SignIn.class);
-//                                                          SignUp.super.finish();
-//                                                          startActivity(intent);
-//                                                          overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//                                                      }
-//                                                  }
-//                                    );
-//                                } else if (responseJSON.has("error")) {
-//                                    String status = responseJSON.getString("error");
-//                                    Log.d("SIGNUP", status);
-//                                    runOnUiThread(new Runnable() {
-//                                                      @Override
-//                                                      public void run() {
-//                                                          usernameET.setText("");
-//                                                          emailET.setText("");
-//                                                          Toast.makeText(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT).show();
-//                                                          signUpButton.setEnabled(true);
-//                                                      }
-//                                                  }
-//                                    );
-//                                } else {
-//                                    runOnUiThread(new Runnable() {
-//                                                      @Override
-//                                                      public void run() {
-//                                                          Log.d("SIGNUP", "Invalid form");
-//                                                          Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
-//                                                          signUpButton.setEnabled(true);
-//                                                      }
-//                                                  }
-//                                    );
-//                                }
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//
-//                        }
-//                    });
+                            @Override
+                            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    } else {
+                        onSignUp();
+                    }
                 }
             }
         });
@@ -252,29 +347,36 @@ public class SignUp extends AppCompatActivity {
         backToSignInText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SignUp.this, SignIn.class);
-                SignUp.super.finish();
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                finish();
+                overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+            }
+        });
+
+        ImageView sideBackShape = (ImageView) findViewById(R.id.sign_up_side_back);
+        sideBackShape.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                finish();
+                overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
             }
         });
     }
 
     private boolean allRequiredFinished(String username, String email, String password, String reEnterPassword, String dob) {
         if (username.isEmpty()) {
-            Toast.makeText(SignUp.this, "Username is required", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Username is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (email.isEmpty()) {
-            Toast.makeText(SignUp.this, "Email Address is required", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Email Address is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (password.isEmpty()) {
-            Toast.makeText(SignUp.this, "Password is required", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Password is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (reEnterPassword.isEmpty()) {
-            Toast.makeText(SignUp.this, "Re-enter Password is required", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Re-enter Password is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (dob.equalsIgnoreCase("Select Birthday")) {
@@ -293,7 +395,7 @@ public class SignUp extends AppCompatActivity {
             signUpButton.setEnabled(true);
             return false;
         } else if (!password.equals(reEnterPassword)) {
-            Toast.makeText(SignUp.this, "Re-enter Password does not match Password", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Re-enter Password does not match Password", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         }
@@ -303,14 +405,14 @@ public class SignUp extends AppCompatActivity {
 
     private boolean isValidUsername(String username) {
         if (username.length() < 3 || username.length() > 20) {
-            Toast.makeText(SignUp.this, "3 <= the length of Username <= 20", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "3 <= the length of Username <= 20", Toast.LENGTH_SHORT).show();
             return false;
         }
 
         Pattern p = Pattern.compile("[a-z][0-9a-z_]{2,}");
         Matcher m = p.matcher(username);
         if (!m.matches()) {
-            Toast.makeText(SignUp.this, "Username: alphanumeric_, starts with alpha, not case sensitive", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Username: alphanumeric_, starts with alpha, not case sensitive", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -320,7 +422,7 @@ public class SignUp extends AppCompatActivity {
         Pattern p = Pattern.compile("\\w+@\\w+(\\.\\w+)+");
         Matcher m = p.matcher(email);
         if (!m.matches()) {
-            Toast.makeText(SignUp.this, "Check your Email Address format", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(SignUp.this, "Check your Email Address format", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -330,7 +432,7 @@ public class SignUp extends AppCompatActivity {
         Pattern p = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\\.#?!@$%^&*-]).{8,}$");
         Matcher m = p.matcher(password);
         if (!m.matches()) {
-            Toast.makeText(SignUp.this, "Invalid Password", Toast.LENGTH_SHORT).show(); // remind user
+            //Toast.makeText(SignUp.this, "Invalid Password", Toast.LENGTH_SHORT).show(); // remind user
             return false;
         }
         return true;
@@ -347,7 +449,7 @@ public class SignUp extends AppCompatActivity {
                         avatarImageBtn.setImageBitmap(bitmap);
                         avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "output_photo_compressed.jpg");
                         bottomDialog.dismiss();
-                        Toast.makeText(this, "take the photo successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Take the photo successfully", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -427,6 +529,73 @@ public class SignUp extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void onSignUp() {
+        HttpUtil.signUp(new String[]{username, password, email, dob, avatarFileLink}, new okhttp3.Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.d("SIGNUP", "***** signUp onResponse *****");
+                String responseData = response.body().string();
+                Log.d("SIGNUP", "signUp: " + responseData);
+                try {
+                    JSONObject responseJSON = new JSONObject(responseData);
+                    if (responseJSON.has("success")) {
+                        String status = responseJSON.getString("success");
+                        Log.d("SIGNUP", "signUp success: " + status);
+                        runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              Toast.makeText(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
+                                              finish();
+                                              overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                          }
+                                      }
+                        );
+                    } else if (responseJSON.has("error")) {
+                        String status = responseJSON.getString("error");
+                        Log.d("SIGNUP", "signUp error: " + status);
+                        runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              usernameET.setText("");
+                                              emailET.setText("");
+                                              Toast.makeText(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT).show();
+                                              signUpButton.setEnabled(true);
+                                          }
+                                      }
+                        );
+                    } else {
+                        Log.d("SIGNUP", "signUp: Invalid form");
+                        runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                              signUpButton.setEnabled(true);
+                                          }
+                                      }
+                        );
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        // go back to sign in, as it is single instance, we are not creating a new one
+        finish();
+        startActivity(new Intent(SignUp.this, SignIn.class));
+
+        //(destination, origion)
+        overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
     }
 
 }

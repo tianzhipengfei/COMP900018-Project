@@ -7,12 +7,13 @@
     tools:context=".ui.create.CreateCapsuleFragment">
 
     <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/shapeableImageView"
         android:layout_width="250dp"
         android:layout_height="250dp"
+        android:src="@drawable/capsule"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/capsule"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_home"
@@ -28,4 +29,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/create_capsule_test_count"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginBottom="128dp"
+        android:text="text here"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </TextView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/create_capsule_test_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
