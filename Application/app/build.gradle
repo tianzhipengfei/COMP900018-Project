@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+//plugin for Safe Args to help passing arguments between fragments
+apply plugin: "androidx.navigation.safeargs"
+
 android {
     compileSdkVersion 29
     buildToolsVersion "30.0.1"
@@ -36,7 +39,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
 
-//    def nav_version = "2.3.0"
-//    implementation "androidx.navigation:navigation-fragment:$nav_version"
-//    implementation "androidx.navigation:navigation-ui:$nav_version"
+    def nav_version = "2.3.0"
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
 }
