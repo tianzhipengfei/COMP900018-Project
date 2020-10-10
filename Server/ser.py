@@ -564,6 +564,7 @@ class UploadAudio:
 
 class UploadAvatar:
     def POST(self):
+        print(type(web.input()))
         i = web.input(myfile={})
         try:
             usr = i['usr']
@@ -575,7 +576,7 @@ class UploadAvatar:
             format_name = filename.split(".")[-1]
             if format_name not in ['jpg', 'jpeg', 'png', 'gif', 'tif', 'psd', 'dng', 'cr2', 'nef']:
                 return {'error': 'Invalid format'}
-            target_folder = '/home/sudokuServer/static/mobile/'
+            target_folder = '/Users/eric/Desktop/'
             target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
             target_dir = os.path.join(target_folder, target_filename)
             f = open(target_dir, 'wb')
