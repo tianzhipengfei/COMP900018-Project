@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import static android.content.ContentValues.TAG;
 
@@ -88,7 +89,10 @@ public class AccountMegaFragment extends Fragment {
             Log.d(TAG, "found navController");
         }
 
-        
+        Button button = view.findViewById(R.id.edit_profile_btn_change_password);
+        if(button != null){
+            Log.d(TAG, "found change password button");
+        }
 
 
     }
