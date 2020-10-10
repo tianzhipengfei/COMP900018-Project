@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_profile_navigation"
+    app:startDestination="@id/editProfileContentFragment">
+
+    <fragment
+        android:id="@+id/editProfileContentFragment"
+        android:name="com.example.group_w01_07_3.ui.account.EditProfileContentFragment"
+        android:label="fragment_edit_profile_content"
+        tools:layout="@layout/fragment_edit_profile_content" >
+        <action
+            android:id="@+id/action_editProfileContentFragment_to_changePasswordFragment2"
+            app:destination="@id/changePasswordFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/changePasswordFragment2"
+        android:name="com.example.group_w01_07_3.ui.account.ChangePasswordFragment"
+        android:label="ChangePasswordFragment" />
+</navigation>
