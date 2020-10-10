@@ -565,32 +565,32 @@ class UploadAudio:
 class UploadAvatar:
     def POST(self):
         i = web.input(myfile={})
-        try:
-            usr = i['usr']
-            print(usr)
-            if getUser(usr):
-                return {'error': 'userExist - user already exist'}
+        # try:
+        usr = i['usr']
+        print(usr)
+        if getUser(usr):
+            return {'error': 'userExist - user already exist'}
 
-            # filename
-            filename = i['myfile'].filename 
-            print(filename)
-            format_name = filename.split(".")[-1]
-            print(format_name)
-            if format_name not in ['jpg', 'jpeg', 'png', 'gif', 'tif', 'psd', 'dng', 'cr2', 'nef']:
-                return {'error': 'Invalid format'}
-            target_folder = '/Users/eric/Desktop/'
-            target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
-            target_dir = os.path.join(target_folder, target_filename)
-            f = open(target_dir, 'wb')
-            f.write(i['myfile'].value)
-            f.close()
-            static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
-            return {"success": True, "file": static_url}
-        except AttributeError as err:
-            print("AttributeError: {0}".format(err))
-            return web.badrequest()
-        except:
-            return web.badrequest()
+        # filename
+        filename = i['myfile'].filename 
+        print(filename)
+        format_name = filename.split(".")[-1]
+        print(format_name)
+        if format_name not in ['jpg', 'jpeg', 'png', 'gif', 'tif', 'psd', 'dng', 'cr2', 'nef']:
+            return {'error': 'Invalid format'}
+        target_folder = '/Users/eric/Desktop/'
+        target_filename = str(usr) + '-' + str(int(time.time())) + '.' + format_name
+        target_dir = os.path.join(target_folder, target_filename)
+        f = open(target_dir, 'wb')
+        f.write(i['myfile'].value)
+        f.close()
+        static_url = "https://www.tianzhipengfei.xin/static/mobile/" + target_filename
+        return {"success": True, "file": static_url}
+        # except AttributeError as err:
+        #     print("AttributeError: {0}".format(err))
+        #     return web.badrequest()
+        # except:
+        #     return web.badrequest()
         
 
 
