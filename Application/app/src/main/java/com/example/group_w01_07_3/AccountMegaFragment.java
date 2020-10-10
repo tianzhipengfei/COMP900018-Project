@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.group_w01_07_3.ui.account.EditProfileFragment;
+
 import static android.content.ContentValues.TAG;
 
 /**
@@ -89,6 +91,35 @@ public class AccountMegaFragment extends Fragment {
             Log.d(TAG, "found navController");
         }
 
+        EditProfileFragment currentFragment = (EditProfileFragment)getChildFragmentManager().findFragmentByTag("android:switcher:" + R.id.vpPager + ":0");
+        if (currentFragment != null){
+            Log.d(TAG, "found EditProfileFragment");
+        }
+
+////                //NOTE!!!!!!!!!!CHANGE THIS,,,,,FORE TESTING PURPOSE, I CREATE A NEW FRAGMENT EVERY TIME. PLZ UPDATE TO perfect handle(check if exist)
+////                ChangePasswordFragment newFragment = new ChangePasswordFragment();
+////                //网上找的.Viewpager 里面getItem是根据这个公式来自动生成tag的
+////                EditProfileFragment currentFragment = (EditProfileFragment)getFragmentManager().findFragmentByTag("android:switcher:" + R.id.vpPager + ":0");
+////
+////                FragmentManager manager = getParentFragmentManager();
+////                FragmentTransaction transaction = manager.beginTransaction();
+////
+////                if (!newFragment.isAdded()) {    // 先判断是否被add过
+//////                    View currentView = currentFragment.getView();
+//////                    FrameLayout frameLayout = (FrameLayout) currentView.findViewById(R.id.edit_profile_fragment_mega_layout) ;
+//////                    frameLayout.setVisibility(View.INVISIBLE);
+////                    transaction
+////                            .hide(currentFragment)
+////                            .add(R.id.edit_profile_fragment_mega_layout, newFragment,"change_password_fragment")
+////                            .commit(); // 隐藏当前的fragment，add下一个到Activity中
+////                }
+////                else {
+////                    transaction.hide(currentFragment).show(newFragment).commit(); // 隐藏当前的fragment，显示下一个
+////                }
+////
+////                transaction.add(R.id.edit_profile_fragment_mega_layout, newFragment,"changing_password");
+////                transaction.addToBackStack(null);
+////                transaction.commit();
         Button button = view.findViewById(R.id.edit_profile_btn_change_password);
         if(button != null){
             Log.d(TAG, "found change password button");

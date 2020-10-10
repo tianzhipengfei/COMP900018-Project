@@ -3,21 +3,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigationView">
 
-    <group android:checkableBehavior="single">
+<!--    <group android:checkableBehavior="single">-->
 
+<!--        <item-->
+<!--            android:id="@+id/discover"-->
+<!--            android:title="Discover"-->
+<!--            android:icon="@drawable/ic_baseline_explore_24"/>-->
+<!--        <item-->
+<!--            android:id="@+id/capsule"-->
+<!--            android:title="Capsule"-->
+<!--            android:icon="@drawable/ic_baseline_add_circle_24"/>-->
+<!--        <item-->
+<!--            android:id="@+id/account"-->
+<!--            android:title="Account"-->
+<!--            android:icon="@drawable/ic_baseline_account_circle_24"/>-->
+
+<!--    </group>-->
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/discover"
             android:title="Discover"
             android:icon="@drawable/ic_baseline_explore_24"/>
-        <item
-            android:id="@+id/capsule"
-            android:title="Capsule"
-            android:icon="@drawable/ic_baseline_add_circle_24"/>
+
+        <item android:title="Memory Capsule">
+            <menu>
+                <item
+                    android:checkable="true"
+                    android:id="@+id/create_capsule_tab"
+                    android:title="Create Capsule"/>
+                <item
+                    android:checkable="true"
+                    android:id="@+id/capsule_history_tab"
+                    android:title="Opened Capsule History"/>
+            </menu>
+
+        </item>
+
         <item
             android:id="@+id/account"
             android:title="Account"
             android:icon="@drawable/ic_baseline_account_circle_24"/>
 
     </group>
+
 
 </menu>

@@ -16,6 +16,9 @@ import java.util.List;
 
 public class OpenedCapsuleHistoryFragment extends Fragment {
 
+    public OpenedCapsuleHistoryFragment() {
+    }
+
     public static OpenedCapsuleHistoryFragment newInstance() {
 
         Bundle args = new Bundle();

@@ -6,6 +6,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.group_w01_07_3.ui.account.AccountFragment;
+import com.example.group_w01_07_3.ui.account.EditProfileFragment;
+import com.example.group_w01_07_3.ui.account.OpenedCapsuleHistoryFragment;
 import com.example.group_w01_07_3.ui.create.CreateCapsuleFragment;
 import com.example.group_w01_07_3.ui.discover.DiscoverCapsuleFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -41,6 +43,9 @@ public class HomeActivity extends AppCompatActivity implements
 
     private CreateCapsuleFragment createCapsuleFragment;
     private DiscoverCapsuleFragment discoverCapsuleFragment;
+
+    private EditProfileFragment editProfileFragment;
+    private OpenedCapsuleHistoryFragment openedCapsuleHistoryFragment;
     //记录当前正在使用的fragment
     private Fragment isFragment;
 
@@ -103,16 +108,22 @@ public class HomeActivity extends AppCompatActivity implements
 
             switch (id) {
                 case R.id.account:
-                    if (accountMegaFragment == null) {
-                        accountMegaFragment = new AccountMegaFragment();
+                    if (editProfileFragment == null) {
+                        editProfileFragment = new EditProfileFragment();
                     }
-                    switchContent(isFragment, accountMegaFragment);
+                    switchContent(isFragment, editProfileFragment);
                     return true;
-                case R.id.capsule:
+                case R.id.create_capsule_tab:
                     if (createCapsuleFragment == null) {
                         createCapsuleFragment = new CreateCapsuleFragment();
                     }
                     switchContent(isFragment, createCapsuleFragment);
+                    return true;
+                case R.id.capsule_history_tab:
+                    if (openedCapsuleHistoryFragment == null) {
+                        openedCapsuleHistoryFragment = new OpenedCapsuleHistoryFragment();
+                    }
+                    switchContent(isFragment, openedCapsuleHistoryFragment);
                     return true;
                 case R.id.discover:
                     if (discoverCapsuleFragment == null) {
