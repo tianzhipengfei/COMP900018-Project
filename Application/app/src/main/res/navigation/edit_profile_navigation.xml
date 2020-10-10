@@ -12,10 +12,21 @@
         tools:layout="@layout/fragment_edit_profile_content" >
         <action
             android:id="@+id/action_editProfileContentFragment_to_changePasswordFragment2"
-            app:destination="@id/changePasswordFragment2" />
+            app:destination="@id/changePasswordFragment2"
+            app:enterAnim="@anim/slide_in_left" />
     </fragment>
     <fragment
         android:id="@+id/changePasswordFragment2"
         android:name="com.example.group_w01_07_3.ui.account.ChangePasswordFragment"
-        android:label="ChangePasswordFragment" />
+        android:label="ChangePasswordFragment" >
+        <action
+            android:id="@+id/action_changePasswordFragment2_to_testingJumpFragment"
+            app:destination="@id/testingJumpFragment"
+            app:popUpTo="@id/changePasswordFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/testingJumpFragment"
+        android:name="com.example.group_w01_07_3.ui.account.TestingJumpFragment"
+        android:label="fragment_testing_jump"
+        tools:layout="@layout/fragment_testing_jump" />
 </navigation>

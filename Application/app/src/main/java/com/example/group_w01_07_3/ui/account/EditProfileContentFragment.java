@@ -6,7 +6,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +18,18 @@ import android.widget.Button;
 import com.example.group_w01_07_3.ChangePassword;
 import com.example.group_w01_07_3.R;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link EditProfileContentFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class EditProfileContentFragment extends Fragment {
+
+
+    private NavController navController;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -67,16 +76,33 @@ public class EditProfileContentFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_edit_profile_content, container, false);
 
-        Button changePasswordBtn = (Button) root.findViewById(R.id.edit_profile_btn_change_password);
+//        Button changePasswordBtn = (Button) root.findViewById(R.id.edit_profile_btn_change_password);
+//        changePasswordBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(getContext(), ChangePassword.class);
+//                startActivity(intent);
+//            }
+//        });
+
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+        navController = Navigation.findNavController(view);
+
+        Button changePasswordBtn = (Button) view.findViewById(R.id.edit_profile_btn_change_password);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getContext(), ChangePassword.class);
-                startActivity(intent);
+                navController.navigate(R.id.action_editProfileContentFragment_to_changePasswordFragment2);
             }
         });
 
-        return root;
     }
 
 }
