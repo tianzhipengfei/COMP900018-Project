@@ -1,4 +1,4 @@
-package com.example.group_w01_07_3;
+package com.example.group_w01_07_3.features.history;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -13,8 +13,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.group_w01_07_3.ui.create.CreateCapsule;
-import com.example.group_w01_07_3.ui.discover.DiscoverCapsule;
+import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.account.EditProfile;
+import com.example.group_w01_07_3.features.create.CreateCapsule;
+import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;

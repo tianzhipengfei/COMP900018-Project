@@ -1,4 +1,4 @@
-package com.example.group_w01_07_3.ui.discover;
+package com.example.group_w01_07_3.features.discover;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -11,12 +11,10 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.group_w01_07_3.EditProfile;
-import com.example.group_w01_07_3.MainActivity;
-import com.example.group_w01_07_3.OpenedCapsuleHistory;
+import com.example.group_w01_07_3.features.account.EditProfile;
+import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
-import com.example.group_w01_07_3.SignIn;
-import com.example.group_w01_07_3.ui.create.CreateCapsule;
+import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.google.android.material.navigation.NavigationView;
 
 public class DiscoverCapsule extends AppCompatActivity implements

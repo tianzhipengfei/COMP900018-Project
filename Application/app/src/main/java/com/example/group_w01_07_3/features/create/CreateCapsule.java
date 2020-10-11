@@ -1,9 +1,8 @@
-package com.example.group_w01_07_3.ui.create;
+package com.example.group_w01_07_3.features.create;
 
 import android.Manifest;
 import android.content.Context;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,9 +16,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.util.Calendar;
 
@@ -30,11 +27,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.group_w01_07_3.EditProfile;
-import com.example.group_w01_07_3.HomeActivity;
-import com.example.group_w01_07_3.OpenedCapsuleHistory;
+import com.example.group_w01_07_3.features.account.EditProfile;
+import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
-import com.example.group_w01_07_3.ui.discover.DiscoverCapsule;
+import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.google.android.material.navigation.NavigationView;
 
@@ -209,10 +205,10 @@ public class CreateCapsule extends AppCompatActivity implements
                                                           CreateCapsule.this,
                                                           "Create Capsule successfully",
                                                           Toast.LENGTH_SHORT).show();
-                                                  startActivity(new Intent(getApplicationContext(),
-                                                          HomeActivity.class));
-                                                  overridePendingTransition(android.R.anim.fade_in,
-                                                          android.R.anim.fade_out);
+//                                                  startActivity(new Intent(getApplicationContext(),
+//                                                          HomeActivity.class));
+//                                                  overridePendingTransition(android.R.anim.fade_in,
+//                                                          android.R.anim.fade_out);
                                               }
                                           }
                             );

@@ -1,4 +1,4 @@
-package com.example.group_w01_07_3;
+package com.example.group_w01_07_3.features.account;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -8,17 +8,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.transition.Explode;
-import android.transition.Slide;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.group_w01_07_3.ui.create.CreateCapsule;
-import com.example.group_w01_07_3.ui.discover.DiscoverCapsule;
+import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
+import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.create.CreateCapsule;
+import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.google.android.material.navigation.NavigationView;
 
 public class EditProfile extends AppCompatActivity implements

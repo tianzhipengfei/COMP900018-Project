@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OpenedCapsuleHistory"
+    tools:context=".features.history.OpenedCapsuleHistory"
     android:fitsSystemWindows="true"
     tools:openDrawer="start"
     android:id="@+id/history_drawer_layout">

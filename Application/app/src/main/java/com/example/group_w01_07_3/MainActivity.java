@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.group_w01_07_3.ui.discover.DiscoverCapsuleFragment;
+import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.UserUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } else {
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            Intent intent = new Intent(MainActivity.this, DiscoverCapsule.class);
             startActivity(intent);
             //kill MainActivity
             finish();

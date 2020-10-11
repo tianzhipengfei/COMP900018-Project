@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".EditProfile">
+        tools:context=".features.account.EditProfile">
 
 <!--        <com.google.android.material.appbar.AppBarLayout-->
 <!--            android:id="@+id/appBarLayout_edit_profile"-->

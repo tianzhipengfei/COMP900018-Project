@@ -1,11 +1,9 @@
 package com.example.group_w01_07_3;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.group_w01_07_3.ui.discover.DiscoverCapsule;
+import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.CaesarCipherUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
@@ -136,7 +134,7 @@ public class SignIn extends AppCompatActivity {
                                         @Override
                                         public void run() {
                                             Toast.makeText(SignIn.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(SignIn.this, HomeActivity.class);
+                                            Intent intent = new Intent(SignIn.this, DiscoverCapsule.class);
                                             finish();
                                             startActivity(intent);
                                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
