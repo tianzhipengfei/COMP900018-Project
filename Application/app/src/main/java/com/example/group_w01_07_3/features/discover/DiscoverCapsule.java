@@ -161,13 +161,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // if location permission is already granted
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 mGoogleMap.setMyLocationEnabled(true);
+                Log.i("if-else", "android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M");
             } else {
                 // request location permission
                 checkLocationPermission();
+                Log.i("if-else", "checkLocationPermission");
             }
         } else {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
+            Log.i("if-else", "requestLocationUpdates");
         }
     }
 
@@ -175,6 +178,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         @Override
         public void onLocationResult(LocationResult locationResult) {
             List<Location> locationList = locationResult.getLocations();
+            // Todo: Unable to access device location.
+            //       'locationList' always shows the map with the default Location: 37.4219983 -122.084, location'Googleplex'
+            Log.i("locationList", "" + locationList);
             if (locationList.size() > 0) {
                 //the last location in the list is the newest
                 Location location = locationList.get(locationList.size() - 1);
