@@ -13,18 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".HomeActivity"
-            android:label="@string/title_activity_home"></activity>
-        <activity android:name=".DetailedCapsuleHistoryItem" />
-        <activity android:name=".EditProfile" />
-        <activity android:name=".ChangePassword" />
+        <activity android:name=".features.discover.DiscoverCapsule"></activity>
+        <activity android:name=".features.create.CreateCapsule"/>
+        <activity android:name=".features.history.OpenedCapsuleHistory"/>
+        <activity android:name=".features.history.DetailedCapsuleHistoryItem" />
+        <activity android:name=".features.account.EditProfile" />
+        <activity android:name=".features.account.ChangePassword" />
         <activity android:name=".SignUp" />
-        <activity android:name=".SignIn"
-            android:launchMode="singleInstance"/>
-        <activity android:name=".Account" />
-        <activity android:name=".Capsule" />
-        <activity android:name=".Discover" />
+        <activity
+            android:name=".SignIn"
+            android:launchMode="singleInstance" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,15 +30,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
-            android:authorities="com.example.group_w01_07_3.fileprovider"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.group_w01_07_3.fileprovider"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />

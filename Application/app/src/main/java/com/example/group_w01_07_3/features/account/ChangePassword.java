@@ -1,4 +1,4 @@
-package com.example.group_w01_07_3;
+package com.example.group_w01_07_3.features.account;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.group_w01_07_3.R;
 import com.google.android.material.progressindicator.ProgressIndicator;
 
 public class ChangePassword extends AppCompatActivity {

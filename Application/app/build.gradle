@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+//plugin for Safe Args to help passing arguments between fragments
+apply plugin: "androidx.navigation.safeargs"
+
 android {
     compileSdkVersion 29
     buildToolsVersion "30.0.1"
@@ -39,5 +42,6 @@ dependencies {
     def nav_version = "2.3.0"
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
+
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
 }

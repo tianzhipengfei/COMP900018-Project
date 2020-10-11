@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@drawable/gradient_1"
+    android:gravity="bottom"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
+    android:layout_height="176dp">
+<!--    android:gravity="bottom": we want everything display below this header-->
+    
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:src="@drawable/logo">
+
+
+    </com.google.android.material.imageview.ShapeableImageView>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:textColor="@color/colorPrimary"
+        android:paddingTop="8dp"
+        android:text="Memory Capsule">
+
+
+    </com.google.android.material.textview.MaterialTextView>
+
+
+</LinearLayout>

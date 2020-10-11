@@ -1,31 +1,38 @@
-package com.example.group_w01_07_3.ui.create;
+package com.example.group_w01_07_3.features.create;
 
 import android.Manifest;
 import android.content.Context;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.group_w01_07_3.HomeActivity;
+import com.example.group_w01_07_3.features.account.EditProfile;
+import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.google.android.material.navigation.NavigationView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -34,7 +41,10 @@ import org.json.JSONObject;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class CreateCapsule extends Activity {
+public class CreateCapsule extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener{
+
+    private DrawerLayout drawerLayout;
 
     private int permission = 1;
     private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
@@ -45,6 +55,32 @@ public class CreateCapsule extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_capsule);
+
+        //don't pop up keyboard automatically when entering the screen.
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
+
+        //设置主Activity的toolbar, 以及初始化侧滑菜单栏
+        Toolbar toolbar = findViewById(R.id.toolbar_create);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setTitle("Create Memory Capsule");
+
+        drawerLayout = findViewById(R.id.create_drawer_layout);
+
+        //handle the hamburger menu. remember to create two strings
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        //设置侧滑菜单栏
+        NavigationView navigationView = findViewById(R.id.nav_view_create);
+        navigationView.getMenu().getItem(1).setChecked(true);
+        navigationView.setNavigationItemSelectedListener(this);
+
+
     }
 
     public void whetherPublic(View v) {
@@ -169,10 +205,10 @@ public class CreateCapsule extends Activity {
                                                           CreateCapsule.this,
                                                           "Create Capsule successfully",
                                                           Toast.LENGTH_SHORT).show();
-                                                  startActivity(new Intent(getApplicationContext(),
-                                                          HomeActivity.class));
-                                                  overridePendingTransition(android.R.anim.fade_in,
-                                                          android.R.anim.fade_out);
+//                                                  startActivity(new Intent(getApplicationContext(),
+//                                                          HomeActivity.class));
+//                                                  overridePendingTransition(android.R.anim.fade_in,
+//                                                          android.R.anim.fade_out);
                                               }
                                           }
                             );
@@ -237,6 +273,54 @@ public class CreateCapsule extends Activity {
     }
 
     public void cancel(View v){
-        startActivity(new Intent(CreateCapsule.this,HomeActivity.class));
+        startActivity(new Intent(CreateCapsule.this,DiscoverCapsule.class));
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        drawerLayout.closeDrawers();
+
+        int id = item.getItemId();
+        Intent intent;
+        switch (id){
+            case R.id.discover_capsule_tab:
+                intent = new Intent(CreateCapsule.this, DiscoverCapsule.class);
+                startActivity(intent);
+                return true;
+            case R.id.create_capsule_tab:
+                //main activity cannot start itself again
+                return true;
+            case R.id.capsule_history_tab:
+                intent = new Intent(CreateCapsule.this, OpenedCapsuleHistory.class);
+                startActivity(intent);
+                return true;
+            case R.id.edit_profile_tab:
+                intent = new Intent(CreateCapsule.this, EditProfile.class);
+                startActivity(intent);
+                return true;
+        }
+
+
+        return false;
+    }
+
+    @Override
+    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+    }
+
+    @Override
+    public void onDrawerOpened(@NonNull View drawerView) {
+
+    }
+
+    @Override
+    public void onDrawerClosed(@NonNull View drawerView) {
+
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
+
     }
 }

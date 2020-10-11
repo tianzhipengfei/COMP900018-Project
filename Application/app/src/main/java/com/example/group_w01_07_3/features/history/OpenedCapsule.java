@@ -1,4 +1,4 @@
-package com.example.group_w01_07_3.ui.account;
+package com.example.group_w01_07_3.features.history;
 
 public class OpenedCapsule {
 
