@@ -82,6 +82,7 @@ public class EditProfile extends AppCompatActivity implements
             public void onClick(View view) {
                 Intent intent = new Intent(EditProfile.this, ChangePassword.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.stay);
             }
         });
 

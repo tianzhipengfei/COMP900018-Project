@@ -33,6 +33,7 @@ public class ChangePassword extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+//                overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
             }
         });
 
@@ -68,5 +69,12 @@ public class ChangePassword extends AppCompatActivity {
             }
         });
 
+    }
+
+    //overide to include
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+//        overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
     }
 }
