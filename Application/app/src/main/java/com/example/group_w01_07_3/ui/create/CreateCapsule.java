@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -29,7 +30,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.group_w01_07_3.EditProfile;
 import com.example.group_w01_07_3.HomeActivity;
+import com.example.group_w01_07_3.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.ui.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
@@ -43,7 +46,7 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class CreateCapsule extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener{
 
     private DrawerLayout drawerLayout;
 
@@ -57,21 +60,30 @@ public class CreateCapsule extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_capsule);
 
-
+        //don't pop up keyboard automatically when entering the screen.
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
 
         //设置主Activity的toolbar, 以及初始化侧滑菜单栏
-        Toolbar toolbar = findViewById(R.id.toolbar_discover);
+        Toolbar toolbar = findViewById(R.id.toolbar_create);
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setTitle("Create Memory Capsule");
 
-        drawerLayout = findViewById(R.id.discover_drawer_layout);
+        drawerLayout = findViewById(R.id.create_drawer_layout);
 
         //handle the hamburger menu. remember to create two strings
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        //设置侧滑菜单栏
+        NavigationView navigationView = findViewById(R.id.nav_view_create);
+        navigationView.getMenu().getItem(1).setChecked(true);
+        navigationView.setNavigationItemSelectedListener(this);
+
 
     }
 
@@ -270,16 +282,49 @@ public class CreateCapsule extends AppCompatActivity implements
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-        item.setChecked(true);
         drawerLayout.closeDrawers();
 
         int id = item.getItemId();
+        Intent intent;
         switch (id){
             case R.id.discover_capsule_tab:
-                Intent intent = new Intent(CreateCapsule.this, DiscoverCapsule.class);
+                intent = new Intent(CreateCapsule.this, DiscoverCapsule.class);
                 startActivity(intent);
+                return true;
+            case R.id.create_capsule_tab:
+                //main activity cannot start itself again
+                return true;
+            case R.id.capsule_history_tab:
+                intent = new Intent(CreateCapsule.this, OpenedCapsuleHistory.class);
+                startActivity(intent);
+                return true;
+            case R.id.edit_profile_tab:
+                intent = new Intent(CreateCapsule.this, EditProfile.class);
+                startActivity(intent);
+                return true;
         }
+
+
         return false;
+    }
+
+    @Override
+    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+    }
+
+    @Override
+    public void onDrawerOpened(@NonNull View drawerView) {
+
+    }
+
+    @Override
+    public void onDrawerClosed(@NonNull View drawerView) {
+
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
+
     }
 }

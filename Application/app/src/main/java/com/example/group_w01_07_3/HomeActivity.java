@@ -107,7 +107,7 @@ public class HomeActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
             switch (id) {
-                case R.id.account_tab:
+                case R.id.edit_profile_tab:
                     if (editProfileFragment == null) {
                         editProfileFragment = new EditProfileFragment();
                     }

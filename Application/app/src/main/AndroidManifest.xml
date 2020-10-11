@@ -14,6 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.discover.DiscoverCapsule"></activity>
+        <activity android:name=".ui.create.CreateCapsule"/>
+        <activity android:name=".OpenedCapsuleHistory"/>
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home" />

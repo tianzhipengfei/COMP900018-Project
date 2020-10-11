@@ -9,15 +9,18 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.example.group_w01_07_3.EditProfile;
 import com.example.group_w01_07_3.MainActivity;
+import com.example.group_w01_07_3.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.SignIn;
 import com.example.group_w01_07_3.ui.create.CreateCapsule;
 import com.google.android.material.navigation.NavigationView;
 
 public class DiscoverCapsule extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener{
 
     private DrawerLayout drawerLayout;
 
@@ -41,26 +44,59 @@ public class DiscoverCapsule extends AppCompatActivity implements
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-
-        //设置导航栏
+        //设置侧滑菜单栏
         NavigationView navigationView = findViewById(R.id.nav_view_discover);
-
-        navigationView.getMenu().getItem(0).setChecked(true);
+        navigationView.getMenu().getItem(0).setChecked(true); //setChecked myself
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        item.setChecked(true);
+//        item.setChecked(true);
         drawerLayout.closeDrawers();
 
         int id = item.getItemId();
+        Intent intent;
         switch (id){
+            case R.id.discover_capsule_tab:
+                //main activity cannot start itself again
+                return true;
             case R.id.create_capsule_tab:
-                Intent intent = new Intent(DiscoverCapsule.this, CreateCapsule.class);
+                intent = new Intent(DiscoverCapsule.this, CreateCapsule.class);
                 startActivity(intent);
+                return true;
+            case R.id.capsule_history_tab:
+                intent = new Intent(DiscoverCapsule.this, OpenedCapsuleHistory.class);
+                startActivity(intent);
+                return true;
+            case R.id.edit_profile_tab:
+                intent = new Intent(DiscoverCapsule.this, EditProfile.class);
+                startActivity(intent);
+                return true;
         }
 
 
         return false;
+    }
+
+
+    @Override
+    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+    }
+
+    @Override
+    public void onDrawerOpened(@NonNull View drawerView) {
+
+    }
+
+    @Override
+    public void onDrawerClosed(@NonNull View drawerView) {
+
+    }
+
+    @Override
+    public void onDrawerStateChanged(int newState) {
+
     }
 }
