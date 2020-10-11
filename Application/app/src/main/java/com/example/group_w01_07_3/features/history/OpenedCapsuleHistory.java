@@ -40,7 +40,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar_history);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("Opened Capsule History");
+        getSupportActionBar().setTitle("Discover Memory Capsule");
 
         drawerLayout = findViewById(R.id.history_drawer_layout);
 
@@ -96,19 +96,14 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
         int id = item.getItemId();
         Intent intent;
-        //note. This is top level navigation(unrelated major task). Must use fade through
         switch (id){
             case R.id.discover_capsule_tab:
                 intent = new Intent(OpenedCapsuleHistory.this, DiscoverCapsule.class);
                 startActivity(intent);
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return true;
             case R.id.create_capsule_tab:
                 intent = new Intent(OpenedCapsuleHistory.this, CreateCapsule.class);
                 startActivity(intent);
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return true;
             case R.id.capsule_history_tab:
                 //main activity cannot start itself again
@@ -116,8 +111,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             case R.id.edit_profile_tab:
                 intent = new Intent(OpenedCapsuleHistory.this, EditProfile.class);
                 startActivity(intent);
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return true;
         }
 

@@ -282,13 +282,10 @@ public class CreateCapsule extends AppCompatActivity implements
 
         int id = item.getItemId();
         Intent intent;
-        //note. This is top level navigation(unrelated major task). Must use fade through
         switch (id){
             case R.id.discover_capsule_tab:
                 intent = new Intent(CreateCapsule.this, DiscoverCapsule.class);
                 startActivity(intent);
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return true;
             case R.id.create_capsule_tab:
                 //main activity cannot start itself again
@@ -296,14 +293,10 @@ public class CreateCapsule extends AppCompatActivity implements
             case R.id.capsule_history_tab:
                 intent = new Intent(CreateCapsule.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return true;
             case R.id.edit_profile_tab:
                 intent = new Intent(CreateCapsule.this, EditProfile.class);
                 startActivity(intent);
-                finish();
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return true;
         }
 
