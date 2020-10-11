@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.group_w01_07_3.ui.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.CaesarCipherUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
@@ -215,7 +216,7 @@ public class SignIn extends AppCompatActivity {
         skipToAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(SignIn.this, HomeActivity.class);
+                Intent intent = new Intent(SignIn.this, DiscoverCapsule.class);
                 //kill SinIn Activity
                 //不用再kIll了,现在sign in是singleInstance(manifest-->launchmode--》singleInstance)
                 finish();

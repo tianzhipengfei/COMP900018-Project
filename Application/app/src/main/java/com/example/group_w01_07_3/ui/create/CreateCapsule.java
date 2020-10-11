@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -21,11 +22,18 @@ import java.io.InputStream;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.HomeActivity;
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.ui.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.google.android.material.navigation.NavigationView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -34,7 +42,10 @@ import org.json.JSONObject;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public class CreateCapsule extends Activity {
+public class CreateCapsule extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener{
+
+    private DrawerLayout drawerLayout;
 
     private int permission = 1;
     private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
@@ -45,6 +56,23 @@ public class CreateCapsule extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_capsule);
+
+
+
+        //设置主Activity的toolbar, 以及初始化侧滑菜单栏
+        Toolbar toolbar = findViewById(R.id.toolbar_discover);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setTitle("Create Memory Capsule");
+
+        drawerLayout = findViewById(R.id.discover_drawer_layout);
+
+        //handle the hamburger menu. remember to create two strings
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
     }
 
     public void whetherPublic(View v) {
@@ -237,6 +265,21 @@ public class CreateCapsule extends Activity {
     }
 
     public void cancel(View v){
-        startActivity(new Intent(CreateCapsule.this,HomeActivity.class));
+        startActivity(new Intent(CreateCapsule.this,DiscoverCapsule.class));
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        item.setChecked(true);
+        drawerLayout.closeDrawers();
+
+        int id = item.getItemId();
+        switch (id){
+            case R.id.discover_capsule_tab:
+                Intent intent = new Intent(CreateCapsule.this, DiscoverCapsule.class);
+                startActivity(intent);
+        }
+        return false;
     }
 }

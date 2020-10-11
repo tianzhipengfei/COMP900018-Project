@@ -107,7 +107,7 @@ public class HomeActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
             switch (id) {
-                case R.id.account:
+                case R.id.account_tab:
                     if (editProfileFragment == null) {
                         editProfileFragment = new EditProfileFragment();
                     }
@@ -125,7 +125,7 @@ public class HomeActivity extends AppCompatActivity implements
                     }
                     switchContent(isFragment, openedCapsuleHistoryFragment);
                     return true;
-                case R.id.discover:
+                case R.id.discover_capsule_tab:
                     if (discoverCapsuleFragment == null) {
                         discoverCapsuleFragment = new DiscoverCapsuleFragment();
                     }
