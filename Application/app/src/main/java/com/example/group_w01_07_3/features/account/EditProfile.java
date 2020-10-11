@@ -101,18 +101,26 @@ public class EditProfile extends AppCompatActivity implements
 
         int id = item.getItemId();
         Intent intent;
+
+        //note. This is top level navigation(unrelated major task). Must use fade through
         switch (id){
             case R.id.discover_capsule_tab:
                 intent = new Intent(EditProfile.this, DiscoverCapsule.class);
                 startActivity(intent);
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return true;
             case R.id.create_capsule_tab:
                 intent = new Intent(EditProfile.this, CreateCapsule.class);
                 startActivity(intent);
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return true;
             case R.id.capsule_history_tab:
                 intent = new Intent(EditProfile.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 return true;
             case R.id.edit_profile_tab:
                 //main activity cannot start itself again
