@@ -54,6 +54,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
     Location mLastLocation;
     Marker mCurrLocationMarker;
     FusedLocationProviderClient mFusedLocationClient;
+    private boolean updateCameraFlag = true;
+    final int PER_SECOND = 1000;
+    // time interval for updating locaton
+    private int locationUpdateInterval = 5 * PER_SECOND;
+    // if user moves more than a threshold distance (unit: km), update capsules info
+    private double distanceThresholdToRequest = 0.5;
+    // latitude, and longitude of last request
+    private double lastRequestLat = 360.0;
+    private double lastRequestLon = 360.0;
+    // maximum number of capsules to discover
+    private int capsuleNum = 20;
+    // maximum distance to discover (unit: km)
+    private double discoverCapsuleRange = 3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,12 +160,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         mLocationRequest = new LocationRequest();
-        // the location will be updated every second
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
+        // the location will be updated every locationUpdateInterval second
+        mLocationRequest.setInterval(locationUpdateInterval);
+        mLocationRequest.setFastestInterval(locationUpdateInterval);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -178,8 +192,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         @Override
         public void onLocationResult(LocationResult locationResult) {
             List<Location> locationList = locationResult.getLocations();
-            // Todo: Unable to access device location.
-            //       'locationList' always shows the map with the default Location: 37.4219983 -122.084, location'Googleplex'
             Log.i("locationList", "" + locationList);
             if (locationList.size() > 0) {
                 //the last location in the list is the newest
@@ -198,8 +210,18 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
+                if(checkForRequest(location.getLatitude(), location.getLongitude())){
+                    // TODO: send request
+                    lastRequestLat = location.getLatitude();
+                    lastRequestLon = location.getLongitude();
+                    updateCameraFlag = true;
+                }
+
                 //move map camera
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 11));
+                if(updateCameraFlag){
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+                    updateCameraFlag = false;
+                }
             }
         }
     };
@@ -264,4 +286,30 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 // code modified from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
+
+    private boolean checkForRequest(double curLat, double curLon){
+        if(lastRequestLat == 360 && lastRequestLon == 360){
+            return true;
+        } else if(getDistance(curLat, curLon, lastRequestLat, lastRequestLon) > distanceThresholdToRequest){
+            System.out.println(getDistance(curLat, curLon, lastRequestLat, lastRequestLon));
+            return true;
+        }
+        return false;
+    }
+
+    // Calculate distance by latitude, and longitude (unit: Kilometers)
+    private double getDistance(double lat1, double lon1, double lat2, double lon2){
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        }
+        else {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) +
+                    Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 111.18957696;
+            return dist;
+        }
+    }
 }
