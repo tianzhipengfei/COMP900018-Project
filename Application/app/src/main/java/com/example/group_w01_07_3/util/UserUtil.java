@@ -8,15 +8,13 @@ public class UserUtil {
     public static void setToken(Context context, String token) {
         SharedPreferences pref = context.getSharedPreferences("user_token", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        //editor.putString("token", CaesarCipherUtil.encrypt(token, 77));
-        editor.putString("token", token);
+        editor.putString("token", CaesarCipherUtil.encrypt(token, 77));
         editor.apply();
     }
 
     public static String getToken(Context context) {
         SharedPreferences pref = context.getSharedPreferences("user_token", Context.MODE_PRIVATE);
-        //String token = CaesarCipherUtil.decrypt(pref.getString("token", ""), 77);
-        String token = pref.getString("token", "");
+        String token = CaesarCipherUtil.decrypt(pref.getString("token", ""), 77);
         return token;
     }
 

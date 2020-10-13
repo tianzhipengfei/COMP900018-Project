@@ -1,26 +1,42 @@
 package com.example.group_w01_07_3.features.account;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.SignIn;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
+import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
+import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.navigation.NavigationView;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
+
 public class EditProfile extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener{
+        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener {
     private Toolbar mToolbar;
 
     private DrawerLayout drawerLayout;
@@ -73,9 +89,6 @@ public class EditProfile extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
 
 
-
-
-
         Button changePasswordBtn = (Button) findViewById(R.id.edit_profile_btn_change_password);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +105,97 @@ public class EditProfile extends AppCompatActivity implements
         TextView DOB = (TextView) findViewById(R.id.edit_profile_dob_display);
         DOB.setText("Seems like the dob changed during onCreate");
 
+        final Button signOutButton = (Button) findViewById(R.id.button_acct_sign_out);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditProfile.this);
+                builder.setIcon(R.drawable.warning);
+                builder.setTitle("Warning");
+                builder.setMessage("Do you want to sign out?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        signOutButton.setEnabled(false);
+                        String token = UserUtil.getToken(EditProfile.this);
+                        if (token.isEmpty()) {
+                            Log.d("SIGNOUT", "Error: no token");
+                            Toast.makeText(EditProfile.this, "Error: no token", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(EditProfile.this, SignIn.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            HttpUtil.signOut(token, new okhttp3.Callback() {
+                                @Override
+                                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                    Log.d("SIGNOUT", "***** signOut onResponse *****");
+                                    String responseData = response.body().string();
+                                    Log.d("SIGNOUT", "signOut: " + responseData);
+                                    try {
+                                        JSONObject responseJSON = new JSONObject(responseData);
+                                        if (responseJSON.has("success")) {
+                                            String status = responseJSON.getString("success");
+                                            Log.d("SIGNOUT", "signOut success: " + status);
+                                            EditProfile.this.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    UserUtil.clearToken(EditProfile.this);
+                                                    Toast.makeText(EditProfile.this, "Sign out successfully", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(EditProfile.this, SignIn.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            });
+                                        } else if (responseJSON.has("error")) {
+                                            String status = responseJSON.getString("success");
+                                            Log.d("SIGNOUT", "signOut error: " + status);
+                                            EditProfile.this.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    UserUtil.clearToken(EditProfile.this);
+                                                    Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(EditProfile.this, SignIn.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            });
+                                        } else {
+                                            Log.d("SIGNOUT", "signOut: Invalid form");
+                                            EditProfile.this.runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    UserUtil.clearToken(EditProfile.this);
+                                                    Toast.makeText(EditProfile.this, "Invalid form", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(EditProfile.this, SignIn.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            });
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+            }
+        });
+
     }
 
     @Override
@@ -101,7 +205,7 @@ public class EditProfile extends AppCompatActivity implements
 
         int id = item.getItemId();
         Intent intent;
-        switch (id){
+        switch (id) {
             case R.id.discover_capsule_tab:
                 intent = new Intent(EditProfile.this, DiscoverCapsule.class);
                 startActivity(intent);
