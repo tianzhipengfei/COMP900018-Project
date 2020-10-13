@@ -40,6 +40,7 @@ class PopUpTest extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                         x2=motionEvent.getX();
                         y2=motionEvent.getY();
+                        //delta-> threhold
                         t2=System.currentTimeMillis();
                         if((x1==x2)&&(y1==y2)&&(t2-t1)<click_duration){
                             //handle click of user
@@ -61,5 +62,6 @@ class PopUpTest extends AppCompatActivity {
             }
         }
     );
+        //add a button, missed
     }
 }
