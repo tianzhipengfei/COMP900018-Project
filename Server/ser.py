@@ -239,7 +239,7 @@ class SignOut:
 
         return {'success': True}
 
-class changeAvatar:
+class ChangeAvatar:
     def POST(self):
         webData = web.data().decode()
         i = json.loads(webData)
