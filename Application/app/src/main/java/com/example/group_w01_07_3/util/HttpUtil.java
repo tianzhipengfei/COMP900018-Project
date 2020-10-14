@@ -2,9 +2,7 @@ package com.example.group_w01_07_3.util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
-
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;

@@ -45,9 +45,7 @@ import java.util.List;
 
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener, OnMapReadyCallback {
-
     private DrawerLayout drawerLayout;
-
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
