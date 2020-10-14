@@ -53,7 +53,7 @@ public class HttpUtil {
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("usr", username)
-                .addFormDataPart("myfile", avatarFile.getName(), RequestBody.create(avatarFile, FORM_DATA))
+                .addFormDataPart("myfile", avatarFile.getName(), RequestBody.create(avatarFile, MediaType.parse("image/jpeg")))
                 .build();
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "uploadAvatar")
