@@ -60,21 +60,18 @@
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
-### 4. ModifyProfile
-* URL: https://www.tianzhipengfei.xin/mobile/modifyProfile
+### 4. ChangeAvatar
+* URL: https://www.tianzhipengfei.xin/mobile/changeAvatar
 * Method: POST
 * Parameters:
 
 | Property | Type | Required | Description |
 |---|---|---|---|
 | tkn | string | yes | token |
-| email | string | yes | email |
-| dob | string | yes | date of birth |
 | avatar | string | yes | avatar |
 * Returns:
 	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com', 'udob': '2020-01-01'}}
 	* Fail:
-		* if new email exists, return {'error': 'emailExist - email already exist'}
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 

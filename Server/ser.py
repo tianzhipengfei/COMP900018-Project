@@ -18,7 +18,7 @@ urls = [
     '/signIn', 'SignIn',
     '/signUp', 'SignUp',
     '/signOut', 'SignOut',
-    '/modifyProfile', 'ModifyProfile',
+    '/changeAvatar', 'ChangeAvatar',
     '/changePassword', 'ChangePassword',
     '/getProfile', 'GetProfile',
     '/createCapsule', 'CreateCapsule',
@@ -239,20 +239,17 @@ class SignOut:
 
         return {'success': True}
 
-class ModifyProfile:
+class changeAvatar:
     def POST(self):
         webData = web.data().decode()
         i = json.loads(webData)
 
         # Check whether request contain token 
-        if not i.get('tkn') or not i.get('email')  or \
-        not i.get('avatar')  or not i.get('tkn') :
+        if not i.get('tkn') or not i.get('avatar'):
             return web.badrequest()
 
         tkn = i.get('tkn')
-        email = i.get('email')
         avatar = i.get('avatar')
-        dob = i.get('dob')
 
         # Check whether the user has logged in
         user = getUser(None, tkn)
@@ -263,13 +260,8 @@ class ModifyProfile:
         if not checkToken(user):
             return {'error':'Token expired'}
 
-        # Check whether the new username and new email are unique in database
-        if getEmail(email):
-            return {'error': 'emailExist - email already exist'}
-
         # Update user's info and return user's info        
-        res = db.update('users', where='uid=$id', uemail=email, uavatar=avatar,\
-            udob=dob, vars={'id':user['uid']})
+        res = db.update('users', where='uid=$id', uavatar=avatar, vars={'id':user['uid']})
         # Since info might be changed, get user's latest info again
         user = getUser(None, tkn)
 
