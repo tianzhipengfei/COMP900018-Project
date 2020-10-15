@@ -13,7 +13,15 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class ImageUtil {
+
+    private static Bitmap urlBitmap;
 
     public static File compressImage(Context context, Bitmap bitmap, String filename) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -41,23 +49,39 @@ public class ImageUtil {
     }
 
     public static Bitmap getHttpImage(String urlString) {
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-            int code = connection.getResponseCode();
-            if (code == HttpURLConnection.HTTP_OK) {
-                InputStream inputStream = connection.getInputStream();
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                return bitmap;
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(urlString)
+                .build();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            public void onResponse(Call call, Response response) {
+                InputStream inputStream = response.body().byteStream();
+                urlBitmap = BitmapFactory.decodeStream(inputStream);
             }
-            connection.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+        });
+        return urlBitmap;
+
+//        try {
+//            URL url = new URL(urlString);
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("GET");
+//            connection.setConnectTimeout(5000);
+//            connection.setReadTimeout(5000);
+//            int code = connection.getResponseCode();
+//            if (code == HttpURLConnection.HTTP_OK) {
+//                InputStream inputStream = connection.getInputStream();
+//                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+//                return bitmap;
+//            }
+//            connection.disconnect();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
     }
 
 }

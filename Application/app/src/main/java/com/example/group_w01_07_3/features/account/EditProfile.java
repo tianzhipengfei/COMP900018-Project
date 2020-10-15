@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,8 +58,19 @@ public class EditProfile extends AppCompatActivity implements
 
     private DrawerLayout drawerLayout;
     private BottomDialog bottomDialog;
+
     private ImageView avatarDisplay;
+    private TextView usernameDisplay;
+    private TextView emailDisplay;
+    private TextView dobDisplay;
+
+
     private File avatarFile;
+
+    private String usernameProfileString;
+    private String avatarProfileString;
+    private String emailProfileString;
+    private String dobProfileString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +101,9 @@ public class EditProfile extends AppCompatActivity implements
 //        });
 
         avatarDisplay = (ImageView) findViewById(R.id.edit_profile_avatar_display);
+        usernameDisplay = (TextView) findViewById(R.id.edit_profile_username_display);
+        emailDisplay = (TextView) findViewById(R.id.edit_profile_email_display);
+        dobDisplay = (TextView) findViewById(R.id.edit_profile_dob_display);
 
         //设置主Activity的toolbar, 以及初始化侧滑菜单栏
         Toolbar toolbar = findViewById(R.id.toolbar_edit_profile);
@@ -118,13 +133,6 @@ public class EditProfile extends AppCompatActivity implements
                 startActivity(intent);
             }
         });
-
-        TextView username = (TextView) findViewById(R.id.edit_profile_username_display);
-        username.setText("Seems like the username changed during onCreate");
-        TextView email = (TextView) findViewById(R.id.edit_profile_email_display);
-        email.setText("Seems like the email changed during onCreate");
-        TextView DOB = (TextView) findViewById(R.id.edit_profile_dob_display);
-        DOB.setText("Seems like the dob changed during onCreate");
 
         Button changeAvatarButton = (Button) findViewById(R.id.edit_profile_btn_change_avatar);
         changeAvatarButton.setOnClickListener(new View.OnClickListener() {
@@ -374,6 +382,98 @@ public class EditProfile extends AppCompatActivity implements
         } else {
             Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void onGetProfile() {
+        if (UserUtil.getToken(EditProfile.this).isEmpty()) {
+            Toast.makeText(EditProfile.this, "No token to get profile", Toast.LENGTH_SHORT).show();
+            usernameDisplay.setText("null");
+            emailDisplay.setText("null");
+            dobDisplay.setText("null");
+        } else {
+            HttpUtil.getProfile(UserUtil.getToken(EditProfile.this), new okhttp3.Callback() {
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.d("PROFILE", "***** getProfile onResponse *****");
+                    String responseData = response.body().string();
+                    Log.d("PROFILE", "getProfile: " + responseData);
+                    try {
+                        JSONObject responseJSON = new JSONObject(responseData);
+                        if (responseJSON.has("success")) {
+                            String status = responseJSON.getString("success");
+                            Log.d("PROFILE", "getProfile success: " + status);
+                            String userInfo = responseJSON.getString("userInfo");
+                            JSONObject userInfoJSON = new JSONObject(userInfo);
+                            usernameProfileString = userInfoJSON.getString("uusr");
+                            avatarProfileString = userInfoJSON.getString("uavatar");
+                            emailProfileString = userInfoJSON.getString("uemail");
+                            dobProfileString = userInfoJSON.getString("udob");
+                            runOnUiThread(new Runnable() {
+                                              @Override
+                                              public void run() {
+                                                  Toast.makeText(EditProfile.this, "Get profile successfully", Toast.LENGTH_SHORT).show();
+                                                  Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
+                                                  if (!(avatarProfileString == null)) {
+                                                      Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
+                                                      avatarDisplay.setImageBitmap(ImageUtil.getHttpImage(avatarProfileString));
+                                                  } else {
+                                                      Log.d("PROFILE", "avatarProfileString: (else)");
+                                                      avatarDisplay.setImageResource(R.drawable.avatar_sample);
+                                                  }
+                                                  usernameDisplay.setText(usernameProfileString);
+                                                  emailDisplay.setText(emailProfileString);
+                                                  dobDisplay.setText(dobProfileString);
+                                              }
+                                          }
+                            );
+                        } else if (responseJSON.has("error")) {
+                            String status = responseJSON.getString("error");
+                            Log.d("PROFILE", "getProfile error: " + status);
+                            runOnUiThread(new Runnable() {
+                                              @Override
+                                              public void run() {
+                                                  Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                                  usernameDisplay.setText("null");
+                                                  emailDisplay.setText("null");
+                                                  dobDisplay.setText("null");
+                                              }
+                                          }
+                            );
+                        } else {
+                            Log.d("PROFILE", "getProfile: Invalid form");
+                            runOnUiThread(new Runnable() {
+                                              @Override
+                                              public void run() {
+                                                  Toast.makeText(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                  usernameDisplay.setText("null");
+                                                  emailDisplay.setText("null");
+                                                  dobDisplay.setText("null");
+                                              }
+                                          }
+                            );
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onGetProfile();
     }
 
 }

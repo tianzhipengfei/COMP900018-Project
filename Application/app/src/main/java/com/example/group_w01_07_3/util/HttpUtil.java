@@ -97,6 +97,15 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
+    public static void getProfile(String token, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "getProfile?tkn=" + token)
+                .get()
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
     public static void createCapsule(JSONObject capsuleInfo,okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(capsuleInfo.toString(), HttpUtil.JSON);
