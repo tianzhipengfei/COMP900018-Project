@@ -2,6 +2,7 @@ package com.example.group_w01_07_3.util;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class RecordAudioUtil {
     private AppCompatActivity context;
     private MediaRecorder recorder = null;
     private MediaPlayer player = null;
+    private boolean stream  = false;
 
     // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
@@ -34,6 +36,13 @@ public class RecordAudioUtil {
 
     }
 
+    public RecordAudioUtil(AppCompatActivity activity,String filePath ){
+
+        context = activity;
+        fileName = filePath;
+        stream = true;
+
+    }
 
     public void onRecord(boolean start) {
 
@@ -51,6 +60,8 @@ public class RecordAudioUtil {
             stopPlaying();
         }
     }
+
+
     public boolean checkPermission(){
         int recordPermit = ActivityCompat.checkSelfPermission(
                 context, Manifest.permission.RECORD_AUDIO);
@@ -70,8 +81,12 @@ public class RecordAudioUtil {
 
     private void startPlaying() {
         player = new MediaPlayer();
+
         try {
             player.setDataSource(fileName);
+            if(stream==true){
+                player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            }
             player.prepare();
             player.start();
         } catch (IOException e) {
