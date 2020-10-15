@@ -36,9 +36,8 @@ public class RecordAudioUtil {
 
     }
 
-    public RecordAudioUtil(AppCompatActivity activity,String filePath ){
+    public RecordAudioUtil(String filePath ){
 
-        context = activity;
         fileName = filePath;
         stream = true;
 
