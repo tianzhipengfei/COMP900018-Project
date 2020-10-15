@@ -265,7 +265,7 @@ class ChangeAvatar:
         # Since info might be changed, get user's latest info again
         user = getUser(None, tkn)
 
-        return {'sucess': True, 'userInfo': getUserInfo(user)}
+        return {'success': True, 'userInfo': getUserInfo(user)}
 
 class ChangePassword:
     def POST(self):
@@ -300,7 +300,7 @@ class ChangePassword:
         pwd = getPwd(usr, npass)     
         res = db.update('users', where='uid=$id', upwd=pwd, vars={'id':user['uid']})
 
-        return {'sucess': True, 'userInfo': getUserInfo(user)}
+        return {'success': True, 'userInfo': getUserInfo(user)}
 
 class GetProfile:
     @json_response
@@ -410,7 +410,7 @@ class DiscoverCapsule:
         if len(retrieved_capsules):
             for capsule in retrieved_capsules:
                 res_capsules.append(getCapsuleInfo(capsule))
-        return {'sucess': True, 'capsules': res_capsules}
+        return {'success': True, 'capsules': res_capsules}
 
 class OpenCapsule:    
     def POST(self):
@@ -483,7 +483,7 @@ class GetCapsuleHistory:
             cid_list.append(cur_cid)
             cur_capsule = db.query("SELECT * FROM capsules WHERE cid = '{}'".format(cur_cid))[0]
             res.append(getCapsuleInfo(cur_capsule))
-        return {'sucess': True, 'hisotry': res}
+        return {'success': True, 'hisotry': res}
 
 class UploadImage:
     def POST(self):
