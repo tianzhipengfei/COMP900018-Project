@@ -69,7 +69,7 @@
                 android:layout_height="64dp"
                 android:backgroundTint="#ECECEC"
                 android:letterSpacing="0.09"
-                android:text="Edit Avatar"
+                android:text="Change Avatar"
                 android:textAlignment="viewStart"
                 android:textAllCaps="false"
                 app:icon="@drawable/ic_foward"
