@@ -4,14 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -54,34 +54,16 @@ public class ImageUtil {
                 .url(urlString)
                 .build();
         okHttpClient.newCall(request).enqueue(new Callback() {
-            public void onResponse(Call call, Response response) {
+            public void onResponse(@NotNull Call call, @NotNull Response response) {
                 InputStream inputStream = response.body().byteStream();
                 urlBitmap = BitmapFactory.decodeStream(inputStream);
             }
 
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
             }
         });
         return urlBitmap;
-
-//        try {
-//            URL url = new URL(urlString);
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setRequestMethod("GET");
-//            connection.setConnectTimeout(5000);
-//            connection.setReadTimeout(5000);
-//            int code = connection.getResponseCode();
-//            if (code == HttpURLConnection.HTTP_OK) {
-//                InputStream inputStream = connection.getInputStream();
-//                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-//                return bitmap;
-//            }
-//            connection.disconnect();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
     }
 
 }

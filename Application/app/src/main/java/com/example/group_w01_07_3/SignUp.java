@@ -430,7 +430,7 @@ public class SignUp extends AppCompatActivity {
     }
 
     private boolean isValidPassword(String password) {
-        Pattern p = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\\.#?!@$%^&*-]).{8,}$");
+        Pattern p = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\\.#?!@$%^&*-_=+]).{8,}$");
         Matcher m = p.matcher(password);
         if (!m.matches()) {
             //Toast.makeText(SignUp.this, "Invalid Password", Toast.LENGTH_SHORT).show(); // remind user
