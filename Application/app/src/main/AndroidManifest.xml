@@ -19,7 +19,9 @@
         <activity android:name=".features.create.CreateCapsule"/>
         <activity android:name=".features.history.OpenedCapsuleHistory"/>
         <activity android:name=".features.history.DetailedCapsuleHistoryItem" />
-        <activity android:name=".features.account.EditProfile" />
+        <activity android:name=".features.account.EditProfile"
+            android:launchMode="singleTask">
+        </activity>
         <activity android:name=".features.account.ChangePassword" />
         <activity android:name=".SignUp" />
         <activity

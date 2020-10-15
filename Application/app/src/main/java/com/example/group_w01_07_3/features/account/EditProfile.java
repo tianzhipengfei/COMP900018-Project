@@ -65,7 +65,8 @@ public class EditProfile extends AppCompatActivity implements
     private TextView dobDisplay;
 
 
-    private File avatarFile;
+    private File newAvatarFile;
+    private String newAvatarString;
 
     private String usernameProfileString;
     private String avatarProfileString;
@@ -299,10 +300,12 @@ public class EditProfile extends AppCompatActivity implements
                 if (resultCode == RESULT_OK) {
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(BottomDialog.imageUri));
-                        avatarDisplay.setImageBitmap(bitmap);
-                        avatarFile = ImageUtil.compressImage(EditProfile.this, bitmap, "output_photo_compressed.jpg");
+//                        avatarDisplay.setImageBitmap(bitmap);
+                        newAvatarFile = ImageUtil.compressImage(EditProfile.this, bitmap, "output_photo_compressed.jpg");
                         bottomDialog.dismiss();
-                        Toast.makeText(this, "Take the photo successfully", Toast.LENGTH_SHORT).show();
+//                        avatarDisplay.setImageBitmap(bitmap);
+                        onUploadImage();
+//                        Toast.makeText(this, "Take the photo successfully", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -375,10 +378,12 @@ public class EditProfile extends AppCompatActivity implements
     private void displayImage(String imagePath) {
         if (imagePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            avatarFile = ImageUtil.compressImage(EditProfile.this, bitmap, "image_compressed.jpg");
-            avatarDisplay.setImageBitmap(bitmap);
+            newAvatarFile = ImageUtil.compressImage(EditProfile.this, bitmap, "image_compressed.jpg");
+//            avatarDisplay.setImageBitmap(bitmap);
+            onUploadImage();
+//            avatarDisplay.setImageBitmap(bitmap);
             bottomDialog.dismiss();
-            Toast.makeText(this, "Select the image successfully", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Select the image successfully", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
         }
@@ -465,9 +470,49 @@ public class EditProfile extends AppCompatActivity implements
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void onUploadImage() {
+        // token null
+        HttpUtil.uploadImage(UserUtil.getToken(EditProfile.this), newAvatarFile, new okhttp3.Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                Log.d("avatar", "1");
+                // log comments
+                String responseData = response.body().string();
+                try {
+                    JSONObject responseJSON = new JSONObject(responseData);
+                    newAvatarString = responseJSON.getString("file");
+                    onChangeAvatar();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void onChangeAvatar() {
+        // token null
+        HttpUtil.changeAvatar(UserUtil.getToken(EditProfile.this), newAvatarString, new okhttp3.Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                // log comments
+                Log.d("avatar", "2");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -475,5 +520,4 @@ public class EditProfile extends AppCompatActivity implements
         super.onResume();
         onGetProfile();
     }
-
 }
