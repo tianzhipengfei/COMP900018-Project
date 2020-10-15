@@ -14,7 +14,7 @@ import okhttp3.RequestBody;
 public class HttpUtil {
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private static final MediaType FORM_DATA = MediaType.parse("multipart/form-data");
+    private static final MediaType JPG = MediaType.parse("image/jpg");
     private static String address = "https://www.tianzhipengfei.xin/mobile/";
 
     public static void signUp(String[] paras, okhttp3.Callback callback) {
@@ -53,7 +53,7 @@ public class HttpUtil {
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("usr", username)
-                .addFormDataPart("myfile", avatarFile.getName(), RequestBody.create(avatarFile, MediaType.parse("image/jpeg")))
+                .addFormDataPart("myfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
                 .build();
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "uploadAvatar")
