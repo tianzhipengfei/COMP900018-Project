@@ -22,10 +22,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
+import com.example.group_w01_07_3.util.HttpUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -41,10 +44,26 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Dictionary;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener, OnMapReadyCallback {
+
+    // capsules information received from database
+    private List<String> selectedCapsule;
+    private List<String> allCapsules;
 
     private DrawerLayout drawerLayout;
 
@@ -311,5 +330,71 @@ public class DiscoverCapsule extends AppCompatActivity implements
             dist = dist * 111.18957696;
             return dist;
         }
+    }
+
+/* HTTP GET Method
+ Returns
+    {"sucess": true,
+     "capsules": [
+         {"cid": 2, "cusr": "test1",
+         "ccontent": "Test content1",
+          "ctitle": "Test title",
+          "cimage": null,
+          "caudio": null,
+          "ccount": 0, "cavatar": null},
+
+         {"cid": 3,
+          "cusr": "test1",
+          "ccontent": "Test content2",
+          "ctitle": "Test title",
+          "cimage": null,
+          "caudio": null,
+          "ccount": 0,
+          "cavatar": null
+         }
+        ]
+    }
+}*/
+
+    private void onDiscoverCapsule() {
+        if (UserUtil.getToken(DiscoverCapsule.this).isEmpty()) {
+            Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
+            this.selectedCapsule = new ArrayList<String>();
+            this.allCapsules = new ArrayList<String>();
+        } else {
+            HttpUtil.getCapsule(UserUtil.getToken(DiscoverCapsule.this), 100.0, 100.0, 500, 1, new okhttp3.Callback() {
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.d("CAPSULE", "***** getCapsule onResponse *****");
+                    String responseData = response.body().string();
+                    Log.d("CAPSULE", "getCapsule: " + responseData);
+                    try {
+                        // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
+                        JSONObject responseJSON = new JSONObject(responseData);
+                        if (responseJSON.has("success")) {
+                            String status = responseJSON.getString("success");
+                            Log.d("CAPSULE", "getCapsule success: " + status);
+                            String capsulesInfo = responseJSON.getString("capsules");
+                            JSONObject capsulesInfoJSON = new JSONObject(capsulesInfo);
+                            Log.d("CAPSULE", "capsulesInfo: " + capsulesInfo);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                    Log.d("CAPSULE", "onFailure()");
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        onDiscoverCapsule();
     }
 }
