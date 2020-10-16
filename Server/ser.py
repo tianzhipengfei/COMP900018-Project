@@ -126,7 +126,7 @@ def getCapsuleInfo(capsule):
     res = {}
     usr = capsule['cusr']
     user = getUser(usr)
-    keys = ['cid', 'cusr', 'ccontent', 'ctitle', 'cimage', 'caudio', 'ccount']
+    keys = ['cid', 'cusr', 'ccontent', 'ctitle', 'cimage', 'caudio', 'ccount', 'clat', 'clon']
     for key in keys:
         res[key] = capsule[key]
     res['cavatar'] = user['uavatar']
@@ -449,7 +449,7 @@ class OpenCapsule:
             hlat=lat, hlon=lon, htime=tim)
 
         cur_capsule = db.query("SELECT * FROM capsules WHERE cid = '{}'".format(cid))[0]
-        return {'success': True, 'capsule': getCapsuleInfo(cur_capsule)}
+        return {'success': True}
 
 class GetCapsuleHistory:
     @json_response
