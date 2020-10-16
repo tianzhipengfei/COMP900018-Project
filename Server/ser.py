@@ -18,7 +18,7 @@ urls = [
     '/signIn', 'SignIn',
     '/signUp', 'SignUp',
     '/signOut', 'SignOut',
-    '/modifyProfile', 'ModifyProfile',
+    '/changeAvatar', 'ChangeAvatar',
     '/changePassword', 'ChangePassword',
     '/getProfile', 'GetProfile',
     '/createCapsule', 'CreateCapsule',
@@ -239,20 +239,17 @@ class SignOut:
 
         return {'success': True}
 
-class ModifyProfile:
+class ChangeAvatar:
     def POST(self):
         webData = web.data().decode()
         i = json.loads(webData)
 
         # Check whether request contain token 
-        if not i.get('tkn') or not i.get('email')  or \
-        not i.get('avatar')  or not i.get('tkn') :
+        if not i.get('tkn') or not i.get('avatar'):
             return web.badrequest()
 
         tkn = i.get('tkn')
-        email = i.get('email')
         avatar = i.get('avatar')
-        dob = i.get('dob')
 
         # Check whether the user has logged in
         user = getUser(None, tkn)
@@ -263,17 +260,12 @@ class ModifyProfile:
         if not checkToken(user):
             return {'error':'Token expired'}
 
-        # Check whether the new username and new email are unique in database
-        if getEmail(email):
-            return {'error': 'emailExist - email already exist'}
-
         # Update user's info and return user's info        
-        res = db.update('users', where='uid=$id', uemail=email, uavatar=avatar,\
-            udob=dob, vars={'id':user['uid']})
+        res = db.update('users', where='uid=$id', uavatar=avatar, vars={'id':user['uid']})
         # Since info might be changed, get user's latest info again
         user = getUser(None, tkn)
 
-        return {'sucess': True, 'userInfo': getUserInfo(user)}
+        return {'success': True, 'userInfo': getUserInfo(user)}
 
 class ChangePassword:
     def POST(self):
@@ -308,7 +300,7 @@ class ChangePassword:
         pwd = getPwd(usr, npass)     
         res = db.update('users', where='uid=$id', upwd=pwd, vars={'id':user['uid']})
 
-        return {'sucess': True, 'userInfo': getUserInfo(user)}
+        return {'success': True, 'userInfo': getUserInfo(user)}
 
 class GetProfile:
     @json_response
@@ -418,7 +410,7 @@ class DiscoverCapsule:
         if len(retrieved_capsules):
             for capsule in retrieved_capsules:
                 res_capsules.append(getCapsuleInfo(capsule))
-        return {'sucess': True, 'capsules': res_capsules}
+        return {'success': True, 'capsules': res_capsules}
 
 class OpenCapsule:    
     def POST(self):
@@ -491,7 +483,7 @@ class GetCapsuleHistory:
             cid_list.append(cur_cid)
             cur_capsule = db.query("SELECT * FROM capsules WHERE cid = '{}'".format(cur_cid))[0]
             res.append(getCapsuleInfo(cur_capsule))
-        return {'sucess': True, 'hisotry': res}
+        return {'success': True, 'hisotry': res}
 
 class UploadImage:
     def POST(self):

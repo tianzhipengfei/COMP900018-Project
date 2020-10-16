@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -24,7 +25,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.features.account.EditProfile;
@@ -32,6 +32,8 @@ import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.LocationUtil;
+import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.google.android.material.navigation.NavigationView;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,20 +44,23 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class CreateCapsule extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener{
-
+        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener {
+    private boolean mStartRecording = true;
+    boolean mStartPlaying = true;
     private DrawerLayout drawerLayout;
-
+    private RecordAudioUtil recorderUtil;
+    private LocationUtil locationUtil ;
     private int permission = 1;
-    private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
-    private final int REQUEST_PERMISSION_COARSE_LOCATION = 2;
+
+
     JSONObject capsuleInfo = new JSONObject();
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_capsule);
-
+        recorderUtil= new RecordAudioUtil(this);
+        locationUtil= new LocationUtil(this);
         //don't pop up keyboard automatically when entering the screen.
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
@@ -98,67 +103,36 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
-    private boolean checkPermission() {
-        int fineLocation = ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (fineLocation != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_PERMISSION_FINE_LOCATION);
-        }
-        int corseLocation = ActivityCompat.checkSelfPermission
-                (this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (corseLocation != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{
-                            Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_PERMISSION_COARSE_LOCATION);
-        }
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission
-                (this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     private boolean getLocation() throws JSONException {
-        if (checkPermission()) {
 
-            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (location != null) {
-                try {
-                    capsuleInfo.put("lat", location.getLatitude());
-                    capsuleInfo.put("lat", location.getLongitude());
-                    return true;
-                } catch (JSONException e) {
-                    System.out.print("Problems happen during parsing json objects");
-                    return false;
-                }
-            } else {
-                capsuleInfo.put("lat", -29.228890);
-                capsuleInfo.put("lon", 141.544555);
+        Location location = locationUtil.getLocation();
+        if (location != null) {
+            try {
+                capsuleInfo.put("lat", location.getLatitude());
+                capsuleInfo.put("lat", location.getLongitude());
                 return true;
+            } catch (JSONException e) {
+                System.out.print("Problems happen during parsing json objects");
+                return false;
             }
         } else {
-            Toast.makeText(getApplicationContext(), "Need permission", Toast.LENGTH_SHORT)
-                    .show();
-            return false;
+            capsuleInfo.put("lat", 37.4219983);
+            capsuleInfo.put("lon", -122.084);
+            return true;
         }
+
     }
 
     private boolean getOtherInfo() throws JSONException {
         EditText capsuleTitle = findViewById(R.id.create_capsule_title);
         EditText capsuleContent = findViewById(R.id.create_capsule_content);
-        if(capsuleTitle.getText().toString().isEmpty()){
+        if (capsuleTitle.getText().toString().isEmpty()) {
             Toast.makeText(CreateCapsule.this, "Please enter the title",
                     Toast.LENGTH_SHORT).show();
             return false;
         }
-        if(capsuleContent.getText().toString().isEmpty()){
+        if (capsuleContent.getText().toString().isEmpty()) {
             Toast.makeText(CreateCapsule.this, "Please enter the content",
                     Toast.LENGTH_SHORT).show();
             return false;
@@ -176,8 +150,40 @@ public class CreateCapsule extends AppCompatActivity implements
         return true;
     }
 
+    public void recordAudio(View v) {
+        // check permission
+        if (recorderUtil.checkPermission()) {
+            Button recordButton = findViewById(R.id.record_button);
+            recorderUtil.onRecord(mStartRecording);
+            if (mStartRecording) {
+                recordButton.setText("STOP");
+            } else {
+                recordButton.setText("RECORD");
+            }
+            mStartRecording = !mStartRecording;
+        } else {
+            Toast.makeText(getApplicationContext(), "Need permission", Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
+    public void playAudio(View v) {
+        Button playButton = findViewById(R.id.play_button);
+        recorderUtil.onPlay(mStartPlaying);
+        if (mStartPlaying) {
+            playButton.setText("STOP");
+        } else {
+            playButton.setText("PLAY");
+        }
+        mStartPlaying = !mStartPlaying;
+
+
+    }
+
+
+
     public void createCapsule(View v) throws JSONException {
-        if (getLocation()&&getOtherInfo()) {
+        if (getLocation() && getOtherInfo()) {
             //collect info
             ;
             Log.d("CapsuleInfo", capsuleInfo.toString());
@@ -205,10 +211,7 @@ public class CreateCapsule extends AppCompatActivity implements
                                                           CreateCapsule.this,
                                                           "Create Capsule successfully",
                                                           Toast.LENGTH_SHORT).show();
-//                                                  startActivity(new Intent(getApplicationContext(),
-//                                                          HomeActivity.class));
-//                                                  overridePendingTransition(android.R.anim.fade_in,
-//                                                          android.R.anim.fade_out);
+//
                                               }
                                           }
                             );
@@ -219,61 +222,11 @@ public class CreateCapsule extends AppCompatActivity implements
                 }
             });
 
-            /*
-
-            Toast.makeText(getApplicationContext(), capsuleInfo.toString(), Toast.LENGTH_SHORT)
-                    .show();
-
-            // Prepare for connect
-            URL url = new URL("https://www.tianzhipengfei.xin/mobile/createCapsule");
-            byte[] out = capsuleInfo.toString().getBytes(StandardCharsets.UTF_8);
-            int length = out.length;
-
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-            con.setDoOutput(true);
-            con.setFixedLengthStreamingMode(length);
-            con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-
-
-            // response code is OK
-            int responceCode = con.getResponseCode();
-
-            if (responceCode == HttpURLConnection.HTTP_OK) {
-                try (OutputStream os = con.getOutputStream()) {
-                    os.write(out);
-                    os.flush();
-
-                } catch (Exception e) {
-                    Log.d("Exception","Problems happen during transmission");
-
-                }
-
-                // Receive reply
-                InputStream inputStream = con.getInputStream();
-                BufferedReader responseReader = new BufferedReader(
-                        new InputStreamReader(inputStream, "UTF-8"));
-
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = responseReader.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                responseReader.close();
-                Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_SHORT)
-                        .show();
-
-            }else{
-                Toast.makeText(getApplicationContext(), "connection fail", Toast.LENGTH_SHORT)
-                        .show();
-            }*/
-
         }
     }
 
-    public void cancel(View v){
-        startActivity(new Intent(CreateCapsule.this,DiscoverCapsule.class));
+    public void cancel(View v) {
+        startActivity(new Intent(CreateCapsule.this, DiscoverCapsule.class));
     }
 
     @Override
@@ -282,7 +235,7 @@ public class CreateCapsule extends AppCompatActivity implements
 
         int id = item.getItemId();
         Intent intent;
-        switch (id){
+        switch (id) {
             case R.id.discover_capsule_tab:
                 intent = new Intent(CreateCapsule.this, DiscoverCapsule.class);
                 startActivity(intent);
@@ -302,6 +255,12 @@ public class CreateCapsule extends AppCompatActivity implements
 
 
         return false;
+    }
+
+    public void onStop() {
+
+        super.onStop();
+        recorderUtil.onStop();
     }
 
     @Override

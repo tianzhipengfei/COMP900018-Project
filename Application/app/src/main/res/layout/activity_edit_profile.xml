@@ -69,7 +69,7 @@
                 android:layout_height="64dp"
                 android:backgroundTint="#ECECEC"
                 android:letterSpacing="0.09"
-                android:text="Edit Avatar"
+                android:text="Change Avatar"
                 android:textAlignment="viewStart"
                 android:textAllCaps="false"
                 app:icon="@drawable/ic_foward"
@@ -263,10 +263,26 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_profile_dob_Layout" />
 
-
-
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_acct_sign_out"
+            android:layout_width="256dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="77dp"
+            android:layout_marginTop="84dp"
+            android:layout_marginEnd="78dp"
+            android:backgroundTint="@color/colorWarning"
+            android:text="Sign Out"
+            android:textAllCaps="true"
+            app:cornerRadius="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile_btn_change_password"
+            app:layout_constraintVertical_bias="0.003" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view_edit_profile"
         android:layout_width="wrap_content"
