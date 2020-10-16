@@ -215,6 +215,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             if (locationList.size() > 0) {
                 //the last location in the list is the newest
                 Location location = locationList.get(locationList.size() - 1);
+                // default location Googleplex: 37.4219983 -122.084
                 Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
                 mLastLocation = location;
                 if (mCurrLocationMarker != null) {
@@ -362,7 +363,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             this.selectedCapsule = new ArrayList<String>();
             this.allCapsules = new ArrayList<String>();
         } else {
-            HttpUtil.getCapsule(UserUtil.getToken(DiscoverCapsule.this), 100.0, 100.0, 500, 1, new okhttp3.Callback() {
+            HttpUtil.getCapsule(UserUtil.getToken(DiscoverCapsule.this), 37, -122, 500, 2, new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     Log.d("CAPSULE", "***** getCapsule onResponse *****");
