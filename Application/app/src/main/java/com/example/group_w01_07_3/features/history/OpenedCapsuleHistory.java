@@ -100,11 +100,13 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             case R.id.discover_capsule_tab:
                 intent = new Intent(OpenedCapsuleHistory.this, DiscoverCapsule.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.create_capsule_tab:
                 intent = new Intent(OpenedCapsuleHistory.this, CreateCapsule.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.capsule_history_tab:
@@ -113,6 +115,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             case R.id.edit_profile_tab:
                 intent = new Intent(OpenedCapsuleHistory.this, EditProfile.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
                 return true;
         }

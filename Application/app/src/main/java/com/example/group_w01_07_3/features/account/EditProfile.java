@@ -256,16 +256,19 @@ public class EditProfile extends AppCompatActivity implements
             case R.id.discover_capsule_tab:
                 intent = new Intent(EditProfile.this, DiscoverCapsule.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.create_capsule_tab:
                 intent = new Intent(EditProfile.this, CreateCapsule.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.capsule_history_tab:
                 intent = new Intent(EditProfile.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.edit_profile_tab:

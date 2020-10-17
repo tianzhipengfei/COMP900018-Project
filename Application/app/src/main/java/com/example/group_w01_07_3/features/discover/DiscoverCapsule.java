@@ -133,16 +133,19 @@ public class DiscoverCapsule extends AppCompatActivity implements
             case R.id.create_capsule_tab:
                 intent = new Intent(DiscoverCapsule.this, CreateCapsule.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.capsule_history_tab:
                 intent = new Intent(DiscoverCapsule.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.edit_profile_tab:
                 intent = new Intent(DiscoverCapsule.this, EditProfile.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 finish();
                 return true;
         }
