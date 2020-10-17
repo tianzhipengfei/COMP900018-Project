@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.group_w01_07_3">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -15,13 +15,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".features.discover.DiscoverCapsule"></activity>
-        <activity android:name=".features.create.CreateCapsule"/>
-        <activity android:name=".features.history.OpenedCapsuleHistory"/>
+        <activity android:name=".features.discover.DiscoverCapsule" />
+        <activity android:name=".features.discover.Display"/>
+        <activity android:name=".features.create.CreateCapsule" />
+        <activity android:name=".features.history.OpenedCapsuleHistory" />
         <activity android:name=".features.history.DetailedCapsuleHistoryItem" />
-        <activity android:name=".features.account.EditProfile"
-            android:launchMode="singleTask">
-        </activity>
+        <activity
+            android:name=".features.account.EditProfile"
+            android:launchMode="singleTask"></activity>
         <activity android:name=".features.account.ChangePassword" />
         <activity android:name=".SignUp" />
         <activity

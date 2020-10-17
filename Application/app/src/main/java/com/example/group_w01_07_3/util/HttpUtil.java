@@ -3,6 +3,8 @@ package com.example.group_w01_07_3.util;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
+
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -163,6 +165,26 @@ public class HttpUtil {
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);
+    }
+    public void openCapsule(String token,String cid,double lat,double lon,String time,okhttp3.Callback callback){
+        JSONObject json = new JSONObject();
+        try{
+            json.put("tkn",token);
+            json.put("cid",cid);
+            json.put("lat",lat);
+            json.put("lon",lon);
+            json.put("time",time);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
+        Request request=new Request.Builder()
+                .url(HttpUtil.address+"openCapsule")
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
+
     }
 
 }
