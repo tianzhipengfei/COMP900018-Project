@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -72,6 +73,8 @@ public class EditProfile extends AppCompatActivity implements
     private String avatarProfileString;
     private String emailProfileString;
     private String dobProfileString;
+
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +245,16 @@ public class EditProfile extends AppCompatActivity implements
                 builder.show();
             }
         });
+
+        handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                onGetProfile();
+                handler.postDelayed(this, 3000);
+            }
+        };
+        handler.postDelayed(runnable, 3000);
 
     }
 
@@ -521,9 +534,9 @@ public class EditProfile extends AppCompatActivity implements
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onGetProfile();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        onGetProfile();
+//    }
 }
