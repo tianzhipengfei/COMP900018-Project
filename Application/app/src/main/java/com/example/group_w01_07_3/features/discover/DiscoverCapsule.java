@@ -60,13 +60,10 @@ import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener, OnMapReadyCallback {
-
     // capsules information received from database
     private List<String> selectedCapsule;
     private List<String> allCapsules;
-
     private DrawerLayout drawerLayout;
-
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
