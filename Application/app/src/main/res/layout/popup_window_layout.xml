@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="330dp"
+        android:src="@drawable/slidewindow_capsule"
+        android:paddingTop="20dp"/>
+    <TextView
+        android:paddingTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="20dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:alpha="0.8"
+        android:text="        Slide to the end of right to open capsule"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+    <com.example.group_w01_07_3.features.discover.VerificationSeekBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="false"
+        android:max="100"
+        android:maxHeight="45dp"
+        android:minHeight="45dp"
+        android:padding="1dp"
+        android:paddingTop="40dp"
+        android:progress="0"
+        android:progressDrawable="@drawable/bg_seekbar"
+        android:thumb="@drawable/seekbar_thumb"
+        android:thumbOffset="-1dp" />
+</LinearLayout>
