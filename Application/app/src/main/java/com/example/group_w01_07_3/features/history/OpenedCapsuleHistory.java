@@ -100,10 +100,12 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             case R.id.discover_capsule_tab:
                 intent = new Intent(OpenedCapsuleHistory.this, DiscoverCapsule.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.create_capsule_tab:
                 intent = new Intent(OpenedCapsuleHistory.this, CreateCapsule.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.capsule_history_tab:
                 //main activity cannot start itself again
@@ -111,6 +113,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             case R.id.edit_profile_tab:
                 intent = new Intent(OpenedCapsuleHistory.this, EditProfile.class);
                 startActivity(intent);
+                finish();
                 return true;
         }
 

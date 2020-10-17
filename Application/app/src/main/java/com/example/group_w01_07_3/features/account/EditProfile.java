@@ -256,14 +256,17 @@ public class EditProfile extends AppCompatActivity implements
             case R.id.discover_capsule_tab:
                 intent = new Intent(EditProfile.this, DiscoverCapsule.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.create_capsule_tab:
                 intent = new Intent(EditProfile.this, CreateCapsule.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.capsule_history_tab:
                 intent = new Intent(EditProfile.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.edit_profile_tab:
                 //main activity cannot start itself again
