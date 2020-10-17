@@ -74,16 +74,6 @@ public class Display extends AppCompatActivity {
             }
         });
     }
-//    private void audioPlay(View view ){
-//        media.onPlay(startPlay);
-//        if(startPlay){
-//            play.setText("Stop");
-//        }else{
-//            play.setText("Play");
-//        }
-//        startPlay=!startPlay;
-//    }
-
     public void audioPlay(View view) {
         media.onPlay(startPlay);
         if(startPlay){

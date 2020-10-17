@@ -10,6 +10,7 @@
         android:src="@drawable/slidewindow_capsule"
         android:paddingTop="20dp"/>
     <TextView
+        android:id="@+id/hint"
         android:paddingTop="20dp"
         android:layout_gravity="center_horizontal"
         android:paddingBottom="20dp"
@@ -24,6 +25,7 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         android:layout_margin="10dp"
         android:clickable="false"
         android:max="100"
@@ -35,4 +37,10 @@
         android:progressDrawable="@drawable/bg_seekbar"
         android:thumb="@drawable/seekbar_thumb"
         android:thumbOffset="-1dp" />
+    <ImageView
+        android:id="@+id/tap_me"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/popup_tapbutton"/>
 </LinearLayout>
