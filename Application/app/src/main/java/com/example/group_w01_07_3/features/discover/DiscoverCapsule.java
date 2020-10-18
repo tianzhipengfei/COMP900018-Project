@@ -20,6 +20,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.group_w01_07_3.util.HttpUtil;
@@ -111,6 +113,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView navigationView = findViewById(R.id.nav_view_discover);
         navigationView.getMenu().getItem(0).setChecked(true); //setChecked myself
         navigationView.setNavigationItemSelectedListener(this);
+
+        //the logic to find the header, then update it
+        //TODO: Automatically retrieve avatar and username, then set it back to the header
+        View headerview = navigationView.getHeaderView(0);
+        TextView headerUsername = headerview.findViewById(R.id.header_username);
+        headerUsername.setText("blablabla");
+        ImageView headerAvatar = headerview.findViewById(R.id.header_avatar);
+        headerAvatar.setImageResource(R.drawable.camera);
 
         //get current Location in GoogleMap using FusedLocationProviderClient
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
