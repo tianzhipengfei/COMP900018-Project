@@ -1,4 +1,7 @@
 package com.example.group_w01_07_3.features.discover;
+import android.app.Activity;
+import android.content.Intent;
+import android.location.Location;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,16 +15,38 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.history.OpenedCapsule;
+import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.LocationUtil;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.Random;
 
-public class popUpWindow extends AppCompatActivity {
+import okhttp3.Call;
+import okhttp3.Response;
+
+public class popUpWindow {
     private PopupWindow popupWindow;
     //combine with discover capsule class later
-    public void createWindow(View view) {
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(LAYOUT_INFLATER_SERVICE);
+    public void createWindow(final View view, final JSONObject capsuleInfo) throws JSONException {
+        LocationUtil locationUtil=new LocationUtil((AppCompatActivity) view.getContext());
+        Location location=locationUtil.getLocation();
+        final JSONObject request=new JSONObject();
+        request.put("lat",location.getLatitude());
+        request.put("lon",location.getLongitude());
+        request.put("time", Calendar.getInstance().getTime());
+        request.put("tkn",capsuleInfo.get("tkn"));
+        request.put("cid",capsuleInfo.get("cid"));
+        //add two additional information:tkn and cid after the discovery activity has been finished.
+        LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
         final View popupView = inflater.inflate(R.layout.popup_window_layout, null);
+        Intent intent=new Intent(view.getContext(), OpenedCapsule.class);
+        view.getContext().startActivity(intent);
         TextView hint = (TextView) popupView.findViewById(R.id.hint);
         final boolean focusable = true;
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -51,23 +76,33 @@ public class popUpWindow extends AppCompatActivity {
                     public void onStartTrackingTouch(SeekBar seekBar) {
                         //Toast.makeText(popupView.getContext(),"seekbar touch start",Toast.LENGTH_SHORT).show();
                     }
-
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
                         if (seekBar.getProgress() < 100) {
                             seekBar.setProgress(0);
                         } else {
+                            Toast.makeText(popupView.getContext(), "Congraduation! You have been success! Wait for open", Toast.LENGTH_LONG).show();
                             popupWindow.dismiss();
-                            System.out.println(popupWindow);
-                            int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-                            int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                            LayoutInflater inflater = (LayoutInflater)
-                                    getSystemService(LAYOUT_INFLATER_SERVICE);
-                            //asychronize request, post
-                            Toast.makeText(popupView.getContext(), "Congraduation! You have been success!", Toast.LENGTH_SHORT).show();
-                            //new activity
+                            HttpUtil.openCapsule(request,new okhttp3.Callback(){
+                                @Override
+                                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                    try {
+                                        JSONObject replyJSON=new JSONObject(response.body().string());
+                                        if (replyJSON.has("Success")){
+                                            Intent intent=new Intent(view.getContext(), Display.class);
+                                            intent.putExtra("capsule",capsuleInfo.toString());
+                                            view.getContext().startActivity(intent);
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                @Override
+                                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                    Toast.makeText(view.getContext(),"The connection fail",Toast.LENGTH_SHORT);
+                                }
+                            });
                         }
-                        Toast.makeText(popupView.getContext(), "seekbar touch stopped", Toast.LENGTH_SHORT).show();
                     }
                 });
                 break;
@@ -79,14 +114,35 @@ public class popUpWindow extends AppCompatActivity {
                 img.setVisibility(View.VISIBLE);
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view) {
+                    public void onClick(final View view) {
+                        Toast.makeText(popupView.getContext(), "Click successfully!You have been success! Wait for open", Toast.LENGTH_SHORT).show();
                         popupWindow.dismiss();
-                        Toast.makeText(popupView.getContext(), "Click successfully!", Toast.LENGTH_SHORT).show();
+                        HttpUtil.openCapsule(request,new okhttp3.Callback(){
+                            @Override
+                            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                try {
+                                    JSONObject replyJSON=new JSONObject(response.body().string());
+                                    if (replyJSON.has("Success")){
+                                        Intent intent=new Intent(view.getContext(), Display.class);
+                                        intent.putExtra("capsule",capsuleInfo.toString());
+                                        view.getContext().startActivity(intent);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            @Override
+                            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                Toast.makeText(view.getContext(),"The connection fail",Toast.LENGTH_SHORT);
+                            }
+                        });
+
+
                     }
                 });
                 break;
             case 2:
-                Toast.makeText(getApplicationContext(), "Wait for shake listener", Toast.LENGTH_SHORT);
+                Toast.makeText(view.getContext(), "Wait for shake listener", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

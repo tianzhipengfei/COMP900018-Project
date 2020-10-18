@@ -186,19 +186,9 @@ public class HttpUtil {
                 .build();
         client.newCall(request).enqueue(callback);
     }
-    public void openCapsule(String token,String cid,double lat,double lon,String time,okhttp3.Callback callback){
-        JSONObject json = new JSONObject();
-        try{
-            json.put("tkn",token);
-            json.put("cid",cid);
-            json.put("lat",lat);
-            json.put("lon",lon);
-            json.put("time",time);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public static void openCapsule(JSONObject requestInfo,okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
-        RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
+        RequestBody requestBody = RequestBody.create(requestInfo.toString(), HttpUtil.JSON);
         Request request=new Request.Builder()
                 .url(HttpUtil.address+"openCapsule")
                 .post(requestBody)
