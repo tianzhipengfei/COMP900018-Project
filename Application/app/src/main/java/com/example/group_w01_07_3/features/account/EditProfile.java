@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +31,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.SignIn;
-import com.example.group_w01_07_3.SignUp;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
@@ -435,7 +433,7 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  Toast.makeText(EditProfile.this, "Get profile successfully", Toast.LENGTH_SHORT).show();
+                                                  // Toast.makeText(EditProfile.this, "Get profile successfully", Toast.LENGTH_SHORT).show();
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
                                                   if (!(avatarProfileString == null)) {
                                                       Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
@@ -534,9 +532,10 @@ public class EditProfile extends AppCompatActivity implements
         });
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        onGetProfile();
-//    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
+    }
+
 }
