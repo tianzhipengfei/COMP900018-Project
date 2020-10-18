@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -72,6 +73,8 @@ public class EditProfile extends AppCompatActivity implements
     private String avatarProfileString;
     private String emailProfileString;
     private String dobProfileString;
+
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,6 +246,16 @@ public class EditProfile extends AppCompatActivity implements
             }
         });
 
+        handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                onGetProfile();
+                handler.postDelayed(this, 3000);
+            }
+        };
+        handler.postDelayed(runnable, 3000);
+
     }
 
     @Override
@@ -256,14 +269,20 @@ public class EditProfile extends AppCompatActivity implements
             case R.id.discover_capsule_tab:
                 intent = new Intent(EditProfile.this, DiscoverCapsule.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                finish();
                 return true;
             case R.id.create_capsule_tab:
                 intent = new Intent(EditProfile.this, CreateCapsule.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                finish();
                 return true;
             case R.id.capsule_history_tab:
                 intent = new Intent(EditProfile.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                finish();
                 return true;
             case R.id.edit_profile_tab:
                 //main activity cannot start itself again
@@ -515,9 +534,9 @@ public class EditProfile extends AppCompatActivity implements
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        onGetProfile();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        onGetProfile();
+//    }
 }
