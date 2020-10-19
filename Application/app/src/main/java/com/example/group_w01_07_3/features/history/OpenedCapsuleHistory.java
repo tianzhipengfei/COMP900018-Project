@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.account.EditProfile;
@@ -36,6 +38,8 @@ import okhttp3.Response;
 
 public class OpenedCapsuleHistory extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener{
+
+    boolean doubleBackToExitPressedOnce = false;
 
     private DrawerLayout drawerLayout;
     View headerview;
@@ -178,6 +182,26 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 }
             });
         }
+    }
+
+    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click again again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 
 }

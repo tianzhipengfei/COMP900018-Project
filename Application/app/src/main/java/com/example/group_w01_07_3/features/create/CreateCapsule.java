@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,9 @@ import okhttp3.Response;
 
 public class CreateCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
+
+    boolean doubleBackToExitPressedOnce = false;
+
     private boolean mStartRecording = true;
     boolean mStartPlaying = true;
 
@@ -313,5 +317,25 @@ public class CreateCapsule extends AppCompatActivity implements
 
         super.onStop();
         recorderUtil.onStop();
+    }
+
+    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click again again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 }

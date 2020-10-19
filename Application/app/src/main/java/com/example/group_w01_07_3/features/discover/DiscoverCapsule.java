@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
@@ -64,6 +65,8 @@ import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+
+    boolean doubleBackToExitPressedOnce = false;
 
     // capsules information received from database
     private List<String> selectedCapsule;
@@ -431,5 +434,26 @@ public class DiscoverCapsule extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         onDiscoverCapsule();
+    }
+
+
+    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click again again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 }
