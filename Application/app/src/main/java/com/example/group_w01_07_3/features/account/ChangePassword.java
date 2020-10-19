@@ -176,6 +176,7 @@ public class ChangePassword extends AppCompatActivity {
                                 public void run() {
                                     Toast.makeText(ChangePassword.this, "Change password successfully", Toast.LENGTH_SHORT).show();
                                     finish();
+                                    overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                                 }
                             });
                         } else if (responseJSON.has("error")) {

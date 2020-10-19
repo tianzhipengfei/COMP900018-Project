@@ -207,6 +207,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
+                                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                                 }
                                             });
                                         } else if (responseJSON.has("error")) {
@@ -220,6 +221,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
+                                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                                 }
                                             });
                                         } else {
@@ -232,6 +234,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
+                                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                                 }
                                             });
                                         }
