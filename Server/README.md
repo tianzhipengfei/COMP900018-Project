@@ -60,21 +60,18 @@
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
-### 4. ModifyProfile
-* URL: https://www.tianzhipengfei.xin/mobile/modifyProfile
+### 4. ChangeAvatar
+* URL: https://www.tianzhipengfei.xin/mobile/changeAvatar
 * Method: POST
 * Parameters:
 
 | Property | Type | Required | Description |
 |---|---|---|---|
 | tkn | string | yes | token |
-| email | string | yes | email |
-| dob | string | yes | date of birth |
 | avatar | string | yes | avatar |
 * Returns:
 	* Success: {'sucess': True, 'userInfo': {'uusr': 'test', 'uavatar': 'test_avatar', 'uemail': 'test@qq.com', 'udob': '2020-01-01'}}
 	* Fail:
-		* if new email exists, return {'error': 'emailExist - email already exist'}
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
@@ -144,7 +141,7 @@
 | max_distance | int | no | maximum distance allowed to discover capsules (default 5) |
 | num_capsules | int | no | maximum number of capsules can be found (default 20) |
 * Returns:
-	* Success: {"sucess": true, "capsules": [{"cid": 2, "cusr": "test1", "ccontent": "Test content1", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}, {"cid": 3, "cusr": "test1", "ccontent": "Test content2", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 0, "cavatar": null}]}
+	* Success: {"success": true, "capsules": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "ctitle": "Test Title", "cimage": null, "caudio": null, "ccount": 0, "clat": -37.813629, "clon": 144.963058, "cavatar": null}, {"cid": 2, "cusr": "test", "ccontent": "Test content1", "ctitle": "Test Title1", "cimage": null, "caudio": null, "ccount": 0, "clat": -37.813629, "clon": 144.963058, "cavatar": null}]}
 	* Fail:
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
@@ -162,7 +159,8 @@
 | lon | double | yes | longitude |
 | time | string | yes | when open the capsule |capsules can be found (default 20) |
 * Returns:
-	* Success: {'success': True, 'capsule': {'cid': 1, 'cusr': 'test', 'ccontent': 'test content', 'ctitle': 'test title', 'cimage': None, 'caudio': None, 'ccount': 2, 'cavatar': None}}		* Fail:
+	* Success: {'success': True}		
+	* Fail:
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()
 
@@ -176,7 +174,7 @@
 |---|---|---|---|
 | tkn | string | yes | token |
 * Returns:
-	* Success: {"sucess": true, "hisotry": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 2, "cavatar": "test_avatar"}, {"cid": 2, "cusr": "test1", "ccontent": "Test content1", "ctitle": "Test title", "cimage": null, "caudio": null, "ccount": 2, "cavatar": null}]}
+	* Success: {"sucess": true, "hisotry": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "ctitle": "Test Title", "cimage": null, "caudio": null, "ccount": 0, "clat": -37.813629, "clon": 144.963058, "cavatar": null}, {"cid": 2, "cusr": "test", "ccontent": "Test content1", "ctitle": "Test Title1", "cimage": null, "caudio": null, "ccount": 0, "clat": -37.813629, "clon": 144.963058, "cavatar": null}]}
 	* Fail:
 		* if user has not logged in, return {'error':'Not logged in'}
 		* if form is invalid,return web.badrequest()

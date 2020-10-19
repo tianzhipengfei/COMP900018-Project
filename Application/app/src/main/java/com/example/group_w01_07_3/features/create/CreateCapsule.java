@@ -8,13 +8,16 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Console;
@@ -37,6 +40,7 @@ import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -46,10 +50,18 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class CreateCapsule extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener {
+        NavigationView.OnNavigationItemSelectedListener {
+
+    boolean doubleBackToExitPressedOnce = false;
+
     private boolean mStartRecording = true;
     boolean mStartPlaying = true;
+
     private DrawerLayout drawerLayout;
+    View headerview;
+    TextView headerUsername;
+    private String usernameProfileString;
+
     private RecordAudioUtil recorderUtil;
     private LocationUtil locationUtil;
     private int permission = 1;
@@ -90,11 +102,36 @@ public class CreateCapsule extends AppCompatActivity implements
         navigationView.getMenu().getItem(1).setChecked(true);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //the logic to find the header, then update the username from server user profile
+        headerview = navigationView.getHeaderView(0);
+        headerUsername = headerview.findViewById(R.id.header_username);
 
+        updateHeaderUsername();
+    }
+
+    //must inflate menu item, otherwise won't show
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.create_capsule_menu, menu);
+        return true;
+    }
+
+    //Implement the onclicked listener for the create button
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.create_capsule_appbar_create:
+                Toast.makeText(CreateCapsule.this, "Create button clicked", Toast.LENGTH_SHORT).show();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void whetherPublic(View v) {
-        Switch permiSwitch = (Switch) findViewById(R.id.create_capsule_permission);
+        SwitchMaterial permiSwitch = (SwitchMaterial) findViewById(R.id.create_capsule_permission);
         if (permiSwitch.isChecked()) {
             permission = 0;
         } else {
@@ -249,6 +286,8 @@ public class CreateCapsule extends AppCompatActivity implements
             case R.id.discover_capsule_tab:
                 intent = new Intent(CreateCapsule.this, DiscoverCapsule.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                finish();
                 return true;
             case R.id.create_capsule_tab:
                 //main activity cannot start itself again
@@ -256,15 +295,54 @@ public class CreateCapsule extends AppCompatActivity implements
             case R.id.capsule_history_tab:
                 intent = new Intent(CreateCapsule.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                finish();
                 return true;
             case R.id.edit_profile_tab:
                 intent = new Intent(CreateCapsule.this, EditProfile.class);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                finish();
                 return true;
         }
 
 
         return false;
+    }
+
+    private void updateHeaderUsername(){
+        if(!UserUtil.getToken(CreateCapsule.this).isEmpty()){
+            HttpUtil.getProfile(UserUtil.getToken(CreateCapsule.this), new okhttp3.Callback() {
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.d("PROFILE", "***** getProfile onResponse *****");
+                    String responseData = response.body().string();
+                    Log.d("PROFILE", "getProfile: " + responseData);
+                    try {
+                        JSONObject responseJSON = new JSONObject(responseData);
+                        if (responseJSON.has("success")) {
+                            String status = responseJSON.getString("success");
+                            Log.d("PROFILE", "getProfile success: " + status);
+                            String userInfo = responseJSON.getString("userInfo");
+                            JSONObject userInfoJSON = new JSONObject(userInfo);
+                            usernameProfileString = userInfoJSON.getString("uusr");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    headerUsername.setText(usernameProfileString);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     public void onStop() {
@@ -273,23 +351,24 @@ public class CreateCapsule extends AppCompatActivity implements
         recorderUtil.onStop();
     }
 
+    //double backpressed to exit app
+    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
     @Override
-    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
 
-    }
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
 
-    @Override
-    public void onDrawerOpened(@NonNull View drawerView) {
+        new Handler().postDelayed(new Runnable() {
 
-    }
-
-    @Override
-    public void onDrawerClosed(@NonNull View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 }

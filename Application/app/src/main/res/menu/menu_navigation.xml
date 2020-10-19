@@ -2,41 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigationView">
-
-<!--    <group android:checkableBehavior="single">-->
-
-<!--        <item-->
-<!--            android:id="@+id/discover"-->
-<!--            android:title="Discover"-->
-<!--            android:icon="@drawable/ic_baseline_explore_24"/>-->
-<!--        <item-->
-<!--            android:id="@+id/capsule"-->
-<!--            android:title="Capsule"-->
-<!--            android:icon="@drawable/ic_baseline_add_circle_24"/>-->
-<!--        <item-->
-<!--            android:id="@+id/account"-->
-<!--            android:title="Account"-->
-<!--            android:icon="@drawable/ic_baseline_account_circle_24"/>-->
-
-<!--    </group>-->
     <group android:checkableBehavior="single">
         <item
 
             android:id="@+id/discover_capsule_tab"
             android:title="Discover"
-            android:icon="@drawable/ic_baseline_explore_24"/>
+            android:icon="@drawable/slidemenu_discover"/>
         <item
             android:id="@+id/create_capsule_tab"
             android:title="Create Capsule"
-            android:icon="@drawable/ic_baseline_add_circle_24"/>
+            android:icon="@drawable/slidemenu_add"/>
         <item
             android:id="@+id/capsule_history_tab"
             android:title="Opened Capsule History"
-            android:icon="@drawable/ic_history"/>
+            android:icon="@drawable/slidemenu_history"/>
         <item
             android:id="@+id/edit_profile_tab"
             android:title="Account"
-            android:icon="@drawable/ic_baseline_account_circle_24"/>
+            android:icon="@drawable/slidemenu_account"/>
 
     </group>
 
