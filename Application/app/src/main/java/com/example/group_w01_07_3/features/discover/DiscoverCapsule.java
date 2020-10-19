@@ -272,6 +272,52 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     updateCameraFlag = false;
                 }
             }
+
+            if (capsuleInfo.length() == 0) {
+                Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
+                Log.d("CAPSULE", "***** No token to get capsule *****");
+                Log.i("CAPSULE", capsuleInfo+"");
+//            this.selectedCapsule = new ArrayList<String>();
+//            this.allCapsules = new ArrayList<String>();
+            } else {
+                try {
+                    String token = UserUtil.getToken(DiscoverCapsule.this);
+                    Log.i(" CAPSULE",  "token:"+token);
+                    HttpUtil.getCapsule(token, capsuleInfo, new okhttp3.Callback() {
+                        @Override
+                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                            Log.d("CAPSULE", "***** getCapsule onResponse *****");
+                            String responseData = response.body().string();
+//                            Log.i("CAPSULE", "capsuleInfo.toString():"+capsuleInfo.toString());
+                            Log.i("CAPSULE", "responseData:"+responseData);
+//                            Log.i(" CAPSULE",  "responseData:"+responseData.getClass().getName());  // java.lang.String
+
+                                try {
+                                    // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
+                                    JSONObject responseJSON = new JSONObject(responseData);
+                                    Log.i(" CAPSULE",  "responseJSON:"+responseJSON.getClass().getName());  // java.lang.String
+                                    if (responseJSON.has("success")) {
+                                        String status = responseJSON.getString("success");
+                                        Log.d("CAPSULE", "getCapsule success: " + status);
+
+                                        String capsulesInfo = responseJSON.getString("capsules");
+                                        JSONObject capsulesInfoJSON = new JSONObject(capsulesInfo);
+                                        Log.d("CAPSULE", "capsulesInfoJSON: " + capsulesInfoJSON);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                        }
+                        @Override
+                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                            e.printStackTrace();
+                            Log.d("CAPSULE", "onFailure()");
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     };
 
@@ -330,6 +376,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     // if permission was denied, disable relevant functionality
                     Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
                 }
+
                 return;
             }
         }
@@ -386,53 +433,54 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 }*/
 
-    private void onDiscoverCapsule() throws JSONException {
-        if (capsuleInfo.length() == 0) {
-            Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
-            Log.d("CAPSULE", "***** No token to get capsule *****");
-            Log.i("CAPSULE", capsuleInfo+"");
-//            this.selectedCapsule = new ArrayList<String>();
-//            this.allCapsules = new ArrayList<String>();
-        } else {
-            HttpUtil.getCapsule(capsuleInfo, new okhttp3.Callback() {
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.d("CAPSULE", "***** getCapsule onResponse *****");
-                    String responseData = response.body().string();
-                    // Todo: responseData - 400 Bad request
-                    Log.d("CAPSULE", "getCapsule: " + responseData);
-                    Log.i("CAPSULE", capsuleInfo+"");
-//                    try {
-//                        // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
-//                        JSONObject responseJSON = new JSONObject(responseData);
-//                        if (responseJSON.has("success")) {
-//                            String status = responseJSON.getString("success");
-//                            Log.d("CAPSULE", "getCapsule success: " + status);
-//                            String capsulesInfo = responseJSON.getString("capsules");
-//                            JSONObject capsulesInfoJSON = new JSONObject(capsulesInfo);
-//                            Log.d("CAPSULE", "capsulesInfo: " + capsulesInfo);
-//                        }
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-                }
-
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    e.printStackTrace();
-                    Log.d("CAPSULE", "onFailure()");
-                }
-            });
-        }
-    }
+//    private void onDiscoverCapsule() throws JSONException {
+//        if (capsuleInfo.length() == 0) {
+//            Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
+//            Log.d("CAPSULE", "***** No token to get capsule *****");
+//            Log.i("CAPSULE", capsuleInfo+"");
+////            this.selectedCapsule = new ArrayList<String>();
+////            this.allCapsules = new ArrayList<String>();
+//        } else {
+//            HttpUtil.getCapsule(capsuleInfo, new okhttp3.Callback() {
+//            @Override
+//            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+//                Log.d("CAPSULE", "***** getCapsule onResponse *****");
+//                String responseData = response.body().string();
+//
+//                Log.d("CAPSULE", "getCapsule: " + responseData);
+//                Log.i("CAPSULE", capsuleInfo+"");
+//                Log.i(" capsuleInfo.toString()",  capsuleInfo.toString());
+////                    try {
+////                        // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
+////                        JSONObject responseJSON = new JSONObject(responseData);
+////                        if (responseJSON.has("success")) {
+////                            String status = responseJSON.getString("success");
+////                            Log.d("CAPSULE", "getCapsule success: " + status);
+////                            String capsulesInfo = responseJSON.getString("capsules");
+////                            JSONObject capsulesInfoJSON = new JSONObject(capsulesInfo);
+////                            Log.d("CAPSULE", "capsulesInfo: " + capsulesInfo);
+////                        }
+////                    } catch (JSONException e) {
+////                        e.printStackTrace();
+////                    }
+//            }
+//
+//            @Override
+//            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+//                e.printStackTrace();
+//                Log.d("CAPSULE", "onFailure()");
+//            }
+//        });
+//        }
+//    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        try {
-            onDiscoverCapsule();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            onDiscoverCapsule();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
     }
 }
