@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 
 public class LocationUtil {
     private AppCompatActivity context;
+
     LocationManager lm;
     private final int REQUEST_PERMISSION_COARSE_LOCATION = 2;
     private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
@@ -51,6 +53,7 @@ public class LocationUtil {
 
     public Location getLocation() {
         if (checkLocationPermission()) {
+
             Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             return location;
         }else{
