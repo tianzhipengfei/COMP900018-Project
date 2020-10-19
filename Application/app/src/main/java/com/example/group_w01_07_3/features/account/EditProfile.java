@@ -52,10 +52,17 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class EditProfile extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener {
+        NavigationView.OnNavigationItemSelectedListener {
+
+    boolean doubleBackToExitPressedOnce = false;
+
     private Toolbar mToolbar;
 
     private DrawerLayout drawerLayout;
+    View headerview;
+    TextView headerUsername;
+
+
     private BottomDialog bottomDialog;
 
     private ImageView avatarDisplay;
@@ -111,7 +118,7 @@ public class EditProfile extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar_edit_profile);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("Profile");
+        getSupportActionBar().setTitle("User Profile");
 
         drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
 
@@ -125,6 +132,12 @@ public class EditProfile extends AppCompatActivity implements
         NavigationView navigationView = findViewById(R.id.nav_view_edit_profile);
         navigationView.getMenu().getItem(3).setChecked(true); //setChecked myself
         navigationView.setNavigationItemSelectedListener(this);
+
+        //the logic to find the header, then update the username from server user profile
+        headerview = navigationView.getHeaderView(0);
+        headerUsername = headerview.findViewById(R.id.header_username);
+
+        updateHeaderUsername();
 
 
         Button changePasswordBtn = (Button) findViewById(R.id.edit_profile_btn_change_password);
@@ -249,10 +262,10 @@ public class EditProfile extends AppCompatActivity implements
             @Override
             public void run() {
                 onGetProfile();
-                handler.postDelayed(this, 3000);
+                handler.postDelayed(this, 1500);
             }
         };
-        handler.postDelayed(runnable, 3000);
+        handler.postDelayed(runnable, 10);
 
     }
 
@@ -289,24 +302,39 @@ public class EditProfile extends AppCompatActivity implements
         return false;
     }
 
-    @Override
-    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
-    }
-
-    @Override
-    public void onDrawerOpened(@NonNull View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerClosed(@NonNull View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-
+    private void updateHeaderUsername(){
+        if(!UserUtil.getToken(EditProfile.this).isEmpty()){
+            HttpUtil.getProfile(UserUtil.getToken(EditProfile.this), new okhttp3.Callback() {
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.d("PROFILE", "***** getProfile onResponse *****");
+                    String responseData = response.body().string();
+                    Log.d("PROFILE", "getProfile: " + responseData);
+                    try {
+                        JSONObject responseJSON = new JSONObject(responseData);
+                        if (responseJSON.has("success")) {
+                            String status = responseJSON.getString("success");
+                            Log.d("PROFILE", "getProfile success: " + status);
+                            String userInfo = responseJSON.getString("userInfo");
+                            JSONObject userInfoJSON = new JSONObject(userInfo);
+                            usernameProfileString = userInfoJSON.getString("uusr");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    headerUsername.setText(usernameProfileString);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     @Override
@@ -437,7 +465,13 @@ public class EditProfile extends AppCompatActivity implements
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
                                                   if (!(avatarProfileString == "null")) {
                                                       Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
-                                                      avatarDisplay.setImageBitmap(ImageUtil.getHttpImage(avatarProfileString));
+                                                      Bitmap bitmap = ImageUtil.getHttpImage(avatarProfileString);
+                                                      //TODO: 请自行解决在bitmap完全下载好后再来的功能，这样子就不是一个空的bitmap
+                                                      if (bitmap != null){
+                                                          Log.d("PROFILE", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                                                      }
+//                                                      Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap,  56 ,56, true);//this bitmap2 you can use only for display
+                                                      avatarDisplay.setImageBitmap(bitmap);
                                                   } else {
                                                       Log.d("PROFILE", "avatarProfileString: (else)");
                                                       avatarDisplay.setImageResource(R.drawable.avatar_sample);
@@ -536,6 +570,27 @@ public class EditProfile extends AppCompatActivity implements
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
+    }
+
+    //double backpressed to exit app
+    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 
 }

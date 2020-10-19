@@ -210,19 +210,6 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
-        TextView skipToAccountButton = (TextView) findViewById(R.id.text_skip_to_account);
-        skipToAccountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SignIn.this, DiscoverCapsule.class);
-                //kill SinIn Activity
-                //不用再kIll了,现在sign in是singleInstance(manifest-->launchmode--》singleInstance)
-                finish();
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
-        });
-
         ImageView sideAddShape = (ImageView) findViewById(R.id.sign_in_side_add);
         sideAddShape.setOnClickListener(new View.OnClickListener(){
             @Override
