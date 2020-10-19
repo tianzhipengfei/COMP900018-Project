@@ -56,6 +56,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Dictionary;
 import java.util.List;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -63,9 +64,11 @@ import okhttp3.Response;
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener, OnMapReadyCallback {
 
-    // capsules information received from database
-    private List<String> selectedCapsule;
-    private List<String> allCapsules;
+    // receive capsule information through HTTP GET request
+    JSONArray allCapsules = new JSONArray();
+    JSONObject selectedCapsule = new JSONObject();
+    // request capsule
+    private JSONObject capsuleInfo = new JSONObject();
 
     private DrawerLayout drawerLayout;
 
@@ -88,9 +91,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private int capsuleNum = 20;
     // maximum distance to discover (unit: km)
     private double discoverCapsuleRange = 3;
-
-    // will be used for HTTP GET request
-    JSONObject capsuleInfo = new JSONObject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,16 +122,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mapFrag.getMapAsync(this);
 
         try {
-            //for testing
-            capsuleInfo.put("tkn", "59c43e5670cfd24da97c607a5759aa33d88fdbc5");
-
-            //Todo: change to current location
-            capsuleInfo.put("lat", 37.4219983);
-            capsuleInfo.put("lon", -122.084);
             capsuleInfo.put("max_distance", 1000);
             capsuleInfo.put("num_capsules", 3);
-
-            Log.i("capsuleInfo", capsuleInfo+"");
         } catch (JSONException e) {
             System.out.print("Problems happen during parsing json objects");
         }
@@ -151,25 +143,24 @@ public class DiscoverCapsule extends AppCompatActivity implements
             case R.id.create_capsule_tab:
                 intent = new Intent(DiscoverCapsule.this, CreateCapsule.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.capsule_history_tab:
                 intent = new Intent(DiscoverCapsule.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.edit_profile_tab:
                 intent = new Intent(DiscoverCapsule.this, EditProfile.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
                 return true;
         }
         return false;
     }
-
 
     @Override
     public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
@@ -218,16 +209,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // if location permission is already granted
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 mGoogleMap.setMyLocationEnabled(true);
-                Log.i("if-else", "android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M");
+//                Log.i("MGOOGLEMAP:", "android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M");
             } else {
                 // request location permission
                 checkLocationPermission();
-                Log.i("if-else", "checkLocationPermission");
+                Log.i("MGOOGLEMAP:", "checkLocationPermission");
             }
         } else {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
-            Log.i("if-else", "requestLocationUpdates");
+//            Log.i("MGOOGLEMAP:", "requestLocationUpdates");
         }
     }
 
@@ -246,11 +237,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     mCurrLocationMarker.remove();
                 }
 
-//                // Todo: add log, lat variables
-//                double lon = location.getLongitude();
-//                double lat = location.getLatitude();
-
-
                 //place current location marker
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 MarkerOptions markerOptions = new MarkerOptions();
@@ -259,15 +245,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
-                if(checkForRequest(location.getLatitude(), location.getLongitude())){
+                if (checkForRequest(location.getLatitude(), location.getLongitude())) {
                     // TODO: send request
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
                     updateCameraFlag = true;
+                    try {
+                        capsuleInfo.put("lat", lastRequestLat);
+                        capsuleInfo.put("lon", lastRequestLon);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 //move map camera
-                if(updateCameraFlag){
+                if (updateCameraFlag) {
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                     updateCameraFlag = false;
                 }
@@ -276,38 +268,38 @@ public class DiscoverCapsule extends AppCompatActivity implements
             if (capsuleInfo.length() == 0) {
                 Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
                 Log.d("CAPSULE", "***** No token to get capsule *****");
-                Log.i("CAPSULE", capsuleInfo+"");
-//            this.selectedCapsule = new ArrayList<String>();
-//            this.allCapsules = new ArrayList<String>();
+                allCapsules = new JSONArray();
+                selectedCapsule = new JSONObject();
             } else {
                 try {
                     String token = UserUtil.getToken(DiscoverCapsule.this);
-                    Log.i(" CAPSULE",  "token:"+token);
+                    Log.i(" CAPSULE", "token:" + token);
+                    Log.i(" CAPSULE", "capsuleInfo:" + capsuleInfo);
                     HttpUtil.getCapsule(token, capsuleInfo, new okhttp3.Callback() {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             Log.d("CAPSULE", "***** getCapsule onResponse *****");
                             String responseData = response.body().string();
-//                            Log.i("CAPSULE", "capsuleInfo.toString():"+capsuleInfo.toString());
-                            Log.i("CAPSULE", "responseData:"+responseData);
-//                            Log.i(" CAPSULE",  "responseData:"+responseData.getClass().getName());  // java.lang.String
+                            // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
+                            Log.i("CAPSULE", "responseData:" + responseData);
 
-                                try {
-                                    // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
-                                    JSONObject responseJSON = new JSONObject(responseData);
-                                    Log.i(" CAPSULE",  "responseJSON:"+responseJSON.getClass().getName());  // java.lang.String
-                                    if (responseJSON.has("success")) {
-                                        String status = responseJSON.getString("success");
-                                        Log.d("CAPSULE", "getCapsule success: " + status);
-
-                                        String capsulesInfo = responseJSON.getString("capsules");
-                                        JSONObject capsulesInfoJSON = new JSONObject(capsulesInfo);
-                                        Log.d("CAPSULE", "capsulesInfoJSON: " + capsulesInfoJSON);
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                            try {
+                                JSONObject responseJSON = new JSONObject(responseData); //.getClass().getName() java.lang.String
+                                if (responseJSON.has("success")) {
+                                    String status = responseJSON.getString("success");
+                                    Log.d("CAPSULE", "getCapsule success: " + status);
+                                    String capsulesInfo = responseJSON.getString("capsules");
+                                    allCapsules = new JSONArray(capsulesInfo);
+                                    Log.d("CAPSULE", "allCapsules: " + allCapsules);
+                                    Random rand = new Random();
+                                    selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
+                                    Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
+
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                             e.printStackTrace();
@@ -381,12 +373,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         }
     }
-// code modified from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
+    // code modified from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
 
-    private boolean checkForRequest(double curLat, double curLon){
-        if(lastRequestLat == 360 && lastRequestLon == 360){
+    private boolean checkForRequest(double curLat, double curLon) {
+        if (lastRequestLat == 360 && lastRequestLon == 360) {
             return true;
-        } else if(getDistance(curLat, curLon, lastRequestLat, lastRequestLon) > distanceThresholdToRequest){
+        } else if (getDistance(curLat, curLon, lastRequestLat, lastRequestLon) > distanceThresholdToRequest) {
             System.out.println(getDistance(curLat, curLon, lastRequestLat, lastRequestLon));
             return true;
         }
@@ -394,11 +386,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     // Calculate distance by latitude, and longitude (unit: Kilometers)
-    private double getDistance(double lat1, double lon1, double lat2, double lon2){
+    private double getDistance(double lat1, double lon1, double lat2, double lon2) {
         if ((lat1 == lat2) && (lon1 == lon2)) {
             return 0;
-        }
-        else {
+        } else {
             double theta = lon1 - lon2;
             double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) +
                     Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
@@ -409,6 +400,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+}
 /* HTTP GET Method
  Returns
     {"sucess": true,
@@ -437,32 +433,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //        if (capsuleInfo.length() == 0) {
 //            Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
 //            Log.d("CAPSULE", "***** No token to get capsule *****");
-//            Log.i("CAPSULE", capsuleInfo+"");
-////            this.selectedCapsule = new ArrayList<String>();
-////            this.allCapsules = new ArrayList<String>();
 //        } else {
 //            HttpUtil.getCapsule(capsuleInfo, new okhttp3.Callback() {
 //            @Override
 //            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
 //                Log.d("CAPSULE", "***** getCapsule onResponse *****");
 //                String responseData = response.body().string();
-//
 //                Log.d("CAPSULE", "getCapsule: " + responseData);
-//                Log.i("CAPSULE", capsuleInfo+"");
-//                Log.i(" capsuleInfo.toString()",  capsuleInfo.toString());
-////                    try {
-////                        // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
-////                        JSONObject responseJSON = new JSONObject(responseData);
-////                        if (responseJSON.has("success")) {
-////                            String status = responseJSON.getString("success");
-////                            Log.d("CAPSULE", "getCapsule success: " + status);
-////                            String capsulesInfo = responseJSON.getString("capsules");
-////                            JSONObject capsulesInfoJSON = new JSONObject(capsulesInfo);
-////                            Log.d("CAPSULE", "capsulesInfo: " + capsulesInfo);
-////                        }
-////                    } catch (JSONException e) {
-////                        e.printStackTrace();
-////                    }
 //            }
 //
 //            @Override
@@ -473,14 +450,3 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //        });
 //        }
 //    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        try {
-//            onDiscoverCapsule();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-    }
-}

@@ -109,33 +109,17 @@ public class HttpUtil {
     public static void getCapsule(String token, JSONObject capsuleInfo,okhttp3.Callback callback) throws JSONException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(HttpUtil.address + "discoverCapsule?"+
-                        "tkn="+token+"&lat=37.4219983&lon=-122.084&max_distance=1000&num_capsules=3")
-//                .url(HttpUtil.address + "discoverCapsule?tkn=" + token) // 400 Bad Request
-//                .url(HttpUtil.address + "discoverCapsule") // 400 Bad Request
+                .url(HttpUtil.address + "discoverCapsule?" + "tkn=" + token
+                        + "&lat=" + capsuleInfo.get("lat")
+                        + "&lon=" + capsuleInfo.get("lon")
+                        + "&max_distance=1000&num_capsules=3")
                 .get()
                 .build();
         client.newCall(request).enqueue(callback);
+        //for testing
+        //.url(HttpUtil.address + "discoverCapsule?"+
+        //"tkn="+token+"&lat=37.4219983&lon=-122.084&max_distance=1000&num_capsules=3")
     }
-
-//    public static void getCapsule(String token, okhttp3.Callback callback) {
-//        OkHttpClient client = new OkHttpClient();
-//        Request request = new Request.Builder()
-//                .url(HttpUtil.address + "discoverCapsule?tkn=" + token)
-//                .get()
-//                .build();
-//        client.newCall(request).enqueue(callback);
-//    }
-
-//    public static void createCapsule(JSONObject capsuleInfo,okhttp3.Callback callback){
-//        OkHttpClient client = new OkHttpClient();
-//        RequestBody requestBody = RequestBody.create(capsuleInfo.toString(), HttpUtil.JSON);
-//        Request request = new Request.Builder()
-//                .url(HttpUtil.address + "createCapsule")
-//                .post(requestBody)
-//                .build();
-//        client.newCall(request).enqueue(callback);
-//    }
 
     public static void uploadImage(String token, File avatarFile, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
