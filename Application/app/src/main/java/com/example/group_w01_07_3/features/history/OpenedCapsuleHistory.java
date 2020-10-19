@@ -46,6 +46,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     TextView headerUsername;
     private String usernameProfileString;
 
+    NavigationView navigationView;
+
     private Toolbar mToolbar;
 
     @Override
@@ -70,7 +72,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         toggle.syncState();
 
         //设置侧滑菜单栏
-        NavigationView navigationView = findViewById(R.id.nav_view_history);
+        navigationView = findViewById(R.id.nav_view_history);
         navigationView.getMenu().getItem(2).setChecked(true); //setChecked myself
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -188,21 +190,25 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce=false;
+        if(drawerLayout.isDrawerOpen(navigationView)){
+            drawerLayout.closeDrawer(navigationView);
+        }else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
             }
-        }, 2000);
+
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce=false;
+                }
+            }, 2000);
+        }
     }
 
 }
