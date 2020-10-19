@@ -23,7 +23,7 @@
         "   * Format: username@domainName\n"
         "\n"
         "4. Password (required)\n"
-        "   * At least 8 Characters\n"
+        "   * Contain at least 8 Characters\n"
         "   * Must contain at least 1 uppercase letter,\n"
         "     1 lowercase letter, 1 number\n"
         "     and 1 special character\n"
