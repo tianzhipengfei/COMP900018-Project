@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
@@ -43,7 +44,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
-
+import android.os.Handler;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +53,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Dictionary;
 import java.util.List;
 
@@ -87,6 +89,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // maximum distance to discover (unit: km)
     private double discoverCapsuleRange = 3;
 
+    // will be used for HTTP GET request
+    JSONObject capsuleInfo = new JSONObject();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +121,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
 
+        try {
+            //for testing
+            capsuleInfo.put("tkn", "59c43e5670cfd24da97c607a5759aa33d88fdbc5");
+
+            //Todo: change to current location
+            capsuleInfo.put("lat", 37.4219983);
+            capsuleInfo.put("lon", -122.084);
+            capsuleInfo.put("max_distance", 1000);
+            capsuleInfo.put("num_capsules", 3);
+
+            Log.i("capsuleInfo", capsuleInfo+"");
+        } catch (JSONException e) {
+            System.out.print("Problems happen during parsing json objects");
+        }
     }
 
     @Override
@@ -227,6 +245,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 if (mCurrLocationMarker != null) {
                     mCurrLocationMarker.remove();
                 }
+
+//                // Todo: add log, lat variables
+//                double lon = location.getLongitude();
+//                double lat = location.getLatitude();
+
 
                 //place current location marker
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -363,31 +386,35 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 }*/
 
-    private void onDiscoverCapsule() {
-        if (UserUtil.getToken(DiscoverCapsule.this).isEmpty()) {
+    private void onDiscoverCapsule() throws JSONException {
+        if (capsuleInfo.length() == 0) {
             Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
-            this.selectedCapsule = new ArrayList<String>();
-            this.allCapsules = new ArrayList<String>();
+            Log.d("CAPSULE", "***** No token to get capsule *****");
+            Log.i("CAPSULE", capsuleInfo+"");
+//            this.selectedCapsule = new ArrayList<String>();
+//            this.allCapsules = new ArrayList<String>();
         } else {
-            HttpUtil.getCapsule(UserUtil.getToken(DiscoverCapsule.this), 37, -122, 500, 2, new okhttp3.Callback() {
+            HttpUtil.getCapsule(capsuleInfo, new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     Log.d("CAPSULE", "***** getCapsule onResponse *****");
                     String responseData = response.body().string();
+                    // Todo: responseData - 400 Bad request
                     Log.d("CAPSULE", "getCapsule: " + responseData);
-                    try {
-                        // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
-                        JSONObject responseJSON = new JSONObject(responseData);
-                        if (responseJSON.has("success")) {
-                            String status = responseJSON.getString("success");
-                            Log.d("CAPSULE", "getCapsule success: " + status);
-                            String capsulesInfo = responseJSON.getString("capsules");
-                            JSONObject capsulesInfoJSON = new JSONObject(capsulesInfo);
-                            Log.d("CAPSULE", "capsulesInfo: " + capsulesInfo);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    Log.i("CAPSULE", capsuleInfo+"");
+//                    try {
+//                        // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
+//                        JSONObject responseJSON = new JSONObject(responseData);
+//                        if (responseJSON.has("success")) {
+//                            String status = responseJSON.getString("success");
+//                            Log.d("CAPSULE", "getCapsule success: " + status);
+//                            String capsulesInfo = responseJSON.getString("capsules");
+//                            JSONObject capsulesInfoJSON = new JSONObject(capsulesInfo);
+//                            Log.d("CAPSULE", "capsulesInfo: " + capsulesInfo);
+//                        }
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
                 }
 
                 @Override
@@ -402,6 +429,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        onDiscoverCapsule();
+        try {
+            onDiscoverCapsule();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }
