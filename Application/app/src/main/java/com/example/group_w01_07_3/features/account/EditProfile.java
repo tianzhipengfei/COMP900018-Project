@@ -249,10 +249,10 @@ public class EditProfile extends AppCompatActivity implements
             @Override
             public void run() {
                 onGetProfile();
-                handler.postDelayed(this, 3000);
+                handler.postDelayed(this, 1500);
             }
         };
-        handler.postDelayed(runnable, 3000);
+        handler.postDelayed(runnable, 10);
 
     }
 
@@ -437,7 +437,13 @@ public class EditProfile extends AppCompatActivity implements
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
                                                   if (!(avatarProfileString == "null")) {
                                                       Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
-                                                      avatarDisplay.setImageBitmap(ImageUtil.getHttpImage(avatarProfileString));
+                                                      Bitmap bitmap = ImageUtil.getHttpImage(avatarProfileString);
+                                                      //TODO: 请自行解决在bitmap完全下载好后再来的功能，这样子就不是一个空的bitmap
+                                                      if (bitmap != null){
+                                                          Log.d("PROFILE", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                                                      }
+//                                                      Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap,  56 ,56, true);//this bitmap2 you can use only for display
+                                                      avatarDisplay.setImageBitmap(bitmap);
                                                   } else {
                                                       Log.d("PROFILE", "avatarProfileString: (else)");
                                                       avatarDisplay.setImageResource(R.drawable.avatar_sample);
