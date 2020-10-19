@@ -146,6 +146,8 @@ public class EditProfile extends AppCompatActivity implements
             public void onClick(View view) {
                 Intent intent = new Intent(EditProfile.this, ChangePassword.class);
                 startActivity(intent);
+//                overridePendingTransition(R.anim.slide_in_right,R.anim.stay);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
             }
         });
 
@@ -205,6 +207,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
+                                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                                 }
                                             });
                                         } else if (responseJSON.has("error")) {
@@ -218,6 +221,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
+                                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                                 }
                                             });
                                         } else {
@@ -230,6 +234,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
+                                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                                 }
                                             });
                                         }

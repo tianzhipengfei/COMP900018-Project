@@ -50,18 +50,25 @@ public class ChangePassword extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_change_password);
 
+        //don't pop uo keyboard when entering the screen.
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        );
+
         mToolbar = findViewById(R.id.change_password_back_toolbar);
-        setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_back);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("Change Password");
 
         //navigate back to account page. 请自己根据activity life cycle来写返回功能
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }
         });
 
@@ -169,6 +176,7 @@ public class ChangePassword extends AppCompatActivity {
                                 public void run() {
                                     Toast.makeText(ChangePassword.this, "Change password successfully", Toast.LENGTH_SHORT).show();
                                     finish();
+                                    overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                                 }
                             });
                         } else if (responseJSON.has("error")) {
@@ -221,5 +229,11 @@ public class ChangePassword extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
     }
 }

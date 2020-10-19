@@ -12,34 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".features.account.EditProfile">
-
-        <!--        <com.google.android.material.appbar.AppBarLayout-->
-        <!--            android:id="@+id/appBarLayout_edit_profile"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:backgroundTint="@color/colorResetWhite"-->
-        <!--            android:theme="@style/ThemeOverlay.AppCompat.Light"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="parent">-->
-
-        <!--            <androidx.appcompat.widget.Toolbar-->
-        <!--                android:id="@+id/edit_profile_back_toolbar"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="?attr/actionBarSize">-->
-
-        <!--                <com.google.android.material.textview.MaterialTextView-->
-        <!--                    android:layout_width="wrap_content"-->
-        <!--                    android:layout_height="wrap_content"-->
-        <!--                    android:alpha="0.8"-->
-        <!--                    android:text="Edit Profile"-->
-        <!--                    android:textColor="#000000"-->
-        <!--                    android:textSize="18sp"-->
-        <!--                    android:textStyle="bold" />-->
-        <!--            </androidx.appcompat.widget.Toolbar>-->
-
-        <!--        </com.google.android.material.appbar.AppBarLayout>-->
+        android:id="@+id/edit_profile_appbar_layout">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_edit_profile"
@@ -52,233 +25,261 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/edit_profile_avatar_Layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="64dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_edit_profile">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/edit_profile_btn_change_avatar"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#ECECEC"
-                android:letterSpacing="0.09"
-                android:text="Change Avatar"
-                android:textAlignment="viewStart"
-                android:textAllCaps="false"
-                app:icon="@drawable/ic_foward"
-                app:iconGravity="end"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent"
+                tools:context=".features.account.EditProfile">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/edit_profile_avatar_Layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:paddingTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/edit_profile_btn_change_avatar"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="64dp"
+                        android:layout_marginTop="16dp"
+                        android:backgroundTint="#ECECEC"
+                        android:letterSpacing="0.09"
+                        android:text="Change Avatar"
+                        android:textAlignment="viewStart"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_foward"
+                        app:iconGravity="end"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/edit_profile_avatar_display"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="56dp"
-                android:src="@drawable/avatar_sample"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/edit_profile_avatar_Layout"
-                app:shapeAppearanceOverlay="@style/circleImageView" />
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/edit_profile_avatar_display"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="56dp"
+                        android:src="@drawable/avatar_sample"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/edit_profile_avatar_Layout"
+                        app:shapeAppearanceOverlay="@style/circleImageView" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/edit_profile_username_Layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_profile_avatar_Layout">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/edit_profile_username_Layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_profile_avatar_Layout">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/edit_profile_username_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.09"
-                android:text="Username"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/edit_profile_username_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.09"
+                        android:text="Username"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-            </com.google.android.material.textview.MaterialTextView>
+                    </com.google.android.material.textview.MaterialTextView>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/edit_profile_username_display"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:ellipsize="end"
-                android:lines="1"
-                android:maxWidth="240dp"
-                android:text="Please wait, loading username"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/edit_profile_username_display"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:maxWidth="240dp"
+                        android:text="Please wait, loading username"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-            </com.google.android.material.textview.MaterialTextView>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:id="@+id/edit_profile_view_divider_1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:alpha="0.4"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_profile_username_Layout" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/edit_profile_email_Layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_profile_view_divider_1">
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/edit_profile_email_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.09"
-                android:text="Email Address"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </com.google.android.material.textview.MaterialTextView>
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/edit_profile_email_display"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:ellipsize="end"
-                android:lines="1"
-                android:maxWidth="240dp"
-                android:text="Please wait, loading email"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </com.google.android.material.textview.MaterialTextView>
+                    </com.google.android.material.textview.MaterialTextView>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <View
-            android:id="@+id/edit_profile_view_divider_2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:alpha="0.4"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_profile_email_Layout" />
+                <View
+                    android:id="@+id/edit_profile_view_divider_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:alpha="0.4"
+                    android:background="@android:color/darker_gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_profile_username_Layout" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/edit_profile_dob_Layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_profile_email_Layout">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/edit_profile_email_Layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_profile_view_divider_1">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/edit_profile_dob_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:letterSpacing="0.09"
-                android:text="Birthday"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/edit_profile_email_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.09"
+                        android:text="Email Address"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-            </com.google.android.material.textview.MaterialTextView>
+                    </com.google.android.material.textview.MaterialTextView>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/edit_profile_dob_display"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:ellipsize="end"
-                android:lines="1"
-                android:maxWidth="240dp"
-                android:text="Please wait, loading birthday"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/edit_profile_email_display"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:maxWidth="240dp"
+                        android:text="Please wait, loading email"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-            </com.google.android.material.textview.MaterialTextView>
+                    </com.google.android.material.textview.MaterialTextView>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/edit_profile_btn_change_password"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:backgroundTint="#ECECEC"
-            android:letterSpacing="0.09"
-            android:text="Change Password"
-            android:textAlignment="viewStart"
-            android:textAllCaps="false"
-            app:icon="@drawable/ic_foward"
-            app:iconGravity="end"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_profile_dob_Layout" />
+                <View
+                    android:id="@+id/edit_profile_view_divider_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:alpha="0.4"
+                    android:background="@android:color/darker_gray"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_profile_email_Layout" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_acct_sign_out"
-            android:layout_width="256dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="64dp"
-            android:backgroundTint="@color/colorWarning"
-            android:text="Sign Out"
-            android:textAllCaps="true"
-            app:cornerRadius="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/edit_profile_dob_Layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_profile_email_Layout">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/edit_profile_dob_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.09"
+                        android:text="Birthday"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                    </com.google.android.material.textview.MaterialTextView>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/edit_profile_dob_display"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:maxWidth="240dp"
+                        android:text="Please wait, loading birthday"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                    </com.google.android.material.textview.MaterialTextView>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/edit_profile_btn_change_password"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:backgroundTint="#ECECEC"
+                    android:letterSpacing="0.09"
+                    android:text="Change Password"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_foward"
+                    app:iconGravity="end"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_profile_dob_Layout" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_acct_sign_out"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="56dp"
+                    android:layout_marginTop="80dp"
+                    android:layout_marginEnd="56dp"
+                    android:layout_marginBottom="64dp"
+                    android:backgroundTint="@color/colorWarning"
+                    android:text="Sign Out"
+                    android:textAllCaps="true"
+                    app:cornerRadius="24dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_profile_btn_change_password" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view_edit_profile"
