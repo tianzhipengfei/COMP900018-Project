@@ -435,7 +435,7 @@ public class EditProfile extends AppCompatActivity implements
                                               public void run() {
                                                   // Toast.makeText(EditProfile.this, "Get profile successfully", Toast.LENGTH_SHORT).show();
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
-                                                  if (!(avatarProfileString == null)) {
+                                                  if (!(avatarProfileString == "null")) {
                                                       Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
                                                       avatarDisplay.setImageBitmap(ImageUtil.getHttpImage(avatarProfileString));
                                                   } else {
