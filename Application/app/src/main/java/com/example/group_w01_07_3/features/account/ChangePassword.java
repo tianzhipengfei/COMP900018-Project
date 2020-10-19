@@ -53,9 +53,9 @@ public class ChangePassword extends AppCompatActivity {
         setContentView(R.layout.activity_change_password);
 
         mToolbar = findViewById(R.id.change_password_back_toolbar);
-        setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_back);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("Change Password");
 
         //navigate back to account page. 请自己根据activity life cycle来写返回功能
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
