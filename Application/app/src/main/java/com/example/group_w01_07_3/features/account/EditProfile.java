@@ -572,6 +572,7 @@ public class EditProfile extends AppCompatActivity implements
         handler.removeCallbacksAndMessages(null);
     }
 
+    //double backpressed to exit app
     //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
     @Override
     public void onBackPressed() {
@@ -581,7 +582,7 @@ public class EditProfile extends AppCompatActivity implements
         }
 
         this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click again again to exit", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(new Runnable() {
 
