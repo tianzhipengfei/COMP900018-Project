@@ -19,6 +19,7 @@ import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.history.OpenedCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.LocationUtil;
+import com.example.group_w01_07_3.util.UserUtil;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -42,18 +43,23 @@ public class popUpWindow {
 
     //combine with discover capsule class later
     public void createWindow(final View view, final JSONObject capsuleInfo) throws JSONException {
+        final JSONObject request=new JSONObject();
+        if(!UserUtil.getToken(view.getContext()).isEmpty()){
+            request.put("tkn",UserUtil.getToken(view.getContext()));
+        }else{
+            request.put("tkn",null);
+        }
         LocationUtil locationUtil=new LocationUtil((AppCompatActivity) view.getContext());
         Location location=locationUtil.getLocation();
-        final JSONObject request=new JSONObject();
         request.put("lat",location.getLatitude());
         request.put("lon",location.getLongitude());
         request.put("time", Calendar.getInstance().getTime());
-        request.put("tkn",capsuleInfo.get("tkn"));
+        //request.put("tkn",capsuleInfo.get("tkn"));
         request.put("cid",capsuleInfo.get("cid"));
         //add two additional information:tkn and cid after the discovery activity has been finished.
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
         final View popupView = inflater.inflate(R.layout.popup_window_layout, null);
-        Intent intent=new Intent(view.getContext(), OpenedCapsule.class);
+        Intent intent=new Intent(view.getContext(), Display.class);
         view.getContext().startActivity(intent);
         TextView hint = (TextView) popupView.findViewById(R.id.hint);
         final boolean focusable = true;
