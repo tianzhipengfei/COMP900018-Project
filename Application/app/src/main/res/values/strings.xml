@@ -9,4 +9,29 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="registration_help">
+        "1. Avatar (optional)\n"
+        "   * Input using camera or gallery\n"
+        "\n"
+        "2. Username (required)\n"
+        "   * Length between 3 to 20 characters\n"
+        "   * Accept letter, number and \"_\" symbol\n"
+        "   * Username must begin with letter\n"
+        "\n"
+        "3. Email Address (required)\n"
+        "   * Please use a valid email address\n"
+        "   * Format: username@domainName\n"
+        "\n"
+        "4. Password (required)\n"
+        "   * At least 8 Characters\n"
+        "   * Must contain at least 1 uppercase letter,\n"
+        "     1 lowercase letter, 1 number\n"
+        "     and 1 special character\n"
+        "\n"
+        "5. Re-enter Password (required)\n"
+        "   * Must match with the previous input\n"
+        "\n"
+        "6. Date of Birth (required)\n"
+        "   * Cannot be a date after today\n"
+    </string>
 </resources>
