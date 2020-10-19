@@ -1,26 +1,37 @@
 package com.example.group_w01_07_3.features.create;
 
 import android.Manifest;
+import android.content.ContentUris;
 import android.content.Context;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Console;
+import java.io.File;
 import java.io.IOException;
 
 import java.util.Calendar;
@@ -31,14 +42,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.group_w01_07_3.SignUp;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
+import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.ImageUtil;
 import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.example.group_w01_07_3.util.UserUtil;
+import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -66,6 +81,9 @@ public class CreateCapsule extends AppCompatActivity implements
     private LocationUtil locationUtil;
     private int permission = 1;
     private String token;
+
+    private BottomDialog bottomDialog;
+    private File imageFile;
 
     JSONObject capsuleInfo = new JSONObject();
 
@@ -130,6 +148,7 @@ public class CreateCapsule extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+
     public void whetherPublic(View v) {
         SwitchMaterial permiSwitch = (SwitchMaterial) findViewById(R.id.create_capsule_permission);
         if (permiSwitch.isChecked()) {
@@ -144,7 +163,6 @@ public class CreateCapsule extends AppCompatActivity implements
             permiSwitch.setText("create private capsule");
         }
     }
-
 
     private boolean getLocation() throws JSONException {
 
@@ -171,7 +189,7 @@ public class CreateCapsule extends AppCompatActivity implements
 
     }
 
-    private boolean getOtherInfo() throws JSONException {
+    private boolean getOtherInfo() {
         EditText capsuleTitle = findViewById(R.id.create_capsule_title);
         EditText capsuleContent = findViewById(R.id.create_capsule_content);
         if (capsuleTitle.getText().toString().isEmpty()) {
@@ -198,7 +216,8 @@ public class CreateCapsule extends AppCompatActivity implements
         return true;
     }
 
-    public void recordAudio(View v) throws JSONException {
+    // for recording and playing audio
+    public void recordAudio(View v) {
         // check permission
         if (recorderUtil.checkPermission()) {
             Button recordButton = findViewById(R.id.record_button);
@@ -216,7 +235,7 @@ public class CreateCapsule extends AppCompatActivity implements
 
     }
 
-    public void playAudio(View v) throws JSONException {
+    public void playAudio(View v)  {
 
         Button playButton = findViewById(R.id.play_button);
         recorderUtil.onPlay(mStartPlaying);
@@ -229,6 +248,129 @@ public class CreateCapsule extends AppCompatActivity implements
 
     }
 
+    public void onStop() {
+
+        super.onStop();
+        recorderUtil.onStop();
+    }
+
+    // For user upload/take picture
+    public void takePicture(View v){
+
+        bottomDialog = new BottomDialog(this);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomDialog
+                .getContentView().getLayoutParams();
+        params.width = getResources().getDisplayMetrics().widthPixels -
+                DensityUtil.dp2px(this, 16f);
+
+
+        params.bottomMargin = DensityUtil.dp2px(this, 8f);
+        bottomDialog.getContentView().setLayoutParams(params);
+        bottomDialog.setCanceledOnTouchOutside(true);
+        bottomDialog.getWindow().setGravity(Gravity.BOTTOM);
+        bottomDialog.getWindow().setWindowAnimations(R.style.BottomDialog_Animation);
+        bottomDialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ImageView placeholder = (ImageView) findViewById(R.id.create_capsule_piture_preview);
+        switch (requestCode) {
+            case BottomDialog.TAKE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(BottomDialog.imageUri));
+                        placeholder.setImageBitmap(bitmap);
+                        imageFile = ImageUtil.compressImage(this, bitmap,
+                                "create_capsule_output_photo_compressed.jpg");
+                        bottomDialog.dismiss();
+                        Toast.makeText(this, "Take the photo successfully",
+                                Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            case BottomDialog.CHOOSE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    handleImageOnKitKat(data);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openAlbum();
+                } else {
+                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, BottomDialog.CHOOSE_PHOTO);
+    }
+
+    private void handleImageOnKitKat(Intent data) {
+        String imagePath = null;
+        Uri uri = data.getData();
+        if (DocumentsContract.isDocumentUri(this, uri)) {
+            String docId = DocumentsContract.getDocumentId(uri);
+            if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                String id = docId.split(":")[1];
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = getImagePath(uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            imagePath = uri.getPath();
+        }
+        displayImage(imagePath);
+    }
+
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
+    private void displayImage(String imagePath) {
+        ImageView placeholder = (ImageView) findViewById(R.id.create_capsule_piture_preview);
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            imageFile = ImageUtil.compressImage(this, bitmap,
+                    "create_capsule_image_compressed.jpg");
+            placeholder.setImageBitmap(bitmap);
+            bottomDialog.dismiss();
+            Toast.makeText(this, "Select the image successfully",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public void createCapsule(View v) throws JSONException {
         if (getLocation() && getOtherInfo()) {
@@ -272,9 +414,17 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
+
+
+
+
     public void cancel(View v) {
         startActivity(new Intent(CreateCapsule.this, DiscoverCapsule.class));
     }
+
+
+
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -345,11 +495,7 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
-    public void onStop() {
 
-        super.onStop();
-        recorderUtil.onStop();
-    }
 
     //double backpressed to exit app
     //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
