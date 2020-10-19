@@ -59,7 +59,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar_history);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("Discover Memory Capsule");
+        getSupportActionBar().setTitle("History of Opened Capsules");
 
         drawerLayout = findViewById(R.id.history_drawer_layout);
 
