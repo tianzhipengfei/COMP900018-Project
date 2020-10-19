@@ -2,6 +2,7 @@ package com.example.group_w01_07_3.features.discover;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,13 @@ import okhttp3.Response;
 
 public class popUpWindow {
     private PopupWindow popupWindow;
+
+    JSONObject selectedCapsule = new JSONObject();
+    public popUpWindow(JSONObject selectedCapsule) {
+        this.selectedCapsule = selectedCapsule;
+        Log.d("POPUPWINDOW", "selectedCapsule: " + selectedCapsule);
+    }
+
     //combine with discover capsule class later
     public void createWindow(final View view, final JSONObject capsuleInfo) throws JSONException {
         LocationUtil locationUtil=new LocationUtil((AppCompatActivity) view.getContext());

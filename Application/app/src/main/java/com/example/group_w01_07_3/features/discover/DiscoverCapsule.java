@@ -322,6 +322,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     Random rand = new Random();
                                     selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
                                     Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
+                                    new popUpWindow(selectedCapsule);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
