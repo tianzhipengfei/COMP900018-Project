@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,6 +39,7 @@ import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -103,8 +105,29 @@ public class CreateCapsule extends AppCompatActivity implements
         updateHeaderUsername();
     }
 
+    //must inflate menu item, otherwise won't show
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.create_capsule_menu, menu);
+        return true;
+    }
+
+    //Implement the onclicked listener for the create button
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.create_capsule_appbar_create:
+                Toast.makeText(CreateCapsule.this, "Create button clicked", Toast.LENGTH_SHORT).show();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     public void whetherPublic(View v) {
-        Switch permiSwitch = (Switch) findViewById(R.id.create_capsule_permission);
+        SwitchMaterial permiSwitch = (SwitchMaterial) findViewById(R.id.create_capsule_permission);
         if (permiSwitch.isChecked()) {
             permission = 0;
         } else {
