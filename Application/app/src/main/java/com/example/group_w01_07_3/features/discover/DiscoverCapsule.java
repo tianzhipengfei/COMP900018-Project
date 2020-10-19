@@ -21,6 +21,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.group_w01_07_3.util.HttpUtil;
@@ -62,7 +63,10 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener, OnMapReadyCallback {
+        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+
+    boolean doubleBackToExitPressedOnce = false;
+    private String usernameProfileString;
 
     // receive capsule information through HTTP GET request
     JSONArray allCapsules = new JSONArray();
@@ -70,7 +74,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // request capsule
     private JSONObject capsuleInfo = new JSONObject();
 
+    private Toolbar mToolbar;
     private DrawerLayout drawerLayout;
+    View headerview;
+    TextView headerUsername;
 
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
@@ -115,6 +122,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView navigationView = findViewById(R.id.nav_view_discover);
         navigationView.getMenu().getItem(0).setChecked(true); //setChecked myself
         navigationView.setNavigationItemSelectedListener(this);
+
+        //the logic to find the header, then update the username from server user profile
+        headerview = navigationView.getHeaderView(0);
+        headerUsername = headerview.findViewById(R.id.header_username);
+
+        updateHeaderUsername();
 
         //get current Location in GoogleMap using FusedLocationProviderClient
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -162,24 +175,39 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
-    @Override
-    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
-    }
-
-    @Override
-    public void onDrawerOpened(@NonNull View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerClosed(@NonNull View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-
+    private void updateHeaderUsername(){
+        if(!UserUtil.getToken(DiscoverCapsule.this).isEmpty()){
+            HttpUtil.getProfile(UserUtil.getToken(DiscoverCapsule.this), new okhttp3.Callback() {
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.d("PROFILE", "***** getProfile onResponse *****");
+                    String responseData = response.body().string();
+                    Log.d("PROFILE", "getProfile: " + responseData);
+                    try {
+                        JSONObject responseJSON = new JSONObject(responseData);
+                        if (responseJSON.has("success")) {
+                            String status = responseJSON.getString("success");
+                            Log.d("PROFILE", "getProfile success: " + status);
+                            String userInfo = responseJSON.getString("userInfo");
+                            JSONObject userInfoJSON = new JSONObject(userInfo);
+                            usernameProfileString = userInfoJSON.getString("uusr");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    headerUsername.setText(usernameProfileString);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     @Override
@@ -403,6 +431,27 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    //double backpressed to exit app
+    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 }
 /* HTTP GET Method
