@@ -143,38 +143,16 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        ImageButton imageButton = (ImageButton) findViewById(R.id.imageButton_sign_up_question);
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        ImageView helpImageButton = (ImageView) findViewById(R.id.imageButton_sign_up_question);
+        helpImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String guideline = getString(R.string.registration_help);
                 AlertDialog dialog = new AlertDialog.Builder(SignUp.this)
                         .setIcon(R.drawable.sign_up_rules)
-                        .setTitle("Sign Up Rules")
-                        .setMessage("1. Username (required)\n" +
-                                "   * 3 <= the length of username <= 20\n" +
-                                "   * accept letter, number and \"_\" symbol\n" +
-                                "   * begin with a letter\n" +
-                                "   * letter case insensitive\n" +
-                                "\n" +
-                                "2. Email Address (required)\n" +
-                                "   * username@domainName\n" +
-                                "\n" +
-                                "3. Password (required) [can change]\n" +
-                                "   * the length of password >= 8\n" +
-                                "   * consist of at least 1 lowercase letter,\n" +
-                                "     1 uppercase letter, 1 number\n" +
-                                "     and 1 special character\n" +
-                                "\n" +
-                                "4. Re-enter Password (required)\n" +
-                                "   * match with previous input\n" +
-                                "\n" +
-                                "5. Date of Birth (required)\n" +
-                                "   * cannot be a date after today\n" +
-                                "\n" +
-                                "6. Avatar (optional) [can change]\n" +
-                                "   * take a photo\n" +
-                                "     or choose an image from the gallery")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setTitle("Account Registration Guideline")
+                        .setMessage(guideline)
+                        .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -349,7 +327,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }
         });
 
@@ -358,7 +336,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
             }
         });
     }

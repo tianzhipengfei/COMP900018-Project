@@ -206,20 +206,7 @@ public class SignIn extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SignIn.this, SignUp.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right,R.anim.stay);
-            }
-        });
-
-        TextView skipToAccountButton = (TextView) findViewById(R.id.text_skip_to_account);
-        skipToAccountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SignIn.this, DiscoverCapsule.class);
-                //kill SinIn Activity
-                //不用再kIll了,现在sign in是singleInstance(manifest-->launchmode--》singleInstance)
-                finish();
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
             }
         });
 
@@ -229,7 +216,7 @@ public class SignIn extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SignIn.this, SignUp.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right,R.anim.stay);
+                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
             }
         });
 
