@@ -95,7 +95,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/edit_profile_username_Layout"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_profile_avatar_Layout">
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.09"
                 android:text="Username"
@@ -120,13 +120,13 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/edit_profile_username_display"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:ellipsize="end"
                 android:lines="1"
-                android:maxWidth="160dp"
-                android:text="User Name Display Here"
+                android:maxWidth="240dp"
+                android:text="Please wait, loading username"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -140,7 +140,6 @@
             android:id="@+id/edit_profile_view_divider_1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="16dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:background="@android:color/darker_gray"
@@ -160,9 +159,10 @@
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/edit_profile_email_title"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.09"
                 android:text="Email Address"
@@ -176,13 +176,13 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/edit_profile_email_display"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:lines="1"
-                android:maxWidth="160dp"
                 android:layout_marginEnd="16dp"
-                android:text="Email Display Here"
+                android:lines="1"
+                android:ellipsize="end"
+                android:maxWidth="240dp"
+                android:text="Please wait, loading email"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -215,9 +215,10 @@
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/edit_profile_dob_title"
                 android:layout_width="wrap_content"
-                android:layout_height="24dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.09"
                 android:text="Birthday"
@@ -231,13 +232,13 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/edit_profile_dob_display"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
                 android:lines="1"
-                android:maxWidth="160dp"
+                android:ellipsize="end"
+                android:maxWidth="240dp"
                 android:layout_marginEnd="16dp"
-                android:text="Birthday Display Here"
+                android:text="Please wait, loading birthday"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -267,19 +268,14 @@
             android:id="@+id/button_acct_sign_out"
             android:layout_width="256dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="77dp"
-            android:layout_marginTop="84dp"
-            android:layout_marginEnd="78dp"
+            android:layout_marginBottom="64dp"
             android:backgroundTint="@color/colorWarning"
             android:text="Sign Out"
             android:textAllCaps="true"
             app:cornerRadius="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_profile_btn_change_password"
-            app:layout_constraintVertical_bias="0.003" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
