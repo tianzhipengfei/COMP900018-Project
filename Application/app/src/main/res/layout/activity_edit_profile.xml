@@ -1,46 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/edit_profile_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:openDrawer="start"
-    android:id="@+id/edit_profile_drawer_layout">
+    tools:openDrawer="start">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".features.account.EditProfile">
 
-<!--        <com.google.android.material.appbar.AppBarLayout-->
-<!--            android:id="@+id/appBarLayout_edit_profile"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:backgroundTint="@color/colorResetWhite"-->
-<!--            android:theme="@style/ThemeOverlay.AppCompat.Light"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent">-->
+        <!--        <com.google.android.material.appbar.AppBarLayout-->
+        <!--            android:id="@+id/appBarLayout_edit_profile"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:backgroundTint="@color/colorResetWhite"-->
+        <!--            android:theme="@style/ThemeOverlay.AppCompat.Light"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent">-->
 
-<!--            <androidx.appcompat.widget.Toolbar-->
-<!--                android:id="@+id/edit_profile_back_toolbar"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="?attr/actionBarSize">-->
+        <!--            <androidx.appcompat.widget.Toolbar-->
+        <!--                android:id="@+id/edit_profile_back_toolbar"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="?attr/actionBarSize">-->
 
-<!--                <com.google.android.material.textview.MaterialTextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:alpha="0.8"-->
-<!--                    android:text="Edit Profile"-->
-<!--                    android:textColor="#000000"-->
-<!--                    android:textSize="18sp"-->
-<!--                    android:textStyle="bold" />-->
-<!--            </androidx.appcompat.widget.Toolbar>-->
+        <!--                <com.google.android.material.textview.MaterialTextView-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:alpha="0.8"-->
+        <!--                    android:text="Edit Profile"-->
+        <!--                    android:textColor="#000000"-->
+        <!--                    android:textSize="18sp"-->
+        <!--                    android:textStyle="bold" />-->
+        <!--            </androidx.appcompat.widget.Toolbar>-->
 
-<!--        </com.google.android.material.appbar.AppBarLayout>-->
+        <!--        </com.google.android.material.appbar.AppBarLayout>-->
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_edit_profile"
@@ -144,8 +143,8 @@
             android:layout_height="1dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:background="@android:color/darker_gray"
             android:alpha="0.4"
+            android:background="@android:color/darker_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_profile_username_Layout" />
@@ -181,8 +180,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:lines="1"
                 android:ellipsize="end"
+                android:lines="1"
                 android:maxWidth="240dp"
                 android:text="Please wait, loading email"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -200,8 +199,8 @@
             android:layout_height="1dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:background="@android:color/darker_gray"
             android:alpha="0.4"
+            android:background="@android:color/darker_gray"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_profile_email_Layout" />
@@ -236,10 +235,10 @@
                 android:id="@+id/edit_profile_dob_display"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:lines="1"
-                android:ellipsize="end"
-                android:maxWidth="240dp"
                 android:layout_marginEnd="16dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:maxWidth="240dp"
                 android:text="Please wait, loading birthday"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -288,6 +287,5 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/menu_navigation"
-        />
+        app:menu="@menu/menu_navigation" />
 </androidx.drawerlayout.widget.DrawerLayout>

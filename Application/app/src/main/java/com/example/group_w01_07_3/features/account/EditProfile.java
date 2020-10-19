@@ -118,7 +118,7 @@ public class EditProfile extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar_edit_profile);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("Profile");
+        getSupportActionBar().setTitle("User Profile");
 
         drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
 
