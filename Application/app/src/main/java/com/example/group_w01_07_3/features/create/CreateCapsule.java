@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.io.Console;
 import java.io.IOException;
 
 import java.util.Calendar;
@@ -34,6 +35,7 @@ import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
+import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.navigation.NavigationView;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,9 +51,9 @@ public class CreateCapsule extends AppCompatActivity implements
     boolean mStartPlaying = true;
     private DrawerLayout drawerLayout;
     private RecordAudioUtil recorderUtil;
-    private LocationUtil locationUtil ;
+    private LocationUtil locationUtil;
     private int permission = 1;
-
+    private String token;
 
     JSONObject capsuleInfo = new JSONObject();
 
@@ -59,8 +61,11 @@ public class CreateCapsule extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_capsule);
-        recorderUtil= new RecordAudioUtil(this);
-        locationUtil= new LocationUtil(this);
+        recorderUtil = new RecordAudioUtil(this);
+        locationUtil = new LocationUtil(this);
+        UserUtil userUtil = new UserUtil();
+        token = userUtil.getToken(this.getApplicationContext());
+
         //don't pop up keyboard automatically when entering the screen.
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
@@ -109,14 +114,19 @@ public class CreateCapsule extends AppCompatActivity implements
         Location location = locationUtil.getLocation();
         if (location != null) {
             try {
+                Log.i("GOT LCOATION", "GOT LCOATION");
+                Log.i("LAT", String.valueOf(location.getLatitude()));
+                Log.i("LON", String.valueOf(location.getLongitude()));
                 capsuleInfo.put("lat", location.getLatitude());
-                capsuleInfo.put("lat", location.getLongitude());
+                capsuleInfo.put("lon", location.getLongitude());
                 return true;
             } catch (JSONException e) {
                 System.out.print("Problems happen during parsing json objects");
                 return false;
             }
         } else {
+            Log.e("NULL POSITION", "NULL LOCATION");
+
             capsuleInfo.put("lat", 37.4219983);
             capsuleInfo.put("lon", -122.084);
             return true;
@@ -142,15 +152,16 @@ public class CreateCapsule extends AppCompatActivity implements
             capsuleInfo.put("content", capsuleContent.getText());
             capsuleInfo.put("time", Calendar.getInstance().getTime());
             capsuleInfo.put("permission", permission);
+            capsuleInfo.put("tkn", this.token);
             //for testing
-            capsuleInfo.put("tkn", "59c43e5670cfd24da97c607a5759aa33d88fdbc5");
+
         } catch (JSONException e) {
             System.out.print("Problems happen during parsing json objects");
         }
         return true;
     }
 
-    public void recordAudio(View v) {
+    public void recordAudio(View v) throws JSONException {
         // check permission
         if (recorderUtil.checkPermission()) {
             Button recordButton = findViewById(R.id.record_button);
@@ -165,9 +176,11 @@ public class CreateCapsule extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), "Need permission", Toast.LENGTH_SHORT)
                     .show();
         }
+
     }
 
-    public void playAudio(View v) {
+    public void playAudio(View v) throws JSONException {
+
         Button playButton = findViewById(R.id.play_button);
         recorderUtil.onPlay(mStartPlaying);
         if (mStartPlaying) {
@@ -177,16 +190,13 @@ public class CreateCapsule extends AppCompatActivity implements
         }
         mStartPlaying = !mStartPlaying;
 
-
     }
-
 
 
     public void createCapsule(View v) throws JSONException {
         if (getLocation() && getOtherInfo()) {
-            //collect info
-            ;
-            Log.d("CapsuleInfo", capsuleInfo.toString());
+            //collect info;
+            Log.i("CapsuleInfo", capsuleInfo.toString());
             HttpUtil.createCapsule(capsuleInfo, new okhttp3.Callback() {
 
                 @Override
@@ -198,12 +208,12 @@ public class CreateCapsule extends AppCompatActivity implements
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String responseData = response.body().string();
-                    Log.d("CREATECAPSULE", responseData);
+                    Log.i("CREATECAPSULE", responseData);
                     try {
                         JSONObject responseJSON = new JSONObject(responseData);
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
-                            Log.d("CREATECAPSULE", status);
+                            Log.i("CREATECAPSULE", status);
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
