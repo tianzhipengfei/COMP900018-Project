@@ -52,10 +52,14 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class EditProfile extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener {
+        NavigationView.OnNavigationItemSelectedListener {
     private Toolbar mToolbar;
 
     private DrawerLayout drawerLayout;
+    View headerview;
+    TextView headerUsername;
+
+
     private BottomDialog bottomDialog;
 
     private ImageView avatarDisplay;
@@ -125,6 +129,12 @@ public class EditProfile extends AppCompatActivity implements
         NavigationView navigationView = findViewById(R.id.nav_view_edit_profile);
         navigationView.getMenu().getItem(3).setChecked(true); //setChecked myself
         navigationView.setNavigationItemSelectedListener(this);
+
+        //the logic to find the header, then update the username from server user profile
+        headerview = navigationView.getHeaderView(0);
+        headerUsername = headerview.findViewById(R.id.header_username);
+
+        updateHeaderUsername();
 
 
         Button changePasswordBtn = (Button) findViewById(R.id.edit_profile_btn_change_password);
@@ -289,24 +299,39 @@ public class EditProfile extends AppCompatActivity implements
         return false;
     }
 
-    @Override
-    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
-    }
-
-    @Override
-    public void onDrawerOpened(@NonNull View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerClosed(@NonNull View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-
+    private void updateHeaderUsername(){
+        if(!UserUtil.getToken(EditProfile.this).isEmpty()){
+            HttpUtil.getProfile(UserUtil.getToken(EditProfile.this), new okhttp3.Callback() {
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.d("PROFILE", "***** getProfile onResponse *****");
+                    String responseData = response.body().string();
+                    Log.d("PROFILE", "getProfile: " + responseData);
+                    try {
+                        JSONObject responseJSON = new JSONObject(responseData);
+                        if (responseJSON.has("success")) {
+                            String status = responseJSON.getString("success");
+                            Log.d("PROFILE", "getProfile success: " + status);
+                            String userInfo = responseJSON.getString("userInfo");
+                            JSONObject userInfoJSON = new JSONObject(userInfo);
+                            usernameProfileString = userInfoJSON.getString("uusr");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    headerUsername.setText(usernameProfileString);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     @Override

@@ -13,6 +13,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.ImageUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
@@ -61,13 +63,16 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, DrawerLayout.DrawerListener, OnMapReadyCallback {
+        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     // capsules information received from database
     private List<String> selectedCapsule;
     private List<String> allCapsules;
 
     private DrawerLayout drawerLayout;
+    View headerview;
+    TextView headerUsername;
+    private String usernameProfileString;
 
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
@@ -114,13 +119,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         navigationView.getMenu().getItem(0).setChecked(true); //setChecked myself
         navigationView.setNavigationItemSelectedListener(this);
 
-        //the logic to find the header, then update it
-        //TODO: Automatically retrieve avatar and username, then set it back to the header
-        View headerview = navigationView.getHeaderView(0);
-        TextView headerUsername = headerview.findViewById(R.id.header_username);
-        headerUsername.setText("blablabla");
-        ImageView headerAvatar = headerview.findViewById(R.id.header_avatar);
-        headerAvatar.setImageResource(R.drawable.camera);
+        //the logic to find the header, then update the username from server user profile
+        headerview = navigationView.getHeaderView(0);
+        headerUsername = headerview.findViewById(R.id.header_username);
+
+        updateHeaderUsername();
+
 
         //get current Location in GoogleMap using FusedLocationProviderClient
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -162,25 +166,39 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
-
-    @Override
-    public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
-    }
-
-    @Override
-    public void onDrawerOpened(@NonNull View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerClosed(@NonNull View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-
+    private void updateHeaderUsername(){
+        if(!UserUtil.getToken(DiscoverCapsule.this).isEmpty()){
+            HttpUtil.getProfile(UserUtil.getToken(DiscoverCapsule.this), new okhttp3.Callback() {
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.d("PROFILE", "***** getProfile onResponse *****");
+                    String responseData = response.body().string();
+                    Log.d("PROFILE", "getProfile: " + responseData);
+                    try {
+                        JSONObject responseJSON = new JSONObject(responseData);
+                        if (responseJSON.has("success")) {
+                            String status = responseJSON.getString("success");
+                            Log.d("PROFILE", "getProfile success: " + status);
+                            String userInfo = responseJSON.getString("userInfo");
+                            JSONObject userInfoJSON = new JSONObject(userInfo);
+                            usernameProfileString = userInfoJSON.getString("uusr");
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    headerUsername.setText(usernameProfileString);
+                                }
+                            });
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
     }
 
     @Override
