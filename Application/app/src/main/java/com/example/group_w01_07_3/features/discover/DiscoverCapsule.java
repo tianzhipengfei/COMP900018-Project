@@ -268,35 +268,30 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
-                //TODO: place capsule marker
-                //place capsule marker
-                //show capsules on the map when user is nearby that particular area
-//                capsuleView = findViewById(R.id.capsuleView);
-//                if (true){
-//                    capsuleView.setVisibility(View.INVISIBLE);
-//                } else {
-//                    capsuleView.setVisibility(View.INVISIBLE);
-//                }
 
-                //place current location marker
                 Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
                 Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
-                for(int i = 0; i < allCapsules.length(); i++)
-                {
+                //place capsule marker
+                for(int i = 0; i < allCapsules.length(); i++) {
                     try {
                         JSONObject objects = allCapsules.getJSONObject(i);
-                        String lat = objects.getString("clat");
-                        String lng = objects.getString("clon");
+                        Double lat = objects.getDouble("clat");
+                        Double lng = objects.getDouble("clon");
                         Log.d("CAPSULEMARKER", "i: " + i);
                         Log.d("CAPSULEMARKER", "lat: " + lat);
                         Log.d("CAPSULEMARKER", "lng: " + lng);
 
-                        LatLng lat_Lng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
-                        MarkerOptions capsuleMarker = new MarkerOptions();
-                        capsuleMarker.position(lat_Lng);
-                        capsuleMarker.title("Capsule");
-                        capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                        mCurrLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                        //show capsules on the map when user is nearby that particular area
+                        // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
+                        if (Math.abs(location.getLatitude() - lat) < 0.04 &&
+                                    Math.abs(location.getLongitude() - lng) < 0.04){
+                            LatLng lat_Lng = new LatLng(lat, lng);
+                            MarkerOptions capsuleMarker = new MarkerOptions();
+                            capsuleMarker.position(lat_Lng);
+                            capsuleMarker.title("Capsule");
+                            capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                            mCurrLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
