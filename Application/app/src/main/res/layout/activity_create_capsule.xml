@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:onClick="record"
+    android:background="@color/colorGreyOut"
     tools:openDrawer="start">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -48,109 +48,289 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <EditText
-                    android:id="@+id/create_capsule_title"
-                    android:layout_width="271dp"
-                    android:layout_height="46dp"
-                    android:layout_marginTop="8dp"
-                    android:editable="true"
-                    android:ems="10"
-                    android:enabled="true"
-                    android:hint="Please enter the title of capsule"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <EditText
-                    android:id="@+id/create_capsule_content"
-                    android:layout_width="332dp"
-                    android:layout_height="90dp"
-                    android:layout_marginTop="8dp"
-                    android:editable="true"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:hint="Please enter the content of capsule here"
-                    android:inputType="textMultiLine"
-                    android:isScrollContainer="true"
-                    android:overScrollMode="ifContentScrolls"
-                    android:verticalScrollbarPosition="defaultPosition"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_title" />
-
-                <Button
-                    android:id="@+id/create_capsule_cancel_button"
-                    android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/create_text_section"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="64dp"
-                    android:layout_marginTop="16dp"
-                    android:onClick="cancel"
-                    android:text="Cancel"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_permission" />
+                    android:layout_marginLeft="8dp"
 
-                <ImageView
-                    android:id="@+id/create_capsule_piture_preview"
-                    android:layout_width="350dp"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/ic_camera"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/customborder"
+                    android:backgroundTint="#ffffff"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/play_button" />
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <Button
-                    android:id="@+id/create_capsule_piture_button"
-                    android:layout_width="98dp"
-                    android:layout_height="42dp"
-                    android:layout_marginTop="8dp"
-                    android:onClick="takePicture"
-                    android:text="Picture"
-                    app:layout_constraintStart_toEndOf="@+id/play_button"
-                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_content" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/create_title_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/oleo_script_swash_caps_bold"
+                        android:text="Name Your Memory Capsule"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                <Button
-                    android:id="@+id/create_capsule_button"
-                    android:layout_width="wrap_content"
+                    </com.google.android.material.textview.MaterialTextView>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/create_capsule_title_layout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        app:boxCornerRadiusBottomEnd="16dp"
+
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="0dp"
+                        app:endIconMode="clear_text"
+
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/create_title_textview">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/create_capsule_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:hint="Title of your capsule"
+                            android:minHeight="64dp"></com.google.android.material.textfield.TextInputEditText>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/create_content_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:fontFamily="@font/oleo_script_swash_caps_bold"
+                        android:text="Your Text Memory"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/create_capsule_title_layout">
+
+                    </com.google.android.material.textview.MaterialTextView>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/create_capsule_content_layout"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        app:boxCornerRadiusBottomEnd="16dp"
+
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+
+                        app:boxCornerRadiusTopStart="16dp"
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="0dp"
+                        app:endIconMode="clear_text"
+
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+
+                        app:layout_constraintTop_toBottomOf="@id/create_content_textview">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/create_capsule_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:hint="Content of your capsule"
+
+                            android:minHeight="64dp"></com.google.android.material.textfield.TextInputEditText>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/create_voice_section"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
+                    android:layout_marginLeft="8dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginEnd="64dp"
-                    android:onClick="createCapsule"
-                    android:text="Create"
+                    android:layout_marginRight="8dp"
+
+                    android:background="@drawable/customborder"
+                    android:backgroundTint="#ffffff"
+
+
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_permission" />
-
-                <Button
-                    android:id="@+id/play_button"
-                    android:layout_width="86dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="8dp"
-                    android:onClick="playAudio"
-                    android:text="Play"
-                    app:layout_constraintStart_toEndOf="@+id/record_button"
-                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_content" />
-
-                <Button
-                    android:id="@+id/record_button"
-                    android:layout_width="86dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="84dp"
-                    android:layout_marginTop="8dp"
-                    android:onClick="recordAudio"
-                    android:text="Record"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_content" />
+                    app:layout_constraintTop_toBottomOf="@id/create_text_section">
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/create_capsule_permission"
-                    android:layout_width="wrap_content"
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/create_voice_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+
+                        android:fontFamily="@font/oleo_script_swash_caps_bold"
+                        android:text="Your Voice Message"
+
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                    </com.google.android.material.textview.MaterialTextView>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/create_nontext_mega_layout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:onClick="whetherPublic"
-                    android:text="create public capsule"
+                    android:layout_marginEnd="8dp"
+                    android:orientation="horizontal"
+
+                    android:background="@drawable/customborder"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_piture_preview" />
+                    app:layout_constraintTop_toBottomOf="@+id/create_voice_section">
+
+                    <ImageView
+                        android:id="@+id/create_capsule_piture_preview"
+                        android:layout_width="0dp"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight=".5"
+                        android:src="@drawable/ic_camera"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/play_button" />
+
+                    <LinearLayout
+                        android:id="@+id/voice_linear_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight=".5"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Voice Memory"
+                            android:textAlignment="center" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/record_button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:onClick="recordAudio"
+                                android:text="Record" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/play_button"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:onClick="playAudio"
+                                android:text="Play" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/create_capsule_permission"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:onClick="whetherPublic"
+                            android:text="create public capsule" />
+
+
+                    </LinearLayout>
+                </LinearLayout>
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/create_capsule_piture_preview"-->
+<!--                    android:layout_width="350dp"-->
+<!--                    android:layout_height="200dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:src="@drawable/ic_camera"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/play_button" />-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/create_capsule_piture_button"-->
+<!--                    android:layout_width="98dp"-->
+<!--                    android:layout_height="42dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:onClick="takePicture"-->
+<!--                    android:text="Picture"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/play_button"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_content_layout" />-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/play_button"-->
+<!--                    android:layout_width="86dp"-->
+<!--                    android:layout_height="40dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:onClick="playAudio"-->
+<!--                    android:text="Play"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/record_button"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_content_layout" />-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/record_button"-->
+<!--                    android:layout_width="86dp"-->
+<!--                    android:layout_height="40dp"-->
+<!--                    android:layout_marginStart="84dp"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:onClick="recordAudio"-->
+<!--                    android:text="Record"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_content_layout" />-->
+
+<!--                <com.google.android.material.switchmaterial.SwitchMaterial-->
+<!--                    android:id="@+id/create_capsule_permission"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:onClick="whetherPublic"-->
+<!--                    android:text="create public capsule"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/create_nontext_mega_layout" />-->
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -168,6 +348,8 @@
             app:layout_anchorGravity="bottom|right|end"
             android:text="Create"
             app:icon="@drawable/appbar_send"
+
+            android:onClick="createCapsule"
             />
 
 

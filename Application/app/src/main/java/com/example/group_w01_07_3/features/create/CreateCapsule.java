@@ -131,22 +131,8 @@ public class CreateCapsule extends AppCompatActivity implements
         headerUsername = headerview.findViewById(R.id.header_username);
 
         updateHeaderUsername();
-
-        floatingActionButton = findViewById(R.id.create_fab);
-        floatingActionButton.bringToFront();
-        floatingActionButton.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View view) {
-                createCapsuleSend(view);
-            }
-        });
     }
 
-    //TODO: 在这里写发送的onclickListener的事件
-    private void createCapsuleSend(View view){
-        Toast.makeText(CreateCapsule.this, "Create button clicked", Toast.LENGTH_SHORT).show();
-    }
 
     //must inflate menu item, otherwise won't show
     @Override
@@ -434,18 +420,6 @@ public class CreateCapsule extends AppCompatActivity implements
 
         }
     }
-
-
-
-
-
-    public void cancel(View v) {
-        startActivity(new Intent(CreateCapsule.this, DiscoverCapsule.class));
-    }
-
-
-
-
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
