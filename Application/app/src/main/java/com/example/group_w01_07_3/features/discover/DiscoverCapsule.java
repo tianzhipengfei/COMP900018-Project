@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,8 +20,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +58,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import okhttp3.Call;
@@ -256,7 +263,23 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     Log.w("Click", "one of mCapsuleLocationMarker is clicked" + m);
                     if(marker.equals(m) ){
                         Log.w("Click", "******* popup window *******");
-                        //Todo: Rose's popupWindow
+                        //Rose's popupWindow
+                        LayoutInflater in=(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                        final View popupview=in.inflate(R.layout.popup_window_layout,null);
+                        int width=LinearLayout.LayoutParams.WRAP_CONTENT;
+                        int height=LinearLayout.LayoutParams.WRAP_CONTENT;
+                        PopupWindow pw=new PopupWindow(popupview,width,height,true);
+                        pw.showAtLocation(popupview, Gravity.CENTER,0,0);
+                        ImageView img=popupview.findViewById(R.id.tap_me);
+                        //how to find the information of selected capsule
+                        img.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(popupview.getContext(), "Click successfully!You have been success! Wait for open", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+
 
 
                         return true;

@@ -24,7 +24,7 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_margin="10dp"
         android:clickable="false"
         android:max="100"
@@ -38,7 +38,7 @@
         android:thumbOffset="-1dp" />
     <ImageView
         android:id="@+id/tap_me"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/popup_tapbutton"/>
