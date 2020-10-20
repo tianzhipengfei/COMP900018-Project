@@ -12,15 +12,12 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.history.OpenedCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.UserUtil;
-
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,7 +63,8 @@ public class popUpWindow {
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         Random random = new Random();
-        int choice = random.nextInt() % 3;
+//        int choice = random.nextInt() % 3;
+        int choice=1;
         //choice=1;
         switch (choice) {
             //choice 1 slide bar

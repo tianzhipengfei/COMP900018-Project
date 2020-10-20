@@ -19,11 +19,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.features.account.EditProfile;
@@ -67,20 +68,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
-
     // receive capsule information through HTTP GET request
     JSONArray allCapsules = new JSONArray();
     JSONObject selectedCapsule = new JSONObject();
     // request capsule
     private JSONObject capsuleInfo = new JSONObject();
-
     private Toolbar mToolbar;
     private DrawerLayout drawerLayout;
     View headerview;
     TextView headerUsername;
-
     NavigationView navigationView;
-
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
@@ -142,6 +139,22 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } catch (JSONException e) {
             System.out.print("Problems happen during parsing json objects");
         }
+//        try to add pop-up window
+//        String selectedinfo="{\"cid\": 6, \"cusr\": \"lyt\", \"ccontent\": \"THE FOURTH\", \"ctitle\": \"THE FOURTH\", \"cimage\": \"https://file.example.vn/images/file_example_JPG_500kB.jpg\", \"caudio\": \"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3\", \"ccount\": 0, \"clat\": 37.429025, \"clon\": -122.083288, \"cpermission\": 1, \"cavatar\": \"https://www.tianzhipengfei.xin/static/mobile/lyt-1603078706.jpg\"}";
+//        try {
+//            selectedCapsule=new JSONObject(selectedinfo);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        popUpWindow window=new popUpWindow(selectedCapsule);
+//        Log.d("Pop-up Window", "onCreate: "+selectedCapsule.toString());
+//        try {
+//            window.createWindow(getWindow().getCurrentFocus(),selectedCapsule);
+//            Log.d("Pop-up Window", "onCreate: "+"The window is created.");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.d("Pop-up Window",e.toString());
+//        }
     }
 
     @Override
@@ -325,8 +338,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
                                     Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
                                     //new popUpWindow(selectedCapsule);
-                                    popUpWindow window=new popUpWindow(selectedCapsule);
-                                    window.createWindow(findViewById(R.id.discover_drawer_layout),selectedCapsule);
+//                                    popUpWindow window=new popUpWindow(selectedCapsule);
+//                                    window.createWindow(findViewById(R.id.discover_drawer_layout),selectedCapsule);
 
                                 }
                             } catch (JSONException e) {
