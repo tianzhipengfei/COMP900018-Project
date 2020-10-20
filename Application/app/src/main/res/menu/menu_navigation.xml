@@ -10,7 +10,7 @@
             android:icon="@drawable/slidemenu_discover"/>
         <item
             android:id="@+id/create_capsule_tab"
-            android:title="Create Capsule"
+            android:title="Create Memory Capsule"
             android:icon="@drawable/slidemenu_add"/>
         <item
             android:id="@+id/capsule_history_tab"
