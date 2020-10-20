@@ -124,7 +124,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     }
 
     @Override
-    public void onCapsuleItemClick(int pos, TextView title) {
+    public void onCapsuleItemClick(int pos, TextView title, TextView date) {
         // create intent and send book object to Details activity
 
         Intent intent = new Intent(this,DetailedCapsuleHistoryItem.class);
@@ -133,9 +133,10 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         // shared Animation setup
         // let's import the Pair class
         Pair<View,String> p1 = Pair.create((View)title,"capsuleTitleTN"); // second arg is the transition string Name
+        Pair<View,String> p2 = Pair.create((View)date,"capsuleDateTN"); // second arg is the transition string Name
 
         ActivityOptionsCompat optionsCompat =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1);
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2);
 
         // start the activity with scene transition
 

@@ -10,7 +10,7 @@ import com.example.group_w01_07_3.R;
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
     TextView title;
-
+    TextView date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +18,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         setContentView(R.layout.activity_detailed_capsule_history_item);
 
         title = findViewById(R.id.history_detail_title);
+        date = findViewById(R.id.history_detail_date);
 
         //get the capsule object
         OpenedCapsule item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
@@ -27,6 +28,8 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
     private void loadCapsule(OpenedCapsule item){
         String titleString  = item.getCapsule_title();
+        String dateString = item.getOpened_date();
         title.setText(titleString);
+        date.setText(dateString);
     }
 }

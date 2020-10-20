@@ -6,6 +6,7 @@ public interface CapsuleCallback {
 
     void onCapsuleItemClick(
             int pos,
-            TextView title
+            TextView title,
+            TextView date
     );
 }
