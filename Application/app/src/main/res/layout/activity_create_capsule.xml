@@ -242,44 +242,21 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/create_drop_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-
-                    android:background="@drawable/ic_drop"
-                    android:backgroundTint="#ffffff"
-
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/create_image_layout" />
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/create_drop_inverse_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-
-                    android:background="@drawable/ic_drop_inverse"
-                    android:backgroundTint="#ffffff"
-
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/create_drop_2" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/create_voice_section"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:layout_marginTop="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
 
 
                     android:layout_marginBottom="48dp"
-                    android:background="@drawable/customborder_top_no_corner"
+                    android:background="@drawable/custom_border_all_corner"
                     android:backgroundTint="#ffffff"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/create_drop_inverse_2">
+                    app:layout_constraintTop_toBottomOf="@id/create_image_layout">
 
 
                     <com.google.android.material.textview.MaterialTextView
