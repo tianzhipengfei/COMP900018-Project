@@ -73,6 +73,8 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
             capsule_title = itemView.findViewById(R.id.history_opened_capsule_title);
             opened_date = itemView.findViewById(R.id.history_opened_capsule_openDate);
 
+
+            //根据callback,这里设置的view支持transition 【要真正进行transition这个动画，得在主activity的onCapsuleItemClick里吧pair传进去
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
