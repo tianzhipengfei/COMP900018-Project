@@ -325,8 +325,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
                                     Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
                                     //new popUpWindow(selectedCapsule);
-                                    popUpWindow window=new popUpWindow(selectedCapsule);
-                                    window.createWindow(findViewById(R.id.discover_drawer_layout),selectedCapsule);
+//                                    popUpWindow window=new popUpWindow(selectedCapsule);
+//                                    window.createWindow(findViewById(R.id.discover_drawer_layout),selectedCapsule);
 
                                 }
                             } catch (JSONException e) {
