@@ -8,7 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,7 +30,6 @@ import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
-import com.example.group_w01_07_3.util.HttpUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -51,8 +50,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import okhttp3.Call;
@@ -84,6 +83,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     Location mLastLocation;
     Marker mCurrLocationMarker;
     Marker mCapsuleLocationMarker;
+    List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
     FusedLocationProviderClient mFusedLocationClient;
     private boolean updateCameraFlag = true;
     final int PER_SECOND = 1000;
@@ -251,15 +251,18 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Log.w("Click", "onMarkerClick");
-                // TODO Auto-generated method stub
-                if(marker.equals(mCapsuleLocationMarker) ){
-                    Log.w("Click", "clickable capsule markers");
-                    //Todo: Rose's popupWindow
+                Log.w("Click", "onMarkerClick:"+ marker);
+                for (Marker m: mCapsuleMarkers ) {
+                    Log.w("Click", "one of mCapsuleLocationMarker is clicked" + m);
+                    if(marker.equals(m) ){
+                        Log.w("Click", "******* popup window *******");
+                        //Todo: Rose's popupWindow
 
 
-                    return true;
+                        return true;
+                    }
                 }
+                if(marker.equals(mCurrLocationMarker) ){ Log.w("Click", "mCurrLocationMarker is clicked"); }
                 return false;
             }
         });
@@ -288,7 +291,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
-
                 Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
                 Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
                 //place capsule marker
@@ -311,6 +313,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             capsuleMarker.title("Capsule");
                             capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                             mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                            mCapsuleMarkers.add(mCapsuleLocationMarker);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -527,5 +530,4 @@ public class DiscoverCapsule extends AppCompatActivity implements
         ]
     }
 }*/
-
 
