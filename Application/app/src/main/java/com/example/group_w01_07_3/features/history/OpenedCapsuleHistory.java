@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -36,8 +38,10 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Response;
 
+import androidx.core.util.Pair;
+
 public class OpenedCapsuleHistory extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener, CapsuleCallback{
 
     boolean doubleBackToExitPressedOnce = false;
 
@@ -49,6 +53,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     NavigationView navigationView;
 
     private Toolbar mToolbar;
+
+    private List<OpenedCapsule> testingList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +93,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //setup recycleView with adapter
         //这里我是手动添加的几个样本数据供测试layout用,写代码时请删除
         RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
-        List<OpenedCapsule> testingList = new ArrayList<>();
+        testingList = new ArrayList<>();
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
@@ -97,7 +103,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
 
-        OpenedCapsuleAdapter openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList);
+        OpenedCapsuleAdapter openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -115,6 +121,29 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 //                finish();
 //            }
 //        });
+    }
+
+    @Override
+    public void onCapsuleItemClick(int pos, TextView title) {
+        // create intent and send book object to Details activity
+
+        Intent intent = new Intent(this,DetailedCapsuleHistoryItem.class);
+        intent.putExtra("capsuleObject",testingList.get(pos));
+
+        // shared Animation setup
+        // let's import the Pair class
+        Pair<View,String> p1 = Pair.create((View)title,"capsuleTitleTN"); // second arg is the transition string Name
+
+        ActivityOptionsCompat optionsCompat =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1);
+
+        // start the activity with scene transition
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            startActivity(intent,optionsCompat.toBundle());
+        }
+        else
+            startActivity(intent);
     }
 
     @Override
@@ -210,5 +239,4 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             }, 2000);
         }
     }
-
 }

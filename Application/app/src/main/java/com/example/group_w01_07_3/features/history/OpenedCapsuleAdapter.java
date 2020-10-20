@@ -21,9 +21,12 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
     Context mcontext;
     List<OpenedCapsule> mData;
 
-    public OpenedCapsuleAdapter(Context mcontext, List<OpenedCapsule> mData) {
+    CapsuleCallback callback;
+
+    public OpenedCapsuleAdapter(Context mcontext, List<OpenedCapsule> mData, CapsuleCallback callback) {
         this.mcontext = mcontext;
         this.mData = mData;
+        this.callback = callback;
     }
 
     @NonNull
@@ -69,6 +72,13 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
             original_user_avatar = itemView.findViewById(R.id.history_capsule_original_user_avatar);
             capsule_title = itemView.findViewById(R.id.history_opened_capsule_title);
             opened_date = itemView.findViewById(R.id.history_opened_capsule_openDate);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    callback.onCapsuleItemClick(getAdapterPosition(), capsule_title);
+                }
+            });
         }
     }
 }
