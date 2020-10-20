@@ -45,17 +45,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
-import android.os.Handler;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Dictionary;
 import java.util.List;
 import java.util.Random;
 
@@ -239,7 +234,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // if location permission is already granted
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 mGoogleMap.setMyLocationEnabled(true);
-//                Log.i("MGOOGLEMAP:", "android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M");
             } else {
                 // request location permission
                 checkLocationPermission();
@@ -248,7 +242,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } else {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
-//            Log.i("MGOOGLEMAP:", "requestLocationUpdates");
         }
     }
 
@@ -275,6 +268,36 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
+
+                Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
+                Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
+                //place capsule marker
+                for(int i = 0; i < allCapsules.length(); i++) {
+                    try {
+                        JSONObject objects = allCapsules.getJSONObject(i);
+                        Double lat = objects.getDouble("clat");
+                        Double lng = objects.getDouble("clon");
+                        Log.d("CAPSULEMARKER", "i: " + i);
+                        Log.d("CAPSULEMARKER", "lat: " + lat);
+                        Log.d("CAPSULEMARKER", "lng: " + lng);
+
+                        //show capsules on the map when user is nearby that particular area
+                        // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
+                        if (Math.abs(location.getLatitude() - lat) < 0.04 &&
+                                    Math.abs(location.getLongitude() - lng) < 0.04){
+                            LatLng lat_Lng = new LatLng(lat, lng);
+                            MarkerOptions capsuleMarker = new MarkerOptions();
+                            capsuleMarker.position(lat_Lng);
+                            capsuleMarker.title("Capsule");
+                            capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                            mCurrLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
+                    }
+                }
+
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
                     // TODO: send request
                     lastRequestLat = location.getLatitude();
@@ -287,7 +310,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                 }
-
                 //move map camera
                 if (updateCameraFlag) {
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
@@ -309,25 +331,22 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             Log.d("CAPSULE", "***** getCapsule onResponse *****");
-                            String responseData = response.body().string();
+                            String responseData = response.body().string(); //.getClass().getName() java.lang.String
                             // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
                             Log.i("CAPSULE", "responseData:" + responseData);
 
                             try {
-                                JSONObject responseJSON = new JSONObject(responseData); //.getClass().getName() java.lang.String
+                                JSONObject responseJSON = new JSONObject(responseData);
                                 if (responseJSON.has("success")) {
                                     String status = responseJSON.getString("success");
                                     Log.d("CAPSULE", "getCapsule success: " + status);
-                                    String capsulesInfo = responseJSON.getString("capsules");
-                                    allCapsules = new JSONArray(capsulesInfo);
-                                    Log.d("CAPSULE", "allCapsules: " + allCapsules);
+
+                                    allCapsules = responseJSON.getJSONArray("capsules");
+                                    Log.d("CAPSULE", "capsuleInfo: " + allCapsules);
+
                                     Random rand = new Random();
                                     selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
                                     Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
-                                    //new popUpWindow(selectedCapsule);
-//                                    popUpWindow window=new popUpWindow(selectedCapsule);
-//                                    window.createWindow(findViewById(R.id.discover_drawer_layout),selectedCapsule);
-
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -464,6 +483,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 }
+
+//Todo: popupWindow
+//new popUpWindow(selectedCapsule);
+//popUpWindow window=new popUpWindow(selectedCapsule);
+//window.createWindow(findViewById(R.id.discover_drawer_layout),selectedCapsule);
+
 /* HTTP GET Method
  Returns
     {"sucess": true,
@@ -509,3 +534,4 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //        });
 //        }
 //    }
+
