@@ -134,28 +134,6 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
 
-    //must inflate menu item, otherwise won't show
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-
-        getMenuInflater().inflate(R.menu.create_capsule_menu, menu);
-        return true;
-    }
-
-    //Implement the onclicked listener for the create button
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        switch (id){
-            case R.id.create_capsule_appbar_create:
-                Toast.makeText(CreateCapsule.this, "Create button clicked", Toast.LENGTH_SHORT).show();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
     public void whetherPublic(View v) {
         SwitchMaterial permiSwitch = (SwitchMaterial) findViewById(R.id.create_capsule_permission);
         if (permiSwitch.isChecked()) {
@@ -165,9 +143,9 @@ public class CreateCapsule extends AppCompatActivity implements
         }
 
         if (permission == 1) {
-            permiSwitch.setText("create public capsule");
+            permiSwitch.setText("Create Public Memory Capsule");
         } else {
-            permiSwitch.setText("create private capsule");
+            permiSwitch.setText("Create Private Memory Capsule");
         }
     }
 
