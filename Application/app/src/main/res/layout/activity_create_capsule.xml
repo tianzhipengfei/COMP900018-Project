@@ -10,119 +10,15 @@
     android:onClick="record"
     tools:openDrawer="start">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/create_coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/create_capsule_cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="64dp"
-            android:layout_marginTop="16dp"
-            android:onClick="cancel"
-            android:text="Cancel"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_capsule_permission" />
-
-        <ImageView
-            android:id="@+id/create_capsule_piture_preview"
-            android:layout_width="350dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/ic_camera"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/play_button" />
-
-        <Button
-            android:id="@+id/create_capsule_piture_button"
-            android:layout_width="98dp"
-            android:layout_height="42dp"
-            android:layout_marginTop="8dp"
-            android:onClick="takePicture"
-            android:text="Picture"
-            app:layout_constraintStart_toEndOf="@+id/play_button"
-            app:layout_constraintTop_toBottomOf="@+id/create_capsule_content" />
-
-        <Button
-            android:id="@+id/create_capsule_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="64dp"
-            android:onClick="createCapsule"
-            android:text="Create"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_capsule_permission" />
-
-        <EditText
-            android:id="@+id/create_capsule_content"
-            android:layout_width="332dp"
-            android:layout_height="90dp"
-            android:layout_marginTop="8dp"
-            android:editable="true"
-            android:ems="10"
-            android:gravity="start|top"
-            android:hint="Please enter the content of capsule here"
-            android:inputType="textMultiLine"
-            android:isScrollContainer="true"
-            android:overScrollMode="ifContentScrolls"
-            android:verticalScrollbarPosition="defaultPosition"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_capsule_title" />
-
-        <Button
-            android:id="@+id/play_button"
-            android:layout_width="86dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            android:onClick="playAudio"
-            android:text="Play"
-            app:layout_constraintStart_toEndOf="@+id/record_button"
-            app:layout_constraintTop_toBottomOf="@+id/create_capsule_content" />
-
-        <Button
-            android:id="@+id/record_button"
-            android:layout_width="86dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="84dp"
-            android:layout_marginTop="8dp"
-            android:onClick="recordAudio"
-            android:text="Record"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_capsule_content" />
-
-        <EditText
-            android:id="@+id/create_capsule_title"
-            android:layout_width="271dp"
-            android:layout_height="46dp"
-            android:layout_marginTop="8dp"
-            android:editable="true"
-            android:ems="10"
-            android:enabled="true"
-            android:hint="Please enter the title of capsule"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_create_layout" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/create_capsule_permission"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:onClick="whetherPublic"
-            android:text="create public capsule"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_capsule_piture_preview" />
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/toolbar_create_layout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -140,8 +36,143 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </com.google.android.material.appbar.AppBarLayout>
+        
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/create_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            >
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/create_capsule_title"
+                    android:layout_width="271dp"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="8dp"
+                    android:editable="true"
+                    android:ems="10"
+                    android:enabled="true"
+                    android:hint="Please enter the title of capsule"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/create_capsule_content"
+                    android:layout_width="332dp"
+                    android:layout_height="90dp"
+                    android:layout_marginTop="8dp"
+                    android:editable="true"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:hint="Please enter the content of capsule here"
+                    android:inputType="textMultiLine"
+                    android:isScrollContainer="true"
+                    android:overScrollMode="ifContentScrolls"
+                    android:verticalScrollbarPosition="defaultPosition"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_title" />
+
+                <Button
+                    android:id="@+id/create_capsule_cancel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="64dp"
+                    android:layout_marginTop="16dp"
+                    android:onClick="cancel"
+                    android:text="Cancel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_permission" />
+
+                <ImageView
+                    android:id="@+id/create_capsule_piture_preview"
+                    android:layout_width="350dp"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_camera"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/play_button" />
+
+                <Button
+                    android:id="@+id/create_capsule_piture_button"
+                    android:layout_width="98dp"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="8dp"
+                    android:onClick="takePicture"
+                    android:text="Picture"
+                    app:layout_constraintStart_toEndOf="@+id/play_button"
+                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_content" />
+
+                <Button
+                    android:id="@+id/create_capsule_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="64dp"
+                    android:onClick="createCapsule"
+                    android:text="Create"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_permission" />
+
+                <Button
+                    android:id="@+id/play_button"
+                    android:layout_width="86dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="8dp"
+                    android:onClick="playAudio"
+                    android:text="Play"
+                    app:layout_constraintStart_toEndOf="@+id/record_button"
+                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_content" />
+
+                <Button
+                    android:id="@+id/record_button"
+                    android:layout_width="86dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="84dp"
+                    android:layout_marginTop="8dp"
+                    android:onClick="recordAudio"
+                    android:text="Record"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_content" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/create_capsule_permission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:onClick="whetherPublic"
+                    android:text="create public capsule"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/create_capsule_piture_preview" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/create_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/create_scroll_view"
+            app:fabSize="normal"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/colorSecondary"
+            app:layout_anchorGravity="bottom|right|end"
+            android:text="Create"
+            app:icon="@drawable/appbar_send"
+            />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view_create"

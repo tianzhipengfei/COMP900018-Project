@@ -54,6 +54,8 @@ import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.widget.BottomDialog;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -78,6 +80,8 @@ public class CreateCapsule extends AppCompatActivity implements
     private String usernameProfileString;
 
     NavigationView navigationView;
+
+    ExtendedFloatingActionButton floatingActionButton;
 
     private RecordAudioUtil recorderUtil;
     private LocationUtil locationUtil;
@@ -127,6 +131,21 @@ public class CreateCapsule extends AppCompatActivity implements
         headerUsername = headerview.findViewById(R.id.header_username);
 
         updateHeaderUsername();
+
+        floatingActionButton = findViewById(R.id.create_fab);
+        floatingActionButton.bringToFront();
+        floatingActionButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                createCapsuleSend(view);
+            }
+        });
+    }
+
+    //TODO: 在这里写发送的onclickListener的事件
+    private void createCapsuleSend(View view){
+        Toast.makeText(CreateCapsule.this, "Create button clicked", Toast.LENGTH_SHORT).show();
     }
 
     //must inflate menu item, otherwise won't show
