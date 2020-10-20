@@ -54,7 +54,7 @@ db.query('''
         cpermission INTEGER NOT NULL,   -- Public or private
         clat REAL NOT NULL,             -- Latitude 
         clon REAL NOT NULL,             -- Longitude
-        ctitle TEXT NOT NULL,         -- Capsule title
+        ctitle TEXT NOT NULL,           -- Capsule title
         ccontent TEXT NOT NULL,         -- Capsule content
         cimage TEXT,                    -- Capsule image URI
         caudio TEXT,                    -- Capsule audio URI
@@ -126,7 +126,7 @@ def getCapsuleInfo(capsule):
     res = {}
     usr = capsule['cusr']
     user = getUser(usr)
-    keys = ['cid', 'cusr', 'ccontent', 'ctitle', 'cimage', 'caudio', 'ccount', 'clat', 'clon']
+    keys = ['cid', 'cusr', 'ccontent', 'ctitle', 'cimage', 'caudio', 'ccount', 'clat', 'clon', 'cpermission']
     for key in keys:
         res[key] = capsule[key]
     res['cavatar'] = user['uavatar']
@@ -397,6 +397,9 @@ class DiscoverCapsule:
 
         max_distance = i.get('max_distance') if i.get('max_distance') else 5
         num_capsules = i.get('num_capsules') if i.get('num_capsules') else 20
+
+        max_distance = int(max_distance)
+        num_capsules = int(num_capsules)
 
         # Filter the capsules within max_distance
         filtered_capsule = filter_capsule(lat, lon, other_capsules, max_distance)
