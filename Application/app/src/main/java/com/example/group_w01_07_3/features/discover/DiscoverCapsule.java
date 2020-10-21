@@ -254,7 +254,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             public boolean onMarkerClick(Marker marker) {
                 Log.w("Click", "onMarkerClick:"+ marker);
                 for (Marker m: mCapsuleMarkers ) {
-                    Log.w("Click", "one of mCapsuleLocationMarker is clicked" + m);
+                    Log.w("Click", "one of mCapsuleLocationMarker is clicked:" + m);
                     if(marker.equals(m) ){
                         Log.w("Click", "******* popup window *******");
                         //Todo: Rose's popupWindow
@@ -272,9 +272,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     final LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            //google map zoom in and zoom out
-            mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-
             List<Location> locationList = locationResult.getLocations();
             Log.i("locationList", "" + locationList);
             if (locationList.size() > 0) {
@@ -323,6 +320,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                         Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
                     }
+                }
+
+                //google map zoom in and zoom out
+                mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
+                //always show marker title
+                mCurrLocationMarker.showInfoWindow();
+                for (Marker m: mCapsuleMarkers ) {
+                    m.showInfoWindow();
                 }
 
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
