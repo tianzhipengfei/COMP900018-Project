@@ -137,7 +137,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 swipeRefreshLayout.setRefreshing(false);//取消进度框
 
                 View bigView = findViewById(R.id.history_drawer_layout);
-                Snackbar snackbar = Snackbar.make(bigView, "Refreshed History", Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(bigView, "Refreshed History", Snackbar.LENGTH_SHORT);
                 snackbar.show();
             }
         });
