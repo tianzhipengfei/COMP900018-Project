@@ -272,6 +272,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     final LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
+            //google map zoom in and zoom out
+            mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
             List<Location> locationList = locationResult.getLocations();
             Log.i("locationList", "" + locationList);
             if (locationList.size() > 0) {
