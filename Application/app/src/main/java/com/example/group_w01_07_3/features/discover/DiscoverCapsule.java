@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -61,7 +63,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
 
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
@@ -100,13 +102,18 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private int capsuleNum = 20;
     // maximum distance to discover (unit: km)
     private double discoverCapsuleRange = 3;
+    // shake event
+    private SensorManager sensorMgr;
+    private float last_x = 0 ;
+    private float last_y = 0;
+    private float last_z = 0;
+    private static final int SHAKE_THRESHOLD = 800;
+    private long lastUpdate = System.currentTimeMillis();
 
-    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discover_capsule);
-
 
         //use toolbar at top of screen across all activities
         Toolbar toolbar = findViewById(R.id.toolbar_discover);
@@ -146,6 +153,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         Toast.makeText(DiscoverCapsule.this,
                 "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
+
+        sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorMgr.registerListener(this,
+                SensorManager.SENSOR_ACCELEROMETER,
+                SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override
@@ -220,10 +232,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
-        //stop location updates when Activity is no longer active
-        if (mFusedLocationClient != null) {
-            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-        }
     }
 
     @Override
@@ -266,6 +274,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         //Todo: add popupWindow()
 
 
+
+                        //remove the capsule marker in google map after an user opens the capsule
+                        m.remove();
                         return true;
                     }
                 }
@@ -498,13 +509,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
     }
 
     //double backpressed to exit app
-    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
     @Override
     public void onBackPressed() {
         if(drawerLayout.isDrawerOpen(navigationView)){
@@ -525,6 +537,40 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 }
             }, 2000);
         }
+    }
+
+    // detect a shake event and the shake direction
+    @Override
+    public void onSensorChanged(int sensor, float[] values) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
+            long curTime = System.currentTimeMillis();
+            // only allow one update every 100ms.
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                float x = values[SensorManager.DATA_X];
+                float y = values[SensorManager.DATA_Y];
+                float z = values[SensorManager.DATA_Z];
+                // shaking speed
+                float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+
+                if (speed > SHAKE_THRESHOLD) {
+                    Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
+                    // Todo: comment out toast message after testing,
+                    Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
+                }
+                last_x = x;
+                last_y = y;
+                last_z = z;
+            }
+        }
+    }
+    //The logic is borrowed from https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android
+
+    @Override
+    public void onAccuracyChanged(int i, int i1) {
+
     }
 }
 
