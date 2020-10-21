@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -97,6 +99,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
 
         //TODO: @CHENFu, 这里是我手动加的测试胶囊,请自行实现对应功能
+
+        //TODO:Image load请一定一定要用,不要自己写function(不然没法做animation) : [Picasso] 或者 [Glide】. 非常简单,有URL他就帮你load,只要几行代码, 详情请谷歌
         //load everything needed to be displyaed in the list
         RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<>();
@@ -134,7 +138,10 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 openedCapsuleAdapter.notifyDataSetChanged();
 
                 swipeRefreshLayout.setRefreshing(false);//取消进度框
-                Toast.makeText(OpenedCapsuleHistory.this, "Refresh Successful", Toast.LENGTH_SHORT).show();
+
+                View bigView = findViewById(R.id.history_drawer_layout);
+                Snackbar snackbar = Snackbar.make(bigView, "Refreshed History", Snackbar.LENGTH_SHORT);
+                snackbar.show();
             }
         });
 
@@ -155,7 +162,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     }
 
     @Override
-    public void onCapsuleItemClick(int pos, TextView title, TextView date) {
+    public void onCapsuleItemClick(int pos, TextView title, TextView date, ImageView capImage) {
         // create intent and send book object to Details activity
 
         Intent intent = new Intent(this,DetailedCapsuleHistoryItem.class);
@@ -165,11 +172,12 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         // let's import the Pair class
         Pair<View,String> p1 = Pair.create((View)title,"capsuleTitleTN"); // second arg is the transition string Name
         Pair<View,String> p2 = Pair.create((View)date,"capsuleDateTN"); // second arg is the transition string Name
+        Pair<View,String> p3 = Pair.create((View)capImage,"capsuleImageTN"); // second arg is the transition string Name
 
 
         //这里设置的就是到底哪几个view的transition被开启运作
         ActivityOptionsCompat optionsCompat =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2);
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3);
 
         // start the activity with scene transition
 
