@@ -48,10 +48,13 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         // animation for the whole card
         holder.megaCardLayout.setAnimation(AnimationUtils.loadAnimation(mcontext,R.anim.fade_scale_animation));
 
+        //all elements defined here will be updated based on the data provided
         holder.capsule_image.setImageResource(mData.get(position).getCapsule_image());
         holder.original_user_avatar.setImageResource(mData.get(position).getAvatar());
         holder.capsule_title.setText(mData.get(position).getCapsule_title());
         holder.opened_date.setText(mData.get(position).getOpened_date());
+        holder.private_tag.setText(mData.get(position).getTag());
+        holder.capsule_content.setText(mData.get(position).getContent());
     }
 
     @Override
@@ -61,7 +64,7 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
 
     public class capsuleCardViewHolder extends RecyclerView.ViewHolder {
         ImageView capsule_image, original_user_avatar;
-        TextView capsule_title, opened_date;
+        TextView capsule_title, opened_date, private_tag, capsule_content;
         ConstraintLayout megaCardLayout;
 
 
@@ -72,13 +75,15 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
             original_user_avatar = itemView.findViewById(R.id.history_capsule_original_user_avatar);
             capsule_title = itemView.findViewById(R.id.history_opened_capsule_title);
             opened_date = itemView.findViewById(R.id.history_opened_capsule_openDate);
+            private_tag = itemView.findViewById(R.id.history_opened_capsule_tag);
+            capsule_content = itemView.findViewById(R.id.history_opened_capsule_content);
 
 
             //根据callback,这里设置的view支持transition 【要真正进行transition这个动画，得在主activity的onCapsuleItemClick里吧pair传进去
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    callback.onCapsuleItemClick(getAdapterPosition(), capsule_title, opened_date, capsule_image);
+                    callback.onCapsuleItemClick(getAdapterPosition(), capsule_title, opened_date, capsule_image, private_tag, capsule_content);
                 }
             });
         }

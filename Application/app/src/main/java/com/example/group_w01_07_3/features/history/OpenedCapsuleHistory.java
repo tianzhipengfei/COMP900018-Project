@@ -104,15 +104,17 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //load everything needed to be displyaed in the list
         RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<>();
+        String testPurposeLongString = getApplicationContext().getString(R.string.registration_help);
+
         testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title" +
-                "his is a very long title,This is a very long title,This is a very long title", "2019/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title: aa", "2018/2/31", R.drawable.slidewindow_capsule, R.drawable.logo));
-        testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title: cc", "2016/4/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title: dd", "2015/5/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title: ee", "2014/6/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title: ff", "2020/7/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title: gg", "2020/8/31", R.drawable.avatar_sample, R.drawable.capsule));
+                "his is a very long title,This is a very long title,This is a very long title", "2019/12/31", R.drawable.avatar_sample, R.drawable.capsule, "Your Private Capsule",testPurposeLongString));
+        testingList.add(new OpenedCapsule("testing input capsule title: aa", "2018/2/31", R.drawable.slidewindow_capsule, R.drawable.logo,"Public Memory Capsule",testPurposeLongString));
+        testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcv"));
+        testingList.add(new OpenedCapsule("testing input capsule title: cc", "2016/4/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule",testPurposeLongString));
+        testingList.add(new OpenedCapsule("testing input capsule title: dd", "2015/5/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxvxv"));
+        testingList.add(new OpenedCapsule("testing input capsule title: ee", "2014/6/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString));
+        testingList.add(new OpenedCapsule("testing input capsule title: ff", "2020/7/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcxvcvcvxvxc"));
+        testingList.add(new OpenedCapsule("testing input capsule title: gg", "2020/8/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString));
 
 
         //set up the recycle view
@@ -132,9 +134,9 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 //TODO: @CHENFU: 自行实现获取最新history的功能
                 testingList.clear();
 
-                testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-                testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-                testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+                testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sfgdfsgsdfsdfgsdfgsdfg"));
+                testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule","sdfgsdfgdsfgfsdgdsgdsfgs"));
+                testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sdfgsdgfsdgsdfgsdgsdfgds"));
 
                 openedCapsuleAdapter.notifyDataSetChanged();
 
@@ -149,7 +151,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     }
 
     @Override
-    public void onCapsuleItemClick(int pos, TextView title, TextView date, ImageView capImage) {
+    public void onCapsuleItemClick(int pos, TextView title, TextView date, ImageView capImage, TextView privateTag, TextView content) {
         // create intent and send book object to Details activity
 
         Intent intent = new Intent(this,DetailedCapsuleHistoryItem.class);
@@ -160,11 +162,13 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         Pair<View,String> p1 = Pair.create((View)title,"capsuleTitleTN"); // second arg is the transition string Name
         Pair<View,String> p2 = Pair.create((View)date,"capsuleDateTN"); // second arg is the transition string Name
         Pair<View,String> p3 = Pair.create((View)capImage,"capsuleImageTN"); // second arg is the transition string Name
+        Pair<View,String> p4 = Pair.create((View)privateTag,"capsuleTagTN"); // second arg is the transition string Name
+        Pair<View,String> p5 = Pair.create((View)content,"capsuleContentTN"); // second arg is the transition string Name
 
 
         //这里设置的就是到底哪几个view的transition被开启运作
         ActivityOptionsCompat optionsCompat =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3);
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3,p4,p5);
 
         // start the activity with scene transition
 

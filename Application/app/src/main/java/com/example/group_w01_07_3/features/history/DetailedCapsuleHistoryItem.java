@@ -16,6 +16,8 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
     TextView title;
     TextView date;
+    TextView tag;
+    TextView content;
     ImageView image;
 
     @Override
@@ -41,6 +43,8 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         date = findViewById(R.id.history_detail_date);
 
         image = findViewById(R.id.history_detail_image);
+        tag = findViewById(R.id.history_detail_capsule_private_public_tag);
+        content = findViewById(R.id.history_detail_content);
 
         //get the capsule object
         OpenedCapsule item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
@@ -58,5 +62,11 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
         int imageLocation = item.getCapsule_image();
         image.setImageResource(imageLocation);
+
+        String tagString = item.getTag();
+        tag.setText(tagString);
+
+        String contentString = item.getContent();
+        content.setText(contentString);
     }
 }

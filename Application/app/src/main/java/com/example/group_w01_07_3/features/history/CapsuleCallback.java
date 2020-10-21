@@ -10,6 +10,8 @@ public interface CapsuleCallback {
             int pos,
             TextView title,
             TextView date,
-            ImageView capImage
+            ImageView capImage,
+            TextView privateTag,
+            TextView content
     );
 }
