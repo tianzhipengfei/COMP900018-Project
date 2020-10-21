@@ -266,6 +266,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         //Todo: add popupWindow()
 
 
+
+                        //remove the capsule marker in google map after an user opens the capsule
+                        m.remove();
                         return true;
                     }
                 }
