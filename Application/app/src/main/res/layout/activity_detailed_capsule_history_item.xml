@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorGreyOut"
     tools:context=".features.history.DetailedCapsuleHistoryItem">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,6 +36,7 @@
             app:layout_constraintTop_toBottomOf="@id/detail_history_capsule_back_toolbar">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/detail_history_capsule_content_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 

@@ -78,7 +78,7 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    callback.onCapsuleItemClick(getAdapterPosition(), capsule_title, opened_date);
+                    callback.onCapsuleItemClick(getAdapterPosition(), capsule_title, opened_date, capsule_image);
                 }
             });
         }

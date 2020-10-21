@@ -27,7 +27,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         mToolbar = findViewById(R.id.detail_history_capsule_back_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_back);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Change Password");
+        getSupportActionBar().setTitle("Capsule Review");
 
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
