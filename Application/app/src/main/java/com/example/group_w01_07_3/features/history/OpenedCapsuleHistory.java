@@ -101,8 +101,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //这里我是手动添加的几个样本数据供测试layout用,写代码时请删除
         RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<>();
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.slidewindow_capsule, R.drawable.logo));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));

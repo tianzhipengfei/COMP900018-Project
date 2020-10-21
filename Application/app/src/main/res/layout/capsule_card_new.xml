@@ -11,50 +11,28 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-
-        app:cardElevation="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-
-            <ImageView
-                android:id="@+id/history_capsule_card_background"
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:background="@color/colorGreyOut"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toTopOf="@+id/card_top_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@drawable/capsule" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/card_top_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="#ffffff"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/history_capsule_card_background">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/history_capsule_original_user_avatar"
@@ -63,20 +41,17 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:shapeAppearanceOverlay="@style/circleImageView"
-                    app:strokeWidth="2dp"
                     tools:srcCompat="@drawable/avatar_sample" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/history_opened_capsule_title"
                     android:layout_width="0dp"
                     android:layout_height="32dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:ellipsize="end"
 
@@ -96,7 +71,7 @@
                     android:id="@+id/history_opened_capsule_openDate"
                     android:layout_width="0dp"
                     android:layout_height="32dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="8dp"
 
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
@@ -110,6 +85,24 @@
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/history_capsule_card_background"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_top_layout"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+
+
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
