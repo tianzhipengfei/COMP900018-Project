@@ -1,5 +1,6 @@
 package com.example.group_w01_07_3.features.discover;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
@@ -57,6 +59,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -264,24 +267,95 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     if(marker.equals(m) ){
                         Log.w("Click", "******* popup window *******");
                         //Rose's popupWindow
+//                        popUpWindow popUpWindow=new popUpWindow();
+////                        LayoutInflater in=(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+////                        final View popupview=in.inflate(R.layout.popup_window_layout,null);
+////                        try {
+////                            popUpWindow.createWindow(popupview,selectedCapsule);
+////                        } catch (JSONException e) {
+////                            e.printStackTrace();
+////                        }
                         LayoutInflater in=(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         final View popupview=in.inflate(R.layout.popup_window_layout,null);
                         int width=LinearLayout.LayoutParams.WRAP_CONTENT;
                         int height=LinearLayout.LayoutParams.WRAP_CONTENT;
-                        PopupWindow pw=new PopupWindow(popupview,width,height,true);
+                        final PopupWindow pw=new PopupWindow(popupview,width,height,true);
                         pw.showAtLocation(popupview, Gravity.CENTER,0,0);
                         ImageView img=popupview.findViewById(R.id.tap_me);
-                        //how to find the information of selected capsule
+                        LocationUtil currentLocation=new LocationUtil(DiscoverCapsule.this);
+                        Location current_Location=currentLocation.getLocation();
+                        //get the required information to send the request to the server
+                        Double lon=current_Location.getLatitude();
+                        Double lat=current_Location.getAltitude();
+                        String token=UserUtil.getToken(DiscoverCapsule.this);
+                        Log.d("PopupWindow", "onMarkerClick: "+"Longtitude is "+lon+"The latitude is"+lat);
+                        Log.d("PopupWindow","Compare with the location of last position"+mLastLocation.getLatitude()+"Longtitude is "+mLastLocation.getLongitude());
+                        Log.d("PopupWindow", "onMarkerClick: "+"get the information of selected capsule"+selectedCapsule.toString());
+                        final JSONObject request=new JSONObject();
+                        try {
+                            request.put("tkn",token);
+                            request.put("lat",mLastLocation.getLatitude());
+                            request.put("lon",mLastLocation.getLongitude());
+                            request.put("time",Calendar.getInstance().getTime());
+                            request.put("cid",selectedCapsule.get("cid"));
+                            Log.d("PopUpWindow", "onMarkerClick: "+"Information of request"+request.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         img.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Toast.makeText(popupview.getContext(), "Click successfully!You have been success! Wait for open", Toast.LENGTH_SHORT).show();
+                                String capsuleInfo="{\"cid\":7,\"cusr\":\"lyt\",\"ccontent\":\"THE FIFTH CAPSULE\",\"ctitle\":\"THE FIFTH CAPSILE\",\"cimage\":\"https:\\/\\/file.example.vn\\/images\\/file_example_JPG_500kB.jpg\",\"caudio\":\"https:\\/\\/www.soundhelix.com\\/examples\\/mp3\\/SoundHelix-Song-2.mp3\",\"ccount\":0,\"clat\":37.429025,\"clon\":-122.083288,\"cpermission\":1,\"cavatar\":\"https:\\/\\/www.tianzhipengfei.xin\\/static\\/mobile\\/lyt-1603078706.jpg\"}";
+                                try {
+                                    JSONObject capsuleTry=new JSONObject(capsuleInfo);
+                                    pw.dismiss();
+                                    Intent intent=new Intent(DiscoverCapsule.this, Display.class);
+                                    intent.putExtra("capsule",capsuleTry.toString());
+                                    startActivity(intent);
+                                    finish();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Log.d("Pop up window message send", "onClick: ");
+//                                HttpUtil.openCapsule(request, new Callback() {
+//                                    @Override
+//                                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+//                                        Log.d("PopUpWindow information send", "onFailure: ");
+//                                        DiscoverCapsule.this.runOnUiThread(new Runnable() {
+//                                            @Override
+//                                            public void run() {
+//                                                Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
+//                                                pw.dismiss();
+//                                            }
+//                                        });
+//                                        //Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
+//                                        //pw.dismiss();
+//                                    }
+//                                    @Override
+//                                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+//                                        try {
+//                                            JSONObject replyJSON=new JSONObject(response.body().string());
+//                                            Log.d("Response from server", "onResponse: "+replyJSON.toString());
+//                                            if (replyJSON.has("success")){
+//                                                DiscoverCapsule.this.runOnUiThread(new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+//                                                        Toast.makeText(DiscoverCapsule.this,"Success! Wait for loading capsule!",Toast.LENGTH_SHORT);
+//                                                        pw.dismiss();
+//                                                        Intent intent=new Intent(DiscoverCapsule.this, Display.class);
+//                                                        intent.putExtra("capsule",selectedCapsule.toString());
+//                                                        startActivity(intent);
+//                                                        finish();
+//                                                    }
+//                                                });
+//                                            }
+//                                        } catch (JSONException e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//                                });
                             }
                         });
-
-
-
-
                         return true;
                     }
                 }

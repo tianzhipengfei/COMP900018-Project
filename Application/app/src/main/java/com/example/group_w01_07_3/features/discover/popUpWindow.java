@@ -33,10 +33,10 @@ public class popUpWindow {
     private PopupWindow popupWindow;
 
     JSONObject selectedCapsule = new JSONObject();
-    public popUpWindow(JSONObject selectedCapsule) {
-        this.selectedCapsule = selectedCapsule;
-        Log.d("POPUPWINDOW", "selectedCapsule: " + selectedCapsule);
-    }
+//    public popUpWindow(JSONObject selectedCapsule) {
+//        this.selectedCapsule = selectedCapsule;
+//        Log.d("POPUPWINDOW", "selectedCapsule: " + selectedCapsule);
+//    }
 
     //combine with discover capsule class later
     public void createWindow(final View view, final JSONObject capsuleInfo) throws JSONException {
@@ -46,13 +46,13 @@ public class popUpWindow {
         }else{
             request.put("tkn",null);
         }
-        LocationUtil locationUtil=new LocationUtil((AppCompatActivity) view.getContext());
-        Location location=locationUtil.getLocation();
-        request.put("lat",location.getLatitude());
-        request.put("lon",location.getLongitude());
-        request.put("time", Calendar.getInstance().getTime());
-        //request.put("tkn",capsuleInfo.get("tkn"));
-        request.put("cid",capsuleInfo.get("cid"));
+//        LocationUtil locationUtil=new LocationUtil((AppCompatActivity) view.getContext());
+//        Location location=locationUtil.getLocation();
+//        request.put("lat",location.getLatitude());
+//        request.put("lon",location.getLongitude());
+//        request.put("time", Calendar.getInstance().getTime());
+//        //request.put("tkn",capsuleInfo.get("tkn"));
+//        request.put("cid",capsuleInfo.get("cid"));
         //add two additional information:tkn and cid after the discovery activity has been finished.
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
         final View popupView = inflater.inflate(R.layout.popup_window_layout, null);

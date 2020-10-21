@@ -53,14 +53,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/capsule_title"/>
                 <Button
-                    android:id="@+id/play_button"
+                    android:id="@+id/music_play"
                     android:layout_width="77dp"
                     android:layout_height="33dp"
                     android:layout_marginStart="64dp"
                     android:layout_marginTop="32dp"
                     android:visibility="invisible"
                     android:text="Play"
-                    android:onClick="audioPlay"
+                    android:onClick="playaudioFromUrl"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/capsule_content"/>
                 <Button
