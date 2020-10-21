@@ -1,15 +1,7 @@
 package com.example.group_w01_07_3.features.discover;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,13 +16,21 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.account.EditProfile;
+import com.example.group_w01_07_3.features.create.CreateCapsule;
+import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
-import com.example.group_w01_07_3.features.account.EditProfile;
-import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
-import com.example.group_w01_07_3.R;
-import com.example.group_w01_07_3.features.create.CreateCapsule;
-import com.example.group_w01_07_3.util.HttpUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -45,16 +45,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
@@ -81,6 +84,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     LocationRequest mLocationRequest;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    Marker mCapsuleLocationMarker;
+    List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
     FusedLocationProviderClient mFusedLocationClient;
     private boolean updateCameraFlag = true;
     final int PER_SECOND = 1000;
@@ -96,6 +101,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // maximum distance to discover (unit: km)
     private double discoverCapsuleRange = 3;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -137,6 +143,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } catch (JSONException e) {
             System.out.print("Problems happen during parsing json objects");
         }
+
+        Toast.makeText(DiscoverCapsule.this,
+                "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -172,8 +181,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeaderUsername(){
-        if(!UserUtil.getToken(DiscoverCapsule.this).isEmpty()){
+    private void updateHeaderUsername() {
+        if (!UserUtil.getToken(DiscoverCapsule.this).isEmpty()) {
             HttpUtil.getProfile(UserUtil.getToken(DiscoverCapsule.this), new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -199,6 +208,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                 }
+
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
@@ -243,9 +253,32 @@ public class DiscoverCapsule extends AppCompatActivity implements
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
         }
+
+        // make markers clickable
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Log.w("Click", "onMarkerClick:" + marker);
+                for (Marker m : mCapsuleMarkers) {
+                    Log.w("Click", "one of mCapsuleLocationMarker is clicked:" + m);
+                    if (marker.equals(m)) {
+                        Log.w("Click", "******* popup window *******");
+                        //Todo: add popupWindow()
+
+
+                        return true;
+                    }
+                }
+                if (marker.equals(mCurrLocationMarker)) {
+                    Log.w("Click", "mCurrLocationMarker is clicked");
+                }
+                return false;
+            }
+        });
     }
 
-    LocationCallback mLocationCallback = new LocationCallback() {
+    final LocationCallback mLocationCallback = new LocationCallback() {
+        @SuppressLint("MissingPermission")
         @Override
         public void onLocationResult(LocationResult locationResult) {
             List<Location> locationList = locationResult.getLocations();
@@ -268,11 +301,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
-
                 Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
                 Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
                 //place capsule marker
-                for(int i = 0; i < allCapsules.length(); i++) {
+                for (int i = 0; i < allCapsules.length(); i++) {
                     try {
                         JSONObject objects = allCapsules.getJSONObject(i);
                         Double lat = objects.getDouble("clat");
@@ -284,18 +316,28 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         //show capsules on the map when user is nearby that particular area
                         // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
                         if (Math.abs(location.getLatitude() - lat) < 0.04 &&
-                                    Math.abs(location.getLongitude() - lng) < 0.04){
+                                Math.abs(location.getLongitude() - lng) < 0.04) {
                             LatLng lat_Lng = new LatLng(lat, lng);
                             MarkerOptions capsuleMarker = new MarkerOptions();
                             capsuleMarker.position(lat_Lng);
                             capsuleMarker.title("Capsule");
                             capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                            mCurrLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                            mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                            mCapsuleMarkers.add(mCapsuleLocationMarker);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
                     }
+                }
+
+                //google map zoom in and zoom out
+                mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
+                //always show marker title
+                mCurrLocationMarker.showInfoWindow();
+                for (Marker m: mCapsuleMarkers ) {
+                    m.showInfoWindow();
                 }
 
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
@@ -310,10 +352,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                 }
+
                 //move map camera
                 if (updateCameraFlag) {
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                     updateCameraFlag = false;
+                    Toast.makeText(DiscoverCapsule.this,
+                            "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -327,7 +372,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     String token = UserUtil.getToken(DiscoverCapsule.this);
                     Log.i(" CAPSULE", "token:" + token);
                     Log.i(" CAPSULE", "capsuleInfo:" + capsuleInfo);
-                    HttpUtil.getCapsule(token, capsuleInfo, new okhttp3.Callback() {
+                    HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             Log.d("CAPSULE", "***** getCapsule onResponse *****");
@@ -403,7 +448,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // if request is cancelled, the result arrays are empty.
@@ -426,7 +471,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         }
     }
-    // code modified from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
+    //The logic is borrowed from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
 
     private boolean checkForRequest(double curLat, double curLon) {
         if (lastRequestLat == 360 && lastRequestLon == 360) {
@@ -474,7 +519,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
 
             new Handler().postDelayed(new Runnable() {
-
                 @Override
                 public void run() {
                     doubleBackToExitPressedOnce=false;
@@ -483,11 +527,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 }
-
-//Todo: popupWindow
-//new popUpWindow(selectedCapsule);
-//popUpWindow window=new popUpWindow(selectedCapsule);
-//window.createWindow(findViewById(R.id.discover_drawer_layout),selectedCapsule);
 
 /* HTTP GET Method
  Returns
@@ -512,26 +551,4 @@ public class DiscoverCapsule extends AppCompatActivity implements
         ]
     }
 }*/
-
-//    private void onDiscoverCapsule() throws JSONException {
-//        if (capsuleInfo.length() == 0) {
-//            Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
-//            Log.d("CAPSULE", "***** No token to get capsule *****");
-//        } else {
-//            HttpUtil.getCapsule(capsuleInfo, new okhttp3.Callback() {
-//            @Override
-//            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//                Log.d("CAPSULE", "***** getCapsule onResponse *****");
-//                String responseData = response.body().string();
-//                Log.d("CAPSULE", "getCapsule: " + responseData);
-//            }
-//
-//            @Override
-//            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//                e.printStackTrace();
-//                Log.d("CAPSULE", "onFailure()");
-//            }
-//        });
-//        }
-//    }
 
