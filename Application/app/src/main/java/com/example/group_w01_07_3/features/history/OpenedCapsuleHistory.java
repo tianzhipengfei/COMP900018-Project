@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -36,19 +39,28 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Response;
 
+import androidx.core.util.Pair;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 public class OpenedCapsuleHistory extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener, CapsuleCallback{
 
     boolean doubleBackToExitPressedOnce = false;
+
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private DrawerLayout drawerLayout;
     View headerview;
     TextView headerUsername;
     private String usernameProfileString;
 
+    OpenedCapsuleAdapter openedCapsuleAdapter;
+
     NavigationView navigationView;
 
     private Toolbar mToolbar;
+
+    private List<OpenedCapsule> testingList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +96,12 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
 
 
-        //setup recycleView with adapter
-        //这里我是手动添加的几个样本数据供测试layout用,写代码时请删除
+        //TODO: @CHENFu, 这里是我手动加的测试胶囊,请自行实现对应功能
+        //load everything needed to be displyaed in the list
         RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
-        List<OpenedCapsule> testingList = new ArrayList<>();
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList = new ArrayList<>();
+        testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.slidewindow_capsule, R.drawable.logo));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
@@ -97,9 +109,34 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
 
-        OpenedCapsuleAdapter openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList);
+
+        //set up the recycle view
+        openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        //TODO:@CHENFU, 这一块是负责下拉刷新列表的功能，请自行实现功能
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.history_swipe_refresh_layout);
+
+        swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW);//设置进度框颜色的切换
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh () {
+
+                //TODO: @CHENFU: 自行实现获取最新history的功能
+                testingList.clear();
+
+                testingList.add(new OpenedCapsule("New one ADDED", "2015/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+                testingList.add(new OpenedCapsule("New one ADDED", "2015/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+                testingList.add(new OpenedCapsule("New one ADDED", "2015/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+
+                openedCapsuleAdapter.notifyDataSetChanged();
+
+                swipeRefreshLayout.setRefreshing(false);//取消进度框
+                Toast.makeText(OpenedCapsuleHistory.this, "Refresh Successful", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
 
@@ -115,6 +152,32 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 //                finish();
 //            }
 //        });
+    }
+
+    @Override
+    public void onCapsuleItemClick(int pos, TextView title, TextView date) {
+        // create intent and send book object to Details activity
+
+        Intent intent = new Intent(this,DetailedCapsuleHistoryItem.class);
+        intent.putExtra("capsuleObject",testingList.get(pos));
+
+        // shared Animation setup
+        // let's import the Pair class
+        Pair<View,String> p1 = Pair.create((View)title,"capsuleTitleTN"); // second arg is the transition string Name
+        Pair<View,String> p2 = Pair.create((View)date,"capsuleDateTN"); // second arg is the transition string Name
+
+
+        //这里设置的就是到底哪几个view的transition被开启运作
+        ActivityOptionsCompat optionsCompat =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2);
+
+        // start the activity with scene transition
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            startActivity(intent,optionsCompat.toBundle());
+        }
+        else
+            startActivity(intent);
     }
 
     @Override
@@ -210,5 +273,4 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             }, 2000);
         }
     }
-
 }

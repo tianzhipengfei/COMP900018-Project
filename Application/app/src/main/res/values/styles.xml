@@ -9,6 +9,13 @@
         <item name="colorAccent">@color/colorSecondary</item>
 
 
+        <!-- specify shared element transitions -->
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/changebound</item>
+        <item name="android:windowSharedElementExitTransition">
+            @transition/changebound</item>
+
+
 <!--        <item name="materialCardViewStyle">@style/Widget.App.CardView</item>-->
     </style>
 

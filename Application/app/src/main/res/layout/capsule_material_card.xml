@@ -3,112 +3,167 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/history_capsule_card_layout"
     android:layout_width="match_parent"
-    android:layout_height="260dp">
+    android:layout_height="wrap_content"
+    android:id="@+id/history_capsule_card_layout"
+    android:background="@color/colorGreyOut">
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/history_opened_capsule_card"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="wrap_content"
 
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:strokeColor="@color/colorPrimary"
-        app:strokeWidth="1dp">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <!-- Capsule image -->
 
-            <com.google.android.material.imageview.ShapeableImageView
+            <ImageView
                 android:id="@+id/history_capsule_card_background"
                 android:layout_width="match_parent"
-                android:layout_height="128dp"
-                android:contentDescription="image slider goes here"
-                android:scaleType="centerInside"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="160dp"
+                android:background="@color/colorGreyOut"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toTopOf="@+id/card_top_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearance="?attr/shapeAppearanceMediumComponent"
-                app:srcCompat="@drawable/capsule" />
+                tools:srcCompat="@drawable/capsule" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/card_top_layout"
                 android:layout_width="match_parent"
-                android:layout_height="116dp"
-                android:background="@color/colorGreyOut">
-
-                <!-- user icon -->
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/history_capsule_original_user_avatar"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginStart="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_title"
-                    app:srcCompat="@drawable/avatar_sample" />
-
-                <!-- Title and supporting text -->
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/history_capsule_card_background">
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/history_opened_capsule_title"
-                    android:layout_width="250dp"
-
-                    android:layout_height="40dp"
+                    android:id="@+id/materialTextView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Title of Opened Capsule"
-                    android:textColor="@color/material_on_background_emphasis_high_type"
-                    android:textStyle="bold"
+                    android:text="Your Private Capsule"
+                    android:textColor="@color/colorPrimary"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                </com.google.android.material.textview.MaterialTextView>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/history_opened_capsule_openDate"
-                    android:layout_width="210dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
 
-                    android:layout_height="31dp"
-                    android:layout_marginStart="8dp"
-                    android:alpha="0.6"
+                    android:layout_marginStart="16dp"
+
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="Opened Date: 2020/11/1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/materialTextView2"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/history_opened_capsule_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+
+                    android:layout_marginEnd="16dp"
+                    android:ellipsize="end"
                     android:fontFamily="sans-serif-medium"
 
-                    android:text="Opened at 2020/11/1"
-                    android:textColor="#000000"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/history_capsule_original_user_avatar"
-                    app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_title" />
 
-                <com.google.android.material.button.MaterialButton
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:text="Title of the opened Cpasule, Title of the opened Cpasule,, Title of the opened Cpasule
+, Title of the opened Cpasule
+, Title of the opened Cpasule"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/materialTextView2" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/history_opened_capsule_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:ellipsize="end"
+
+                    android:maxLines="2"
+                    android:scrollHorizontally="true"
+                    android:text="Capsule Content will be displayed here
+Capsule Content will be displayed here
+Capsule Content will be displayed here
+Capsule Content will be displayed here "
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/history_opened_capsule_title" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/history_capsule_original_user_avatar"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/history_opened_capsule_content"
+                    app:shapeAppearanceOverlay="@style/circleImageView"
+                    app:strokeWidth="2dp"
+                    tools:srcCompat="@drawable/avatar_sample" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/materialTextView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="View"
-                    android:textAllCaps="false"
-                    app:cornerRadius="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="By"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintStart_toEndOf="@+id/history_capsule_original_user_avatar"
+                    app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_content" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/history_capsule_original_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Wcs123455"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/materialTextView3"
+                    app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_content" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </com.google.android.material.card.MaterialCardView>
