@@ -27,6 +27,7 @@ import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -134,7 +135,10 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 openedCapsuleAdapter.notifyDataSetChanged();
 
                 swipeRefreshLayout.setRefreshing(false);//取消进度框
-                Toast.makeText(OpenedCapsuleHistory.this, "Refresh Successful", Toast.LENGTH_SHORT).show();
+
+                View bigView = findViewById(R.id.history_drawer_layout);
+                Snackbar snackbar = Snackbar.make(bigView, "Refreshed History", Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
         });
 
