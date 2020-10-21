@@ -1,6 +1,7 @@
 package com.example.group_w01_07_3.features.discover;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -60,7 +61,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback{
+        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
@@ -100,6 +101,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // maximum distance to discover (unit: km)
     private double discoverCapsuleRange = 3;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,6 +143,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } catch (JSONException e) {
             System.out.print("Problems happen during parsing json objects");
         }
+
+        Toast.makeText(DiscoverCapsule.this,
+                "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -176,8 +181,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeaderUsername(){
-        if(!UserUtil.getToken(DiscoverCapsule.this).isEmpty()){
+    private void updateHeaderUsername() {
+        if (!UserUtil.getToken(DiscoverCapsule.this).isEmpty()) {
             HttpUtil.getProfile(UserUtil.getToken(DiscoverCapsule.this), new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -203,6 +208,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                 }
+
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
@@ -252,24 +258,27 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Log.w("Click", "onMarkerClick:"+ marker);
-                for (Marker m: mCapsuleMarkers ) {
+                Log.w("Click", "onMarkerClick:" + marker);
+                for (Marker m : mCapsuleMarkers) {
                     Log.w("Click", "one of mCapsuleLocationMarker is clicked:" + m);
-                    if(marker.equals(m) ){
+                    if (marker.equals(m)) {
                         Log.w("Click", "******* popup window *******");
-                        //Todo: Rose's popupWindow
+                        //Todo: add popupWindow()
 
 
                         return true;
                     }
                 }
-                if(marker.equals(mCurrLocationMarker) ){ Log.w("Click", "mCurrLocationMarker is clicked"); }
+                if (marker.equals(mCurrLocationMarker)) {
+                    Log.w("Click", "mCurrLocationMarker is clicked");
+                }
                 return false;
             }
         });
     }
 
     final LocationCallback mLocationCallback = new LocationCallback() {
+        @SuppressLint("MissingPermission")
         @Override
         public void onLocationResult(LocationResult locationResult) {
             List<Location> locationList = locationResult.getLocations();
@@ -348,6 +357,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 if (updateCameraFlag) {
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                     updateCameraFlag = false;
+                    Toast.makeText(DiscoverCapsule.this,
+                            "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
                 }
             }
 
