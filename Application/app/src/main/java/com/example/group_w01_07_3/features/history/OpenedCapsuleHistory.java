@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,16 +40,21 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 import androidx.core.util.Pair;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class OpenedCapsuleHistory extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, CapsuleCallback{
 
     boolean doubleBackToExitPressedOnce = false;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
     private DrawerLayout drawerLayout;
     View headerview;
     TextView headerUsername;
     private String usernameProfileString;
+
+    OpenedCapsuleAdapter openedCapsuleAdapter;
 
     NavigationView navigationView;
 
@@ -90,6 +96,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
 
 
+
         //setup recycleView with adapter
         //这里我是手动添加的几个样本数据供测试layout用,写代码时请删除
         RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
@@ -103,9 +110,31 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
 
-        OpenedCapsuleAdapter openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
+        openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.history_swipe_refresh_layout);
+
+        swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW);//设置进度框颜色的切换
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh () {
+
+                //TODO: @CHENFU: 自行实现获取最新history的功能
+                testingList.clear();
+
+                testingList.add(new OpenedCapsule("New one ADDED", "2015/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+                testingList.add(new OpenedCapsule("New one ADDED", "2015/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+                testingList.add(new OpenedCapsule("New one ADDED", "2015/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+
+                openedCapsuleAdapter.notifyDataSetChanged();
+
+                swipeRefreshLayout.setRefreshing(false);//取消进度框
+                Toast.makeText(OpenedCapsuleHistory.this, "Refresh Successful", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
 
