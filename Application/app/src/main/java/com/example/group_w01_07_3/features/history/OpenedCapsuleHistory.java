@@ -104,14 +104,15 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //load everything needed to be displyaed in the list
         RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<>();
-        testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.slidewindow_capsule, R.drawable.logo));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title" +
+                "his is a very long title,This is a very long title,This is a very long title", "2019/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("testing input capsule title: aa", "2018/2/31", R.drawable.slidewindow_capsule, R.drawable.logo));
+        testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("testing input capsule title: cc", "2016/4/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("testing input capsule title: dd", "2015/5/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("testing input capsule title: ee", "2014/6/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("testing input capsule title: ff", "2020/7/31", R.drawable.avatar_sample, R.drawable.capsule));
+        testingList.add(new OpenedCapsule("testing input capsule title: gg", "2020/8/31", R.drawable.avatar_sample, R.drawable.capsule));
 
 
         //set up the recycle view
@@ -131,9 +132,9 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 //TODO: @CHENFU: 自行实现获取最新history的功能
                 testingList.clear();
 
-                testingList.add(new OpenedCapsule("New one ADDED", "2015/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-                testingList.add(new OpenedCapsule("New one ADDED", "2015/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-                testingList.add(new OpenedCapsule("New one ADDED", "2015/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+                testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+                testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+                testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", R.drawable.avatar_sample, R.drawable.capsule));
 
                 openedCapsuleAdapter.notifyDataSetChanged();
 
@@ -145,20 +146,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             }
         });
 
-
-
-//        mToolbar = findViewById(R.id.capsule_history_back_toolbar);
-//        setSupportActionBar(mToolbar);
-//        mToolbar.setNavigationIcon(R.drawable.ic_back);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
-//
-//        //navigate back to account page. 请自己根据activity life cycle来写返回功能
-//        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                finish();
-//            }
-//        });
     }
 
     @Override
