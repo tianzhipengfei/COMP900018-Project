@@ -96,9 +96,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
 
 
-
-        //setup recycleView with adapter
-        //这里我是手动添加的几个样本数据供测试layout用,写代码时请删除
+        //TODO: @CHENFu, 这里是我手动加的测试胶囊,请自行实现对应功能
+        //load everything needed to be displyaed in the list
         RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<>();
         testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
@@ -110,11 +109,14 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
         testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
 
+
+        //set up the recycle view
         openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
+        //TODO:@CHENFU, 这一块是负责下拉刷新列表的功能，请自行实现功能
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.history_swipe_refresh_layout);
 
         swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW);//设置进度框颜色的切换
