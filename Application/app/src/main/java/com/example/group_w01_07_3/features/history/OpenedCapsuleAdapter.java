@@ -43,7 +43,7 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
     public void onBindViewHolder(@NonNull capsuleCardViewHolder holder, int position) {
 
         // animation for capsule image
-        holder.capsule_image.setAnimation(AnimationUtils.loadAnimation(mcontext,R.anim.fade_transition_animation));
+//        holder.capsule_image.setAnimation(AnimationUtils.loadAnimation(mcontext,R.anim.fade_transition_animation));
 
         // animation for the whole card
         holder.megaCardLayout.setAnimation(AnimationUtils.loadAnimation(mcontext,R.anim.fade_scale_animation));
