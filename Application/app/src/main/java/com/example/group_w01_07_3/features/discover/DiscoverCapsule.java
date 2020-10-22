@@ -67,30 +67,26 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
-
     // receive capsule information through HTTP GET request
-    JSONArray allCapsules = new JSONArray();
-    JSONObject selectedCapsule = new JSONObject();
+    private JSONArray allCapsules = new JSONArray();
+    private JSONObject selectedCapsule = new JSONObject();
     // request capsule
-    JSONObject capsuleInfo = new JSONObject();
-
+    private JSONObject capsuleInfo = new JSONObject();
     private Toolbar mToolbar;
     private DrawerLayout drawerLayout;
-    View headerview;
-    TextView headerUsername;
-
-    NavigationView navigationView;
-
-    GoogleMap mGoogleMap;
-    SupportMapFragment mapFrag;
-    LocationRequest mLocationRequest;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
-    Marker mCapsuleLocationMarker;
-    List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
-    FusedLocationProviderClient mFusedLocationClient;
+    private View headerview;
+    private TextView headerUsername;
+    private NavigationView navigationView;
+    private GoogleMap mGoogleMap;
+    private SupportMapFragment mapFrag;
+    private LocationRequest mLocationRequest;
+    private Location mLastLocation;
+    private Marker mCurrLocationMarker;
+    private Marker mCapsuleLocationMarker;
+    private List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
+    private FusedLocationProviderClient mFusedLocationClient;
     private boolean updateCameraFlag = true;
-    final int PER_SECOND = 1000;
+    private final int PER_SECOND = 1000;
     // time interval for updating locaton
     private int locationUpdateInterval = 5 * PER_SECOND;
     // if user moves more than a threshold distance (unit: km), update capsules info
@@ -112,6 +108,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // shake to refresh capsules
     private Boolean if_refresh = true;
     private int refresh_counts = 0;
+    // only allow one update every 200ms = 0.2s
+    private static final int max_pause_between_shakes = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -340,8 +338,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 if (updateCameraFlag) {
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                     updateCameraFlag = false;
-//                    Toast.makeText(DiscoverCapsule.this,
-//                            "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
                 }
 
                 //if user shake the device,
@@ -557,8 +553,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void onSensorChanged(int sensor, float[] values) {
         if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
             long curTime = System.currentTimeMillis();
-            // only allow one update every 2000ms = 2s
-            if ((curTime - lastUpdate) > 2000) {
+            // check if the last movement was not long ago
+            if ((curTime - lastUpdate) > max_pause_between_shakes) {
                 long diffTime = (curTime - lastUpdate);
                 lastUpdate = curTime;
 
