@@ -48,7 +48,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         tag = findViewById(R.id.history_detail_capsule_private_public_tag);
         content = findViewById(R.id.history_detail_content);
 
-        avatar = findViewById(R.id.history_capsule_original_user_avatar);
+        avatar = findViewById(R.id.history_detail_capsule_original_user_avatar);
 
         username = findViewById(R.id.history_detail_username);
 
