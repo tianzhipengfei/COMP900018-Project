@@ -1,20 +1,13 @@
 package com.example.group_w01_07_3.features.discover;
 
-import androidx.annotation.LongDef;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,13 +24,22 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.account.EditProfile;
+import com.example.group_w01_07_3.features.create.CreateCapsule;
+import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.UserUtil;
-import com.example.group_w01_07_3.features.account.EditProfile;
-import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
-import com.example.group_w01_07_3.R;
-import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -52,6 +54,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,15 +64,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-
 public class DiscoverCapsule extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback{
+        NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
 
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
@@ -108,12 +108,18 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private int capsuleNum = 20;
     // maximum distance to discover (unit: km)
     private double discoverCapsuleRange = 3;
+    // shake event
+    private SensorManager sensorMgr;
+    private float last_x = 0 ;
+    private float last_y = 0;
+    private float last_z = 0;
+    private static final int SHAKE_THRESHOLD = 800;
+    private long lastUpdate = System.currentTimeMillis();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discover_capsule);
-
 
         //use toolbar at top of screen across all activities
         Toolbar toolbar = findViewById(R.id.toolbar_discover);
@@ -150,6 +156,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } catch (JSONException e) {
             System.out.print("Problems happen during parsing json objects");
         }
+
+        Toast.makeText(DiscoverCapsule.this,
+                "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
+
+        sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorMgr.registerListener(this,
+                SensorManager.SENSOR_ACCELEROMETER,
+                SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override
@@ -185,8 +199,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeaderUsername(){
-        if(!UserUtil.getToken(DiscoverCapsule.this).isEmpty()){
+    private void updateHeaderUsername() {
+        if (!UserUtil.getToken(DiscoverCapsule.this).isEmpty()) {
             HttpUtil.getProfile(UserUtil.getToken(DiscoverCapsule.this), new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -212,6 +226,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                 }
+
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
@@ -223,10 +238,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
-        //stop location updates when Activity is no longer active
-        if (mFusedLocationClient != null) {
-            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-        }
     }
 
     @Override
@@ -261,23 +272,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Log.w("Click", "onMarkerClick:"+ marker);
-                for (Marker m: mCapsuleMarkers ) {
-                    Log.w("Click", "one of mCapsuleLocationMarker is clicked" + m);
-                    if(marker.equals(m) ){
+                Log.w("Click", "onMarkerClick:" + marker);
+                for (Marker m : mCapsuleMarkers) {
+                    Log.w("Click", "one of mCapsuleLocationMarker is clicked:" + m);
+                    if (marker.equals(m)) {
                         Log.w("Click", "******* popup window *******");
-                        //Rose's popupWindow
-//                        popUpWindow popUpWindow=new popUpWindow();
-////                        LayoutInflater in=(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-////                        final View popupview=in.inflate(R.layout.popup_window_layout,null);
-////                        try {
-////                            popUpWindow.createWindow(popupview,selectedCapsule);
-////                        } catch (JSONException e) {
-////                            e.printStackTrace();
-////                        }
+                        //Todo: add popupWindow()
                         LayoutInflater in=(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                         final View popupview=in.inflate(R.layout.popup_window_layout,null);
-                        int width=LinearLayout.LayoutParams.WRAP_CONTENT;
+                        int width= LinearLayout.LayoutParams.WRAP_CONTENT;
                         int height=LinearLayout.LayoutParams.WRAP_CONTENT;
                         final PopupWindow pw=new PopupWindow(popupview,width,height,true);
                         pw.showAtLocation(popupview, Gravity.CENTER,0,0);
@@ -296,7 +299,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             request.put("tkn",token);
                             request.put("lat",mLastLocation.getLatitude());
                             request.put("lon",mLastLocation.getLongitude());
-                            request.put("time",Calendar.getInstance().getTime());
+                            request.put("time", Calendar.getInstance().getTime());
                             request.put("cid",selectedCapsule.get("cid"));
                             Log.d("PopUpWindow", "onMarkerClick: "+"Information of request"+request.toString());
                         } catch (JSONException e) {
@@ -356,16 +359,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //                                });
                             }
                         });
+                        //remove the capsule marker in google map after an user opens the capsule
+                        m.remove();
                         return true;
                     }
                 }
-                if(marker.equals(mCurrLocationMarker) ){ Log.w("Click", "mCurrLocationMarker is clicked"); }
+                if (marker.equals(mCurrLocationMarker)) {
+                    Log.w("Click", "mCurrLocationMarker is clicked");
+                }
                 return false;
             }
         });
     }
 
     final LocationCallback mLocationCallback = new LocationCallback() {
+        @SuppressLint("MissingPermission")
         @Override
         public void onLocationResult(LocationResult locationResult) {
             List<Location> locationList = locationResult.getLocations();
@@ -418,6 +426,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 }
 
+                //google map zoom in and zoom out
+                mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
+                //always show marker title
+                mCurrLocationMarker.showInfoWindow();
+                for (Marker m: mCapsuleMarkers ) {
+                    m.showInfoWindow();
+                }
+
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
                     // TODO: send request
                     lastRequestLat = location.getLatitude();
@@ -435,6 +452,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 if (updateCameraFlag) {
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                     updateCameraFlag = false;
+                    Toast.makeText(DiscoverCapsule.this,
+                            "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -524,7 +543,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // if request is cancelled, the result arrays are empty.
@@ -574,13 +593,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
     }
 
     //double backpressed to exit app
-    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
     @Override
     public void onBackPressed() {
         if(drawerLayout.isDrawerOpen(navigationView)){
@@ -602,6 +622,40 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }, 2000);
         }
     }
+
+    // detect a shake event and the shake direction
+    @Override
+    public void onSensorChanged(int sensor, float[] values) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
+            long curTime = System.currentTimeMillis();
+            // only allow one update every 100ms.
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                float x = values[SensorManager.DATA_X];
+                float y = values[SensorManager.DATA_Y];
+                float z = values[SensorManager.DATA_Z];
+                // shaking speed
+                float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+
+                if (speed > SHAKE_THRESHOLD) {
+                    Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
+                    // Todo: comment out toast message after testing,
+                    Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
+                }
+                last_x = x;
+                last_y = y;
+                last_z = z;
+            }
+        }
+    }
+    //The logic is borrowed from https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android
+
+    @Override
+    public void onAccuracyChanged(int i, int i1) {
+
+    }
 }
 
 /* HTTP GET Method
@@ -614,7 +668,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
           "cimage": null,
           "caudio": null,
           "ccount": 0, "cavatar": null},
-
          {"cid": 3,
           "cusr": "test1",
           "ccontent": "Test content2",
@@ -627,4 +680,3 @@ public class DiscoverCapsule extends AppCompatActivity implements
         ]
     }
 }*/
-

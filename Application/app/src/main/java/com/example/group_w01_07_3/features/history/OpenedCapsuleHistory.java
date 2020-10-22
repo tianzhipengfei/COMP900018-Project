@@ -4,16 +4,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +28,7 @@ import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -36,19 +41,28 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Response;
 
+import androidx.core.util.Pair;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 public class OpenedCapsuleHistory extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener, CapsuleCallback{
 
     boolean doubleBackToExitPressedOnce = false;
+
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private DrawerLayout drawerLayout;
     View headerview;
     TextView headerUsername;
     private String usernameProfileString;
 
+    OpenedCapsuleAdapter openedCapsuleAdapter;
+
     NavigationView navigationView;
 
     private Toolbar mToolbar;
+
+    private List<OpenedCapsule> testingList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,37 +98,87 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
 
 
-        //setup recycleView with adapter
-        //这里我是手动添加的几个样本数据供测试layout用,写代码时请删除
-        RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
-        List<OpenedCapsule> testingList = new ArrayList<>();
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
-        testingList.add(new OpenedCapsule("testing input capsule title", "2020/12/31", R.drawable.avatar_sample, R.drawable.capsule));
+        //TODO: @CHENFu, 这里是我手动加的测试胶囊,请自行实现对应功能
 
-        OpenedCapsuleAdapter openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList);
+        //TODO:Image load请一定一定要用,不要自己写function(不然没法做animation) : [Picasso] 或者 [Glide】. 非常简单,有URL他就帮你load,只要几行代码, 详情请谷歌
+        //load everything needed to be displyaed in the list
+        RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
+        testingList = new ArrayList<>();
+        String testPurposeLongString = getApplicationContext().getString(R.string.registration_help);
+
+        testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title" +
+                "his is a very long title,This is a very long title,This is a very long title", "2019/12/31", R.drawable.avatar_sample, R.drawable.capsule, "Your Private Capsule",testPurposeLongString,"wcs123455"));
+        testingList.add(new OpenedCapsule("testing input capsule title: aa", "2018/2/31", R.drawable.slidewindow_capsule, R.drawable.logo,"Public Memory Capsule",testPurposeLongString,"abfsdfb"));
+        testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcv","wcs123455"));
+        testingList.add(new OpenedCapsule("testing input capsule title: cc", "2016/4/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule",testPurposeLongString,"wcs123455"));
+        testingList.add(new OpenedCapsule("testing input capsule title: dd", "2015/5/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxvxv","wcs123455"));
+        testingList.add(new OpenedCapsule("testing input capsule title: ee", "2014/6/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
+        testingList.add(new OpenedCapsule("testing input capsule title: ff", "2020/7/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcxvcvcvxvxc","wcs123455"));
+        testingList.add(new OpenedCapsule("testing input capsule title: gg", "2020/8/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
+
+
+        //set up the recycle view
+        openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
+        //TODO:@CHENFU, 这一块是负责下拉刷新列表的功能，请自行实现功能
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.history_swipe_refresh_layout);
 
-//        mToolbar = findViewById(R.id.capsule_history_back_toolbar);
-//        setSupportActionBar(mToolbar);
-//        mToolbar.setNavigationIcon(R.drawable.ic_back);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
-//
-//        //navigate back to account page. 请自己根据activity life cycle来写返回功能
-//        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                finish();
-//            }
-//        });
+        swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW);//设置进度框颜色的切换
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh () {
+
+                //TODO: @CHENFU: 自行实现获取最新history的功能
+                testingList.clear();
+
+                testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sfgdfsgsdfsdfgsdfgsdfg","wcs123455"));
+                testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule","sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455"));
+                testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sdfgsdgfsdgsdfgsdgsdfgds","wcs123455"));
+
+                openedCapsuleAdapter.notifyDataSetChanged();
+
+                swipeRefreshLayout.setRefreshing(false);//取消进度框
+
+                View bigView = findViewById(R.id.history_drawer_layout);
+                Snackbar snackbar = Snackbar.make(bigView, "Refreshed History", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
+        });
+
+    }
+
+    @Override
+    public void onCapsuleItemClick(int pos, TextView title, TextView date, ImageView capImage, TextView privateTag, TextView content, ImageView avatar, TextView by, TextView username) {
+        // create intent and send book object to Details activity
+
+        Intent intent = new Intent(this,DetailedCapsuleHistoryItem.class);
+        intent.putExtra("capsuleObject",testingList.get(pos));
+
+        // shared Animation setup
+        // let's import the Pair class
+        Pair<View,String> p1 = Pair.create((View)title,"capsuleTitleTN"); // second arg is the transition string Name
+        Pair<View,String> p2 = Pair.create((View)date,"capsuleDateTN"); // second arg is the transition string Name
+        Pair<View,String> p3 = Pair.create((View)capImage,"capsuleImageTN"); // second arg is the transition string Name
+        Pair<View,String> p4 = Pair.create((View)privateTag,"capsuleTagTN"); // second arg is the transition string Name
+        Pair<View,String> p5 = Pair.create((View)content,"capsuleContentTN"); // second arg is the transition string Name
+        Pair<View,String> p6 = Pair.create((View)avatar,"capsuleAvatarTN"); // second arg is the transition string Name
+        Pair<View,String> p7 = Pair.create((View)by,"capsuleByTN"); // second arg is the transition string Name
+        Pair<View,String> p8 = Pair.create((View)username,"capsuleUsernameTN"); // second arg is the transition string Name
+
+        //这里设置的就是到底哪几个view的transition被开启运作
+        ActivityOptionsCompat optionsCompat =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3,p4,p5,p6,p7,p8);
+
+        // start the activity with scene transition
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            startActivity(intent,optionsCompat.toBundle());
+        }
+        else
+            startActivity(intent);
     }
 
     @Override
@@ -210,5 +274,4 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             }, 2000);
         }
     }
-
 }

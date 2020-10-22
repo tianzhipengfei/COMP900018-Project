@@ -8,6 +8,7 @@ import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +33,7 @@ public class Display extends AppCompatActivity {
     private RecordAudioUtil media;
     private TextView title;
     private TextView content;
-    private Button play;
+    private ImageButton play;
     //private Button stop;
     private MediaPlayer mediaPlayer;
     private String capsuleTitle;
@@ -40,7 +41,10 @@ public class Display extends AppCompatActivity {
     private String imagelink;
     private String audiolink;
     private Boolean startPlay;
-
+    private TextView username;
+    private ImageView profile;
+    private String name;
+    private String avater_link;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,10 +52,12 @@ public class Display extends AppCompatActivity {
         Bundle extra_information = getIntent().getExtras();
         String extra = getIntent().getStringExtra("capsule");
         Log.d("The intent information", "onCreate: " + extra);
-        img = (ImageView) findViewById(R.id.image_capsule);
-        title = (TextView) findViewById(R.id.capsule_title);
-        content = (TextView) findViewById(R.id.capsule_content);
-        play = (Button) findViewById(R.id.music_play);
+        img = (ImageView) findViewById(R.id.display_detail_image);
+        title = (TextView) findViewById(R.id.display_detail_title);
+        content = (TextView) findViewById(R.id.display_detail_content);
+        play = (ImageButton) findViewById(R.id.display_audio_play);
+        username=(TextView) findViewById(R.id.display_detail_username);
+        profile=(ImageView) findViewById(R.id.display_detail_capsule_original_user_avatar);
         mediaPlayer = new MediaPlayer();
         startPlay = true;
         //stop=(Button) findViewById(R.id.stop_button);
@@ -74,6 +80,8 @@ public class Display extends AppCompatActivity {
         imagelink = capsuleInfo.getString("cimage");
         Log.d(TAG, "display: " + "the new image Link" + imagelink);
         audiolink = capsuleInfo.getString("caudio");
+        name=capsuleInfo.getString("cusr");
+        avater_link = capsuleInfo.getString("cavatar");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -104,6 +112,10 @@ public class Display extends AppCompatActivity {
                 }
                 title.setText(capsuleTitle);
                 content.setText(capsuleContent);
+                username.setText(name);
+                if(audiolink!=null){
+                    Picasso.with(getApplicationContext()).load(audiolink).into(profile);
+                }
             }
         });
     }

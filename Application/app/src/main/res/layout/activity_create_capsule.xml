@@ -197,7 +197,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
 
-                    android:background="@drawable/customborder_no_corner"
+                    android:background="@drawable/customborder_top_no_corner"
                     android:backgroundTint="#ffffff"
 
                     app:layout_constraintEnd_toEndOf="parent"
@@ -295,6 +295,8 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/record_button"
                             style="?attr/materialButtonOutlinedStyle"
+                            app:icon="@drawable/voice_record"
+                            app:iconGravity="start"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
@@ -307,6 +309,8 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/play_button"
                             style="?attr/materialButtonOutlinedStyle"
+                            app:icon="@drawable/voice_play"
+                            app:iconGravity="start"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="16dp"
