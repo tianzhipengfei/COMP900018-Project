@@ -72,7 +72,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     JSONArray allCapsules = new JSONArray();
     JSONObject selectedCapsule = new JSONObject();
     // request capsule
-    private JSONObject capsuleInfo = new JSONObject();
+    JSONObject capsuleInfo = new JSONObject();
 
     private Toolbar mToolbar;
     private DrawerLayout drawerLayout;
@@ -109,6 +109,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float last_z = 0;
     private static final int SHAKE_THRESHOLD = 800;
     private long lastUpdate = System.currentTimeMillis();
+    // shake to refresh capsules
+    private Boolean if_refresh = true;
+    private int refresh_counts = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -275,8 +278,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
 
 
-                        //remove the capsule marker in google map after an user opens the capsule
-                        m.remove();
+                        //remove this marker from the map after an user opens the capsule
+                        marker.remove();
                         return true;
                     }
                 }
@@ -310,55 +313,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 markerOptions.position(latLng);
                 markerOptions.title("Current Position");
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                // Todo: for testing, will uncomment later
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-
-                Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
-                Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
-                //place capsule marker
-                for (int i = 0; i < allCapsules.length(); i++) {
-                    try {
-                        JSONObject objects = allCapsules.getJSONObject(i);
-                        Double lat = objects.getDouble("clat");
-                        Double lng = objects.getDouble("clon");
-                        Log.d("CAPSULEMARKER", "i: " + i);
-                        Log.d("CAPSULEMARKER", "lat: " + lat);
-                        Log.d("CAPSULEMARKER", "lng: " + lng);
-
-                        //show capsules on the map when user is nearby that particular area
-                        // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
-                        if (Math.abs(location.getLatitude() - lat) < 0.04 &&
-                                Math.abs(location.getLongitude() - lng) < 0.04) {
-                            LatLng lat_Lng = new LatLng(lat, lng);
-                            MarkerOptions capsuleMarker = new MarkerOptions();
-                            capsuleMarker.position(lat_Lng);
-                            capsuleMarker.title("Capsule");
-                            capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                            mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
-                            mCapsuleMarkers.add(mCapsuleLocationMarker);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
-                    }
-                }
 
                 //google map zoom in and zoom out
                 mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
-                //always show marker title
-                mCurrLocationMarker.showInfoWindow();
-                for (Marker m: mCapsuleMarkers ) {
-                    m.showInfoWindow();
-                }
-
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
-                    // TODO: send request
+                    // send request using the updated current location
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
                     updateCameraFlag = true;
                     try {
                         capsuleInfo.put("lat", lastRequestLat);
                         capsuleInfo.put("lon", lastRequestLon);
+                        Log.d("UPDATE-LOCATION", capsuleInfo+"");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -371,52 +340,96 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     Toast.makeText(DiscoverCapsule.this,
                             "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
                 }
-            }
 
-            if (capsuleInfo.length() == 0) {
-                Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
-                Log.d("CAPSULE", "***** No token to get capsule *****");
-                allCapsules = new JSONArray();
-                selectedCapsule = new JSONObject();
-            } else {
-                try {
-                    String token = UserUtil.getToken(DiscoverCapsule.this);
-                    Log.i(" CAPSULE", "token:" + token);
-                    Log.i(" CAPSULE", "capsuleInfo:" + capsuleInfo);
-                    HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
-                        @Override
-                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            Log.d("CAPSULE", "***** getCapsule onResponse *****");
-                            String responseData = response.body().string(); //.getClass().getName() java.lang.String
-                            // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
-                            Log.i("CAPSULE", "responseData:" + responseData);
+                //if user shake the device,
+                // fetch capsule from database, update markers and set 'if_refresh' to false.
+                if (if_refresh) {
+                    if (capsuleInfo.length() == 0) {
+                        Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
+                        Log.d("CAPSULE", "***** No token to get capsule *****");
+                        allCapsules = new JSONArray();
+                        selectedCapsule = new JSONObject();
+                    } else {
+                        try {
+                            String token = UserUtil.getToken(DiscoverCapsule.this);
+                            Log.i("SENDING-REQUEST", "token:" + token);
+                            Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
+                            Log.i("SENDING-REQUEST", "refresh_counts:" + refresh_counts);
+                            HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
+                                @Override
+                                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                    Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
+                                    String responseData = response.body().string(); //.getClass().getName() java.lang.String
+                                    // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
+                                    Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
+                                    try {
+                                        JSONObject responseJSON = new JSONObject(responseData);
+                                        if (responseJSON.has("success")) {
+                                            String status = responseJSON.getString("success");
+                                            Log.d("CAPSULE", "getCapsule success: " + status);
 
-                            try {
-                                JSONObject responseJSON = new JSONObject(responseData);
-                                if (responseJSON.has("success")) {
-                                    String status = responseJSON.getString("success");
-                                    Log.d("CAPSULE", "getCapsule success: " + status);
+                                            allCapsules = responseJSON.getJSONArray("capsules");
+                                            Log.d("CAPSULE", "capsuleInfo: " + allCapsules);
 
-                                    allCapsules = responseJSON.getJSONArray("capsules");
-                                    Log.d("CAPSULE", "capsuleInfo: " + allCapsules);
+                                            Random rand = new Random();
+                                            selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
+                                            Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
 
-                                    Random rand = new Random();
-                                    selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
-                                    Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
 
-                        @Override
-                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                @Override
+                                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                    e.printStackTrace();
+                                    Log.d("CAPSULE", "onFailure()");
+                                }
+                            });
+                        } catch (JSONException e) {
                             e.printStackTrace();
-                            Log.d("CAPSULE", "onFailure()");
                         }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    }
+
+                    Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
+                    Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
+                    //place capsule marker
+                    for (int i = 0; i < allCapsules.length(); i++) {
+                        try {
+                            JSONObject objects = allCapsules.getJSONObject(i);
+                            Double lat = objects.getDouble("clat");
+                            Double lng = objects.getDouble("clon");
+                            Log.d("CAPSULEMARKER", "i: " + i);
+                            Log.d("CAPSULEMARKER", "lat: " + lat);
+                            Log.d("CAPSULEMARKER", "lng: " + lng);
+
+                            //show capsules on the map when user is nearby that particular area
+                            // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
+                            if (Math.abs(location.getLatitude() - lat) < 0.04 &&
+                                    Math.abs(location.getLongitude() - lng) < 0.04) {
+                                LatLng lat_Lng = new LatLng(lat, lng);
+                                MarkerOptions capsuleMarker = new MarkerOptions();
+                                capsuleMarker.position(lat_Lng);
+                                capsuleMarker.title("Capsule");
+                                capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                                mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                                mCapsuleMarkers.add(mCapsuleLocationMarker);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
+                        }
+                    }
+
+                    //always show marker title
+                    mCurrLocationMarker.showInfoWindow();
+                    for (Marker m: mCapsuleMarkers ) {
+                        m.showInfoWindow();
+                    }
+
+                    if_refresh = false;
+                    refresh_counts+=1;
                 }
             }
         }
@@ -557,6 +570,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                 if (speed > SHAKE_THRESHOLD) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
+                    // shake to refresh capsules
+                    if_refresh = true;
                     // Todo: comment out toast message after testing,
                     Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
                 }
