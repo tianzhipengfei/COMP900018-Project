@@ -54,6 +54,7 @@ import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.widget.BottomDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -205,11 +206,13 @@ public class CreateCapsule extends AppCompatActivity implements
     public void recordAudio(View v) {
         // check permission
         if (recorderUtil.checkPermission()) {
-            Button recordButton = findViewById(R.id.record_button);
+            MaterialButton recordButton = findViewById(R.id.record_button);
             recorderUtil.onRecord(mStartRecording);
             if (mStartRecording) {
+                recordButton.setIconResource(R.drawable.voice_stop);
                 recordButton.setText("STOP");
             } else {
+                recordButton.setIconResource(R.drawable.voice_record);
                 recordButton.setText("RECORD");
             }
             mStartRecording = !mStartRecording;
@@ -222,11 +225,13 @@ public class CreateCapsule extends AppCompatActivity implements
 
     public void playAudio(View v)  {
 
-        Button playButton = findViewById(R.id.play_button);
+        MaterialButton playButton = findViewById(R.id.play_button);
         recorderUtil.onPlay(mStartPlaying);
         if (mStartPlaying) {
+            playButton.setIconResource(R.drawable.voice_stop);
             playButton.setText("STOP");
         } else {
+            playButton.setIconResource(R.drawable.voice_play);
             playButton.setText("PLAY");
         }
         mStartPlaying = !mStartPlaying;

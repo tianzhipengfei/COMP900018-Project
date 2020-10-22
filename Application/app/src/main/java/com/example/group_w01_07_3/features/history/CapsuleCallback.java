@@ -12,6 +12,9 @@ public interface CapsuleCallback {
             TextView date,
             ImageView capImage,
             TextView privateTag,
-            TextView content
+            TextView content,
+            ImageView avatar,
+            TextView by,
+            TextView username
     );
 }

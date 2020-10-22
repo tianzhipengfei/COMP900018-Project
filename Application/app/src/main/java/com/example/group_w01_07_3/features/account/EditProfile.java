@@ -39,6 +39,7 @@ import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.ImageUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.widget.BottomDialog;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
 
 import org.jetbrains.annotations.NotNull;
@@ -142,7 +143,7 @@ public class EditProfile extends AppCompatActivity implements
         updateHeaderUsername();
 
 
-        Button changePasswordBtn = (Button) findViewById(R.id.edit_profile_btn_change_password);
+        MaterialButton changePasswordBtn = (MaterialButton) findViewById(R.id.edit_profile_btn_change_password);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,7 +154,7 @@ public class EditProfile extends AppCompatActivity implements
             }
         });
 
-        Button changeAvatarButton = (Button) findViewById(R.id.edit_profile_btn_change_avatar);
+        MaterialButton changeAvatarButton = (MaterialButton) findViewById(R.id.edit_profile_btn_change_avatar);
         changeAvatarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,7 +171,7 @@ public class EditProfile extends AppCompatActivity implements
             }
         });
 
-        final Button signOutButton = (Button) findViewById(R.id.button_acct_sign_out);
+        final MaterialButton signOutButton = (MaterialButton) findViewById(R.id.button_acct_sign_out);
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -87,7 +87,7 @@
 
                     android:layout_marginEnd="16dp"
                     android:ellipsize="end"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/oleo_script_swash_caps_bold"
 
 
                     android:maxLines="1"
@@ -97,6 +97,7 @@
 , Title of the opened Cpasule"
                     android:textColor="#000000"
                     android:textSize="18sp"
+                    android:typeface="serif"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_tag" />
@@ -137,12 +138,13 @@ Capsule Content will be displayed here "
                     tools:srcCompat="@drawable/avatar_sample" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/materialTextView3"
+                    android:id="@+id/history_capsule_text_by"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="By"
+                    android:textStyle="italic"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/history_capsule_original_user_avatar"
                     app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_content" />
@@ -156,7 +158,7 @@ Capsule Content will be displayed here "
                     android:text="Wcs123455"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/materialTextView3"
+                    app:layout_constraintStart_toEndOf="@+id/history_capsule_text_by"
                     app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_content" />
 
 
