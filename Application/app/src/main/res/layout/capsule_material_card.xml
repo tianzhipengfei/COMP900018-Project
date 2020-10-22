@@ -137,7 +137,7 @@ Capsule Content will be displayed here "
                     tools:srcCompat="@drawable/avatar_sample" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/materialTextView3"
+                    android:id="@+id/history_capsule_text_by"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -156,7 +156,7 @@ Capsule Content will be displayed here "
                     android:text="Wcs123455"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/materialTextView3"
+                    app:layout_constraintStart_toEndOf="@+id/history_capsule_text_by"
                     app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_content" />
 
 

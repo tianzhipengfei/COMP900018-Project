@@ -18,7 +18,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     TextView date;
     TextView tag;
     TextView content;
+    TextView username;
     ImageView image;
+    ImageView avatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,10 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         tag = findViewById(R.id.history_detail_capsule_private_public_tag);
         content = findViewById(R.id.history_detail_content);
 
+        avatar = findViewById(R.id.history_capsule_original_user_avatar);
+
+        username = findViewById(R.id.history_detail_username);
+
         //get the capsule object
         OpenedCapsule item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
 
@@ -60,7 +66,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         title.setText(titleString);
         date.setText(dateString);
 
-        int imageLocation = item.getCapsule_image();
+        int imageLocation = item.getCapsule_image(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
         image.setImageResource(imageLocation);
 
         String tagString = item.getTag();
@@ -68,5 +74,11 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
         String contentString = item.getContent();
         content.setText(contentString);
+
+        int avatarLocation = item.getAvatar(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
+        avatar.setImageResource(avatarLocation);
+
+        String usernameString = item.getUsername();
+        username.setText(usernameString);
     }
 }
