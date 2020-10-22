@@ -84,6 +84,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private Marker mCurrLocationMarker;
     private Marker mCapsuleLocationMarker;
     private List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
+    private List<Marker> old_mCapsuleMarkers = mCapsuleMarkers;
     private FusedLocationProviderClient mFusedLocationClient;
     private boolean updateCameraFlag = true;
     private final int PER_SECOND = 1000;
@@ -110,8 +111,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // check if HTTP get request is successful
     private Boolean if_connected = true;
     private int refresh_counts = 0;
-    // only allow one update every 200ms = 0.2s
-    private static final int max_pause_between_shakes = 200;
+    // only allow one update every 100ms = 0.1s
+    private static final int max_pause_between_shakes = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -317,7 +318,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 markerOptions.position(latLng);
                 markerOptions.title("Current Position");
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                // Todo: for testing, will uncomment later
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
                 //google map zoom in and zoom out
@@ -381,6 +381,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                             Random rand = new Random();
                                             selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
                                             Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
+
                                         }
                                         if_connected = true;
                                     } catch (JSONException e) {
@@ -424,6 +425,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                                 mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
                                 mCapsuleMarkers.add(mCapsuleLocationMarker);
+
+                                refresh_counts+=1;
                             } catch (JSONException e) {
                                 e.printStackTrace();
                                 Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
@@ -439,9 +442,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         }
                     }
 
-                    //step 3: finished refreshing capsules
-                    if_refresh = false;
-                    refresh_counts+=1;
+                    if (!old_mCapsuleMarkers.equals(mCapsuleMarkers)){
+                        if_refresh = false;
+                    }
                 }
             }
         }
