@@ -319,6 +319,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 //google map zoom in and zoom out
                 mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
+                //google map current location
+                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
                     // Todo: send request
                     lastRequestLat = location.getLatitude();
@@ -554,8 +557,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void onSensorChanged(int sensor, float[] values) {
         if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
             long curTime = System.currentTimeMillis();
-            // only allow one update every 100ms.
-            if ((curTime - lastUpdate) > 100) {
+            // only allow one update every 2000ms = 2s
+            if ((curTime - lastUpdate) > 2000) {
                 long diffTime = (curTime - lastUpdate);
                 lastUpdate = curTime;
 
