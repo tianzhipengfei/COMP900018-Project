@@ -320,7 +320,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
-                    // send request using the updated current location
+                    // Todo: send request
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
                     updateCameraFlag = true;
@@ -337,13 +337,47 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 if (updateCameraFlag) {
                     mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
                     updateCameraFlag = false;
-                    Toast.makeText(DiscoverCapsule.this,
-                            "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(DiscoverCapsule.this,
+//                            "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
                 }
 
                 //if user shake the device,
                 // fetch capsule from database, update markers and set 'if_refresh' to false.
                 if (if_refresh) {
+                    Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
+                    Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
+                    //place capsule marker
+                    for (int i = 0; i < allCapsules.length(); i++) {
+                        try {
+                            JSONObject objects = allCapsules.getJSONObject(i);
+                            Double lat = objects.getDouble("clat");
+                            Double lng = objects.getDouble("clon");
+                            Log.d("CAPSULEMARKER", "i: " + i);
+                            Log.d("CAPSULEMARKER", "lat: " + lat);
+                            Log.d("CAPSULEMARKER", "lng: " + lng);
+
+                            //show capsules on the map when user is nearby that particular area (5km by default)
+                            // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
+                            LatLng lat_Lng = new LatLng(lat, lng);
+                            MarkerOptions capsuleMarker = new MarkerOptions();
+                            capsuleMarker.position(lat_Lng);
+                            capsuleMarker.title("Capsule");
+                            capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                            mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                            mCapsuleMarkers.add(mCapsuleLocationMarker);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
+                        }
+                    }
+
+                    //always show marker title
+                    mCurrLocationMarker.showInfoWindow();
+                    for (Marker m: mCapsuleMarkers ) {
+                        m.showInfoWindow();
+                    }
+
+                    // HTTP GET method
                     if (capsuleInfo.length() == 0) {
                         Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
                         Log.d("CAPSULE", "***** No token to get capsule *****");
@@ -374,7 +408,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                             Random rand = new Random();
                                             selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
                                             Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
-
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -390,42 +423,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                    }
-
-                    Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
-                    Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
-                    //place capsule marker
-                    for (int i = 0; i < allCapsules.length(); i++) {
-                        try {
-                            JSONObject objects = allCapsules.getJSONObject(i);
-                            Double lat = objects.getDouble("clat");
-                            Double lng = objects.getDouble("clon");
-                            Log.d("CAPSULEMARKER", "i: " + i);
-                            Log.d("CAPSULEMARKER", "lat: " + lat);
-                            Log.d("CAPSULEMARKER", "lng: " + lng);
-
-                            //show capsules on the map when user is nearby that particular area
-                            // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
-                            if (Math.abs(location.getLatitude() - lat) < 0.04 &&
-                                    Math.abs(location.getLongitude() - lng) < 0.04) {
-                                LatLng lat_Lng = new LatLng(lat, lng);
-                                MarkerOptions capsuleMarker = new MarkerOptions();
-                                capsuleMarker.position(lat_Lng);
-                                capsuleMarker.title("Capsule");
-                                capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                                mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
-                                mCapsuleMarkers.add(mCapsuleLocationMarker);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
-                        }
-                    }
-
-                    //always show marker title
-                    mCurrLocationMarker.showInfoWindow();
-                    for (Marker m: mCapsuleMarkers ) {
-                        m.showInfoWindow();
                     }
 
                     if_refresh = false;
