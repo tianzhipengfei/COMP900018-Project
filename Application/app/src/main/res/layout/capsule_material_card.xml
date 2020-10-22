@@ -87,7 +87,6 @@
 
                     android:layout_marginEnd="16dp"
                     android:ellipsize="end"
-                    android:fontFamily="@font/oleo_script_swash_caps"
 
 
                     android:maxLines="1"
