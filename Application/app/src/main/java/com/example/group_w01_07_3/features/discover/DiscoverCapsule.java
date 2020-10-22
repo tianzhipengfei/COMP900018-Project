@@ -422,7 +422,38 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 MarkerOptions capsuleMarker = new MarkerOptions();
                                 capsuleMarker.position(lat_Lng);
                                 capsuleMarker.title("Capsule");
-                                capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+
+                                //change marker color
+                                if (i == 0 || i == 10)
+                                    capsuleMarker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                                if (i == 1 || i == 11)
+                                    capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                                if (i == 2 || i == 12)
+                                    capsuleMarker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                                if (i == 3 || i == 13)
+                                    capsuleMarker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                if (i == 4 || i == 14)
+                                    capsuleMarker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                                if (i == 5 || i == 15)
+                                    capsuleMarker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                                if (i == 6 || i == 16)
+                                    capsuleMarker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                                if (i == 7 || i == 17)
+                                    capsuleMarker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                                if (i == 8 || i == 18)
+                                    capsuleMarker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                                if (i == 9 || i == 19 || i == 20)
+                                    capsuleMarker.icon(BitmapDescriptorFactory
+                                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+
                                 mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
                                 mCapsuleMarkers.add(mCapsuleLocationMarker);
 
