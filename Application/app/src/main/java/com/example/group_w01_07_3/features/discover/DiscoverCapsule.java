@@ -105,7 +105,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float last_y = 0;
     private float last_z = 0;
     private static final int SHAKE_THRESHOLD = 800;
-    private long lastUpdate = System.currentTimeMillis();
+    private long lastUpdate_shaking = System.currentTimeMillis();
     // shake to refresh capsules
     private Boolean if_refresh = true;
     // check if HTTP get request is successful
@@ -113,6 +113,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private int refresh_counts = 0;
     // only allow one update every 100ms = 0.1s
     private static final int max_pause_between_shakes = 100;
+    private long lastUpdate_map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -331,6 +332,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
                     updateCameraFlag = true;
+
                     try {
                         capsuleInfo.put("lat", lastRequestLat);
                         capsuleInfo.put("lon", lastRequestLon);
@@ -340,16 +342,26 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 }
 
-                //move map camera
-                if (updateCameraFlag) {
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
-                    updateCameraFlag = false;
+                //move map camera back to current location every 15 seconds
+                long curTime = System.currentTimeMillis();
+                if ((curTime - lastUpdate_map) > 15000) {
+                    mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                    @Override
+                    public void onMapLoaded() {
+                        LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
+                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+                        lastUpdate_map = System.currentTimeMillis();
+                    }
+                    });
                 }
+//                if (updateCameraFlag) {
+//                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
+//                    updateCameraFlag = false;
+//                } 
 
                 //if user shake the device,
                 // fetch capsule from database, update markers and set 'if_refresh' to false.
                 if (if_refresh) {
-
                     // Step 1: HTTP GET method
                     if (capsuleInfo.length() == 0) {
                         Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
@@ -604,9 +616,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
             long curTime = System.currentTimeMillis();
             // check if the last movement was not long ago
-            if ((curTime - lastUpdate) > max_pause_between_shakes) {
-                long diffTime = (curTime - lastUpdate);
-                lastUpdate = curTime;
+            if ((curTime - lastUpdate_shaking) > max_pause_between_shakes) {
+                long diffTime = (curTime - lastUpdate_shaking);
+                lastUpdate_shaking = curTime;
 
                 float x = values[SensorManager.DATA_X];
                 float y = values[SensorManager.DATA_Y];
