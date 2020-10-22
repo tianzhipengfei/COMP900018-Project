@@ -7,7 +7,7 @@
     android:background="@drawable/dialog_shape"
     android:orientation="vertical">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/dialog_camera"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
         android:focusable="true"
         app:drawableLeftCompat="@drawable/camera" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/dialog_gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
         android:focusable="true"
         app:drawableStartCompat="@drawable/gallery" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/dialog_cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
