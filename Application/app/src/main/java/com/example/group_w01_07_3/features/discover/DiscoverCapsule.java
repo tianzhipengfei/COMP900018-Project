@@ -667,14 +667,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void PopUpWindowFunction(){
         LayoutInflater in=(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View popupview=in.inflate(R.layout.popup_window_layout,null);
-        int width= LinearLayout.LayoutParams.WRAP_CONTENT;
-        int height=LinearLayout.LayoutParams.WRAP_CONTENT;
+        int width= LinearLayout.LayoutParams.MATCH_PARENT;
+        int height=LinearLayout.LayoutParams.MATCH_PARENT;
 //        int width=1500;
 //        int height=1500;
         TextView hint=(TextView) popupview.findViewById(R.id.hint);
         Random choice=new Random();
-        //int selection=choice.nextInt()%2;
-        int selection=0;
+        int selection=choice.nextInt()%2;
         switch(selection){
             case 0:
                 hint.setText("Tap the area to open capsule");
@@ -735,6 +734,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             e.printStackTrace();
         }
         popUpShake=true;
+        pw.dismiss();
         HttpUtil.openCapsule(request, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -742,8 +742,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 DiscoverCapsule.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
-                        pw.dismiss();
+                        Toast.makeText(DiscoverCapsule.this,"No Internet to send request",Toast.LENGTH_SHORT);
                     }
                 });
                 //Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
