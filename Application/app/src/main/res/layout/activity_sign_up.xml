@@ -59,6 +59,7 @@
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:text="Username"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold">
@@ -92,6 +93,7 @@
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:text="Email Address"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold">
@@ -124,6 +126,7 @@
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:text="Password"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold">
@@ -156,6 +159,7 @@
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:text="Re-enter Password"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold">
@@ -188,6 +192,7 @@
                     android:layout_marginLeft="24dp"
                     android:layout_marginRight="24dp"
                     android:text="Date of Birth"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
                     android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold">
@@ -207,7 +212,9 @@
                         android:layout_marginStart="24dp"
                         android:text="Select Birthday"
                         android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Button"
                         android:textColor="#000000"
+                        android:textStyle="bold"
                         app:icon="@drawable/ic_calendar"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -243,6 +250,8 @@
                     android:layout_marginEnd="56dp"
                     android:layout_marginBottom="8dp"
                     android:text="Sign Up"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Button"
+                    android:textStyle="bold"
                     app:cornerRadius="24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -263,10 +272,11 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:text="Already a member? Sign in"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Body2"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
 
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
