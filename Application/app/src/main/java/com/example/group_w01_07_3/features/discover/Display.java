@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 
 public class Display extends AppCompatActivity {
     private static final String TAG = "Display Activity";
@@ -45,6 +46,8 @@ public class Display extends AppCompatActivity {
     private ImageView profile;
     private String name;
     private String avater_link;
+    private String open_date;
+    private TextView date;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,7 @@ public class Display extends AppCompatActivity {
         play = (ImageButton) findViewById(R.id.display_audio_play);
         username=(TextView) findViewById(R.id.display_detail_username);
         profile=(ImageView) findViewById(R.id.display_detail_capsule_original_user_avatar);
+        date=(TextView) findViewById(R.id.display_detail_date);
         mediaPlayer = new MediaPlayer();
         startPlay = true;
         //stop=(Button) findViewById(R.id.stop_button);
@@ -77,6 +81,7 @@ public class Display extends AppCompatActivity {
     private void display(JSONObject capsuleInfo) throws JSONException {
         capsuleTitle = capsuleInfo.getString("ctitle");
         capsuleContent = capsuleInfo.getString("ccontent");
+        open_date=Calendar.getInstance().getTime().toString();
         imagelink = capsuleInfo.getString("cimage");
         Log.d(TAG, "display: " + "the new image Link" + imagelink);
         audiolink = capsuleInfo.getString("caudio");
@@ -110,11 +115,15 @@ public class Display extends AppCompatActivity {
                     img.setVisibility(View.VISIBLE);
                     Picasso.with(getApplicationContext()).load(imagelink).into(img);
                 }
+                date.setText(open_date);
                 title.setText(capsuleTitle);
                 content.setText(capsuleContent);
                 username.setText(name);
-                if(audiolink!=null){
-                    Picasso.with(getApplicationContext()).load(audiolink).into(profile);
+                Log.d(TAG, "run: "+avater_link);
+                if(avater_link!=null){
+                    profile.setVisibility(View.VISIBLE);
+                    Picasso.with(getApplicationContext()).load(avater_link).into(profile);
+                    Log.d(TAG, "run: "+"Has load the file");
                 }
             }
         });
