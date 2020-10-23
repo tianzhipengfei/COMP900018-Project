@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -36,6 +37,9 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class ChangePassword extends AppCompatActivity {
+
+    private long mLastClickTime = 0;
+
     private Toolbar mToolbar;
     private Button confirmChange;
 
@@ -80,6 +84,12 @@ public class ChangePassword extends AppCompatActivity {
         confirmChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Preventing multiple clicks, using threshold of 1 second
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 confirmChange.setEnabled(false);
 
                 oldPassword = oldPasswordET.getText().toString();
