@@ -67,8 +67,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
-                        android:fontFamily="@font/oleo_script_swash_caps_bold"
                         android:text="Name Your Memory Capsule"
+                        android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline5"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -107,7 +107,8 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:hint="Title of your capsule"
-                            android:minHeight="64dp"></com.google.android.material.textfield.TextInputEditText>
+                            android:minHeight="64dp"
+                            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Body1"></com.google.android.material.textfield.TextInputEditText>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -118,8 +119,8 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:fontFamily="@font/oleo_script_swash_caps_bold"
                         android:text="Your Text Memory"
+                        android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline5"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -160,7 +161,8 @@
                             android:layout_marginEnd="8dp"
                             android:hint="Content of your capsule"
 
-                            android:minHeight="64dp"></com.google.android.material.textfield.TextInputEditText>
+                            android:minHeight="64dp"
+                            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Body1"></com.google.android.material.textfield.TextInputEditText>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -210,8 +212,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
-                        android:fontFamily="@font/oleo_script_swash_caps_bold"
                         android:text="Your Imagery Memory"
+                        android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline5"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -270,9 +272,9 @@
                         android:layout_marginTop="4dp"
                         android:layout_marginEnd="16dp"
 
-                        android:fontFamily="@font/oleo_script_swash_caps_bold"
                         android:text="Your Voice Memory"
                         android:textAlignment="textStart"
+                        android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline5"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -330,6 +332,7 @@
                         android:layout_marginTop="8dp"
                         android:onClick="whetherPublic"
                         android:text="Create Public Memory Capsule"
+                        android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Body1"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/create_voice_btn_layout" />
 
@@ -344,16 +347,17 @@
             android:id="@+id/create_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_anchor="@id/create_scroll_view"
-            app:fabSize="normal"
             android:layout_margin="16dp"
             android:backgroundTint="@color/colorSecondary"
-            app:layout_anchorGravity="bottom|right|end"
-            android:text="Create"
-            app:icon="@drawable/appbar_send"
-
             android:onClick="createCapsule"
-            />
+            android:text="Create"
+            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Button"
+            android:textStyle="bold"
+            app:fabSize="normal"
+
+            app:icon="@drawable/appbar_send"
+            app:layout_anchor="@id/create_scroll_view"
+            app:layout_anchorGravity="bottom|right|end" />
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

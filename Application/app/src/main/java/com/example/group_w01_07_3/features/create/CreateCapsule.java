@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -69,6 +70,8 @@ import okhttp3.Response;
 
 public class CreateCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
+
+    private long mLastClickTime = 0;
 
     boolean doubleBackToExitPressedOnce = false;
 
@@ -363,6 +366,14 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     public void createCapsule(View v) throws JSONException {
+
+        // Preventing multiple clicks, using threshold of 1 second
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
+
         if (getLocation() && getOtherInfo()) {
             //collect info;
             Log.i("CapsuleInfo", capsuleInfo.toString());

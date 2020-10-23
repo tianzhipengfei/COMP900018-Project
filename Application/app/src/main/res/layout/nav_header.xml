@@ -31,8 +31,10 @@
         android:layout_marginStart="8dp"
         android:paddingTop="8dp"
         android:text="Memory Capsule"
+        android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
         android:textColor="@color/colorPrimary"
         android:textSize="18dp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_avatar">
 

@@ -60,6 +60,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="Your Private Capsule"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -74,6 +75,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:text="Opened Date: 2020/11/1"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/history_opened_capsule_tag"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -94,9 +96,11 @@
                     android:text="Title of the opened Cpasule, Title of the opened Cpasule,, Title of the opened Cpasule
 , Title of the opened Cpasule
 , Title of the opened Cpasule"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
                     android:textColor="#000000"
                     android:textSize="18sp"
-                    android:typeface="serif"
+                    android:textStyle="bold"
+                    android:typeface="normal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_tag" />
@@ -116,6 +120,7 @@ Capsule Content will be displayed here
 Capsule Content will be displayed here
 Capsule Content will be displayed here "
 
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Body2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/history_opened_capsule_title" />
@@ -142,6 +147,7 @@ Capsule Content will be displayed here "
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:text="By"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
                     android:textStyle="italic"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/history_capsule_original_user_avatar"
@@ -154,7 +160,9 @@ Capsule Content will be displayed here "
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:text="Wcs123455"
+                    android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
                     android:textColor="@color/colorPrimary"
+                    android:textStyle="italic"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/history_capsule_text_by"
                     app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_content" />

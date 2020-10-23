@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,6 +39,8 @@ public class SignIn extends AppCompatActivity {
     private CheckBox rememberCB;
     private Button signInButton;
 
+    private long mLastClickTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +63,8 @@ public class SignIn extends AppCompatActivity {
             passwordET.setText(password);
             rememberCB.setChecked(true);
         }
+
+
 
         //先暂时不做这个 sendUsernameToEmailButton
 
@@ -92,6 +97,12 @@ public class SignIn extends AppCompatActivity {
 //                        Toast.makeText(SignIn.this, "checked state and implement logic accordingly", Toast.LENGTH_SHORT).show();
 //                    }
 //                }, 3000);
+
+                // Preventing multiple clicks, using threshold of 1 second
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
 
                 signInButton.setEnabled(false);
 
