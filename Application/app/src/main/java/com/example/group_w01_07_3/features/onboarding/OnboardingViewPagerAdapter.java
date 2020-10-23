@@ -1,4 +1,4 @@
-package com.example.group_w01_07_3;
+package com.example.group_w01_07_3.features.onboarding;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
+
+import com.example.group_w01_07_3.R;
 
 import java.util.List;
 
