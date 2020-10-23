@@ -1,4 +1,4 @@
-package com.example.group_w01_07_3;
+package com.example.group_w01_07_3.features.onboarding;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,11 +14,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.group_w01_07_3.features.account.EditProfile;
+import com.example.group_w01_07_3.MainActivity;
+import com.example.group_w01_07_3.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +52,7 @@ public class OnBoardingActivity extends AppCompatActivity {
 
         //Check if onboarding activity has been finished or or
         if (restorePrefData()) {
-            Intent mainActivity = new Intent(getApplicationContext(),MainActivity.class );
+            Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class );
             startActivity(mainActivity);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();

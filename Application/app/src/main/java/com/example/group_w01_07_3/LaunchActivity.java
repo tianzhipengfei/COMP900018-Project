@@ -11,8 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
-import com.example.group_w01_07_3.util.UserUtil;
+import com.example.group_w01_07_3.features.onboarding.OnBoardingActivity;
 
 public class LaunchActivity extends AppCompatActivity {
 
