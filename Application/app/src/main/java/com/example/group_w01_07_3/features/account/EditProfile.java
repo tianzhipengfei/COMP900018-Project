@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -97,20 +98,9 @@ public class EditProfile extends AppCompatActivity implements
 //
 //
         setContentView(R.layout.activity_edit_profile);
-//
-//        mToolbar = findViewById(R.id.edit_profile_back_toolbar);
-//        setSupportActionBar(mToolbar);
-//        mToolbar.setNavigationIcon(R.drawable.ic_back);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
-//
-//        //navigate back to account page. 请自己根据activity life cycle来写返回功能
-//        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                finish();
-////                onBackPressed();
-//            }
-//        });
+
+        //apply alert sound
+        final MediaPlayer mediaPlayer = MediaPlayer.create(EditProfile.this, R.raw.alert);
 
         avatarDisplay = (ImageView) findViewById(R.id.edit_profile_avatar_display);
         usernameDisplay = (TextView) findViewById(R.id.edit_profile_username_display);
@@ -261,6 +251,8 @@ public class EditProfile extends AppCompatActivity implements
                         dialog.dismiss();
                     }
                 });
+                mediaPlayer.start();
+
                 builder.show();
             }
         });

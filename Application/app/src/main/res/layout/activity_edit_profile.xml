@@ -282,6 +282,7 @@
                     android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Button"
                     android:textStyle="bold"
                     app:cornerRadius="24dp"
+                    android:soundEffectsEnabled="false"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

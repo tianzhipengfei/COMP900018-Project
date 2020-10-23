@@ -5,6 +5,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.group_w01_07_3.features.account.EditProfile;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 
@@ -60,6 +62,9 @@ public class OnBoardingActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_on_boarding);
 
+        //apply alert sound
+        final MediaPlayer mediaPlayer = MediaPlayer.create(OnBoardingActivity.this, R.raw.hero);
+
         //initialize views
         tabLayout = findViewById(R.id.onboarding_dot);
         btnGetStarted = findViewById(R.id.onboarding_started);
@@ -105,6 +110,9 @@ public class OnBoardingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
+
+                mediaPlayer.start();
+
                 startActivity(mainActivity);
 
                 //record this onboarding activity has been finished once
