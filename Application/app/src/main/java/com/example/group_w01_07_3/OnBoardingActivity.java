@@ -28,11 +28,11 @@ public class OnBoardingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        Intent intent = new Intent(OnBoardingActivity.this, MainActivity.class);
-//        startActivity(intent);
-//        //kill MainActivity
-//        finish();
-//        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        Intent intent = new Intent(OnBoardingActivity.this, MainActivity.class);
+        startActivity(intent);
+        //kill MainActivity
+        finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
         setContentView(R.layout.activity_on_boarding);
 
