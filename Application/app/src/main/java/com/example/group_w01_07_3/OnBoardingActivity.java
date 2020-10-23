@@ -72,11 +72,11 @@ public class OnBoardingActivity extends AppCompatActivity {
         //crate list data for onboarding pager
         final List<OnboardingItem> onboardingItemList = new ArrayList<>();
         onboardingItemList.add(new OnboardingItem("Record Your Best Memory",
-                "Record your best moments anytime, on the spot, waiting to be discovered.", R.drawable.ic_onboarding_save));
+                "Record your memory anytime, on the spot. The memory is waiting to be discovered.", R.drawable.ic_onboarding_save));
         onboardingItemList.add(new OnboardingItem("Discover The Past Moments",
-                "Discover nearby past memory from yourself and others. Smile for your past and others moments", R.drawable.ic_onboarding_discover));
+                "Discover nearby recorded memory from yourself and others. Smile for your past and others moments", R.drawable.ic_onboarding_discover));
         onboardingItemList.add(new OnboardingItem("Review The Discovered Memory",
-                "Review your opened memory capsules from digital memory collection", R.drawable.ic_onboarding_history));
+                "Review your revealed memory capsules from digital memory collection", R.drawable.ic_onboarding_history));
 
         onboardingPager = findViewById(R.id.onboarding_Viewpager);
         onboardingViewPagerAdapter = new OnboardingViewPagerAdapter(this, onboardingItemList);
