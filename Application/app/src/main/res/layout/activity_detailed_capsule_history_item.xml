@@ -85,15 +85,17 @@
                             android:layout_marginEnd="16dp"
 
                             android:ellipsize="end"
+
                             android:text="Title of the opened Cpasule, Title of the opened Cpasule,, Title of the opened Cpasule
 , Title of the opened Cpasule
 , Title of the opened Cpasule"
-
-                            android:textColor="#000000"
+                            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
                             android:textSize="18sp"
+                            android:textStyle="bold"
                             android:transitionName="capsuleTitleTN"
-                            android:typeface="serif"
+                            android:typeface="normal"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -104,6 +106,7 @@
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="16dp"
                             android:text="Your Private Capsule"
+                            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
                             android:textColor="@color/colorPrimary"
                             android:transitionName="capsuleTagTN"
                             app:layout_constraintStart_toStartOf="parent"
@@ -118,6 +121,7 @@
                             android:layout_marginTop="16dp"
                             android:layout_marginEnd="16dp"
                             android:text="Opened Date: 2020/11/1"
+                            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
                             android:transitionName="capsuleDateTN"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/history_detail_capsule_private_public_tag"
@@ -185,7 +189,8 @@ Capsule Content will be displayed here
 Capsule Content will be displayed here
 Capsule Content will be displayed here "
 
-                            android:textColor="@android:color/primary_text_light"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+
                             android:transitionName="capsuleContentTN"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -216,9 +221,11 @@ Capsule Content will be displayed here "
                             android:layout_marginTop="16dp"
                             android:text="By"
 
-                            android:textStyle="italic"
+                            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
 
+                            android:textStyle="italic"
                             android:transitionName="capsuleByTN"
+                            android:typeface="serif"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/history_detail_capsule_original_user_avatar"
                             app:layout_constraintTop_toBottomOf="@+id/history_detail_content" />
@@ -231,9 +238,12 @@ Capsule Content will be displayed here "
                             android:layout_marginTop="16dp"
                             android:text="Wcs123455"
 
-                            android:textColor="@color/colorPrimary"
+                            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
 
+                            android:textColor="@color/colorPrimary"
+                            android:textStyle="italic"
                             android:transitionName="capsuleUsernameTN"
+                            android:typeface="serif"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/history_detail_by"
                             app:layout_constraintTop_toBottomOf="@+id/history_detail_content" />
