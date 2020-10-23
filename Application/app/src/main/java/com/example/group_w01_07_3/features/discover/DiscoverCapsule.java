@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -18,6 +21,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -59,7 +63,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,7 +73,8 @@ import okhttp3.Callback;
 import okhttp3.Response;
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
-
+    private boolean popUpShake=false;
+    private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
     // receive capsule information through HTTP GET request
@@ -105,6 +109,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private int capsuleNum = 20;
     // maximum distance to discover (unit: km)
     private double discoverCapsuleRange = 3;
+    private boolean shakeOpen=false;
     // shake event
     private SensorManager sensorMgr;
     private float last_x = 0 ;
@@ -244,6 +249,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
+        if (pw != null) {
+            pw.dismiss();
+            popUpShake=false;
+        }
     }
 
     @Override
@@ -632,8 +641,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 float z = values[SensorManager.DATA_Z];
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-
-                if (speed > SHAKE_THRESHOLD) {
+                if (speed>100 && speed<SHAKE_THRESHOLD&&popUpShake){
+                    pw.dismiss();
+                    RequestSending();
+                }
+                if (speed > SHAKE_THRESHOLD&&popUpShake==false) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // shake to refresh capsules
                     if_refresh = true;
@@ -657,12 +669,54 @@ public class DiscoverCapsule extends AppCompatActivity implements
         final View popupview=in.inflate(R.layout.popup_window_layout,null);
         int width= LinearLayout.LayoutParams.WRAP_CONTENT;
         int height=LinearLayout.LayoutParams.WRAP_CONTENT;
-        final PopupWindow pw=new PopupWindow(popupview,width,height,true);
-        pw.showAtLocation(popupview, Gravity.CENTER,0,0);
-        ImageView img=popupview.findViewById(R.id.tap_me);
+//        int width=1500;
+//        int height=1500;
+        TextView hint=(TextView) popupview.findViewById(R.id.hint);
+        Random choice=new Random();
+        //int selection=choice.nextInt()%2;
+        int selection=0;
+        switch(selection){
+            case 0:
+                hint.setText("Tap the area to open capsule");
+                pw=new PopupWindow(popupview,width,height,true);
+                pw.showAtLocation(popupview, Gravity.CENTER,0,0);
+                Button button=(Button) popupview.findViewById(R.id.dismiss);
+                button.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view) {
+                        pw.dismiss();
+                    }
+                });
+                View img=popupview.findViewById(R.id.tap_me);
+                img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        RequestSending();
+                    }
+                });
+                break;
+            case 1:
+                popUpShake=true;
+                hint.setText("Shake slightly to open the capsule");
+                pw=new PopupWindow(popupview,width,height,true);
+                pw.showAtLocation(popupview, Gravity.CENTER,0,0);
+                img=popupview.findViewById(R.id.tap_me);
+                img.setVisibility(View.INVISIBLE);
+                button=(Button) popupview.findViewById(R.id.dismiss);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pw.dismiss();
+                        popUpShake=false;
+                    }
+                });
+                break;
+        }
+    }
+    public void RequestSending(){
+        Toast.makeText(this, "Congradulation! The capsule will open!", Toast.LENGTH_SHORT).show();
         LocationUtil currentLocation=new LocationUtil(DiscoverCapsule.this);
         Location current_Location=currentLocation.getLocation();
-        //get the required information to send the request to the server
         Double lon=current_Location.getLatitude();
         Double lat=current_Location.getAltitude();
         String token=UserUtil.getToken(DiscoverCapsule.this);
@@ -680,58 +734,42 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        img.setOnClickListener(new View.OnClickListener() {
+        popUpShake=true;
+        HttpUtil.openCapsule(request, new Callback() {
             @Override
-            public void onClick(View view) {
-                String capsuleInfo="{\"cid\":2,\"cusr\":\"lyt\",\"ccontent\":\"TEST CAPSULE CONTENT\",\"ctitle\":\"Test CAPSULE FIRST\",\"cimage\":\"https:\\/\\/file.example.vn\\/images\\/file_example_JPG_500kB.jpg\",\"caudio\":\"https:\\/\\/www.soundhelix.com\\/examples\\/mp3\\/SoundHelix-Song-2.mp3\",\"ccount\":0,\"clat\":37.4219983,\"clon\":-122.084,\"cpermission\":1,\"cavatar\":\"https:\\/\\/www.tianzhipengfei.xin\\/static\\/mobile\\/lyt-1603078706.jpg\"}";
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.d("PopUpWindow information send", "onFailure: ");
+                DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
+                        pw.dismiss();
+                    }
+                });
+                //Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
+                //pw.dismiss();
+            }
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
-                    JSONObject capsuleTry=new JSONObject(capsuleInfo);
-                    pw.dismiss();
-                    Intent intent=new Intent(DiscoverCapsule.this, Display.class);
-                    intent.putExtra("capsule",capsuleTry.toString());
-                    startActivity(intent);
-                    finish();
+                    JSONObject replyJSON=new JSONObject(response.body().string());
+                    Log.d("Response from server", "onResponse: "+replyJSON.toString());
+                    if (replyJSON.has("success")){
+                        DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(DiscoverCapsule.this,"Success! Wait for loading capsule!",Toast.LENGTH_SHORT);
+                                pw.dismiss();
+                                Intent intent=new Intent(DiscoverCapsule.this, Display.class);
+                                intent.putExtra("capsule",selectedCapsule.toString());
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.d("Pop up window message send", "onClick: ");
-//                                HttpUtil.openCapsule(request, new Callback() {
-//                                    @Override
-//                                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//                                        Log.d("PopUpWindow information send", "onFailure: ");
-//                                        DiscoverCapsule.this.runOnUiThread(new Runnable() {
-//                                            @Override
-//                                            public void run() {
-//                                                Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
-//                                                pw.dismiss();
-//                                            }
-//                                        });
-//                                        //Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
-//                                        //pw.dismiss();
-//                                    }
-//                                    @Override
-//                                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//                                        try {
-//                                            JSONObject replyJSON=new JSONObject(response.body().string());
-//                                            Log.d("Response from server", "onResponse: "+replyJSON.toString());
-//                                            if (replyJSON.has("success")){
-//                                                DiscoverCapsule.this.runOnUiThread(new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
-//                                                        Toast.makeText(DiscoverCapsule.this,"Success! Wait for loading capsule!",Toast.LENGTH_SHORT);
-//                                                        pw.dismiss();
-//                                                        Intent intent=new Intent(DiscoverCapsule.this, Display.class);
-//                                                        intent.putExtra("capsule",selectedCapsule.toString());
-//                                                        startActivity(intent);
-//                                                        finish();
-//                                                    }
-//                                                });
-//                                            }
-//                                        } catch (JSONException e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//                                });
             }
         });
     }
