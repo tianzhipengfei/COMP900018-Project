@@ -257,6 +257,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    private int getRandomCow(JSONArray jsonArray) {
+        int length = jsonArray.length();
+        int[] array;
+        array = new int[length-1];
+        int rnd = new Random().nextInt(array.length);
+        return array[rnd];
+    }
+
     public List<Marker> refreshCapsules(JSONArray allCapsules) {
         if (!if_refresh) {
             return old_mCapsuleMarkers;
@@ -266,9 +274,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //place capsule marker
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
         Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
-        for (int i = 0; i < allCapsules.length(); i++) {
-            try {
-                JSONObject objects = allCapsules.getJSONObject(i);
+
+        // get random capsule objects from a JSON array
+        try {
+            for (int i = 0; i < 2; i++) {
+                int randumNum = getRandomCow(allCapsules);
+                JSONObject objects = allCapsules.getJSONObject(randumNum);
                 Double lat = objects.getDouble("clat");
                 Double lng = objects.getDouble("clon");
                 Log.d("CAPSULEMARKER", "i: " + i);
@@ -309,7 +320,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 if (i == 8 || i == 18)
                     capsuleMarker.icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
-                if (i == 9 || i == 19 || i == 20)
+                if (i == 9 || i == 19)
                     capsuleMarker.icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
 
@@ -319,10 +330,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 refresh_counts += 1;
                 Log.d("CAPSULEMARKER", "refresh_counts: " + refresh_counts);
                 Log.d("CAPSULEMARKER", "updated mCapsuleMarkers: " + mCapsuleMarkers);
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.d("Error", "please create more capsules. allCapsules.length():" +  allCapsules.length());
         }
+
+        // Todo: replace with this for iterating all received capsules
+//        for (int i = 0; i < allCapsules.length(); i++) {
+//            try {
+//                JSONObject objects = allCapsules.getJSONObject(i);
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         //always show marker title
         mCurrLocationMarker.showInfoWindow();
