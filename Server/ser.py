@@ -145,7 +145,7 @@ def filter_capsule(lat, lon, capsules, max_distance = 5, min_distance=0.5):
     # Capsules within max distance can be discovered 
     res = []
     for capsule in capsules:
-        dis = get_distance(lat, lon, capsule['lat'], capsule['lon']) 
+        dis = get_distance(lat, lon, capsule['clat'], capsule['clon']) 
         if dis <= max_distance and dis >= min_distance:
             res.append(capsule)
     return res
@@ -368,8 +368,8 @@ class DiscoverCapsule:
         if not checkToken(user):
             return {'error':'Token expired'}
 
-        lat = i.get('lat')
-        lon = i.get('lon')
+        lat = float(i.get('lat'))
+        lon = float(i.get('lon'))
         usr = user.get('uusr')
 
         vars = dict(cusr=usr, cpermission=0)
@@ -391,16 +391,16 @@ class DiscoverCapsule:
         num_capsules = i.get('num_capsules') if i.get('num_capsules') else 20
 
         max_distance = int(max_distance)
-        min_capsules = double(min_distance)
+        min_capsules = float(min_distance)
         num_capsules = int(num_capsules)
 
         # Filter the capsules within max_distance
-        filtered_capsule = filter_capsule(lat, lon, other_capsules, max_distance, min_capsules)
+        filtered_capsules = filter_capsule(lat, lon, all_capsules, max_distance, min_capsules)
         # Retieve num_caplsules capsules randomly
-        if len(all_capsules) > num_capsules:
-            retrieved_capsules = rand.sample(all_capsules, num_capsules)
+        if len(filtered_capsules) > num_capsules:
+            retrieved_capsules = rand.sample(filtered_capsules, num_capsules)
         else:
-            retrieved_capsules = all_capsules
+            retrieved_capsules = filtered_capsules
 
         res_capsules =  []
         if len(retrieved_capsules):
