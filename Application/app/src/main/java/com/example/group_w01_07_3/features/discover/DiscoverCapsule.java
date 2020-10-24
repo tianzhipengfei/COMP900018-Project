@@ -129,6 +129,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // only allow one update every 100ms = 0.2s
     private static final int max_pause_between_shakes = 200;
     private long lastUpdate_map;
+    private boolean disable_camera = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -385,11 +386,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
             public boolean onMarkerClick(Marker marker) {
                 Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
                 Log.w("BEFORE-CLICK", "mCapsuleMarkers.size():" + mCapsuleMarkers.size());
-                int count = 0;
+
                 for (Marker m : mCapsuleMarkers) {
                     Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
-                    if (marker.equals(m) && count < 10) {
-                        count = count + 1;
+                    if (marker.equals(m)) {
                         Log.w("MARKERS-MATCH", m + "");
                         Log.w("MARKERS-MATCH", "******* popup window *******");
                         //Todo: add popupWindow()
@@ -490,18 +490,19 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 }
 
-//                //move map camera back to current location every 30 seconds
-//                long curTime = System.currentTimeMillis();
-//                if ((curTime - lastUpdate_map) > 30000) {
-//                    mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-//                        @Override
-//                        public void onMapLoaded() {
-//                            LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
-//                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
-//                            lastUpdate_map = System.currentTimeMillis();
-//                        }
-//                    });
-//                }
+                //move map camera to current location. 1000ms = 1 seconds
+                long curTime = System.currentTimeMillis();
+                if ((curTime - lastUpdate_map) > 1000 && disable_camera == true) {
+                    mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                        @Override
+                        public void onMapLoaded() {
+                            LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
+                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+                            lastUpdate_map = System.currentTimeMillis();
+                        }
+                    });
+                    disable_camera = false;
+                }
 
 //                if (updateCameraFlag) {
 //                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
@@ -689,6 +690,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // detect a shake event and the shake direction
     @Override
     public void onSensorChanged(int sensor, float[] values) {
+        // Todo: needs to keep shaking for 1 second
+
         if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_shake == true) {
             long curTime = System.currentTimeMillis();
             // check if the last movement was not long ago
@@ -702,12 +705,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
-                if (speed>100 && speed<SHAKE_THRESHOLD&&popUpShake&&!shakeOpen){
+                if (speed > 100 && speed < SHAKE_THRESHOLD && popUpShake && !shakeOpen) {
                     pw.dismiss();
-                    shakeOpen=true;
+                    shakeOpen = true;
                     RequestSending();
                 }
-                
+
                 if (speed > SHAKE_THRESHOLD && popUpShake == false) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // shake to refresh capsules
@@ -816,28 +819,28 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    public void RequestSending(){
+    public void RequestSending() {
         Toast.makeText(this, "Congradulation! The capsule will open!", Toast.LENGTH_SHORT).show();
-        LocationUtil currentLocation=new LocationUtil(DiscoverCapsule.this);
-        Location current_Location=currentLocation.getLocation();
-        Double lon=current_Location.getLatitude();
-        Double lat=current_Location.getAltitude();
-        String token=UserUtil.getToken(DiscoverCapsule.this);
-        Log.d("PopupWindow", "onMarkerClick: "+"Longtitude is "+lon+"The latitude is"+lat);
-        Log.d("PopupWindow","Compare with the location of last position"+mLastLocation.getLatitude()+"Longtitude is "+mLastLocation.getLongitude());
-        Log.d("PopupWindow", "onMarkerClick: "+"get the information of selected capsule"+selectedCapsule.toString());
-        final JSONObject request=new JSONObject();
+        LocationUtil currentLocation = new LocationUtil(DiscoverCapsule.this);
+        Location current_Location = currentLocation.getLocation();
+        Double lon = current_Location.getLatitude();
+        Double lat = current_Location.getAltitude();
+        String token = UserUtil.getToken(DiscoverCapsule.this);
+        Log.d("PopupWindow", "onMarkerClick: " + "Longtitude is " + lon + "The latitude is" + lat);
+        Log.d("PopupWindow", "Compare with the location of last position" + mLastLocation.getLatitude() + "Longtitude is " + mLastLocation.getLongitude());
+        Log.d("PopupWindow", "onMarkerClick: " + "get the information of selected capsule" + selectedCapsule.toString());
+        final JSONObject request = new JSONObject();
         try {
-            request.put("tkn",token);
-            request.put("lat",mLastLocation.getLatitude());
-            request.put("lon",mLastLocation.getLongitude());
+            request.put("tkn", token);
+            request.put("lat", mLastLocation.getLatitude());
+            request.put("lon", mLastLocation.getLongitude());
             request.put("time", Calendar.getInstance().getTime());
-            request.put("cid",selectedCapsule.get("cid"));
-            Log.d("PopUpWindow", "onMarkerClick: "+"Information of request"+request.toString());
+            request.put("cid", selectedCapsule.get("cid"));
+            Log.d("PopUpWindow", "onMarkerClick: " + "Information of request" + request.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        popUpShake=true;
+        popUpShake = true;
         pw.dismiss();
         HttpUtil.openCapsule(request, new Callback() {
             @Override
@@ -846,25 +849,26 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 DiscoverCapsule.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(DiscoverCapsule.this,"No Internet to send request",Toast.LENGTH_SHORT);
+                        Toast.makeText(DiscoverCapsule.this, "No Internet to send request", Toast.LENGTH_SHORT);
                     }
                 });
                 //Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
                 //pw.dismiss();
             }
+
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
-                    JSONObject replyJSON=new JSONObject(response.body().string());
-                    Log.d("Response from server", "onResponse: "+replyJSON.toString());
-                    if (replyJSON.has("success")){
+                    JSONObject replyJSON = new JSONObject(response.body().string());
+                    Log.d("Response from server", "onResponse: " + replyJSON.toString());
+                    if (replyJSON.has("success")) {
                         DiscoverCapsule.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(DiscoverCapsule.this,"Success! Wait for loading capsule!",Toast.LENGTH_SHORT);
+                                Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
                                 pw.dismiss();
-                                Intent intent=new Intent(DiscoverCapsule.this, Display.class);
-                                intent.putExtra("capsule",selectedCapsule.toString());
+                                Intent intent = new Intent(DiscoverCapsule.this, Display.class);
+                                intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
                             }
                         });
