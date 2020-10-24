@@ -111,6 +111,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private int capsuleNum = 20;
     // maximum distance to discover (unit: km)
     private double discoverCapsuleRange = 3;
+    private boolean shakeOpen=false;
     // shake event
     private SensorManager sensorMgr;
     private float last_x = 0;
@@ -659,6 +660,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
+                if (speed>100 && speed<SHAKE_THRESHOLD&&popUpShake&&!shakeOpen){
+                    pw.dismiss();
+                    shakeOpen=true;
+                    RequestSending();
+                }
+                
                 if (speed > SHAKE_THRESHOLD && popUpShake == false) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // shake to refresh capsules
