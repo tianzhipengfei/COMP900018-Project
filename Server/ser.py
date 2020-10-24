@@ -5,14 +5,8 @@ import hashlib
 import random as rand
 from math import sin, cos, sqrt, atan2
 import os
+import mpu
 
-'''
- TODO:
- 1. 修改信息可以改哪些信息 
-    Chengsheng: password，email, avatar, DOB
- 2. discover胶囊的时候，需要优先显示自己的胶囊么 
-    Chengsheng: 可以搞成(当前地图位置)的(多少范围)内的随机显示(maximum多少个)的，capsule
-'''
 
 urls = [
     '/signIn', 'SignIn',
@@ -144,18 +138,15 @@ def json_response(f):
 
 def get_distance(lat1, lon1, lat2, lon2):
     # Approximate radius of earth in km
-    R = 6373.0
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    distance = R * c
+    distance = mpu.haversine_distance((lat1, lon1), (lat2, lon2))
+    return distance
 
-def filter_capsule(lat, lon, capsules, max_distance = 5):
+def filter_capsule(lat, lon, capsules, max_distance = 5, min_distance=0.5):
     # Capsules within max distance can be discovered 
     res = []
     for capsule in capsules:
-        if get_distance(lat, lon, capsule['lat'], capsule['lon']) <= max_distance:
+        dis = get_distance(lat, lon, capsule['lat'], capsule['lon']) 
+        if dis <= max_distance and dis >= min_distance:
             res.append(capsule)
     return res
 
@@ -396,13 +387,15 @@ class DiscoverCapsule:
                 all_capsules.remove(capsule)
 
         max_distance = i.get('max_distance') if i.get('max_distance') else 5
+        min_distance = i.get('min_distance') if i.get('mmin_distance') else 0.5
         num_capsules = i.get('num_capsules') if i.get('num_capsules') else 20
 
         max_distance = int(max_distance)
+        min_capsules = double(min_distance)
         num_capsules = int(num_capsules)
 
         # Filter the capsules within max_distance
-        filtered_capsule = filter_capsule(lat, lon, other_capsules, max_distance)
+        filtered_capsule = filter_capsule(lat, lon, other_capsules, max_distance, min_capsules)
         # Retieve num_caplsules capsules randomly
         if len(all_capsules) > num_capsules:
             retrieved_capsules = rand.sample(all_capsules, num_capsules)
