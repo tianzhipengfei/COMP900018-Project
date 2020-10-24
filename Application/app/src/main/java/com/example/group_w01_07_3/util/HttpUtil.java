@@ -111,14 +111,18 @@ public class HttpUtil {
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "discoverCapsule?" + "tkn=" + token
                         + "&lat=" + capsuleInfo.get("lat")
-                        + "&lon=" + capsuleInfo.get("lon")
-                        + "&max_distance=1000&num_capsules=3")
+                        + "&lon=" + capsuleInfo.get("lon"))
                 .get()
                 .build();
         client.newCall(request).enqueue(callback);
-        //for testing
-        //.url(HttpUtil.address + "discoverCapsule?"+
-        //"tkn="+token+"&lat=37.4219983&lon=-122.084&max_distance=1000&num_capsules=3")
+
+//        Request request = new Request.Builder()
+//                .url(HttpUtil.address + "discoverCapsule?" + "tkn=" + token
+//                        + "&lat=" + capsuleInfo.get("lat")
+//                        + "&lon=" + capsuleInfo.get("lon")
+//                        + "&max_distance=5&min_distance=0.5&num_capsules=20")
+//                .get()
+//                .build();
     }
 
     public static void uploadImage(String token, File avatarFile, okhttp3.Callback callback) {
