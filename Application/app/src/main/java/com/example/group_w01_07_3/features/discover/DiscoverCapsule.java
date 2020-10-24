@@ -64,11 +64,13 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -76,7 +78,7 @@ import okhttp3.Response;
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
 
-    private boolean popUpShake=false;
+    private boolean popUpShake = false;
     private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
@@ -111,7 +113,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private int capsuleNum = 20;
     // maximum distance to discover (unit: km)
     private double discoverCapsuleRange = 3;
-    private boolean shakeOpen=false;
+    private boolean shakeOpen = false;
     // shake event
     private SensorManager sensorMgr;
     private float last_x = 0;
@@ -177,6 +179,19 @@ public class DiscoverCapsule extends AppCompatActivity implements
         sensorMgr.registerListener(this,
                 SensorManager.SENSOR_ACCELEROMETER,
                 SensorManager.SENSOR_DELAY_GAME);
+
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        mGoogleMap.setMyLocationEnabled(true);
+//        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
 
     @Override
@@ -253,14 +268,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
         super.onPause();
         if (pw != null) {
             pw.dismiss();
-            popUpShake=false;
+            popUpShake = false;
         }
     }
 
     private int getRandomCow(JSONArray jsonArray) {
         int length = jsonArray.length();
         int[] array;
-        array = new int[length-1];
+        array = new int[length - 1];
         int rnd = new Random().nextInt(array.length);
         return array[rnd];
     }
@@ -333,7 +348,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.d("Error", "please create more capsules. allCapsules.length():" +  allCapsules.length());
+            Log.d("Error", "please create more capsules. allCapsules.length():" + allCapsules.length());
         }
 
         // Todo: replace with this for iterating all received capsules
@@ -400,10 +415,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void onMapReady(GoogleMap googleMap) {
         // 'onMapReady' only run once
         mGoogleMap = googleMap;
+        mGoogleMap.setPadding(0, 90, 10, 0); // left, top, right, bottom
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        mLocationRequest = new LocationRequest();
         // the location will be updated every locationUpdateInterval second
+        mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(locationUpdateInterval);
         mLocationRequest.setFastestInterval(locationUpdateInterval);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -415,6 +431,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // if location permission is already granted
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 mGoogleMap.setMyLocationEnabled(true);
+                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
             } else {
                 // request location permission
                 checkLocationPermission();
@@ -423,6 +441,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } else {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         }
     }
 
