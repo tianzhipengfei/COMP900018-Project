@@ -356,6 +356,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        // 'onMapReady' only run once
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
@@ -381,34 +382,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
         }
-
-        // make markers clickable
-        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
-                for (Marker m : mCapsuleMarkers) {
-                    Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
-                    if (marker.equals(m)) {
-                        Log.w("MARKERS-MATCH", m+"");
-                        Log.w("MARKERS-MATCH", "******* popup window *******");
-                        //Todo: add popupWindow()
-
-
-
-                        //remove this marker from the map and record after an user opens the capsule
-                        marker.remove();
-                        mCapsuleMarkers.remove(m);
-                        Log.w("AFTER-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
-                        return true;
-                    }
-                }
-                if (marker.equals(mCurrLocationMarker)) {
-                    Log.w("AFTER-CLICK", "mCurrLocationMarker is clicked");
-                }
-                return false;
-            }
-        });
     }
 
     final LocationCallback mLocationCallback = new LocationCallback() {
@@ -456,9 +429,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 }
 
-                //move map camera back to current location every 15 seconds
+                //move map camera back to current location every 30 seconds
                 long curTime = System.currentTimeMillis();
-                if ((curTime - lastUpdate_map) > 15000) {
+                if ((curTime - lastUpdate_map) > 30000) {
                     mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                     @Override
                     public void onMapLoaded() {
