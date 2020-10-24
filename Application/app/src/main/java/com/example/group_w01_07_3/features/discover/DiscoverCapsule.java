@@ -824,7 +824,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 Intent intent=new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule",selectedCapsule.toString());
                                 startActivity(intent);
-                                finish();
                             }
                         });
                     }
