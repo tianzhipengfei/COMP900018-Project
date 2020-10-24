@@ -107,9 +107,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private static final int SHAKE_THRESHOLD = 800;
     private long lastUpdate_shaking = System.currentTimeMillis();
     // shake to refresh capsules
-    private Boolean if_refresh = true;
-    // check if HTTP get request is successful
-    private Boolean if_connected = true;
+    private boolean if_refresh = true;
+    private boolean can_shake = true;
+    private boolean if_connected = false;
     private int refresh_counts = 0;
     // only allow one update every 100ms = 0.1s
     private static final int max_pause_between_shakes = 100;
@@ -728,7 +728,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // detect a shake event and the shake direction
     @Override
     public void onSensorChanged(int sensor, float[] values) {
-        if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_shake == true) {
             long curTime = System.currentTimeMillis();
             // check if the last movement was not long ago
             if ((curTime - lastUpdate_shaking) > max_pause_between_shakes) {
@@ -745,7 +745,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // shake to refresh capsules
                     if_refresh = true;
-                    // Todo: comment out toast message after testing,
+                    // can only detect a shake event after capsules have finished updated
+                    can_shake = false;
+                    // Todo: comment out toast message after testing
                     Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
                 }
                 last_x = x;
