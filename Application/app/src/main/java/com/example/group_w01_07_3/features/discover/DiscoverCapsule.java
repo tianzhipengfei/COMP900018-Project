@@ -83,8 +83,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private Location mLastLocation;
     private Marker mCurrLocationMarker;
     private Marker mCapsuleLocationMarker;
-    private List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
-    private List<Marker> old_mCapsuleMarkers = mCapsuleMarkers;
+    private List<Marker> old_mCapsuleMarkers = new ArrayList<Marker>();
     private FusedLocationProviderClient mFusedLocationClient;
     private boolean updateCameraFlag = true;
     private final int PER_SECOND = 1000;
