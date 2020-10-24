@@ -381,43 +381,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return mCapsuleMarkers;
     }
 
-    public void removeCapsulesFromMap(final List<Marker> mCapsuleMarkers) {
-        // make markers clickable
-//        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(Marker marker) {
-//                Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
-//                Log.w("BEFORE-CLICK", "mCapsuleMarkers.size():" + mCapsuleMarkers.size());
-//
-//                for (Marker m : mCapsuleMarkers) {
-//                    Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
-//                    if (marker.equals(m)) {
-//                        Log.w("MARKERS-MATCH", m + "");
-//                        Log.w("MARKERS-MATCH", "******* popup window *******");
-//                        //Todo: add popupWindow()
-//                        PopUpWindowFunction();
-//
-//                        //remove this marker from the map and record after an user opens the capsule
-//                        marker.remove();
-//                        mCapsuleMarkers.remove(m);
-//                        old_mCapsuleMarkers.remove(m);
-//                        Log.w("AFTER-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
-//                        return true;
-//                    }
-//                }
-//                if (marker.equals(mCurrLocationMarker)) {
-//                    Log.w("AFTER-CLICK", "mCurrLocationMarker is clicked");
-//                }
-//                return false;
-//            }
-//        });
-    }
+    public void removeCapsulesFromMap(final List<Marker> mCapsuleMarkers) { }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // 'onMapReady' only run once
         mGoogleMap = googleMap;
 
+        // make markers clickable
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -429,12 +400,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     if (marker.equals(m)) {
                         Log.w("MARKERS-MATCH", m + "");
                         Log.w("MARKERS-MATCH", "******* popup window *******");
-                        //Todo: add popupWindow()
-                        PopUpWindowFunction();
 
                         //remove this marker from the map and record after an user opens the capsule
                         marker.remove();
                         old_mCapsuleMarkers.remove(m);
+
+                        //Todo: add popupWindow()
+                        PopUpWindowFunction();
+
                         Log.w("AFTER-CLICK", "mCapsuleMarkers:" + old_mCapsuleMarkers);
                         return true;
                     }
