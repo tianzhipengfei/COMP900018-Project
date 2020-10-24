@@ -2,9 +2,13 @@ package com.example.group_w01_07_3.features.discover;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -13,8 +17,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +43,7 @@ import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -52,12 +64,11 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -65,6 +76,8 @@ import okhttp3.Response;
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
 
+    private boolean popUpShake=false;
+    private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
     // randomly select a capsule through HTTP GET request
@@ -237,6 +250,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
+        if (pw != null) {
+            pw.dismiss();
+            popUpShake=false;
+        }
     }
 
     public List<Marker> refreshCapsules(JSONArray allCapsules) {
@@ -338,6 +355,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         Log.w("MARKERS-MATCH", m + "");
                         Log.w("MARKERS-MATCH", "******* popup window *******");
                         //Todo: add popupWindow()
+                        PopUpWindowFunction();
 
                         //remove this marker from the map and record after an user opens the capsule
                         marker.remove();
@@ -641,7 +659,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
-                if (speed > SHAKE_THRESHOLD) {
+                if (speed > SHAKE_THRESHOLD && popUpShake == false) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // shake to refresh capsules
                     if_refresh = true;
@@ -661,6 +679,153 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onAccuracyChanged(int i, int i1) {
 
+    }
+
+    public void PopUpWindowFunction() {
+        LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View popupview = in.inflate(R.layout.popup_window_layout, null);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+//        int width=1500;
+//        int height=1500;
+        TextView hint = (TextView) popupview.findViewById(R.id.hint);
+        Random choice = new Random();
+        int selection = choice.nextInt() % 3;
+        switch (selection) {
+            case 0:
+                hint.setText("Tap the area to open capsule");
+                pw = new PopupWindow(popupview, width, height, true);
+                pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
+                Button button = (Button) popupview.findViewById(R.id.dismiss);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pw.dismiss();
+                    }
+                });
+                View img = popupview.findViewById(R.id.tap_me);
+                img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        RequestSending();
+                    }
+                });
+                break;
+            case 1:
+                popUpShake = true;
+                hint.setText("Shake slightly to open the capsule");
+                pw = new PopupWindow(popupview, width, height, true);
+                pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
+                img = popupview.findViewById(R.id.tap_me);
+                img.setVisibility(View.INVISIBLE);
+                button = (Button) popupview.findViewById(R.id.dismiss);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pw.dismiss();
+                        popUpShake = false;
+                    }
+                });
+                break;
+            case 2:
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View slideview = inflater.inflate(R.layout.popup_slider, null);
+                final SlideValidationView slideValidationView = (SlideValidationView) slideview.findViewById(R.id.slideView);
+                final VerificationSeekBar seekbar = (VerificationSeekBar) slideview.findViewById(R.id.sb_progress);
+                pw = new PopupWindow(slideview, width, height, true);
+                pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
+                slideValidationView.setListener(new SlideListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(slideview.getContext(), "Success!", Toast.LENGTH_SHORT).show();
+                        seekbar.setProgress(0);
+                        RequestSending();
+                    }
+
+                    public void onFail() {
+                        Toast.makeText(slideview.getContext(), "Fail!Try again", Toast.LENGTH_SHORT).show();
+                        seekbar.setProgress(0);
+                    }
+                });
+                seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        System.out.println("Current Progress" + progress);
+                        slideValidationView.setOffsetX(progress);
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        slideValidationView.deal();
+                    }
+                });
+
+        }
+    }
+
+    public void RequestSending(){
+        Toast.makeText(this, "Congradulation! The capsule will open!", Toast.LENGTH_SHORT).show();
+        LocationUtil currentLocation=new LocationUtil(DiscoverCapsule.this);
+        Location current_Location=currentLocation.getLocation();
+        Double lon=current_Location.getLatitude();
+        Double lat=current_Location.getAltitude();
+        String token=UserUtil.getToken(DiscoverCapsule.this);
+        Log.d("PopupWindow", "onMarkerClick: "+"Longtitude is "+lon+"The latitude is"+lat);
+        Log.d("PopupWindow","Compare with the location of last position"+mLastLocation.getLatitude()+"Longtitude is "+mLastLocation.getLongitude());
+        Log.d("PopupWindow", "onMarkerClick: "+"get the information of selected capsule"+selectedCapsule.toString());
+        final JSONObject request=new JSONObject();
+        try {
+            request.put("tkn",token);
+            request.put("lat",mLastLocation.getLatitude());
+            request.put("lon",mLastLocation.getLongitude());
+            request.put("time", Calendar.getInstance().getTime());
+            request.put("cid",selectedCapsule.get("cid"));
+            Log.d("PopUpWindow", "onMarkerClick: "+"Information of request"+request.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        popUpShake=true;
+        pw.dismiss();
+        HttpUtil.openCapsule(request, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.d("PopUpWindow information send", "onFailure: ");
+                DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(DiscoverCapsule.this,"No Internet to send request",Toast.LENGTH_SHORT);
+                    }
+                });
+                //Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
+                //pw.dismiss();
+            }
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try {
+                    JSONObject replyJSON=new JSONObject(response.body().string());
+                    Log.d("Response from server", "onResponse: "+replyJSON.toString());
+                    if (replyJSON.has("success")){
+                        DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(DiscoverCapsule.this,"Success! Wait for loading capsule!",Toast.LENGTH_SHORT);
+                                pw.dismiss();
+                                Intent intent=new Intent(DiscoverCapsule.this, Display.class);
+                                intent.putExtra("capsule",selectedCapsule.toString());
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
 
