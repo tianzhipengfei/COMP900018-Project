@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -641,8 +642,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 float z = values[SensorManager.DATA_Z];
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-                if (speed>100 && speed<SHAKE_THRESHOLD&&popUpShake){
+                if (speed>100 && speed<SHAKE_THRESHOLD&&popUpShake&&!shakeOpen){
                     pw.dismiss();
+                    shakeOpen=true;
                     RequestSending();
                 }
                 if (speed > SHAKE_THRESHOLD&&popUpShake==false) {
@@ -673,7 +675,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //        int height=1500;
         TextView hint=(TextView) popupview.findViewById(R.id.hint);
         Random choice=new Random();
-        int selection=choice.nextInt()%2;
+        int selection=choice.nextInt()%3;
         switch(selection){
             case 0:
                 hint.setText("Tap the area to open capsule");
@@ -710,6 +712,41 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 });
                 break;
+            case 2:
+                LayoutInflater inflater=(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View slideview=inflater.inflate(R.layout.popup_slider,null);
+                final SlideValidationView slideValidationView =(SlideValidationView) slideview.findViewById(R.id.slideView);
+                final VerificationSeekBar seekbar=(VerificationSeekBar)slideview.findViewById(R.id.sb_progress);
+                pw=new PopupWindow(slideview,width,height,true);
+                pw.showAtLocation(slideview, Gravity.CENTER,0,0);
+                slideValidationView.setListener(new SlideListener() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(slideview.getContext(), "Success!", Toast.LENGTH_SHORT).show();
+                        seekbar.setProgress(0);
+                        RequestSending();
+                    }
+
+                    public void onFail() {
+                        Toast.makeText(slideview.getContext(), "Fail!Try again", Toast.LENGTH_SHORT).show();
+                        seekbar.setProgress(0);
+                    }
+                });
+                seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        System.out.println("Current Progress"+progress);
+                        slideValidationView.setOffsetX(progress);
+                    }
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        slideValidationView.deal();
+                    }
+                });
+
         }
     }
     public void RequestSending(){
