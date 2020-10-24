@@ -240,6 +240,121 @@ public class DiscoverCapsule extends AppCompatActivity implements
         super.onPause();
     }
 
+    public List<Marker> refreshCapsules(JSONArray allCapsules){
+        if (!if_refresh){
+            return old_mCapsuleMarkers;
+        }
+
+        List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
+        //place capsule marker
+        Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
+        Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
+        for (int i = 0; i < allCapsules.length(); i++) {
+            try {
+                JSONObject objects = allCapsules.getJSONObject(i);
+                Double lat = objects.getDouble("clat");
+                Double lng = objects.getDouble("clon");
+                Log.d("CAPSULEMARKER", "i: " + i);
+                Log.d("CAPSULEMARKER", "lat: " + lat);
+                Log.d("CAPSULEMARKER", "lng: " + lng);
+
+                //show capsules on the map when user is nearby that particular area (5km by default)
+                // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
+                LatLng lat_Lng = new LatLng(lat, lng);
+                MarkerOptions capsuleMarker = new MarkerOptions();
+                capsuleMarker.position(lat_Lng);
+                capsuleMarker.title("Capsule");
+
+                //change marker color
+                if (i == 0 || i == 10)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                if (i == 1 || i == 11)
+                    capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                if (i == 2 || i == 12)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                if (i == 3 || i == 13)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                if (i == 4 || i == 14)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                if (i == 5 || i == 15)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                if (i == 6 || i == 16)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                if (i == 7 || i == 17)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                if (i == 8 || i == 18)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                if (i == 9 || i == 19 || i == 20)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+
+                mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                mCapsuleMarkers.add(mCapsuleLocationMarker);
+
+                refresh_counts+=1;
+                Log.d("CAPSULEMARKER", "refresh_counts: " + refresh_counts);
+                Log.d("CAPSULEMARKER", "updated mCapsuleMarkers: " + mCapsuleMarkers);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //always show marker title
+        mCurrLocationMarker.showInfoWindow();
+        if (mCapsuleMarkers.size() > 0){
+            for (Marker m: mCapsuleMarkers ) {
+                m.showInfoWindow();
+            }
+        }
+
+        if (!old_mCapsuleMarkers.equals(mCapsuleMarkers)){
+            if_refresh = false;
+            can_shake = true;
+        }
+
+        old_mCapsuleMarkers = mCapsuleMarkers;
+        return mCapsuleMarkers;
+    }
+
+    public void removeCapsulesFromMap(final List<Marker> mCapsuleMarkers){
+        // make markers clickable
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
+                Log.w("BEFORE-CLICK", "mCapsuleMarkers.size():" + mCapsuleMarkers.size());
+                int count = 0;
+                for (Marker m : mCapsuleMarkers) {
+                    Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
+                    if (marker.equals(m) && count < 10) {
+                        count = count + 1 ;
+                        Log.w("MARKERS-MATCH", m+"");
+                        Log.w("MARKERS-MATCH", "******* popup window *******");
+                        //Todo: add popupWindow()
+
+                        //remove this marker from the map and record after an user opens the capsule
+                        marker.remove();
+                        mCapsuleMarkers.remove(m);
+                        old_mCapsuleMarkers.remove(m);
+                        Log.w("AFTER-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
+                        return true;
+                    }
+                }
+                if (marker.equals(mCurrLocationMarker)) {
+                    Log.w("AFTER-CLICK", "mCurrLocationMarker is clicked");
+                }
+                return false;
+            }
+        });
+    }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
