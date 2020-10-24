@@ -844,7 +844,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        popUpShake = true;
+//        popUpShake =false;
         pw.dismiss();
         HttpUtil.openCapsule(request, new Callback() {
             @Override
