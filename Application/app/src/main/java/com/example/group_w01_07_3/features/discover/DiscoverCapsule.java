@@ -130,6 +130,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private static final int max_pause_between_shakes = 200;
     private long lastUpdate_map;
     private boolean disable_camera = true;
+    private int open_shake_time=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -399,8 +400,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         Log.w("MARKERS-MATCH", "******* popup window *******");
 
                         //remove this marker from the map and record after an user opens the capsule
-                        marker.remove();
-                        old_mCapsuleMarkers.remove(m);
 
                         //Todo: add popupWindow()
                         PopUpWindowFunction();
@@ -692,7 +691,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onSensorChanged(int sensor, float[] values) {
         // Todo: do not open capsule until user keeps shaking device for at least one second
-
+        //when detect 10 times of slight shake, open the capsule
+        if(open_shake_time==10){
+            open_shake_time=0;
+            shakeOpen = true;
+            RequestSending();
+        }
         if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_shake == true) {
             long curTime = System.currentTimeMillis();
             // check if the last movement was not long ago
@@ -705,11 +709,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 float z = values[SensorManager.DATA_Z];
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-
-                if (speed > 100 && speed < SHAKE_THRESHOLD && popUpShake && !shakeOpen) {
-                    pw.dismiss();
-                    shakeOpen = true;
-                    RequestSending();
+                //detect the reasonable shake of capsule
+                if (speed > 400 && speed < SHAKE_THRESHOLD && popUpShake && !shakeOpen) {
+                    open_shake_time+=1;
                 }
 
                 if (speed > SHAKE_THRESHOLD && popUpShake == false) {
@@ -744,6 +746,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         TextView hint = (TextView) popupview.findViewById(R.id.hint);
         Random choice = new Random();
         int selection = choice.nextInt() % 3;
+        selection=1;
         switch (selection) {
             case 0:
                 hint.setText("Tap the area to open capsule");
@@ -866,8 +869,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         DiscoverCapsule.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                //marker remove，wait for scarlett
+//                                marker.remove();
+//                                old_mCapsuleMarkers.remove(m);
                                 Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
-                                pw.dismiss();
+//                                pw.dismiss();
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
