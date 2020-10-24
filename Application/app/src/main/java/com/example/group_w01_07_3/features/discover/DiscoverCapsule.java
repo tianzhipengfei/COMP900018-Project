@@ -302,7 +302,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //            Log.d("Error", "please create more capsules. allCapsules.length():" + allCapsules.length());
 //        }
 
-        // display all capsules in google map 
+        // display all capsules in google map
         for (int i = 0; i < allCapsules.length(); i++) {
             try {
                 JSONObject objects = allCapsules.getJSONObject(i);
