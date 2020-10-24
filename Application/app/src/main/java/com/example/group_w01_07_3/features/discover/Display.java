@@ -90,15 +90,19 @@ public class Display extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                date.setText(open_date);
+                title.setText(capsuleTitle);
+                content.setText(capsuleContent);
+                username.setText(name);
                 if (audiolink != "null") {
                     try {
+                        play.setVisibility(View.VISIBLE);
                         mediaPlayer.setDataSource(audiolink);
                         mediaPlayer.prepare();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 //                    media=new RecordAudioUtil(audiolink);
-                    play.setVisibility(View.VISIBLE);
                     play.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -115,10 +119,6 @@ public class Display extends AppCompatActivity {
                     img.setVisibility(View.VISIBLE);
                     Picasso.with(getApplicationContext()).load(imagelink).into(img);
                 }
-                date.setText(open_date);
-                title.setText(capsuleTitle);
-                content.setText(capsuleContent);
-                username.setText(name);
                 Log.d(TAG, "run: "+avater_link);
                 if(avater_link!=null){
                     profile.setVisibility(View.VISIBLE);
