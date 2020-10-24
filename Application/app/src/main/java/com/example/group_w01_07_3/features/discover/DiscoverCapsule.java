@@ -694,7 +694,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // detect a shake event and the shake direction
     @Override
     public void onSensorChanged(int sensor, float[] values) {
-        // Todo: needs to keep shaking for 1 second
+        // Todo: do not open capsule until user keeps shaking device for at least one second
 
         if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_shake == true) {
             long curTime = System.currentTimeMillis();
