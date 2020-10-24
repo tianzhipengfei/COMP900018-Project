@@ -490,18 +490,19 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 }
 
-                //move map camera back to current location every 30 seconds
-                long curTime = System.currentTimeMillis();
-                if ((curTime - lastUpdate_map) > 30000) {
-                    mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                        @Override
-                        public void onMapLoaded() {
-                            LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
-                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
-                            lastUpdate_map = System.currentTimeMillis();
-                        }
-                    });
-                }
+//                //move map camera back to current location every 30 seconds
+//                long curTime = System.currentTimeMillis();
+//                if ((curTime - lastUpdate_map) > 30000) {
+//                    mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+//                        @Override
+//                        public void onMapLoaded() {
+//                            LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
+//                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+//                            lastUpdate_map = System.currentTimeMillis();
+//                        }
+//                    });
+//                }
+
 //                if (updateCameraFlag) {
 //                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
 //                    updateCameraFlag = false;
