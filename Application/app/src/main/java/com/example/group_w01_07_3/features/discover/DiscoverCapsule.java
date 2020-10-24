@@ -305,7 +305,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 //show capsules on the map when user is nearby that particular area (5km by default)
                 // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
                 LatLng lat_Lng = new LatLng(lat, lng);
-                MarkerOptions capsuleMarker = new MarkerOptions(); 
+                MarkerOptions capsuleMarker = new MarkerOptions();
                 capsuleMarker.position(lat_Lng);
                 capsuleMarker.title("Capsule");
 
