@@ -72,15 +72,17 @@ import java.util.Random;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
+
     private boolean popUpShake=false;
     private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
-    // receive capsule information through HTTP GET request
-    private JSONArray allCapsules = new JSONArray();
+    // randomly select a capsule through HTTP GET request
     private JSONObject selectedCapsule = new JSONObject();
+    private JSONArray allCapsules;
     // request capsule
     private JSONObject capsuleInfo = new JSONObject();
     private Toolbar mToolbar;
@@ -94,8 +96,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private Location mLastLocation;
     private Marker mCurrLocationMarker;
     private Marker mCapsuleLocationMarker;
-    private List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
-    private List<Marker> old_mCapsuleMarkers = mCapsuleMarkers;
+    private List<Marker> old_mCapsuleMarkers = new ArrayList<Marker>();
     private FusedLocationProviderClient mFusedLocationClient;
     private boolean updateCameraFlag = true;
     private final int PER_SECOND = 1000;
@@ -113,18 +114,18 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private boolean shakeOpen=false;
     // shake event
     private SensorManager sensorMgr;
-    private float last_x = 0 ;
+    private float last_x = 0;
     private float last_y = 0;
     private float last_z = 0;
     private static final int SHAKE_THRESHOLD = 800;
     private long lastUpdate_shaking = System.currentTimeMillis();
     // shake to refresh capsules
-    private Boolean if_refresh = true;
-    // check if HTTP get request is successful
-    private Boolean if_connected = true;
+    private boolean if_refresh = true;
+    private boolean can_shake = true;
+    private boolean if_connected = false;
     private int refresh_counts = 0;
-    // only allow one update every 100ms = 0.1s
-    private static final int max_pause_between_shakes = 100;
+    // only allow one update every 100ms = 0.2s
+    private static final int max_pause_between_shakes = 200;
     private long lastUpdate_map;
 
     @Override
@@ -162,12 +163,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
 
-        try {
-            capsuleInfo.put("max_distance", 1000);
-            capsuleInfo.put("num_capsules", 3);
-        } catch (JSONException e) {
-            System.out.print("Problems happen during parsing json objects");
-        }
+//        try {
+//            capsuleInfo.put("max_distance", 10); // 5km by default
+//            capsuleInfo.put("num_capsules", 30); // 20 capsules by default
+//        } catch (JSONException e) {
+//            System.out.print("Problems happen during parsing json objects");
+//        }
 
         Toast.makeText(DiscoverCapsule.this,
                 "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
@@ -256,8 +257,126 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    public List<Marker> refreshCapsules(JSONArray allCapsules) {
+        if (!if_refresh) {
+            return old_mCapsuleMarkers;
+        }
+
+        List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
+        //place capsule marker
+        Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
+        Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
+        for (int i = 0; i < allCapsules.length(); i++) {
+            try {
+                JSONObject objects = allCapsules.getJSONObject(i);
+                Double lat = objects.getDouble("clat");
+                Double lng = objects.getDouble("clon");
+                Log.d("CAPSULEMARKER", "i: " + i);
+                Log.d("CAPSULEMARKER", "lat: " + lat);
+                Log.d("CAPSULEMARKER", "lng: " + lng);
+
+                //show capsules on the map when user is nearby that particular area (5km by default)
+                // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
+                LatLng lat_Lng = new LatLng(lat, lng);
+                MarkerOptions capsuleMarker = new MarkerOptions();
+                capsuleMarker.position(lat_Lng);
+                capsuleMarker.title("Capsule");
+
+                //change marker color
+                if (i == 0 || i == 10)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                if (i == 1 || i == 11)
+                    capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                if (i == 2 || i == 12)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                if (i == 3 || i == 13)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                if (i == 4 || i == 14)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                if (i == 5 || i == 15)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                if (i == 6 || i == 16)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                if (i == 7 || i == 17)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                if (i == 8 || i == 18)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                if (i == 9 || i == 19 || i == 20)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+
+                mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
+                mCapsuleMarkers.add(mCapsuleLocationMarker);
+
+                refresh_counts += 1;
+                Log.d("CAPSULEMARKER", "refresh_counts: " + refresh_counts);
+                Log.d("CAPSULEMARKER", "updated mCapsuleMarkers: " + mCapsuleMarkers);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //always show marker title
+        mCurrLocationMarker.showInfoWindow();
+        if (mCapsuleMarkers.size() > 0) {
+            for (Marker m : mCapsuleMarkers) {
+                m.showInfoWindow();
+            }
+        }
+
+        if (!old_mCapsuleMarkers.equals(mCapsuleMarkers)) {
+            if_refresh = false;
+            can_shake = true;
+        }
+
+        old_mCapsuleMarkers = mCapsuleMarkers;
+        return mCapsuleMarkers;
+    }
+
+    public void removeCapsulesFromMap(final List<Marker> mCapsuleMarkers) {
+        // make markers clickable
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
+                Log.w("BEFORE-CLICK", "mCapsuleMarkers.size():" + mCapsuleMarkers.size());
+                int count = 0;
+                for (Marker m : mCapsuleMarkers) {
+                    Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
+                    if (marker.equals(m) && count < 10) {
+                        count = count + 1;
+                        Log.w("MARKERS-MATCH", m + "");
+                        Log.w("MARKERS-MATCH", "******* popup window *******");
+                        //Todo: add popupWindow()
+                        PopUpWindowFunction();
+
+                        //remove this marker from the map and record after an user opens the capsule
+                        marker.remove();
+                        mCapsuleMarkers.remove(m);
+                        old_mCapsuleMarkers.remove(m);
+                        Log.w("AFTER-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
+                        return true;
+                    }
+                }
+                if (marker.equals(mCurrLocationMarker)) {
+                    Log.w("AFTER-CLICK", "mCurrLocationMarker is clicked");
+                }
+                return false;
+            }
+        });
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        // 'onMapReady' only run once
         mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
@@ -283,35 +402,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
         }
-
-        // make markers clickable
-        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
-                for (Marker m : mCapsuleMarkers) {
-                    Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
-                    if (marker.equals(m)) {
-                        Log.w("MARKERS-MATCH", m+"");
-                        Log.w("MARKERS-MATCH", "******* popup window *******");
-                        //Todo: add popupWindow()
-                        //add pop-up window function at the bottom
-                        PopUpWindowFunction();
-                        //remove this marker from the map and record after an user opens the capsule
-                        marker.remove();
-                        mCapsuleMarkers.remove(m);
-                        Log.w("AFTER-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
-                        //remove the capsule marker in google map after an user opens the capsule
-                        m.remove();
-                        return true;
-                    }
-                }
-                if (marker.equals(mCurrLocationMarker)) {
-                    Log.w("AFTER-CLICK", "mCurrLocationMarker is clicked");
-                }
-                return false;
-            }
-        });
     }
 
     final LocationCallback mLocationCallback = new LocationCallback() {
@@ -353,22 +443,22 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     try {
                         capsuleInfo.put("lat", lastRequestLat);
                         capsuleInfo.put("lon", lastRequestLon);
-                        Log.d("UPDATE-LOCATION", capsuleInfo+"");
+                        Log.d("UPDATE-LOCATION", capsuleInfo + "");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
 
-                //move map camera back to current location every 15 seconds
+                //move map camera back to current location every 30 seconds
                 long curTime = System.currentTimeMillis();
-                if ((curTime - lastUpdate_map) > 15000) {
+                if ((curTime - lastUpdate_map) > 30000) {
                     mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                    @Override
-                    public void onMapLoaded() {
-                        LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
-                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
-                        lastUpdate_map = System.currentTimeMillis();
-                    }
+                        @Override
+                        public void onMapLoaded() {
+                            LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
+                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+                            lastUpdate_map = System.currentTimeMillis();
+                        }
                     });
                 }
 //                if (updateCameraFlag) {
@@ -376,136 +466,63 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //                    updateCameraFlag = false;
 //                }
 
-                //if user shake the device,
-                // fetch capsule from database, update markers and set 'if_refresh' to false.
-                if (if_refresh) {
-                    // Step 1: HTTP GET method
-                    if (capsuleInfo.length() == 0) {
-                        Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
-                        Log.d("CAPSULE", "***** No token to get capsule *****");
-                        allCapsules = new JSONArray();
-                        selectedCapsule = new JSONObject();
-                    } else {
-                        try {
-                            String token = UserUtil.getToken(DiscoverCapsule.this);
-                            Log.i("SENDING-REQUEST", "token:" + token);
-                            Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
-                            Log.i("SENDING-REQUEST", "refresh_counts:" + refresh_counts);
-                            HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
-                                @Override
-                                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                                    Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
-                                    String responseData = response.body().string(); //.getClass().getName() java.lang.String
-                                    // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
-                                    Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
-                                    try {
-                                        JSONObject responseJSON = new JSONObject(responseData);
-                                        if (responseJSON.has("success")) {
-                                            String status = responseJSON.getString("success");
-                                            Log.d("CAPSULE", "getCapsule success: " + status);
+                // HTTP GET method
+                if (capsuleInfo.length() == 0) {
+                    Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
+                    Log.d("CAPSULE", "***** No token to get capsule *****");
+                    allCapsules = new JSONArray();
+                    selectedCapsule = new JSONObject();
+                } else {
+                    try {
+                        String token = UserUtil.getToken(DiscoverCapsule.this);
+                        Log.i("SENDING-REQUEST", "token:" + token);
+                        Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
+                        Log.i("SENDING-REQUEST", "refresh_counts:" + refresh_counts);
+                        HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
+                            @Override
+                            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
+                                String responseData = response.body().string(); //.getClass().getName() java.lang.String
+                                // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
+                                Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
+                                try {
+                                    JSONObject responseJSON = new JSONObject(responseData);
+                                    if (responseJSON.has("success")) {
+                                        String status = responseJSON.getString("success");
+                                        Log.d("DISCOVER-CAPSULE", "getCapsule success: " + status);
 
-                                            allCapsules = responseJSON.getJSONArray("capsules");
-                                            Log.d("CAPSULE", "capsuleInfo: " + allCapsules);
+                                        allCapsules = responseJSON.getJSONArray("capsules");
+                                        Log.d("DISCOVER-CAPSULE", "capsuleInfo: " + allCapsules);
 
-                                            Random rand = new Random();
-                                            selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
-                                            Log.d("CAPSULE", "selectedCapsule: " + selectedCapsule);
-
-                                        }
+                                        Random rand = new Random();
+                                        selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
+                                        Log.d("DISCOVER-CAPSULE", "selectedCapsule: " + selectedCapsule);
                                         if_connected = true;
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                        if_connected = false;
+                                        Log.d("DISCOVER-CAPSULE", "if_connected: " + if_connected);
                                     }
-                                }
-
-                                @Override
-                                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                } catch (JSONException e) {
                                     e.printStackTrace();
-                                    Log.d("CAPSULE", "onFailure()");
-                                    if_connected = false;
                                 }
-                            });
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            if_connected = false;
-                        }
-                    }
-
-                    if (if_connected){
-                        //step 2: place capsule marker
-                        Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
-                        Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
-                        for (int i = 0; i < allCapsules.length(); i++) {
-                            try {
-                                JSONObject objects = allCapsules.getJSONObject(i);
-                                Double lat = objects.getDouble("clat");
-                                Double lng = objects.getDouble("clon");
-                                Log.d("CAPSULEMARKER", "i: " + i);
-                                Log.d("CAPSULEMARKER", "lat: " + lat);
-                                Log.d("CAPSULEMARKER", "lng: " + lng);
-
-                                //show capsules on the map when user is nearby that particular area (5km by default)
-                                // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
-                                LatLng lat_Lng = new LatLng(lat, lng);
-                                MarkerOptions capsuleMarker = new MarkerOptions();
-                                capsuleMarker.position(lat_Lng);
-                                capsuleMarker.title("Capsule");
-
-                                //change marker color
-                                if (i == 0 || i == 10)
-                                    capsuleMarker.icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                                if (i == 1 || i == 11)
-                                    capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                                if (i == 2 || i == 12)
-                                    capsuleMarker.icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-                                if (i == 3 || i == 13)
-                                    capsuleMarker.icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                                if (i == 4 || i == 14)
-                                    capsuleMarker.icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                                if (i == 5 || i == 15)
-                                    capsuleMarker.icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-                                if (i == 6 || i == 16)
-                                    capsuleMarker.icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                                if (i == 7 || i == 17)
-                                    capsuleMarker.icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-                                if (i == 8 || i == 18)
-                                    capsuleMarker.icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
-                                if (i == 9 || i == 19 || i == 20)
-                                    capsuleMarker.icon(BitmapDescriptorFactory
-                                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-
-                                mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
-                                mCapsuleMarkers.add(mCapsuleLocationMarker);
-
-                                refresh_counts+=1;
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                Log.d("CAPSULEMARKER", "markerOptions2-error: " + allCapsules);
                             }
-                        }
-                    }
 
-                    //always show marker title
-                    mCurrLocationMarker.showInfoWindow();
-                    if (mCapsuleMarkers.size() > 0){
-                        for (Marker m: mCapsuleMarkers ) {
-                            m.showInfoWindow();
-                        }
-                    }
-
-                    if (!old_mCapsuleMarkers.equals(mCapsuleMarkers)){
-                        if_refresh = false;
+                            @Override
+                            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                e.printStackTrace();
+                                Log.d("CAPSULE", "onFailure()");
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
+
+                // Todo: call method to make markers clickable
+                if (if_connected) {
+                    removeCapsulesFromMap(refreshCapsules(allCapsules));
+                } else {
+                    Log.i("MGOOGLEMAP:", "No connection");
+                }
+                Log.i("MGOOGLEMAP:", "hi");
             }
         }
     };
@@ -607,9 +624,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(navigationView)){
+        if (drawerLayout.isDrawerOpen(navigationView)) {
             drawerLayout.closeDrawer(navigationView);
-        }else {
+        } else {
             if (doubleBackToExitPressedOnce) {
                 super.onBackPressed();
                 return;
@@ -621,7 +638,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    doubleBackToExitPressedOnce=false;
+                    doubleBackToExitPressedOnce = false;
                 }
             }, 2000);
         }
@@ -630,7 +647,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // detect a shake event and the shake direction
     @Override
     public void onSensorChanged(int sensor, float[] values) {
-        if (sensor == SensorManager.SENSOR_ACCELEROMETER) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_shake == true) {
             long curTime = System.currentTimeMillis();
             // check if the last movement was not long ago
             if ((curTime - lastUpdate_shaking) > max_pause_between_shakes) {
@@ -642,16 +659,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 float z = values[SensorManager.DATA_Z];
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+
                 if (speed>100 && speed<SHAKE_THRESHOLD&&popUpShake&&!shakeOpen){
                     pw.dismiss();
                     shakeOpen=true;
                     RequestSending();
                 }
-                if (speed > SHAKE_THRESHOLD&&popUpShake==false) {
+
+                if (speed > SHAKE_THRESHOLD && popUpShake == false) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // shake to refresh capsules
                     if_refresh = true;
-                    // Todo: comment out toast message after testing,
+                    // can only detect a shake event after capsules have finished updated
+                    can_shake = false;
+                    // Todo: comment out toast message after testing
                     Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
                 }
                 last_x = x;
@@ -666,29 +687,30 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void onAccuracyChanged(int i, int i1) {
 
     }
-    public void PopUpWindowFunction(){
-        LayoutInflater in=(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View popupview=in.inflate(R.layout.popup_window_layout,null);
-        int width= LinearLayout.LayoutParams.MATCH_PARENT;
-        int height=LinearLayout.LayoutParams.MATCH_PARENT;
+
+    public void PopUpWindowFunction() {
+        LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View popupview = in.inflate(R.layout.popup_window_layout, null);
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
 //        int width=1500;
 //        int height=1500;
-        TextView hint=(TextView) popupview.findViewById(R.id.hint);
-        Random choice=new Random();
-        int selection=choice.nextInt()%3;
-        switch(selection){
+        TextView hint = (TextView) popupview.findViewById(R.id.hint);
+        Random choice = new Random();
+        int selection = choice.nextInt() % 3;
+        switch (selection) {
             case 0:
                 hint.setText("Tap the area to open capsule");
-                pw=new PopupWindow(popupview,width,height,true);
-                pw.showAtLocation(popupview, Gravity.CENTER,0,0);
-                Button button=(Button) popupview.findViewById(R.id.dismiss);
-                button.setOnClickListener(new View.OnClickListener(){
+                pw = new PopupWindow(popupview, width, height, true);
+                pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
+                Button button = (Button) popupview.findViewById(R.id.dismiss);
+                button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         pw.dismiss();
                     }
                 });
-                View img=popupview.findViewById(R.id.tap_me);
+                View img = popupview.findViewById(R.id.tap_me);
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -697,28 +719,28 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 });
                 break;
             case 1:
-                popUpShake=true;
+                popUpShake = true;
                 hint.setText("Shake slightly to open the capsule");
-                pw=new PopupWindow(popupview,width,height,true);
-                pw.showAtLocation(popupview, Gravity.CENTER,0,0);
-                img=popupview.findViewById(R.id.tap_me);
+                pw = new PopupWindow(popupview, width, height, true);
+                pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
+                img = popupview.findViewById(R.id.tap_me);
                 img.setVisibility(View.INVISIBLE);
-                button=(Button) popupview.findViewById(R.id.dismiss);
+                button = (Button) popupview.findViewById(R.id.dismiss);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         pw.dismiss();
-                        popUpShake=false;
+                        popUpShake = false;
                     }
                 });
                 break;
             case 2:
-                LayoutInflater inflater=(LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final View slideview=inflater.inflate(R.layout.popup_slider,null);
-                final SlideValidationView slideValidationView =(SlideValidationView) slideview.findViewById(R.id.slideView);
-                final VerificationSeekBar seekbar=(VerificationSeekBar)slideview.findViewById(R.id.sb_progress);
-                pw=new PopupWindow(slideview,width,height,true);
-                pw.showAtLocation(slideview, Gravity.CENTER,0,0);
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                final View slideview = inflater.inflate(R.layout.popup_slider, null);
+                final SlideValidationView slideValidationView = (SlideValidationView) slideview.findViewById(R.id.slideView);
+                final VerificationSeekBar seekbar = (VerificationSeekBar) slideview.findViewById(R.id.sb_progress);
+                pw = new PopupWindow(slideview, width, height, true);
+                pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
                 slideValidationView.setListener(new SlideListener() {
                     @Override
                     public void onSuccess() {
@@ -735,12 +757,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        System.out.println("Current Progress"+progress);
+                        System.out.println("Current Progress" + progress);
                         slideValidationView.setOffsetX(progress);
                     }
+
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
                     }
+
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
                         slideValidationView.deal();
@@ -749,6 +773,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         }
     }
+
     public void RequestSending(){
         Toast.makeText(this, "Congradulation! The capsule will open!", Toast.LENGTH_SHORT).show();
         LocationUtil currentLocation=new LocationUtil(DiscoverCapsule.this);
@@ -799,7 +824,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 Intent intent=new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule",selectedCapsule.toString());
                                 startActivity(intent);
-                                finish();
                             }
                         });
                     }
@@ -815,22 +839,28 @@ public class DiscoverCapsule extends AppCompatActivity implements
  Returns
     {"sucess": true,
      "capsules": [
-         {"cid": 2, "cusr": "test1",
-         "ccontent": "Test content1",
-          "ctitle": "Test title",
-          "cimage": null,
-          "caudio": null,
-          "ccount": 0, "cavatar": null},
-
-         {"cid": 3,
-          "cusr": "test1",
-          "ccontent": "Test content2",
-          "ctitle": "Test title",
-          "cimage": null,
-          "caudio": null,
-          "ccount": 0,
-          "cavatar": null
-         }
+            {"cid": 1,
+            "cusr": "test",
+            "ccontent": "Test content",
+            "ctitle": "Test Title",
+            "cimage": null,
+            "caudio": null,
+            "ccount": 0,
+            "clat": -37.813629,
+            "clon": 144.963058,
+            "cpermission": 1, where 0 means private and 1 means public
+            "cavatar": null},
+            {"cid": 2,
+            "cusr": "test",
+            "ccontent": "Test content1",
+            "ctitle": "Test Title1",
+            "cimage": null,
+            "caudio": null,
+            "ccount": 0,
+            "clat": -37.813629,
+            "clon": 144.963058,
+            "cpermission": 1,
+            "cavatar": null}
         ]
     }
 }*/
