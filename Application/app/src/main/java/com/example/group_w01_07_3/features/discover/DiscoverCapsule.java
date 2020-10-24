@@ -746,7 +746,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         TextView hint = (TextView) popupview.findViewById(R.id.hint);
         Random choice = new Random();
         int selection = choice.nextInt() % 3;
-        selection=1;
         switch (selection) {
             case 0:
                 hint.setText("Tap the area to open capsule");
@@ -769,6 +768,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 break;
             case 1:
                 popUpShake = true;
+                shakeOpen=false;
                 hint.setText("Shake slightly to open the capsule");
                 pw = new PopupWindow(popupview, width, height, true);
                 pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
