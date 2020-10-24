@@ -110,8 +110,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private boolean can_shake = true;
     private boolean if_connected = false;
     private int refresh_counts = 0;
-    // only allow one update every 100ms = 0.1s
-    private static final int max_pause_between_shakes = 100;
+    // only allow one update every 100ms = 0.2s
+    private static final int max_pause_between_shakes = 200;
     private long lastUpdate_map;
 
     @Override
