@@ -12,15 +12,12 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.history.OpenedCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.UserUtil;
-
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,10 +33,10 @@ public class popUpWindow {
     private PopupWindow popupWindow;
 
     JSONObject selectedCapsule = new JSONObject();
-    public popUpWindow(JSONObject selectedCapsule) {
-        this.selectedCapsule = selectedCapsule;
-        Log.d("POPUPWINDOW", "selectedCapsule: " + selectedCapsule);
-    }
+//    public popUpWindow(JSONObject selectedCapsule) {
+//        this.selectedCapsule = selectedCapsule;
+//        Log.d("POPUPWINDOW", "selectedCapsule: " + selectedCapsule);
+//    }
 
     //combine with discover capsule class later
     public void createWindow(final View view, final JSONObject capsuleInfo) throws JSONException {
@@ -49,13 +46,13 @@ public class popUpWindow {
         }else{
             request.put("tkn",null);
         }
-        LocationUtil locationUtil=new LocationUtil((AppCompatActivity) view.getContext());
-        Location location=locationUtil.getLocation();
-        request.put("lat",location.getLatitude());
-        request.put("lon",location.getLongitude());
-        request.put("time", Calendar.getInstance().getTime());
-        //request.put("tkn",capsuleInfo.get("tkn"));
-        request.put("cid",capsuleInfo.get("cid"));
+//        LocationUtil locationUtil=new LocationUtil((AppCompatActivity) view.getContext());
+//        Location location=locationUtil.getLocation();
+//        request.put("lat",location.getLatitude());
+//        request.put("lon",location.getLongitude());
+//        request.put("time", Calendar.getInstance().getTime());
+//        //request.put("tkn",capsuleInfo.get("tkn"));
+//        request.put("cid",capsuleInfo.get("cid"));
         //add two additional information:tkn and cid after the discovery activity has been finished.
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
         final View popupView = inflater.inflate(R.layout.popup_window_layout, null);
@@ -66,7 +63,8 @@ public class popUpWindow {
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         Random random = new Random();
-        int choice = random.nextInt() % 3;
+//        int choice = random.nextInt() % 3;
+        int choice=1;
         //choice=1;
         switch (choice) {
             //choice 1 slide bar

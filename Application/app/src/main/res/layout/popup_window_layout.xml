@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     android:orientation="vertical">
     <ImageView
         android:layout_width="match_parent"
@@ -38,8 +39,13 @@
         android:thumbOffset="-1dp" />
     <ImageView
         android:id="@+id/tap_me"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/popup_tapbutton"/>
+    <Button
+        android:id="@+id/dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dismiss"/>
 </LinearLayout>

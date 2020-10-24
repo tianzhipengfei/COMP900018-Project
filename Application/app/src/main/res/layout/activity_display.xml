@@ -1,96 +1,265 @@
-<androidx.drawerlayout.widget.DrawerLayout
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".features.discover.Display"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start"
-    android:id="@+id/history_drawer_layout">
+    android:background="@color/colorGreyOut"
+    tools:context=".features.discover.Display">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar_display"
+            android:id="@+id/display_history_capsule_back_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+        </com.google.android.material.appbar.MaterialToolbar>
         <ScrollView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="56dp"
+            android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/toolbar_display">
+            app:layout_constraintTop_toBottomOf="@id/display_history_capsule_back_toolbar">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:id="@+id/capsule_title"
-                    android:layout_width="271dp"
-                    android:layout_height="46dp"
-                    android:layout_marginTop="100dp"
-                    android:ems="10"
-                    android:enabled="true"
+                android:layout_height="match_parent">
+
+                <View
+                    android:id="@+id/display_capsule_circle_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/ic_capsule_circle_top"
+                    android:backgroundTint="#ffffff"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-                <TextView
-                    android:id="@+id/capsule_content"
-                    android:layout_width="332dp"
-                    android:layout_height="90dp"
-                    android:layout_marginTop="16dp"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:isScrollContainer="true"
-                    android:overScrollMode="ifContentScrolls"
-                    android:verticalScrollbarPosition="defaultPosition"
+                    app:layout_constraintTop_toTopOf="parent">
+
+
+                </View>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/display_history_capsule_content_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/customborder_no_corner"
+
+                    android:backgroundTint="#ffffff"
+                    app:layout_constraintEnd_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/display_capsule_circle_top">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/display_card_top_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/display_detail_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+
+                            android:ellipsize="end"
+                            android:text="Title of the opened Cpasule, Title of the opened Cpasule,, Title of the opened Cpasule
+, Title of the opened Cpasule
+, Title of the opened Cpasule"
+                            android:textColor="#000000"
+                            android:textSize="18sp"
+                            android:transitionName="capsuleTitleTN"
+                            android:typeface="serif"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/display_detail_capsule_private_public_tag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:text="Your Private Capsule"
+                            android:textColor="@color/colorPrimary"
+                            android:transitionName="capsuleTagTN"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/display_detail_title" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/display_detail_date"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:text="Opened Date: 2020/11/1"
+                            android:transitionName="capsuleDateTN"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/display_detail_capsule_private_public_tag"
+                            app:layout_constraintTop_toBottomOf="@+id/display_detail_title" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/display_card_bot_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/display_card_top_layout">
+
+                        <ImageView
+                            android:id="@+id/display_detail_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="16dp"
+
+                            android:background="@color/colorGreyOut"
+                            android:scaleType="centerCrop"
+                            android:transitionName="capsuleImageTN"
+                            app:layout_constrainedHeight="true"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHeight_max="256dp"
+                            app:layout_constraintHeight_min="128dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:srcCompat="@drawable/capsule" />
+
+                        <!-- Apply ripple effect: android:foreground="?attr/selectableItemBackgroundBorderless"-->
+                        <ImageButton
+                            android:id="@+id/display_audio_play"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="@drawable/custom_border_all_corner"
+
+                            android:backgroundTint="@color/colorPrimary"
+                            android:foreground="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_baseline_mic_24"
+                            app:layout_constraintBottom_toBottomOf="@+id/display_detail_image"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/display_detail_image" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/display_detail_content"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="24dp"
+                            android:layout_marginEnd="16dp"
+                            android:ellipsize="end"
+                            android:text="Capsule Content will be displayed here
+Capsule Content will be displayed here
+Capsule Content will be displayed here
+Capsule Content will be displayed here "
+
+                            android:textColor="@android:color/primary_text_light"
+                            android:transitionName="capsuleContentTN"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/display_detail_image" />
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/display_detail_capsule_original_user_avatar"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:scaleType="centerCrop"
+
+                            android:transitionName="capsuleAvatarTN"
+
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/display_detail_content"
+                            app:shapeAppearanceOverlay="@style/circleImageView"
+                            app:strokeWidth="2dp"
+                            tools:srcCompat="@drawable/avatar_sample" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/display_detail_by"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:text="By"
+
+                            android:textStyle="italic"
+
+                            android:transitionName="capsuleByTN"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/display_detail_capsule_original_user_avatar"
+                            app:layout_constraintTop_toBottomOf="@+id/display_detail_content" />
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:id="@+id/display_detail_username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="16dp"
+                            android:text="Wcs123455"
+
+                            android:textColor="@color/colorPrimary"
+
+                            android:transitionName="capsuleUsernameTN"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/display_detail_by"
+                            app:layout_constraintTop_toBottomOf="@+id/display_detail_content" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/constraintLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/ic_capsule_circle_bot"
+                    android:backgroundTint="#ffffff"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/capsule_title"/>
-                <Button
-                    android:id="@+id/play_button"
-                    android:layout_width="77dp"
-                    android:layout_height="33dp"
-                    android:layout_marginStart="64dp"
-                    android:layout_marginTop="32dp"
-                    android:visibility="invisible"
-                    android:text="Play"
-                    android:onClick="audioPlay"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/capsule_content"/>
-                <Button
-                    android:id="@+id/stop_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="33dp"
-                    android:layout_marginEnd="64dp"
-                    android:visibility="invisible"
-                    android:text="Stop"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/capsule_content" />
-                <ImageView
-                    android:id="@+id/image_capsule"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible"
-                    android:layout_marginTop="32dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/stop_button"/>
+                    app:layout_constraintStart_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/display_history_capsule_content_layout" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
         </ScrollView>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view_history"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/menu_navigation" />
-</androidx.drawerlayout.widget.DrawerLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
