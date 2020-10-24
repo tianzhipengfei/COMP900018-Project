@@ -291,11 +291,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
         Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
 
-        // get random capsule objects from a JSON array
-        try {
-            for (int i = 0; i < 2; i++) {
-                int randumNum = getRandomCow(allCapsules);
-                JSONObject objects = allCapsules.getJSONObject(randumNum);
+//        // get random capsule objects from a JSON array
+//        try {
+//            for (int i = 0; i < 20; i++) {
+//                int randumNum = getRandomCow(allCapsules);
+//                JSONObject objects = allCapsules.getJSONObject(randumNum);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.d("Error", "please create more capsules. allCapsules.length():" + allCapsules.length());
+//        }
+
+        // display all capsules in google map 
+        for (int i = 0; i < allCapsules.length(); i++) {
+            try {
+                JSONObject objects = allCapsules.getJSONObject(i);
                 Double lat = objects.getDouble("clat");
                 Double lng = objects.getDouble("clon");
                 Log.d("CAPSULEMARKER", "i: " + i);
@@ -340,29 +350,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     capsuleMarker.icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
 
-
                 mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
                 mCapsuleMarkers.add(mCapsuleLocationMarker);
 
                 refresh_counts += 1;
                 Log.d("CAPSULEMARKER", "refresh_counts: " + refresh_counts);
                 Log.d("CAPSULEMARKER", "updated mCapsuleMarkers: " + mCapsuleMarkers);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.d("Error", "please create more capsules. allCapsules.length():" + allCapsules.length());
         }
-
-
-        // Todo: replace with this for iterating all received capsules
-//        for (int i = 0; i < allCapsules.length(); i++) {
-//            try {
-//                JSONObject objects = allCapsules.getJSONObject(i);
-//
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
 
         //always show marker title
         mCurrLocationMarker.showInfoWindow();
