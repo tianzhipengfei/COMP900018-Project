@@ -100,7 +100,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private double discoverCapsuleRange = 3;
     // shake event
     private SensorManager sensorMgr;
-    private float last_x = 0 ;
+    private float last_x = 0;
     private float last_y = 0;
     private float last_z = 0;
     private static final int SHAKE_THRESHOLD = 800;
@@ -239,8 +239,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         super.onPause();
     }
 
-    public List<Marker> refreshCapsules(JSONArray allCapsules){
-        if (!if_refresh){
+    public List<Marker> refreshCapsules(JSONArray allCapsules) {
+        if (!if_refresh) {
             return old_mCapsuleMarkers;
         }
 
@@ -298,7 +298,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
                 mCapsuleMarkers.add(mCapsuleLocationMarker);
 
-                refresh_counts+=1;
+                refresh_counts += 1;
                 Log.d("CAPSULEMARKER", "refresh_counts: " + refresh_counts);
                 Log.d("CAPSULEMARKER", "updated mCapsuleMarkers: " + mCapsuleMarkers);
             } catch (JSONException e) {
@@ -308,13 +308,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         //always show marker title
         mCurrLocationMarker.showInfoWindow();
-        if (mCapsuleMarkers.size() > 0){
-            for (Marker m: mCapsuleMarkers ) {
+        if (mCapsuleMarkers.size() > 0) {
+            for (Marker m : mCapsuleMarkers) {
                 m.showInfoWindow();
             }
         }
 
-        if (!old_mCapsuleMarkers.equals(mCapsuleMarkers)){
+        if (!old_mCapsuleMarkers.equals(mCapsuleMarkers)) {
             if_refresh = false;
             can_shake = true;
         }
@@ -323,7 +323,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return mCapsuleMarkers;
     }
 
-    public void removeCapsulesFromMap(final List<Marker> mCapsuleMarkers){
+    public void removeCapsulesFromMap(final List<Marker> mCapsuleMarkers) {
         // make markers clickable
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -334,8 +334,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 for (Marker m : mCapsuleMarkers) {
                     Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
                     if (marker.equals(m) && count < 10) {
-                        count = count + 1 ;
-                        Log.w("MARKERS-MATCH", m+"");
+                        count = count + 1;
+                        Log.w("MARKERS-MATCH", m + "");
                         Log.w("MARKERS-MATCH", "******* popup window *******");
                         //Todo: add popupWindow()
 
@@ -354,6 +354,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         });
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // 'onMapReady' only run once
@@ -423,7 +424,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     try {
                         capsuleInfo.put("lat", lastRequestLat);
                         capsuleInfo.put("lon", lastRequestLon);
-                        Log.d("UPDATE-LOCATION", capsuleInfo+"");
+                        Log.d("UPDATE-LOCATION", capsuleInfo + "");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -433,12 +434,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 long curTime = System.currentTimeMillis();
                 if ((curTime - lastUpdate_map) > 30000) {
                     mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                    @Override
-                    public void onMapLoaded() {
-                        LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
-                        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
-                        lastUpdate_map = System.currentTimeMillis();
-                    }
+                        @Override
+                        public void onMapLoaded() {
+                            LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
+                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+                            lastUpdate_map = System.currentTimeMillis();
+                        }
                     });
                 }
 //                if (updateCameraFlag) {
@@ -497,7 +498,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 }
 
                 // Todo: call method to make markers clickable
-                if (if_connected){
+                if (if_connected) {
                     removeCapsulesFromMap(refreshCapsules(allCapsules));
                 } else {
                     Log.i("MGOOGLEMAP:", "No connection");
@@ -604,9 +605,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(navigationView)){
+        if (drawerLayout.isDrawerOpen(navigationView)) {
             drawerLayout.closeDrawer(navigationView);
-        }else {
+        } else {
             if (doubleBackToExitPressedOnce) {
                 super.onBackPressed();
                 return;
@@ -618,7 +619,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    doubleBackToExitPressedOnce=false;
+                    doubleBackToExitPressedOnce = false;
                 }
             }, 2000);
         }
