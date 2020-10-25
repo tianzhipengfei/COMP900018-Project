@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
+import android.transition.Fade;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +27,15 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Define Transition, used specifically during shared element transition
+        Window window = getWindow();
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        window.setEnterTransition(new Fade());
+        window.setExitTransition(new Fade());
+        window.setAllowEnterTransitionOverlap(false);
+//        window.setAllowReturnTransitionOverlap(false);
+
         setContentView(R.layout.activity_detailed_capsule_history_item);
 
         //set up toolbar

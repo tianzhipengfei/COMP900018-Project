@@ -14,9 +14,11 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +69,15 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        //Define Transition, used specifically during shared element transition
+        Window window = getWindow();
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        window.setEnterTransition(new Fade());
+        window.setExitTransition(new Fade());
+        window.setAllowReturnTransitionOverlap(false);
+
         setContentView(R.layout.activity_opened_capsule_history);
 
 
