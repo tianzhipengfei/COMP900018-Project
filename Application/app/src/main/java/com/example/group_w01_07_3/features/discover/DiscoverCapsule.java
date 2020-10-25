@@ -716,9 +716,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 if (popUpShake && !shakeOpen) {
                     if (Math.abs(x) > thresholdForce && x * last_x < 0){
                         open_shake_time+=1;
-                    } else if (Math.abs(y) > thresholdForce && x * last_y < 0){
+                    } else if (Math.abs(y) > thresholdForce && y * last_y < 0){
                         open_shake_time+=1;
-                    } else if (Math.abs(z) > thresholdForce && x * last_z < 0){
+                    } else if (Math.abs(z) > thresholdForce && z * last_z < 0){
                         open_shake_time+=1;
                     }
                 }
