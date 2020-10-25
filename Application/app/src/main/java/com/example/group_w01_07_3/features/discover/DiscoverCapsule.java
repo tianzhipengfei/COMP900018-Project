@@ -710,8 +710,17 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 //detect the reasonable shake of capsule
-                if (speed > 400 && speed < SHAKE_THRESHOLD && popUpShake && !shakeOpen) {
-                    open_shake_time+=1;
+
+                float thresholdForce = 40;
+
+                if (popUpShake && !shakeOpen) {
+                    if (Math.abs(x) > thresholdForce && x * last_x < 0){
+                        open_shake_time+=1;
+                    } else if (Math.abs(y) > thresholdForce && x * last_y < 0){
+                        open_shake_time+=1;
+                    } else if (Math.abs(z) > thresholdForce && x * last_z < 0){
+                        open_shake_time+=1;
+                    }
                 }
 
                 if (speed > SHAKE_THRESHOLD && popUpShake == false) {
