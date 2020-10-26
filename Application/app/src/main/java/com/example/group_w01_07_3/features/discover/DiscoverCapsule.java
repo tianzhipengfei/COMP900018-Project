@@ -104,6 +104,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // latitude, and longitude of last request
     private double lastRequestLat = 360.0;
     private double lastRequestLon = 360.0;
+    // current latitude, and longitude
+    private double curLat = 360.0;
+    private double curLon = 360.0;
     // maximum number of capsules to discover
     private int capsuleNum = 20;
     // maximum distance to discover (unit: km)
@@ -410,6 +413,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
             if (locationList.size() > 0) {
                 //the last location in the list is the newest
                 Location location = locationList.get(locationList.size() - 1);
+                curLat = location.getLatitude();
+                curLon = location.getLongitude();
 
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
                     // send request
@@ -706,7 +711,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         TextView hint = (TextView) popupview.findViewById(R.id.hint);
         Random choice = new Random();
         int selection = choice.nextInt() % 3;
-        selection=2;
         switch (selection) {
             case 0:
                 hint.setText("Tap the area to open capsule");
@@ -790,11 +794,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         progress.setTitle("Loading");
         progress.setMessage("Wait for server verficiation");
         progress.show();
-//        Toast.makeText(this, "Congradulation! The capsule will open!", Toast.LENGTH_SHORT).show();
-        LocationUtil currentLocation = new LocationUtil(DiscoverCapsule.this);
-        Location current_Location = currentLocation.getLocation();
-        Double lon = current_Location.getLatitude();
-        Double lat = current_Location.getAltitude();
+        Double lon = curLon;
+        Double lat = curLat;
         String token = UserUtil.getToken(DiscoverCapsule.this);
         Log.d("PopupWindow", "onMarkerClick: " + "Longtitude is " + lon + "The latitude is" + lat);
         Log.d("PopupWindow", "Compare with the location of last position" + mLastLocation.getLatitude() + "Longtitude is " + mLastLocation.getLongitude());
