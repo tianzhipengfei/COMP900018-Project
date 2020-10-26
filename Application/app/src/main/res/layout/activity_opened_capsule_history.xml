@@ -44,11 +44,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include layout="@layout/capsule_material_card" />
+                <include layout="@layout/shimmer_material_card" />
 
-                <include layout="@layout/capsule_material_card" />
+                <include layout="@layout/shimmer_material_card" />
 
-                <include layout="@layout/capsule_material_card" />
+                <include layout="@layout/shimmer_material_card" />
 
             </LinearLayout>
 
