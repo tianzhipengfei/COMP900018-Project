@@ -51,6 +51,8 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.textfield.TextInputEditText;
+
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -356,10 +358,10 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
+    // Upload functions
     private void uploadAudio(){
-        File audioFile = recorderUtil.getAudioFile();
-        //RequestSend requestSend = new RequestSend(token, capsuleInfo, this);
-        //requestSend.execute(imageFile, audioFile);
+        final File audioFile = recorderUtil.getAudioFile();
+
         if(audioFile!=null){
             HttpUtil.uploadAudio(token, audioFile, new okhttp3.Callback() {
 
@@ -374,6 +376,8 @@ public class CreateCapsule extends AppCompatActivity implements
                             String status = responseJSON.getString("success");
                             Log.i("AudioUrl", status);
                             capsuleInfo.put("audio",responseJSON.getString("file"));
+
+                            audioFile.delete();
                             uploadImg();
 
                         }
@@ -447,14 +451,27 @@ public class CreateCapsule extends AppCompatActivity implements
                         runOnUiThread(new Runnable() {
                                           @Override
                                           public void run() {
-                                              Toast.makeText(
-                                                      CreateCapsule.this,
+                                              findViewById(R.id.create_progress_bar).setVisibility(View.INVISIBLE);
+                                              findViewById(R.id.waiting_text).setVisibility(View.INVISIBLE);
+                                              Toast.makeText(CreateCapsule.this,
                                                       "Create Capsule successfully",
                                                       Toast.LENGTH_SHORT).show();
-//
+                                              TextInputEditText capsuleTitle = findViewById(R.id.create_capsule_title);
+                                              TextInputEditText capsuleContent = findViewById(R.id.create_capsule_content);
+                                              capsuleTitle.setText("");
+                                              capsuleContent.setText("");
+                                             /*
+                                              if(imageFile!=null) {
+                                                  ImageView placeholder = (ImageView) findViewById(R.id.create_capsule_piture_preview);
+                                                  placeholder.setImageBitmap(null);
+                                                  imageFile.delete();
+                                              }
+
+                                              */
                                           }
                                       }
                         );
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -473,6 +490,8 @@ public class CreateCapsule extends AppCompatActivity implements
 
         if (getLocation() && getOtherInfo()) {
             //collect info;
+            findViewById(R.id.create_progress_bar).setVisibility(View.VISIBLE);
+            findViewById(R.id.waiting_text).setVisibility(View.VISIBLE);
             uploadAudio();
 
 
