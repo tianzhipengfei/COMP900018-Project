@@ -2,6 +2,7 @@ package com.example.group_w01_07_3.features.discover;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -131,6 +132,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private long lastUpdate_map;
     private boolean disable_camera = true;
     private int open_shake_time=0;
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -507,7 +509,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //                if (updateCameraFlag) {
 //                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
 //                    updateCameraFlag = false;
-//                } 
+//                }
 
                 // HTTP GET method
                 if (capsuleInfo.length() == 0) {
@@ -710,17 +712,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 //detect the reasonable shake of capsule
-
-                float thresholdForce = 40;
-
-                if (popUpShake && !shakeOpen) {
-                    if (Math.abs(x) > thresholdForce && x * last_x < 0){
-                        open_shake_time+=1;
-                    } else if (Math.abs(y) > thresholdForce && y * last_y < 0){
-                        open_shake_time+=1;
-                    } else if (Math.abs(z) > thresholdForce && z * last_z < 0){
-                        open_shake_time+=1;
-                    }
+                if (speed > 400 && speed < SHAKE_THRESHOLD && popUpShake && !shakeOpen) {
+                    open_shake_time+=1;
                 }
 
                 if (speed > SHAKE_THRESHOLD && popUpShake == false) {
@@ -755,6 +748,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         TextView hint = (TextView) popupview.findViewById(R.id.hint);
         Random choice = new Random();
         int selection = choice.nextInt() % 3;
+        selection=2;
         switch (selection) {
             case 0:
                 hint.setText("Tap the area to open capsule");
@@ -815,7 +809,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        System.out.println("Current Progress" + progress);
                         slideValidationView.setOffsetX(progress);
                     }
 
@@ -833,7 +826,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     public void RequestSending() {
-        Toast.makeText(this, "Congradulation! The capsule will open!", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "Congradulation! The capsule will open!", Toast.LENGTH_SHORT).show();
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Check confidentiality with server");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
         LocationUtil currentLocation = new LocationUtil(DiscoverCapsule.this);
         Location current_Location = currentLocation.getLocation();
         Double lon = current_Location.getLatitude();
@@ -862,6 +860,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 DiscoverCapsule.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        progress.dismiss();
                         Toast.makeText(DiscoverCapsule.this, "No Internet to send request", Toast.LENGTH_SHORT);
                     }
                 });
@@ -881,11 +880,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 //marker remove，wait for scarlett
 //                                marker.remove();
 //                                old_mCapsuleMarkers.remove(m);
-                                Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
+//                                Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
 //                                pw.dismiss();
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
+                                progress.dismiss();
                             }
                         });
                     }
@@ -912,7 +912,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             "clon": 144.963058,
             "cpermission": 1, where 0 means private and 1 means public
             "cavatar": null},
-
             {"cid": 2,
             "cusr": "test",
             "ccontent": "Test content1",
