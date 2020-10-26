@@ -83,6 +83,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private Marker selectedMarker;
     private JSONArray allCapsules;
     private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
+    private Hashtable<Marker, Object> old_mCapsuleMarkers = new Hashtable<Marker, Object>();
     // request capsule
     private JSONObject capsuleInfo = new JSONObject();
     private Toolbar mToolbar;
@@ -335,8 +336,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
-        if_refresh = false;
-        can_shake = true;
+        if (old_mCapsuleMarkers != mCapsuleMarkers){
+            if_refresh = false;
+            can_shake = true;
+        }
     }
 
     @Override
@@ -659,6 +662,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             shakeOpen = true;
             RequestSending();
         }
+
         if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_shake == true) {
             long curTime = System.currentTimeMillis();
             // check if the last movement was not long ago
