@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 
 public class RecordAudioUtil {
@@ -32,7 +33,7 @@ public class RecordAudioUtil {
 
         context = activity;
         fileName = context.getApplicationContext().getExternalCacheDir().getAbsolutePath();
-        fileName += "/audiorecordtest.3gp";
+        fileName += "/capsuleRecording.aac";
 
     }
 
@@ -101,9 +102,9 @@ public class RecordAudioUtil {
     private void startRecording() {
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
         recorder.setOutputFile(fileName);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
 
         try {
             recorder.prepare();
@@ -130,7 +131,9 @@ public class RecordAudioUtil {
             player = null;
         }
     }
-
+    public File getAudioFile(){
+        return new File(fileName);
+    }
 
 }
     
