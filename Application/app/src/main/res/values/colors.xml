@@ -13,4 +13,6 @@
     <color name="colorGreyOut">#ebe2e1</color>
     <color name="colorResetWhite">#ffffff</color>
     <color name="colorWarning">#ab3232</color>
+
+    <color name="grey">#ded6d5</color>
 </resources>

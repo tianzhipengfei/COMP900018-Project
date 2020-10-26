@@ -77,8 +77,13 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //Define Transition, used specifically during shared element transition
         Window window = getWindow();
         window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        window.setEnterTransition(new Fade());
-        window.setExitTransition(new Fade());
+        Fade fade = new Fade();
+        fade.excludeTarget(R.id.toolbar_history,true);
+//        fade.excludeTarget(android.R.id.statusBarBackground, true);
+//        fade.excludeTarget(android.R.id.navigationBarBackground, true);
+        window.setEnterTransition(fade);
+        window.setExitTransition(fade);
+        window.setAllowEnterTransitionOverlap(false);
         window.setAllowReturnTransitionOverlap(false);
 
         setContentView(R.layout.activity_opened_capsule_history);
@@ -220,9 +225,14 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         Pair<View,String> p7 = Pair.create((View)by,"capsuleByTN"); // second arg is the transition string Name
         Pair<View,String> p8 = Pair.create((View)username,"capsuleUsernameTN"); // second arg is the transition string Name
 
+        View statusBar = findViewById(android.R.id.statusBarBackground);
+        View navigationBar = findViewById(android.R.id.navigationBarBackground);
+        Pair<View,String> p9 = Pair.create(statusBar,Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME); // second arg is the transition string Name
+        Pair<View,String> p10 = Pair.create(navigationBar,Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME); // second arg is the transition string Name
+
         //这里设置的就是到底哪几个view的transition被开启运作
         ActivityOptionsCompat optionsCompat =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3,p4,p5,p6,p7,p8);
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10);
 
         // start the activity with scene transition
 
