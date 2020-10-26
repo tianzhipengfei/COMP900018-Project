@@ -685,7 +685,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     if_refresh = true;
 
                     // Todo: comment out toast message after testing
-                    Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
                 }
                 last_x = x;
                 last_y = y;
