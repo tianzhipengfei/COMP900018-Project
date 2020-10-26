@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -22,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -78,7 +74,6 @@ import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
-
     private boolean popUpShake = false;
     private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
@@ -100,12 +95,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private Location mLastLocation;
     private Marker mCurrLocationMarker;
-    private Marker mCapsuleLocationMarker;
-    private List<Marker> old_mCapsuleMarkers = new ArrayList<Marker>();
     private FusedLocationProviderClient mFusedLocationClient;
     private boolean updateCameraFlag = true;
     private final int PER_SECOND = 1000;
-    // time interval for updating locaton
+    // time interval for updating location
     private int locationUpdateInterval = 5 * PER_SECOND;
     // if user moves more than a threshold distance (unit: km), update capsules info
     private double distanceThresholdToRequest = 0.5;
@@ -133,13 +126,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private static final int max_pause_between_shakes = 200;
     private long lastUpdate_map;
     private boolean disable_camera = true;
-    private int open_shake_time=0;
+    private int open_shake_time = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discover_capsule);
-
 
         //use toolbar at top of screen across all activities
         Toolbar toolbar = findViewById(R.id.toolbar_discover);
@@ -339,11 +332,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         //always show myCurrentLocation marker title
         mCurrLocationMarker.showInfoWindow();
-        if (mCapsuleMarkers.size() > 0) {
-            for (Marker m : mCapsuleMarkers) {
-                m.showInfoWindow();
-            }
-        }
 
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
     }
@@ -360,7 +348,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
                 Log.w("BEFORE-CLICK", "mCapsuleMarkers.size():" + mCapsuleMarkers.size());
 
-                for (Marker m: mCapsuleMarkers.keySet()) {
+                for (Marker m : mCapsuleMarkers.keySet()) {
                     Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
                     if (marker.equals(m)) {
                         Log.w("MARKERS-MATCH", m + "");
@@ -419,32 +407,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
         public void onLocationResult(LocationResult locationResult) {
             List<Location> locationList = locationResult.getLocations();
             Log.i("locationList", "" + locationList);
+            //the last location in the list is the newest
+
             if (locationList.size() > 0) {
                 //the last location in the list is the newest
                 Location location = locationList.get(locationList.size() - 1);
-                // default location Googleplex: 37.4219983 -122.084
-                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
-                mLastLocation = location;
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
-                }
-
-                //place current location marker
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.title("Current Position");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-
-                //google map zoom in and zoom out
-                mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-
-                //google map current location
-                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
-                    // Todo: send request
+                    // send request
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
                     updateCameraFlag = true;
@@ -457,25 +427,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                 }
-
-                //move map camera to current location. 1000ms = 1 seconds
-                long curTime = System.currentTimeMillis();
-                if ((curTime - lastUpdate_map) > 1000 && disable_camera == true) {
-                    mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                        @Override
-                        public void onMapLoaded() {
-                            LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
-                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
-                            lastUpdate_map = System.currentTimeMillis();
-                        }
-                    });
-                    disable_camera = false;
-                }
-
-//                if (updateCameraFlag) {
-//                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18));
-//                    updateCameraFlag = false;
-//                } 
+            }
 
             // HTTP GET method
             if (capsuleInfo.length() == 0) {
@@ -700,8 +652,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void onSensorChanged(int sensor, float[] values) {
         // Todo: do not open capsule until user keeps shaking device for at least one second
         //when detect 10 times of slight shake, open the capsule
-        if(open_shake_time==10){
-            open_shake_time=0;
+        if (open_shake_time == 10) {
+            open_shake_time = 0;
             shakeOpen = true;
             RequestSending();
         }
@@ -719,7 +671,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 //detect the reasonable shake of capsule
                 if (speed > 400 && speed < SHAKE_THRESHOLD && popUpShake && !shakeOpen) {
-                    open_shake_time+=1;
+                    open_shake_time += 1;
                 }
 
                 if (speed > SHAKE_THRESHOLD && popUpShake == false) {
@@ -777,7 +729,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 break;
             case 1:
                 popUpShake = true;
-                shakeOpen=false;
+                shakeOpen = false;
                 hint.setText("Shake slightly to open the capsule");
                 pw = new PopupWindow(popupview, width, height, true);
                 pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
