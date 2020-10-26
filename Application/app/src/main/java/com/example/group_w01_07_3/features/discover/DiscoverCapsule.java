@@ -395,23 +395,26 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + old_mCapsuleMarkers);
                 Log.w("BEFORE-CLICK", "mCapsuleMarkers.size():" + old_mCapsuleMarkers.size());
 
-                for (Marker m : old_mCapsuleMarkers) {
-                    Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
-                    if (marker.equals(m)) {
-                        Log.w("MARKERS-MATCH", m + "");
-                        Log.w("MARKERS-MATCH", "******* popup window *******");
 
-                        //remove this marker from the map and record after an user opens the capsule
-
-                        //Todo: add popupWindow()
-                        PopUpWindowFunction();
-
-                        Log.w("AFTER-CLICK", "mCapsuleMarkers:" + old_mCapsuleMarkers);
-                        return true;
-                    }
-                }
                 if (marker.equals(mCurrLocationMarker)) {
                     Log.w("AFTER-CLICK", "mCurrLocationMarker is clicked");
+                    return false;
+                } else{
+                    for (Marker m : old_mCapsuleMarkers) {
+                        Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
+                        if (marker.equals(m)) {
+                            Log.w("MARKERS-MATCH", m + "");
+                            Log.w("MARKERS-MATCH", "******* popup window *******");
+
+                            //remove this marker from the map and record after an user opens the capsule
+
+                            //Todo: add popupWindow()
+                            PopUpWindowFunction();
+
+                            Log.w("AFTER-CLICK", "mCapsuleMarkers:" + old_mCapsuleMarkers);
+                            return true;
+                        }
+                    }
                 }
                 return false;
             }
@@ -513,6 +516,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                 // HTTP GET method
                 if (capsuleInfo.length() == 0) {
+                    // TODO: LTZ
                     Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
                     Log.d("CAPSULE", "***** No token to get capsule *****");
                     allCapsules = new JSONArray();
@@ -712,19 +716,41 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 //detect the reasonable shake of capsule
+<<<<<<< HEAD
                 if (speed > 400 && speed < SHAKE_THRESHOLD && popUpShake && !shakeOpen) {
                     open_shake_time+=1;
+=======
+
+                float thresholdForce = 40;
+
+                // Rose's shake part
+                if (popUpShake) {
+                    if(!shakeOpen){
+                        return ;
+                    }
+                    if (Math.abs(x) > thresholdForce && x * last_x < 0){
+                        open_shake_time+=1;
+                    } else if (Math.abs(y) > thresholdForce && y * last_y < 0){
+                        open_shake_time+=1;
+                    } else if (Math.abs(z) > thresholdForce && z * last_z < 0){
+                        open_shake_time+=1;
+                    }
+>>>>>>> 1966a72e12575a17d1d61405a55a7086a4d8b56d
+                }
+                // Scarlett's shake part
+                else{
+                    // Scarlett's shake rule
+                    if (speed > SHAKE_THRESHOLD) {
+                        Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
+                        // shake to refresh capsules
+                        if_refresh = true;
+                        // can only detect a shake event after capsules have finished updated
+                        can_shake = false;
+                        // Todo: comment out toast message after testing
+                        Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
+                    }
                 }
 
-                if (speed > SHAKE_THRESHOLD && popUpShake == false) {
-                    Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
-                    // shake to refresh capsules
-                    if_refresh = true;
-                    // can only detect a shake event after capsules have finished updated
-                    can_shake = false;
-                    // Todo: comment out toast message after testing
-                    Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
-                }
                 last_x = x;
                 last_y = y;
                 last_z = z;
