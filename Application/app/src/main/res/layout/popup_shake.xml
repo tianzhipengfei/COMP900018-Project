@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="330dp"
+        android:src="@drawable/slidewindow_capsule"
+        android:paddingTop="20dp"/>
+    <TextView
+        android:id="@+id/hint"
+        android:paddingTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="20dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:alpha="0.8"
+        android:text="       Shake to open the capsule"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
+    <Button
+        android:layout_gravity="center"
+        android:id="@+id/dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dismiss"/>
+</LinearLayout>
