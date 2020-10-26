@@ -373,21 +373,14 @@ class DiscoverCapsule:
         usr = user.get('uusr')
 
         vars = dict(cusr=usr, cpermission=0)
-        self_capsule = db.select('capsules', where="cusr = $cusr", vars=vars)
-        other_capsules = db.query("SELECT * FROM capsules WHERE cusr != '{}' AND cpermission != 0".format(usr))
+        self_capsule = list(db.select('capsules', where="cusr = $cusr", vars=vars))
+        other_capsules = list(db.query("SELECT * FROM capsules WHERE cusr != '{}' AND cpermission != 0".format(usr)))
 
         all_capsules = list(self_capsule)
         all_capsules.extend(list(other_capsules))
 
-        # Remove visited capsules by this user
-        visited_capsules_res = db.query("SELECT hcap FROM capsules_history WHERE husr = '{}'".format(usr))
-        visited_capsules = [int(c['hcap']) for c in visited_capsules_res]
-        for capsule in all_capsules:
-            if capsule['cid'] in visited_capsules:
-                all_capsules.remove(capsule)
-
         max_distance = i.get('max_distance') if i.get('max_distance') else 5
-        min_distance = i.get('min_distance') if i.get('mmin_distance') else 0.5
+        min_distance = i.get('min_distance') if i.get('mmin_distance') else 0
         num_capsules = i.get('num_capsules') if i.get('num_capsules') else 20
 
         max_distance = int(max_distance)
@@ -396,6 +389,17 @@ class DiscoverCapsule:
 
         # Filter the capsules within max_distance
         filtered_capsules = filter_capsule(lat, lon, all_capsules, max_distance, min_capsules)
+
+        # Remove visited capsules by this user
+        visited_capsules_res = db.query("SELECT hcap FROM capsules_history WHERE husr = '{}'".format(usr))
+        visited_capsules = [int(c['hcap']) for c in visited_capsules_res]
+        temp_capsules = []
+        for capsule in filtered_capsules:
+            if capsule['cid'] not in visited_capsules:
+                temp_capsules.append(capsule)
+
+
+        filtered_capsules = temp_capsules
         # Retieve num_caplsules capsules randomly
         if len(filtered_capsules) > num_capsules:
             retrieved_capsules = rand.sample(filtered_capsules, num_capsules)
