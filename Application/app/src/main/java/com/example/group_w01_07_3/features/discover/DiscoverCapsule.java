@@ -82,8 +82,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
     private String usernameProfileString;
-    // randomly select a capsule through HTTP GET request
-    private JSONObject selectedCapsule = new JSONObject();
+    // selected capsule
+    private JSONObject selectedCapsule;
+    private Marker selectedMarker;
     private JSONArray allCapsules;
     // request capsule
     private JSONObject capsuleInfo = new JSONObject();
@@ -899,9 +900,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         DiscoverCapsule.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                //marker remove，wait for scarlett
-//                                marker.remove();
-//                                old_mCapsuleMarkers.remove(m);
+                                //remove marker after user opens the capsule
+                                selectedMarker.remove();
+
                                 Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
 //                                pw.dismiss();
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
