@@ -127,7 +127,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private long lastUpdate_map;
     private boolean disable_camera = true;
     private int open_shake_time = 0;
-
+    // record the latest location where a user shaken the device
+    private double recorded_latitude;
+    private double recorded_longtitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,13 +164,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-
-//        try {
-//            capsuleInfo.put("max_distance", 20);  // 5km by default
-//            capsuleInfo.put("num_capsules", 20);  // 20 capsules by default
-//        } catch (JSONException e) {
-//            System.out.print("Problems happen during parsing json objects");
-//        }
 
         Toast.makeText(DiscoverCapsule.this,
                 "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
@@ -265,8 +260,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return array[rnd];
     }
 
-    public void refreshCapsules(JSONArray allCapsules) {
+    public void refreshCapsules(JSONArray allCapsules, Location location) {
         mGoogleMap.clear();
+
+        recorded_latitude = location.getLatitude();
+        recorded_longtitude = location.getLongitude();
 
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
         Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
@@ -338,6 +336,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         if (old_mCapsuleMarkers != mCapsuleMarkers) {
             if_refresh = false;
             can_shake = true;
+            old_mCapsuleMarkers = mCapsuleMarkers;
         }
     }
 
@@ -427,7 +426,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     try {
                         capsuleInfo.put("lat", lastRequestLat);
                         capsuleInfo.put("lon", lastRequestLon);
-                        Log.d("UPDATE-LOCATION", capsuleInfo + "");
+                        Log.d("UPDATE-LOCATION", "lat:"+lastRequestLat);
+                        Log.d("UPDATE-LOCATION", "lon:"+lastRequestLon);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -481,17 +481,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 }
             }
 
-            // Todo: call method to make markers clickable
-            if (if_connected && if_refresh) {
-                Log.i("MGOOGLEMAP:", "Connected");
-                refreshCapsules(allCapsules);
-            } else {
-                Log.i("MGOOGLEMAP:", "No connection");
-            }
-
             // redraw google map
             List<Location> locationList2 = locationResult.getLocations();
-            //the last location in the list is the newest
 
             if (locationList2.size() > 0) {
                 //the last location in the list is the newest
