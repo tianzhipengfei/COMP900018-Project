@@ -29,6 +29,7 @@ import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -48,6 +49,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class OpenedCapsuleHistory extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, CapsuleCallback{
+
+    private ShimmerFrameLayout mShimmerViewContainer;
 
     boolean doubleBackToExitPressedOnce = false;
 
@@ -115,17 +118,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //load everything needed to be displyaed in the list
         RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<>();
-        String testPurposeLongString = getApplicationContext().getString(R.string.registration_help);
-
-        testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title" +
-                "his is a very long title,This is a very long title,This is a very long title", "2019/12/31", R.drawable.avatar_sample, R.drawable.capsule, "Your Private Capsule",testPurposeLongString,"wcs123455"));
-        testingList.add(new OpenedCapsule("testing input capsule title: aa", "2018/2/31", R.drawable.slidewindow_capsule, R.drawable.logo,"Public Memory Capsule",testPurposeLongString,"abfsdfb"));
-        testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcv","wcs123455"));
-        testingList.add(new OpenedCapsule("testing input capsule title: cc", "2016/4/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule",testPurposeLongString,"wcs123455"));
-        testingList.add(new OpenedCapsule("testing input capsule title: dd", "2015/5/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxvxv","wcs123455"));
-        testingList.add(new OpenedCapsule("testing input capsule title: ee", "2014/6/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
-        testingList.add(new OpenedCapsule("testing input capsule title: ff", "2020/7/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcxvcvcvxvxc","wcs123455"));
-        testingList.add(new OpenedCapsule("testing input capsule title: gg", "2020/8/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
+        final String testPurposeLongString = getApplicationContext().getString(R.string.registration_help);
 
 
         //set up the recycle view
@@ -133,6 +126,34 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         recyclerView.setAdapter(openedCapsuleAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
+
+        //TODO: @CHENFU: fetch capsule data into the Arraylist。 在data load的那一刻吧shimmerlayout给干掉,然后显示真正的data
+        //TODO: 这里只是假设fetch capsule data用时为3s,请自己写真正的implemenmtation的函数
+        //todo: Shimmerlayout教程链接 https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                //假设终于data完全download好了
+                testingList.clear();
+                testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title" +
+                        "his is a very long title,This is a very long title,This is a very long title", "2019/12/31", R.drawable.avatar_sample, R.drawable.capsule, "Your Private Capsule",testPurposeLongString,"wcs123455"));
+                testingList.add(new OpenedCapsule("testing input capsule title: aa", "2018/2/31", R.drawable.slidewindow_capsule, R.drawable.logo,"Public Memory Capsule",testPurposeLongString,"abfsdfb"));
+                testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcv","wcs123455"));
+                testingList.add(new OpenedCapsule("testing input capsule title: cc", "2016/4/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule",testPurposeLongString,"wcs123455"));
+                testingList.add(new OpenedCapsule("testing input capsule title: dd", "2015/5/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxvxv","wcs123455"));
+                testingList.add(new OpenedCapsule("testing input capsule title: ee", "2014/6/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
+                testingList.add(new OpenedCapsule("testing input capsule title: ff", "2020/7/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcxvcvcvxvxc","wcs123455"));
+                testingList.add(new OpenedCapsule("testing input capsule title: gg", "2020/8/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
+                openedCapsuleAdapter.notifyDataSetChanged();
+
+                // stop animating Shimmer and hide the layout
+                mShimmerViewContainer.stopShimmer();
+                mShimmerViewContainer.setVisibility(View.INVISIBLE);
+
+            }
+        }, 3000);
 
         //TODO:@CHENFU, 这一块是负责下拉刷新列表的功能，请自行实现功能
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.history_swipe_refresh_layout);
@@ -143,19 +164,39 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             public void onRefresh () {
 
                 //TODO: @CHENFU: 自行实现获取最新history的功能
+
+                //Step1: when starting fetch data
+                //set shimmer layout back, clear current recycleview
+                mShimmerViewContainer.setVisibility(View.VISIBLE);
+                mShimmerViewContainer.startShimmer();
                 testingList.clear();
-
-                testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sfgdfsgsdfsdfgsdfgsdfg","wcs123455"));
-                testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule","sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455"));
-                testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sdfgsdgfsdgsdfgsdgsdfgds","wcs123455"));
-
                 openedCapsuleAdapter.notifyDataSetChanged();
 
-                swipeRefreshLayout.setRefreshing(false);//取消进度框
+                //step2: fetch data complete. set shimmer invisible, notify data change
+                //假设终于把刷新的data下载下来花了3s
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        testingList.clear();
 
-                View bigView = findViewById(R.id.history_drawer_layout);
-                Snackbar snackbar = Snackbar.make(bigView, "Refreshed History", Snackbar.LENGTH_SHORT);
-                snackbar.show();
+                        testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sfgdfsgsdfsdfgsdfgsdfg","wcs123455"));
+                        testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule","sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455"));
+                        testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sdfgsdgfsdgsdfgsdgsdfgds","wcs123455"));
+
+                        openedCapsuleAdapter.notifyDataSetChanged();
+
+                        // stop animating Shimmer and hide the layout
+                        mShimmerViewContainer.stopShimmer();
+                        mShimmerViewContainer.setVisibility(View.GONE);
+
+                        swipeRefreshLayout.setRefreshing(false);//取消进度框
+
+                        View bigView = findViewById(R.id.history_drawer_layout);
+                        Snackbar snackbar = Snackbar.make(bigView, "Refreshed History", Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+                },3000);
+
             }
         });
 
