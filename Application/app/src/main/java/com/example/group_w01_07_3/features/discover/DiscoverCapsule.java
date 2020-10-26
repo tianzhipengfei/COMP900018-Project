@@ -375,7 +375,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         });
 
-        mGoogleMap.setPadding(0, 90, 10, 0); // left, top, right, bottom
+        // left, top, right, bottom
+        mGoogleMap.setPadding(0, 155, 10, 0);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         // the location will be updated every locationUpdateInterval second
