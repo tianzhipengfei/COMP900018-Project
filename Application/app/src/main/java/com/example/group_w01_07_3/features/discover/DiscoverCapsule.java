@@ -336,7 +336,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
         if_refresh = false;
-        can_shake = false;
+        can_shake = true;
     }
 
     @Override
@@ -678,10 +678,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                 if (speed > SHAKE_THRESHOLD && popUpShake == false) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
-                    // shake to refresh capsules
-                    if_refresh = true;
                     // can only detect a shake event after capsules have finished updated
                     can_shake = false;
+
+                    // shake to refresh capsules
+                    if_refresh = true;
 
                     // Todo: comment out toast message after testing
                     Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
