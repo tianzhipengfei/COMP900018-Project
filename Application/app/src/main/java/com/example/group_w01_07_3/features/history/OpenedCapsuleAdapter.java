@@ -55,7 +55,7 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         //TODO: @CHENFU, 这是一个从URL读取图片的例子
         String imageUri = "https://i.imgur.com/tGbaZCY.jpg";
         Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).fit().centerInside().into(holder.capsule_image);
-//        Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).resize(512,512).into(holder.capsule_image);
+//        Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).resize(512,512).centerInside().into(holder.capsule_image);
 
         Picasso.with(mcontext).load(mData.get(position).getAvatar_url()).fit().centerInside().into(holder.original_user_avatar);
 //        Picasso.with(mcontext).load(mData.get(position).getAvatar_url()).resize(48,48).into(holder.original_user_avatar);

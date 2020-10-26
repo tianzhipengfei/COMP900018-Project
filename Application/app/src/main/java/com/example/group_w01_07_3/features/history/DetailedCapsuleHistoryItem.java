@@ -96,7 +96,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         date.setText(dateString);
 
         String imageLocation = item.getCapsule_url(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
-        Picasso.with(this).load(imageLocation).fit().centerInside().into(image);
+        Picasso.with(this).load(imageLocation).fit().into(image);
 //        Picasso.with(this).load(imageLocation).resize(512,512).into(image);
 
         String tagString = item.getTag();
@@ -106,7 +106,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         content.setText(contentString);
 
         String avatarLocation = item.getAvatar_url(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
-        Picasso.with(this).load(avatarLocation).fit().centerInside().into(avatar);
+        Picasso.with(this).load(avatarLocation).fit().into(avatar);
 //        Picasso.with(this).load(avatarLocation).resize(48,48).into(avatar);
 
         String usernameString = item.getUsername();
