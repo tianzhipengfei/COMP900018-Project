@@ -3,8 +3,8 @@
 
         <targets>
             <!-- if using a custom Toolbar container, specify the ID of the AppBarLayout -->
-            <target android:excludeId="@id/toolbar_history" />
-            <target android:excludeId="@id/detail_history_capsule_back_toolbar" />
+<!--            <target android:excludeId="@id/toolbar_history" />-->
+<!--            <target android:excludeId="@id/detail_history_capsule_back_toolbar" />-->
 <!--            <target android:excludeId="@android:id/statusBarBackground"/>-->
 <!--            <target android:excludeId="@android:id/navigationBarBackground"/>-->
         </targets>
