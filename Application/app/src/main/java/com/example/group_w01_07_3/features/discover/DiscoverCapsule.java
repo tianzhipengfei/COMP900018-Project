@@ -24,7 +24,6 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -336,7 +335,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
-        if (old_mCapsuleMarkers != mCapsuleMarkers){
+        if (old_mCapsuleMarkers != mCapsuleMarkers) {
             if_refresh = false;
             can_shake = true;
         }
@@ -440,7 +439,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Log.d("CAPSULE", "***** No token to get capsule *****");
                 allCapsules = new JSONArray();
                 selectedCapsule = new JSONObject();
-            } else {
+            } else if (if_refresh){
                 try {
                     String token = UserUtil.getToken(DiscoverCapsule.this);
                     Log.i("SENDING-REQUEST", "token:" + token);
