@@ -32,6 +32,7 @@ import com.example.group_w01_07_3.util.UserUtil;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -53,8 +54,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     private ShimmerFrameLayout mShimmerViewContainer;
 
     boolean doubleBackToExitPressedOnce = false;
-
-    SwipeRefreshLayout swipeRefreshLayout;
 
     private DrawerLayout drawerLayout;
     View headerview;
@@ -118,7 +117,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
         //TODO:Image load请一定一定要用,不要自己写function(不然没法做animation) : [Picasso] 或者 [Glide】. 非常简单,有URL他就帮你load,只要几行代码, 详情请谷歌
         //load everything needed to be displyaed in the list
-        RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
+        final PullLoadMoreRecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<>();
         final String testPurposeLongString = getApplicationContext().getString(R.string.registration_help);
 
@@ -126,7 +125,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //set up the recycle view
         openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLinearLayout();
+        recyclerView.setPullRefreshEnable(false);
 
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
 
@@ -143,11 +143,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                         "his is a very long title,This is a very long title,This is a very long title", "2019/12/31", R.drawable.avatar_sample, R.drawable.capsule, "Your Private Capsule",testPurposeLongString,"wcs123455"));
                 testingList.add(new OpenedCapsule("testing input capsule title: aa", "2018/2/31", R.drawable.slidewindow_capsule, R.drawable.logo,"Public Memory Capsule",testPurposeLongString,"abfsdfb"));
                 testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcv","wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: cc", "2016/4/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule",testPurposeLongString,"wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: dd", "2015/5/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxvxv","wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: ee", "2014/6/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: ff", "2020/7/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcxvcvcvxvxc","wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: gg", "2020/8/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
+
                 openedCapsuleAdapter.notifyDataSetChanged();
 
                 // stop animating Shimmer and hide the layout
@@ -157,48 +153,25 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             }
         }, 3000);
 
-        //TODO:@CHENFU, 这一块是负责下拉刷新列表的功能，请自行实现功能
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.history_swipe_refresh_layout);
-
-        swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW);//设置进度框颜色的切换
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerView.setOnPullLoadMoreListener(new PullLoadMoreRecyclerView.PullLoadMoreListener() {
             @Override
-            public void onRefresh () {
+            public void onRefresh() {
+            }
 
-                //TODO: @CHENFU: 自行实现获取最新history的功能
-
-                //Step1: when starting fetch data
-                //set shimmer layout back, clear current recycleview
-                mShimmerViewContainer.setVisibility(View.VISIBLE);
-                mShimmerViewContainer.startShimmer();
-                testingList.clear();
-                openedCapsuleAdapter.notifyDataSetChanged();
-
-                //step2: fetch data complete. set shimmer invisible, notify data change
-                //假设终于把刷新的data下载下来花了3s
+            @Override
+            public void onLoadMore() {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        testingList.clear();
-
                         testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sfgdfsgsdfsdfgsdfgsdfg","wcs123455"));
                         testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule","sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455"));
                         testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sdfgsdgfsdgsdfgsdgsdfgds","wcs123455"));
 
                         openedCapsuleAdapter.notifyDataSetChanged();
 
-                        // stop animating Shimmer and hide the layout
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
-
-                        swipeRefreshLayout.setRefreshing(false);//取消进度框
-
-                        View bigView = findViewById(R.id.history_drawer_layout);
-                        Snackbar snackbar = Snackbar.make(bigView, "Refreshed History", Snackbar.LENGTH_SHORT);
-                        snackbar.show();
+                        recyclerView.setPullLoadMoreCompleted();
                     }
                 },3000);
-
             }
         });
 
