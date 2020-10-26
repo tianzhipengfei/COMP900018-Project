@@ -24,6 +24,7 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -61,7 +62,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -105,10 +105,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // latitude, and longitude of last request
     private double lastRequestLat = 360.0;
     private double lastRequestLon = 360.0;
-    // maximum number of capsules to discover
-    private int capsuleNum = 20;
-    // maximum distance to discover (unit: km)
-    private double discoverCapsuleRange = 3;
     private boolean shakeOpen = false;
     // shake event
     private SensorManager sensorMgr;
@@ -176,7 +172,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//        item.setChecked(true);
         drawerLayout.closeDrawers();
 
         int id = item.getItemId();
@@ -252,14 +247,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    private int getRandomCow(JSONArray jsonArray) {
-        int length = jsonArray.length();
-        int[] array;
-        array = new int[length - 1];
-        int rnd = new Random().nextInt(array.length);
-        return array[rnd];
-    }
-
     public void refreshCapsules(JSONArray allCapsules, Location location) {
         mGoogleMap.clear();
 
@@ -278,8 +265,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Log.d("CAPSULEMARKER", "lat: " + lat);
                 Log.d("CAPSULEMARKER", "lng: " + lng);
 
-                //show capsules on the map when user is nearby that particular area (5km by default)
-                // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
                 LatLng lat_Lng = new LatLng(lat, lng);
                 MarkerOptions capsuleMarker = new MarkerOptions();
                 capsuleMarker.position(lat_Lng);
@@ -342,7 +327,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        // 'onMapReady' only run once
+        // 'onMapReady' only runs once
         mGoogleMap = googleMap;
 
         // make markers clickable
@@ -411,14 +396,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
         public void onLocationResult(LocationResult locationResult) {
             List<Location> locationList = locationResult.getLocations();
             Log.i("locationList", "" + locationList);
-            //the last location in the list is the newest
 
             if (locationList.size() > 0) {
                 //the last location in the list is the newest
                 Location location = locationList.get(locationList.size() - 1);
 
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
-                    // send request
+                    // http GET request will uses the latest user's current location
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
                     updateCameraFlag = true;
@@ -426,8 +410,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     try {
                         capsuleInfo.put("lat", lastRequestLat);
                         capsuleInfo.put("lon", lastRequestLon);
-                        Log.d("UPDATE-LOCATION", "lat:"+lastRequestLat);
-                        Log.d("UPDATE-LOCATION", "lon:"+lastRequestLon);
+                        Log.d("UPDATE-LOCATION", "lat:" + lastRequestLat);
+                        Log.d("UPDATE-LOCATION", "lon:" + lastRequestLon);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -440,7 +424,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Log.d("CAPSULE", "***** No token to get capsule *****");
                 allCapsules = new JSONArray();
                 selectedCapsule = new JSONObject();
-            } else if (if_refresh){
+            } else if (if_refresh) {
                 try {
                     String token = UserUtil.getToken(DiscoverCapsule.this);
                     Log.i("SENDING-REQUEST", "token:" + token);
@@ -450,7 +434,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
-                            String responseData = response.body().string(); //.getClass().getName() java.lang.String
+                            String responseData = response.body().string();
                             // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
                             Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
                             try {
@@ -489,8 +473,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Location location = locationList2.get(locationList2.size() - 1);
 
                 // refresh capsules if user shakes the device and there is a http connection.
-                if (if_connected){
-                    if (if_refresh){
+                if (if_connected) {
+                    if (if_refresh) {
                         refreshCapsules(allCapsules, location);
                         Log.i("MapsActivity", "allCapsules before refresh: " + allCapsules);
                     }
@@ -498,7 +482,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                 // refresh capsules if users are 20km aways from the last-requested location.
                 if (Math.abs(recorded_latitude - location.getLatitude()) > 5.55 ||
-                        Math.abs(recorded_longtitude - location.getLongitude()) > 5.55){
+                        Math.abs(recorded_longtitude - location.getLongitude()) > 5.55) {
                     if_refresh = true;
                     Log.i("MapsActivity", "if_refresh is true");
                 }
