@@ -790,7 +790,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     public void RequestSending() {
         pw.dismiss();
-        final ProgressDialog progress=new ProgressDialog(this);
+        final ProgressDialog progress=new ProgressDialog(DiscoverCapsule.this);
         progress.setTitle("Loading");
         progress.setMessage("Wait for server verficiation");
         progress.show();
