@@ -496,6 +496,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 //the last location in the list is the newest
                 Location location = locationList2.get(locationList2.size() - 1);
 
+                // refresh capsules if user shakes the device and there is a http connection.
+                if (if_connected){
+                    if (if_refresh){
+                        refreshCapsules(allCapsules, location);
+                        Log.i("MapsActivity", "allCapsules before refresh: " + allCapsules);
+                    }
+                }
+
+                // refresh capsules if users are 20km aways from the last-requested location.
+                if (Math.abs(recorded_latitude - location.getLatitude()) > 5.55 ||
+                        Math.abs(recorded_longtitude - location.getLongitude()) > 5.55){
+                    if_refresh = true;
+                    Log.i("MapsActivity", "if_refresh is true");
+                }
+
                 // default location Googleplex: 37.4219983 -122.084
                 Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
                 mLastLocation = location;

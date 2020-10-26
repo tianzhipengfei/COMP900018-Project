@@ -113,7 +113,7 @@ public class HttpUtil {
                 .url(HttpUtil.address + "discoverCapsule?" + "tkn=" + token
                         + "&lat=" + capsuleInfo.get("lat")
                         + "&lon=" + capsuleInfo.get("lon")
-                        + "&max_distance=20&min_distance=0.5&num_capsules=20")
+                        + "&max_distance=10&min_distance=0.5&num_capsules=20")
                 .get()
                 .build();
         client.newCall(request).enqueue(callback);
