@@ -498,56 +498,52 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //                    updateCameraFlag = false;
 //                } 
 
-                // HTTP GET method
-                if (capsuleInfo.length() == 0) {
-                    Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
-                    Log.d("CAPSULE", "***** No token to get capsule *****");
-                    allCapsules = new JSONArray();
-                    selectedCapsule = new JSONObject();
-                } else {
-                    try {
-                        String token = UserUtil.getToken(DiscoverCapsule.this);
-                        Log.i("SENDING-REQUEST", "token:" + token);
-                        Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
-                        Log.i("SENDING-REQUEST", "refresh_counts:" + refresh_counts);
-                        HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
-                            @Override
-                            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                                Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
-                                String responseData = response.body().string(); //.getClass().getName() java.lang.String
-                                // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
-                                Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
-                                try {
-                                    JSONObject responseJSON = new JSONObject(responseData);
-                                    if (responseJSON.has("success")) {
-                                        String status = responseJSON.getString("success");
-                                        Log.d("DISCOVER-CAPSULE", "getCapsule success: " + status);
+            // HTTP GET method
+            if (capsuleInfo.length() == 0) {
+                Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
+                Log.d("CAPSULE", "***** No token to get capsule *****");
+                allCapsules = new JSONArray();
+                selectedCapsule = new JSONObject();
+            } else {
+                try {
+                    String token = UserUtil.getToken(DiscoverCapsule.this);
+                    Log.i("SENDING-REQUEST", "token:" + token);
+                    Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
+                    Log.i("SENDING-REQUEST", "refresh_counts:" + refresh_counts);
+                    HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
+                        @Override
+                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                            Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
+                            String responseData = response.body().string(); //.getClass().getName() java.lang.String
+                            // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
+                            Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
+                            try {
+                                JSONObject responseJSON = new JSONObject(responseData);
+                                if (responseJSON.has("success")) {
+                                    String status = responseJSON.getString("success");
+                                    Log.d("DISCOVER-CAPSULE", "getCapsule success: " + status);
 
-                                        allCapsules = responseJSON.getJSONArray("capsules");
-                                        Log.d("DISCOVER-CAPSULE", "capsuleInfo: " + allCapsules);
+                                    allCapsules = responseJSON.getJSONArray("capsules");
+                                    Log.d("DISCOVER-CAPSULE", "capsuleInfo: " + allCapsules);
 
-//                                        Random rand = new Random();
-//                                        selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
-//                                        Log.d("DISCOVER-CAPSULE", "selectedCapsule: " + selectedCapsule);
-
-                                        if_connected = true;
-                                        Log.d("DISCOVER-CAPSULE", "if_connected: " + if_connected);
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                    if_connected = true;
+                                    Log.d("DISCOVER-CAPSULE", "if_connected: " + if_connected);
                                 }
-                            }
-
-                            @Override
-                            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
-                                Log.d("CAPSULE", "onFailure()");
                             }
-                        });
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                            e.printStackTrace();
+                            Log.d("CAPSULE", "onFailure()");
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+            }
 
             // Todo: call method to make markers clickable
             if (if_connected && if_refresh) {
