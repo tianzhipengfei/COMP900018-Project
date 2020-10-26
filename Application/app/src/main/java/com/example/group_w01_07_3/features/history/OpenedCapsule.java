@@ -6,8 +6,8 @@ public class OpenedCapsule implements Serializable {
 
     String capsule_title;
     String opened_date;
-    int avatar;
-    int capsule_image;
+    String avatar_url;
+    String capsule_url;
     String tag;
     String content;
     String username;
@@ -16,11 +16,11 @@ public class OpenedCapsule implements Serializable {
 
     }
 
-    public OpenedCapsule(String capsule_title, String opened_date, int avatar, int capsule_image, String tag, String content, String username) {
+    public OpenedCapsule(String capsule_title, String opened_date, String avatar_url, String capsule_url, String tag, String content, String username) {
         this.capsule_title = capsule_title;
         this.opened_date = opened_date;
-        this.avatar = avatar;
-        this.capsule_image = capsule_image;
+        this.avatar_url = avatar_url;
+        this.capsule_url = capsule_url;
         this.tag = tag;
         this.content = content;
         this.username = username;
@@ -30,55 +30,56 @@ public class OpenedCapsule implements Serializable {
         return capsule_title;
     }
 
-    public String getOpened_date() {
-        return opened_date;
-    }
-
-    public int getAvatar() {
-        return avatar;
-    }
-
-    public int getCapsule_image() {
-        return capsule_image;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
     public void setCapsule_title(String capsule_title) {
         this.capsule_title = capsule_title;
+    }
+
+    public String getOpened_date() {
+        return opened_date;
     }
 
     public void setOpened_date(String opened_date) {
         this.opened_date = opened_date;
     }
 
-    public void setAvatar(int avatar) {
-        this.avatar = avatar;
+    public String getAvatar_url() {
+        return avatar_url;
     }
 
-    public void setCapsule_image(int capsule_image) {
-        this.capsule_image = capsule_image;
+    public void setAvatar_url(String avatar_url) {
+        this.avatar_url = avatar_url;
+    }
+
+    public String getCapsule_url() {
+        return capsule_url;
+    }
+
+    public void setCapsule_url(String capsule_url) {
+        this.capsule_url = capsule_url;
+    }
+
+    public String getTag() {
+        return tag;
     }
 
     public void setTag(String tag) {
         this.tag = tag;
     }
 
+    public String getContent() {
+        return content;
+    }
+
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
+
 }

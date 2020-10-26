@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.group_w01_07_3.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -49,8 +50,16 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         holder.megaCardLayout.setAnimation(AnimationUtils.loadAnimation(mcontext,R.anim.fade_scale_animation));
 
         //all elements defined here will be updated based on the data provided
-        holder.capsule_image.setImageResource(mData.get(position).getCapsule_image());
-        holder.original_user_avatar.setImageResource(mData.get(position).getAvatar());
+//        holder.capsule_image.setImageResource(mData.get(position).getCapsule_image());
+
+        //TODO: @CHENFU, 这是一个从URL读取图片的例子
+        String imageUri = "https://i.imgur.com/tGbaZCY.jpg";
+        Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).fit().centerInside().into(holder.capsule_image);
+//        Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).resize(512,512).into(holder.capsule_image);
+
+        Picasso.with(mcontext).load(mData.get(position).getAvatar_url()).fit().centerInside().into(holder.original_user_avatar);
+//        Picasso.with(mcontext).load(mData.get(position).getAvatar_url()).resize(48,48).into(holder.original_user_avatar);
+
         holder.capsule_title.setText(mData.get(position).getCapsule_title());
         holder.opened_date.setText(mData.get(position).getOpened_date());
         holder.private_tag.setText(mData.get(position).getTag());

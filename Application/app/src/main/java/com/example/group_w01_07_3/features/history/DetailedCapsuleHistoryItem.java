@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.group_w01_07_3.R;
+import com.squareup.picasso.Picasso;
 
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
@@ -94,8 +95,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         title.setText(titleString);
         date.setText(dateString);
 
-        int imageLocation = item.getCapsule_image(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
-        image.setImageResource(imageLocation);
+        String imageLocation = item.getCapsule_url(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
+        Picasso.with(this).load(imageLocation).fit().centerInside().into(image);
+//        Picasso.with(this).load(imageLocation).resize(512,512).into(image);
 
         String tagString = item.getTag();
         tag.setText(tagString);
@@ -103,8 +105,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         String contentString = item.getContent();
         content.setText(contentString);
 
-        int avatarLocation = item.getAvatar(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
-        avatar.setImageResource(avatarLocation);
+        String avatarLocation = item.getAvatar_url(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
+        Picasso.with(this).load(avatarLocation).fit().centerInside().into(avatar);
+//        Picasso.with(this).load(avatarLocation).resize(48,48).into(avatar);
 
         String usernameString = item.getUsername();
         username.setText(usernameString);
