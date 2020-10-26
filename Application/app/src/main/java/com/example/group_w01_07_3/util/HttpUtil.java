@@ -15,6 +15,7 @@ public class HttpUtil {
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType JPG = MediaType.parse("image/jpg");
+    private static final MediaType AAC = MediaType.parse("audio/aac");
     private static String address = "https://www.tianzhipengfei.xin/mobile/";
 
     public static void signUp(String[] paras, okhttp3.Callback callback) {
@@ -194,6 +195,23 @@ public class HttpUtil {
                 .build();
         client.newCall(request).enqueue(callback);
 
+    }
+
+    public static void uploadAudio(String token, File audioFile, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("tkn", token)
+                .addFormDataPart("myfile", audioFile.getName(),
+                        RequestBody.create(audioFile, HttpUtil.AAC))
+                .build();
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "uploadAudio")
+                .header("enctype", "multipart/form-data")
+                .header("Content-Type", "multipart/form-data")
+                .post(requestBody)
+                .build();
+        client.newCall(request).enqueue(callback);
     }
 
 }
