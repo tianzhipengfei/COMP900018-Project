@@ -68,6 +68,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
@@ -86,6 +87,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private JSONObject selectedCapsule;
     private Marker selectedMarker;
     private JSONArray allCapsules;
+    private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
     // request capsule
     private JSONObject capsuleInfo = new JSONObject();
     private Toolbar mToolbar;
@@ -339,12 +341,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     capsuleMarker.icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
 
-                mCapsuleLocationMarker = mGoogleMap.addMarker(capsuleMarker);
-                mCapsuleMarkers.add(mCapsuleLocationMarker);
+                // record capsule information
+                Marker tmp = mGoogleMap.addMarker(capsuleMarker);
+                mCapsuleMarkers.put(tmp, allCapsules.get(i));
 
                 refresh_counts += 1;
                 Log.d("CAPSULEMARKER", "refresh_counts: " + refresh_counts);
-                Log.d("CAPSULEMARKER", "updated mCapsuleMarkers: " + mCapsuleMarkers);
+                Log.d("CAPSULEMARKER", "selectedCapsule: " + selectedCapsule);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
