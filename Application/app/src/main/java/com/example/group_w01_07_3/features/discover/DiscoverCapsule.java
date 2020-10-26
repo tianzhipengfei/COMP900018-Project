@@ -357,27 +357,28 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + old_mCapsuleMarkers);
-                Log.w("BEFORE-CLICK", "mCapsuleMarkers.size():" + old_mCapsuleMarkers.size());
+                Log.w("BEFORE-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
+                Log.w("BEFORE-CLICK", "mCapsuleMarkers.size():" + mCapsuleMarkers.size());
 
-                for (Marker m : old_mCapsuleMarkers) {
+                for (Marker m: mCapsuleMarkers.keySet()) {
                     Log.w("AFTER-CLICK", "one of mCapsuleLocationMarker is clicked:" + m);
                     if (marker.equals(m)) {
                         Log.w("MARKERS-MATCH", m + "");
                         Log.w("MARKERS-MATCH", "******* popup window *******");
 
-                        //remove this marker from the map and record after an user opens the capsule
+                        //remove the marker from the map after an user opens the capsule
 
-                        //Todo: add popupWindow()
+                        selectedCapsule = (JSONObject) mCapsuleMarkers.get(m);
+                        selectedMarker = m;
+
                         PopUpWindowFunction();
 
-                        Log.w("AFTER-CLICK", "mCapsuleMarkers:" + old_mCapsuleMarkers);
+                        Log.w("After-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
+                        Log.w("After-CLICK", "mCapsuleMarkers.size():" + mCapsuleMarkers.size());
                         return true;
                     }
                 }
-                if (marker.equals(mCurrLocationMarker)) {
-                    Log.w("AFTER-CLICK", "mCurrLocationMarker is clicked");
-                }
+
                 return false;
             }
         });
