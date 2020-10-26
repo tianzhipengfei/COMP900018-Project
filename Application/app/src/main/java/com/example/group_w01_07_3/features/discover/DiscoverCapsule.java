@@ -181,19 +181,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         sensorMgr.registerListener(this,
                 SensorManager.SENSOR_ACCELEROMETER,
                 SensorManager.SENSOR_DELAY_GAME);
-
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        mGoogleMap.setMyLocationEnabled(true);
-//        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
 
     @Override
@@ -379,8 +366,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return mCapsuleMarkers;
     }
 
-    public void removeCapsulesFromMap(final List<Marker> mCapsuleMarkers) { }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         // 'onMapReady' only run once
@@ -537,9 +522,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                         allCapsules = responseJSON.getJSONArray("capsules");
                                         Log.d("DISCOVER-CAPSULE", "capsuleInfo: " + allCapsules);
 
-                                        Random rand = new Random();
-                                        selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
-                                        Log.d("DISCOVER-CAPSULE", "selectedCapsule: " + selectedCapsule);
+//                                        Random rand = new Random();
+//                                        selectedCapsule = allCapsules.getJSONObject(rand.nextInt(allCapsules.length()));
+//                                        Log.d("DISCOVER-CAPSULE", "selectedCapsule: " + selectedCapsule);
+
                                         if_connected = true;
                                         Log.d("DISCOVER-CAPSULE", "if_connected: " + if_connected);
                                     }
@@ -561,7 +547,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                 // Todo: call method to make markers clickable
                 if (if_connected) {
-                    removeCapsulesFromMap(refreshCapsules(allCapsules));
+                    refreshCapsules(allCapsules);
                 } else {
                     Log.i("MGOOGLEMAP:", "No connection");
                 }
@@ -720,6 +706,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     if_refresh = true;
                     // can only detect a shake event after capsules have finished updated
                     can_shake = false;
+
                     // Todo: comment out toast message after testing
                     Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
                 }
