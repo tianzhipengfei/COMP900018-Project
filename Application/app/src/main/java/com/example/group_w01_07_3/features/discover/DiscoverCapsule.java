@@ -164,12 +164,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
 
-        try {
-            capsuleInfo.put("max_distance", 5);  // 5km by default
-            capsuleInfo.put("num_capsules", 20);  // 20 capsules by default
-        } catch (JSONException e) {
-            System.out.print("Problems happen during parsing json objects");
-        }
+//        try {
+//            capsuleInfo.put("max_distance", 20);  // 5km by default
+//            capsuleInfo.put("num_capsules", 20);  // 20 capsules by default
+//        } catch (JSONException e) {
+//            System.out.print("Problems happen during parsing json objects");
+//        }
 
         Toast.makeText(DiscoverCapsule.this,
                 "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
