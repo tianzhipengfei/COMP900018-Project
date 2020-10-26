@@ -272,28 +272,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return array[rnd];
     }
 
-    public List<Marker> refreshCapsules(JSONArray allCapsules) {
-        if (!if_refresh) {
-            return old_mCapsuleMarkers;
-        }
+    public void refreshCapsules(JSONArray allCapsules) {
+        mGoogleMap.clear();
 
-        List<Marker> mCapsuleMarkers = new ArrayList<Marker>();
-        //place capsule marker
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
         Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
-
-//        // get random capsule objects from a JSON array
-//        try {
-//            for (int i = 0; i < 20; i++) {
-//                int randumNum = getRandomCow(allCapsules);
-//                JSONObject objects = allCapsules.getJSONObject(randumNum);
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.d("Error", "please create more capsules. allCapsules.length():" + allCapsules.length());
-//        }
-
-        // display all capsules in google map
+        //place capsule markers on google map
         for (int i = 0; i < allCapsules.length(); i++) {
             try {
                 JSONObject objects = allCapsules.getJSONObject(i);
@@ -353,7 +337,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         }
 
-        //always show marker title
+        //always show myCurrentLocation marker title
         mCurrLocationMarker.showInfoWindow();
         if (mCapsuleMarkers.size() > 0) {
             for (Marker m : mCapsuleMarkers) {
@@ -361,13 +345,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         }
 
-        if (!old_mCapsuleMarkers.equals(mCapsuleMarkers)) {
-            if_refresh = false;
-            can_shake = true;
-        }
-
-        old_mCapsuleMarkers = mCapsuleMarkers;
-        return mCapsuleMarkers;
+        Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
     }
 
     @Override
