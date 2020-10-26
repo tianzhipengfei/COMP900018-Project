@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.transition.Fade;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,12 +33,27 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         //Define Transition, used specifically during shared element transition
         Window window = getWindow();
         window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        window.setEnterTransition(new Fade());
-        window.setExitTransition(new Fade());
+        Fade fade = new Fade();
+        window.setEnterTransition(fade);
+        window.setExitTransition(fade);
         window.setAllowEnterTransitionOverlap(false);
-//        window.setAllowReturnTransitionOverlap(false);
+        window.setAllowReturnTransitionOverlap(false);
 
         setContentView(R.layout.activity_detailed_capsule_history_item);
+
+        // Postpone the transition until the window's decor view has finished its layout.
+        // Must include these otherwise status bar/background/toolbar will blink when entering
+        postponeEnterTransition();
+
+        final View decor = getWindow().getDecorView();
+        decor.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                decor.getViewTreeObserver().removeOnPreDrawListener(this);
+                startPostponedEnterTransition();
+                return true;
+            }
+        });
 
         //set up toolbar
         mToolbar = findViewById(R.id.detail_history_capsule_back_toolbar);

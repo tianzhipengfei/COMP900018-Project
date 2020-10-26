@@ -1,8 +1,6 @@
 package com.example.group_w01_07_3.features.create;
 
-import android.Manifest;
 import android.content.ContentUris;
-import android.content.Context;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,7 +8,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,19 +16,15 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 
@@ -43,7 +36,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.group_w01_07_3.SignUp;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
@@ -57,7 +49,6 @@ import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -226,7 +217,7 @@ public class CreateCapsule extends AppCompatActivity implements
 
     }
 
-    public void playAudio(View v)  {
+    public void playAudio(View v) {
 
         MaterialButton playButton = findViewById(R.id.play_button);
         recorderUtil.onPlay(mStartPlaying);
@@ -248,7 +239,7 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     // For user upload/take picture
-    public void takePicture(View v){
+    public void takePicture(View v) {
 
         bottomDialog = new BottomDialog(this);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomDialog
@@ -365,25 +356,46 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
-    public void createCapsule(View v) throws JSONException {
+    private void uploadAudio(){
+        File audioFile = recorderUtil.getAudioFile();
+        //RequestSend requestSend = new RequestSend(token, capsuleInfo, this);
+        //requestSend.execute(imageFile, audioFile);
+        if(audioFile!=null){
+            HttpUtil.uploadAudio(token, audioFile, new okhttp3.Callback() {
 
-        // Preventing multiple clicks, using threshold of 1 second
-        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-            return;
-        }
-        mLastClickTime = SystemClock.elapsedRealtime();
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response)
+                        throws IOException {
+                    String responseData = response.body().string();
+                    Log.i("AudioHTTP", responseData);
+                    try {
+                        JSONObject responseJSON = new JSONObject(responseData);
+                        if (responseJSON.has("success")) {
+                            String status = responseJSON.getString("success");
+                            Log.i("AudioUrl", status);
+                            capsuleInfo.put("audio",responseJSON.getString("file"));
+                            uploadImg();
 
-
-        if (getLocation() && getOtherInfo()) {
-            //collect info;
-            Log.i("CapsuleInfo", capsuleInfo.toString());
-            HttpUtil.createCapsule(capsuleInfo, new okhttp3.Callback() {
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Toast.makeText(CreateCapsule.this, "connection fail", Toast.LENGTH_SHORT)
-                            .show();
+
                 }
+            });
+
+        }else{
+            uploadImg();
+        }
+    }
+
+    private void uploadImg(){
+        if(imageFile!=null) {
+            HttpUtil.uploadImage(token, imageFile, new okhttp3.Callback() {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -393,24 +405,76 @@ public class CreateCapsule extends AppCompatActivity implements
                         JSONObject responseJSON = new JSONObject(responseData);
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
-                            Log.i("CREATECAPSULE", status);
-                            runOnUiThread(new Runnable() {
-                                              @Override
-                                              public void run() {
-                                                  Toast.makeText(
-                                                          CreateCapsule.this,
-                                                          "Create Capsule successfully",
-                                                          Toast.LENGTH_SHORT).show();
-//
-                                              }
-                                          }
-                            );
+                            Log.i("ImageUrl", status);
+                            capsuleInfo.put("img", responseJSON.getString("file"));
+                            uploadOther();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+                }
             });
+        }else{
+            uploadOther();
+        }
+    }
+
+    private void uploadOther(){
+        Log.i("CapsuleInfo", capsuleInfo.toString());
+
+        HttpUtil.createCapsule(capsuleInfo, new okhttp3.Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Toast.makeText(CreateCapsule.this, "connection fail", Toast.LENGTH_SHORT)
+                        .show();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String responseData = response.body().string();
+                Log.i("CREATECAPSULE", responseData);
+                try {
+                    JSONObject responseJSON = new JSONObject(responseData);
+                    if (responseJSON.has("success")) {
+                        String status = responseJSON.getString("success");
+                        Log.i("CREATECAPSULE", status);
+                        runOnUiThread(new Runnable() {
+                                          @Override
+                                          public void run() {
+                                              Toast.makeText(
+                                                      CreateCapsule.this,
+                                                      "Create Capsule successfully",
+                                                      Toast.LENGTH_SHORT).show();
+//
+                                          }
+                                      }
+                        );
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void createCapsule(View v) throws JSONException {
+
+        // Preventing multiple clicks, using threshold of 1 second
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
+        if (getLocation() && getOtherInfo()) {
+            //collect info;
+            uploadAudio();
+
 
         }
     }
@@ -425,7 +489,7 @@ public class CreateCapsule extends AppCompatActivity implements
             case R.id.discover_capsule_tab:
                 intent = new Intent(CreateCapsule.this, DiscoverCapsule.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.create_capsule_tab:
@@ -434,13 +498,13 @@ public class CreateCapsule extends AppCompatActivity implements
             case R.id.capsule_history_tab:
                 intent = new Intent(CreateCapsule.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.edit_profile_tab:
                 intent = new Intent(CreateCapsule.this, EditProfile.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
                 return true;
         }
@@ -449,8 +513,8 @@ public class CreateCapsule extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeaderUsername(){
-        if(!UserUtil.getToken(CreateCapsule.this).isEmpty()){
+    private void updateHeaderUsername() {
+        if (!UserUtil.getToken(CreateCapsule.this).isEmpty()) {
             HttpUtil.getProfile(UserUtil.getToken(CreateCapsule.this), new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -476,6 +540,7 @@ public class CreateCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                 }
+
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
@@ -485,15 +550,14 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
 
-
     //double backpressed to exit app
     //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
     @Override
     public void onBackPressed() {
 
-        if(drawerLayout.isDrawerOpen(navigationView)){
+        if (drawerLayout.isDrawerOpen(navigationView)) {
             drawerLayout.closeDrawer(navigationView);
-        }else {
+        } else {
             if (doubleBackToExitPressedOnce) {
                 super.onBackPressed();
                 return;
@@ -506,7 +570,7 @@ public class CreateCapsule extends AppCompatActivity implements
 
                 @Override
                 public void run() {
-                    doubleBackToExitPressedOnce=false;
+                    doubleBackToExitPressedOnce = false;
                 }
             }, 2000);
         }
