@@ -334,6 +334,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mCurrLocationMarker.showInfoWindow();
 
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
+
+        if_refresh = false;
+        can_shake = false;
     }
 
     @Override
@@ -366,7 +369,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         return true;
                     }
                 }
-
                 return false;
             }
         });
