@@ -545,13 +545,56 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 }
 
-                // Todo: call method to make markers clickable
-                if (if_connected) {
-                    refreshCapsules(allCapsules);
-                } else {
-                    Log.i("MGOOGLEMAP:", "No connection");
+            // Todo: call method to make markers clickable
+            if (if_connected && if_refresh) {
+                Log.i("MGOOGLEMAP:", "Connected");
+                refreshCapsules(allCapsules);
+            } else {
+                Log.i("MGOOGLEMAP:", "No connection");
+            }
+
+            // redraw google map
+            List<Location> locationList2 = locationResult.getLocations();
+            //the last location in the list is the newest
+
+            if (locationList2.size() > 0) {
+                //the last location in the list is the newest
+                Location location = locationList2.get(locationList2.size() - 1);
+
+                // default location Googleplex: 37.4219983 -122.084
+                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
+                mLastLocation = location;
+                if (mCurrLocationMarker != null) {
+                    mCurrLocationMarker.remove();
                 }
-                Log.i("MGOOGLEMAP:", "hi");
+
+                //place current location marker
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title("Current Position");
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+
+                //google map zoom in and zoom out
+                mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
+                //google map current location
+                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+                //move map camera to current location. 1000ms = 1 seconds
+                long curTime = System.currentTimeMillis();
+                if ((curTime - lastUpdate_map) > 1000 && disable_camera == true) {
+                    mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                        @Override
+                        public void onMapLoaded() {
+                            LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
+                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+                            lastUpdate_map = System.currentTimeMillis();
+                        }
+                    });
+                    disable_camera = false;
+                }
             }
         }
     };
