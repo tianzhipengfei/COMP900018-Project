@@ -8,7 +8,7 @@ public class OpenedCapsule implements Serializable {
     String opened_date;
     String avatar_url;
     String capsule_url;
-    String tag;
+    int tag;
     String content;
     String username;
     String voice_url;
@@ -17,7 +17,7 @@ public class OpenedCapsule implements Serializable {
 
     }
 
-    public OpenedCapsule(String capsule_title, String opened_date, String avatar_url, String capsule_url, String tag, String content, String username, String voice_url) {
+    public OpenedCapsule(String capsule_title, String opened_date, String avatar_url, String capsule_url, int tag, String content, String username, String voice_url) {
         this.capsule_title = capsule_title;
         this.opened_date = opened_date;
         this.avatar_url = avatar_url;
@@ -60,11 +60,11 @@ public class OpenedCapsule implements Serializable {
         this.capsule_url = capsule_url;
     }
 
-    public String getTag() {
+    public int getTag() {
         return tag;
     }
 
-    public void setTag(String tag) {
+    public void setTag(int tag) {
         this.tag = tag;
     }
 

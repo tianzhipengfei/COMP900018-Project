@@ -35,7 +35,8 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     ImageButton voice;
 
 
-    String titleString,dateString,tagString,usernameString,contentString;
+    String titleString,dateString,usernameString,contentString;
+    int tagIndentifier;
     String imageLocation, avatarLocation, voiceLocation;
 
     OpenedCapsule item;
@@ -110,24 +111,54 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     private void loadCapsule(OpenedCapsule item){
         titleString  = item.getCapsule_title();
         dateString = item.getOpened_date();
-        tagString = item.getTag();
+        tagIndentifier = item.getTag();
         usernameString = item.getUsername();
         contentString = item.getContent();
-
-        title.setText(titleString);
-        date.setText(dateString);
-        tag.setText(tagString);
-        content.setText(contentString);
-        username.setText(usernameString);
 
         imageLocation = item.getCapsule_url();
         avatarLocation = item.getAvatar_url();
         voiceLocation = item.getVoice_url();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                title.setText(titleString);
+                date.setText(dateString);
+                content.setText(contentString);
+                username.setText(usernameString);
 
-        loadImage();
-        loadAvatar();
-        loadVoice();
+                if(tagIndentifier == 1){
+                    tag.setText("Public Memory Capsule");
+                } else {
+                    tag.setText("Your Private Capsule");
+                }
 
+                if(!imageLocation.equals("null")){
+                    loadImage();
+                } else {
+                    imageShimmer.stopShimmer();
+                    imageShimmer.setVisibility(View.GONE);
+                    image.requestLayout();
+                    image.setMinimumHeight(48);
+                    image.setVisibility(View.VISIBLE);
+                }
+                if(!avatarLocation.equals("null")){
+                    loadAvatar();
+                } else {
+                    avatarShimmer.stopShimmer();
+                    avatarShimmer.setVisibility(View.GONE);
+                    avatar.setVisibility(View.VISIBLE);
+                    avatar.setImageResource(R.drawable.avatar_sample);
+                }
+
+                if(!voiceLocation.equals("null")){
+                    loadVoice();
+                } else {
+                    voiceShimmer.stopShimmer();
+                    voiceShimmer.setVisibility(View.GONE);
+//                    voice.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
     }
 
