@@ -27,6 +27,12 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     ImageView image;
     ImageView avatar;
 
+
+    String titleString,dateString,tagString,usernameString,contentString;
+    String imageLocation, avatarLocation;
+
+    OpenedCapsule item;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +88,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         username = findViewById(R.id.history_detail_username);
 
         //get the capsule object
-        OpenedCapsule item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
+        item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
 
         loadCapsule(item);
     }
@@ -90,26 +96,39 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
     //这里设置的部分都会被update,不管那一块写了transition没有
     private void loadCapsule(OpenedCapsule item){
-        String titleString  = item.getCapsule_title();
-        String dateString = item.getOpened_date();
+        titleString  = item.getCapsule_title();
+        dateString = item.getOpened_date();
+        tagString = item.getTag();
+        usernameString = item.getUsername();
+        contentString = item.getContent();
+
         title.setText(titleString);
         date.setText(dateString);
-
-        String imageLocation = item.getCapsule_url(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
-        Picasso.with(this).load(imageLocation).fit().into(image);
-//        Picasso.with(this).load(imageLocation).resize(512,512).into(image);
-
-        String tagString = item.getTag();
         tag.setText(tagString);
-
-        String contentString = item.getContent();
         content.setText(contentString);
-
-        String avatarLocation = item.getAvatar_url(); //TODO: This is for testing purpose only. 真正实现的时候你应该用的是Picasso或者Glide从URL load
-        Picasso.with(this).load(avatarLocation).fit().into(avatar);
-//        Picasso.with(this).load(avatarLocation).resize(48,48).into(avatar);
-
-        String usernameString = item.getUsername();
         username.setText(usernameString);
+
+        imageLocation = item.getCapsule_url();
+        avatarLocation = item.getAvatar_url();
+
+        image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Ensure we call this only once
+                image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                Picasso.with(DetailedCapsuleHistoryItem.this)
+                        .load(imageLocation)
+                        .resize(image.getWidth(),0)
+                        .into(image);
+            }
+        });
+
+        //when display the exact image, NOT allow stretch image. so fix width with auto height
+//        Picasso.with(this).load(imageLocation).resize(image.getWidth(),0).into(image);
+        Picasso.with(this)
+                .load(avatarLocation)
+                .fit()
+                .into(avatar);
+
     }
 }

@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
                 android:background="@color/colorGreyOut"
-                android:scaleType="centerCrop"
+
                 app:layout_constraintBottom_toTopOf="@+id/card_top_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
