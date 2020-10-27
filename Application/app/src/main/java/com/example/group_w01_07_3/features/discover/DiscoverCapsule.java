@@ -567,36 +567,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            //if we need to show an explanation to the user *asynchronously
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+            //no explanation needed for the user, we can request the location permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
 
-                // After the user sees the explanation, try again to request the permission.
-                // do not block the thread waiting for the user's response
-                new AlertDialog.Builder(this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(DiscoverCapsule.this,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
-                                // Todo: may remove the if-statement dialog block
-                                Log.i("MGOOGLEMAP:", "onClick");
-                            }
-                        })
-                        .create()
-                        .show();
-            } else {
-                //no explanation needed for the user, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-
-                Log.i("MGOOGLEMAP:", "no explanation needed for the user");
-            }
+            Log.i("MGOOGLEMAP:", "no explanation needed for the user");
         }
     }
 
