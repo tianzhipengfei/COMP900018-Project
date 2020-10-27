@@ -153,7 +153,7 @@ public class Display extends AppCompatActivity {
                     shimmerImage.stopShimmer();
                     shimmerImage.setVisibility(View.GONE);
                     img.setVisibility(View.VISIBLE);
-                    img.setImageResource(R.drawable.gradient_1);
+//                    img.setImageResource(R.drawable.gradient_1);
                 }
 
                 if (avater_link!= "null" ){
