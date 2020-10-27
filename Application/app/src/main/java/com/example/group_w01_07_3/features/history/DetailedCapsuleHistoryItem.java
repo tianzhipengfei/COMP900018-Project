@@ -6,18 +6,24 @@ import androidx.appcompat.widget.Toolbar;
 import android.os.Bundle;
 import android.os.Handler;
 import android.transition.Fade;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.group_w01_07_3.R;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
     private Toolbar mToolbar;
+
+    private ShimmerFrameLayout imageShimmer, avatarShimmer, voiceShimmer;
 
     TextView title;
     TextView date;
@@ -26,6 +32,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     TextView username;
     ImageView image;
     ImageView avatar;
+    ImageButton voice;
 
 
     String titleString,dateString,tagString,usernameString,contentString;
@@ -75,17 +82,22 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             }
         });
 
+        //find view for shimmer placeholder layout
+        imageShimmer = findViewById(R.id.history_detail_shimmer_image);
+        avatarShimmer = findViewById(R.id.history_detail_shimmer_avatar);
+        voiceShimmer = findViewById(R.id.history_detail_shimmer_voice);
+
 
         title = findViewById(R.id.history_detail_title);
         date = findViewById(R.id.history_detail_date);
-
-        image = findViewById(R.id.history_detail_image);
+        username = findViewById(R.id.history_detail_username);
         tag = findViewById(R.id.history_detail_capsule_private_public_tag);
         content = findViewById(R.id.history_detail_content);
 
+        image = findViewById(R.id.history_detail_image);
         avatar = findViewById(R.id.history_detail_capsule_original_user_avatar);
+        voice = findViewById(R.id.history_detail_voice);
 
-        username = findViewById(R.id.history_detail_username);
 
         //get the capsule object
         item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
@@ -111,26 +123,84 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         imageLocation = item.getCapsule_url();
         avatarLocation = item.getAvatar_url();
 
+        //Must use  this tree observer to load content image
         image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 // Ensure we call this only once
                 image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
                 Picasso.with(DetailedCapsuleHistoryItem.this)
                         .load(imageLocation)
                         .resize(image.getWidth(),0)
-                        .placeholder(R.drawable.capsule)
-                        .into(image);
+                        .into(image, new com.squareup.picasso.Callback() {
+
+                            //once loaded, hide the placeholder shimmer, then show the user image
+                            @Override
+                            public void onSuccess() {
+                                imageShimmer.stopShimmer();
+                                imageShimmer.setVisibility(View.GONE);
+                                image.setVisibility(View.VISIBLE);
+                            }
+
+                            //retry loading one more time
+                            @Override
+                            public void onError() {
+                                Log.d("Debug", "AVATAR - Picasso Errored");
+                                Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load the capsule image",
+                                        Snackbar.LENGTH_LONG)
+                                        .setAction("Retry", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Picasso.with(DetailedCapsuleHistoryItem.this).load(imageLocation).fit().into(image);
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
             }
         });
 
-        //when display the exact image, NOT allow stretch image. so fix width with auto height
-//        Picasso.with(this).load(imageLocation).resize(image.getWidth(),0).into(image);
+        //avatar view has fix size, so no need to use viewtree
         Picasso.with(this)
                 .load(avatarLocation)
                 .fit()
-                .placeholder(R.drawable.avatar_sample)
-                .into(avatar);
+                .into(avatar, new com.squareup.picasso.Callback() {
+
+                    //once loaded, hide the placeholder shimmer, then show the avatar
+                    @Override
+                    public void onSuccess() {
+                        avatarShimmer.stopShimmer();
+                        avatarShimmer.setVisibility(View.GONE);
+                        avatar.setVisibility(View.VISIBLE);
+                    }
+
+                    //retry loading one more time
+                    @Override
+                    public void onError() {
+                        Log.d("Debug", "AVATAR - Picasso Errored");
+                        Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load user avatar of the capsule owner",
+                                Snackbar.LENGTH_LONG)
+                                .setAction("Retry", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Picasso.with(DetailedCapsuleHistoryItem.this).load(avatarLocation).fit().into(avatar);
+                                    }
+                                })
+                                .show();
+                    }
+                });
+
+
+        //TODO: @CHENFU ---- testing purpose only, assue finish loading voice from server takes 3 seconds
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                voiceShimmer.stopShimmer();
+                voiceShimmer.setVisibility(View.GONE);
+                voice.setVisibility(View.VISIBLE);
+            }
+        },3000);
 
     }
 }
