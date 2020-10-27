@@ -44,7 +44,7 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
     public void onBindViewHolder(@NonNull capsuleCardViewHolder holder, int position) {
 
         // animation for capsule image
-        holder.capsule_image.setAnimation(AnimationUtils.loadAnimation(mcontext,R.anim.fade_transition_animation));
+//        holder.capsule_image.setAnimation(AnimationUtils.loadAnimation(mcontext,R.anim.fade_transition_animation));
 
         // animation for the whole card
         holder.megaCardLayout.setAnimation(AnimationUtils.loadAnimation(mcontext,R.anim.fade_scale_animation));
@@ -64,16 +64,18 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
 
         //resize with center crop to make sure not a stretch image display in the material card preview
         // if no resource found "null", then set default image in
-        // must set default image, otherwise picasso will behave strangely
+        // must cancel picasso pending requrest then set default image, otherwise mess up image load
         if (!mData.get(position).getCapsule_url().equals("null")){
             Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).fit().centerCrop().into(holder.capsule_image);
         } else {
+            Picasso.with(mcontext).cancelRequest(holder.capsule_image);
             holder.capsule_image.setImageResource(R.color.colorGreyOut);
         }
 
         if (!mData.get(position).getAvatar_url().equals("null")){
             Picasso.with(mcontext).load(mData.get(position).getAvatar_url()).fit().into(holder.original_user_avatar);
         } else {
+            Picasso.with(mcontext).cancelRequest(holder.original_user_avatar);
             holder.original_user_avatar.setImageResource(R.drawable.avatar_sample);
         }
 
