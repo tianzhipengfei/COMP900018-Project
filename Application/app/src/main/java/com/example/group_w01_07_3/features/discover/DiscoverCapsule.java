@@ -333,23 +333,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //enable google map current location button
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-        // Todo: unable to move map camera to current location using phone when user uses the app for the first time,
-        //          but there is no issue when using virtual machine
-        //move map camera to current location. 1000ms = 1 seconds
-        long curTime = System.currentTimeMillis();
-        if ((curTime - lastUpdate_map) > 1000 && disable_camera == true) {
-            mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                @Override
-                public void onMapLoaded() {
-                    LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
-                    lastUpdate_map = System.currentTimeMillis();
-                }
-            });
-            disable_camera = false;
-            Log.d("CAMERA", "disable_camera = false");
-        }
-
         Log.i("onMapReady", "ends");
     }
 
@@ -423,6 +406,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                         lastRequestLat = location.getLatitude();
                         lastRequestLon = location.getLongitude();
+
+                        //move map camera to current location. 1000ms = 1 seconds
+                        long curTime = System.currentTimeMillis();
+                        if ((curTime - lastUpdate_map) > 1000) {
+                            mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                                @Override
+                                public void onMapLoaded() {
+                                    LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
+                                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+                                    lastUpdate_map = System.currentTimeMillis();
+                                }
+                            });
+                        }
+
                         capsuleInfo.put("lat", lastRequestLat);
                         capsuleInfo.put("lon", lastRequestLon);
                         Log.d("UPDATE-LOCATION", "lat:" + lastRequestLat);
