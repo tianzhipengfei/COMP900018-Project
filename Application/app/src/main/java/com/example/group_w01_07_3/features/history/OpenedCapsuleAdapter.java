@@ -63,8 +63,20 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         holder.username.setText(mData.get(position).getUsername());
 
         //resize with center crop to make sure not a stretch image display in the material card preview
-        Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).fit().centerCrop().into(holder.capsule_image);
-        Picasso.with(mcontext).load(mData.get(position).getAvatar_url()).fit().into(holder.original_user_avatar);
+        // if no resource found "null", then set default image in
+        // must set default image, otherwise picasso will behave strangely
+        if (!mData.get(position).getCapsule_url().equals("null")){
+            Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).fit().centerCrop().into(holder.capsule_image);
+        } else {
+            holder.capsule_image.setImageResource(R.color.colorGreyOut);
+        }
+
+        if (!mData.get(position).getAvatar_url().equals("null")){
+            Picasso.with(mcontext).load(mData.get(position).getAvatar_url()).fit().into(holder.original_user_avatar);
+        } else {
+            holder.original_user_avatar.setImageResource(R.drawable.avatar_sample);
+        }
+
     }
 
     @Override

@@ -155,7 +155,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 } else {
                     voiceShimmer.stopShimmer();
                     voiceShimmer.setVisibility(View.GONE);
-                    voice.setVisibility(View.VISIBLE);
+//                    voice.setVisibility(View.VISIBLE);
                 }
             }
         });

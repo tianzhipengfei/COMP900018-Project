@@ -144,7 +144,7 @@ public class Display extends AppCompatActivity {
                 } else {
                     shimmerVoice.stopShimmer();
                     shimmerVoice.setVisibility(View.GONE);
-                    play.setVisibility(View.VISIBLE);
+//                    play.setVisibility(View.VISIBLE);
                 }
 
                 if (imagelink != "null"){

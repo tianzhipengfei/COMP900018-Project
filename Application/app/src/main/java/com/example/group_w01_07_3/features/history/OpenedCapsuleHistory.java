@@ -178,9 +178,12 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                         public void run() {
                             recyclerView.setPullLoadMoreCompleted();
                             recycleInt += 1;
-                            testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603620329.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700200.jpg",1,"sfgdfsgsdfsdfgsdfgsdfg","wcs123455","12345"));
-                            testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700259.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700323.jpg",1,"sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455","12345"));
-                            testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700356.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700436.jpg",1,"sdfgsdgfsdgsdfgsdgsdfgds","wcs123455","12345"));
+//                            testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603620329.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700200.jpg",1,"sfgdfsgsdfsdfgsdfgsdfg","wcs123455","12345"));
+//                            testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700259.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700323.jpg",1,"sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455","12345"));
+//                            testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700356.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700436.jpg",1,"sdfgsdgfsdgsdfgsdgsdfgds","wcs123455","12345"));
+                            testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", "null", "null",1,"sfgdfsgsdfsdfgsdfgsdfg","wcs123455","null"));
+                            testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", "null", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700323.jpg",1,"sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455","12345"));
+                            testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700356.jpg", "null",1,"sdfgsdgfsdgsdfgsdgsdfgds","wcs123455","12345"));
                             openedCapsuleAdapter.notifyDataSetChanged();
                             Toast.makeText(OpenedCapsuleHistory.this, "first round refresh notified", Toast.LENGTH_SHORT).show();
                             //必须要晚一点设置complete
