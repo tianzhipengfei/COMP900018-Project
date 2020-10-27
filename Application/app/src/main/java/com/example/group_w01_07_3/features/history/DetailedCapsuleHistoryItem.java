@@ -124,6 +124,14 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         avatarLocation = item.getAvatar_url();
         voiceLocation = item.getVoice_url();
 
+        loadImage();
+        loadAvatar();
+        loadVoice();
+
+
+    }
+
+    private void loadImage(){
         //Must use  this tree observer to load content image
         image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -147,7 +155,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                             //retry loading one more time
                             @Override
                             public void onError() {
-                                Log.d("Debug", "AVATAR - Picasso Errored");
+                                Log.d("Debug", "IMAGE - Picasso Errored");
                                 Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load the capsule image",
                                         Snackbar.LENGTH_LONG)
                                         .setAction("Retry", new View.OnClickListener() {
@@ -161,7 +169,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                         });
             }
         });
+    }
 
+    private void loadAvatar(){
         //avatar view has fix size, so no need to use viewtree
         Picasso.with(this)
                 .load(avatarLocation)
@@ -191,9 +201,10 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                 .show();
                     }
                 });
+    }
 
-
-        //TODO: @CHENFU ---- testing purpose only, assume finish loading voice from server takes 3 seconds
+    //TODO: @CHENFU ---- testing purpose only, assume finish loading voice from server takes 3 seconds
+    private void loadVoice(){
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -204,6 +215,5 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 voice.setVisibility(View.VISIBLE);
             }
         },3000);
-
     }
 }
