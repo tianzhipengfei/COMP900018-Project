@@ -109,6 +109,7 @@ public class Display extends AppCompatActivity {
                         mediaPlayer.setDataSource(audiolink);
                         mediaPlayer.prepare();
                         mediaPlayer.setLooping(true);
+                        
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
