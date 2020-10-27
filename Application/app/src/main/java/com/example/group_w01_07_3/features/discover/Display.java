@@ -144,7 +144,7 @@ public class Display extends AppCompatActivity {
                 } else {
                     shimmerVoice.stopShimmer();
                     shimmerVoice.setVisibility(View.GONE);
-                    play.setVisibility(View.VISIBLE);
+//                    play.setVisibility(View.VISIBLE);
                 }
 
                 if (imagelink != "null"){
@@ -152,7 +152,10 @@ public class Display extends AppCompatActivity {
                 } else {
                     shimmerImage.stopShimmer();
                     shimmerImage.setVisibility(View.GONE);
+                    img.requestLayout();
+                    img.setMinimumHeight(48);
                     img.setVisibility(View.VISIBLE);
+
 //                    img.setImageResource(R.drawable.gradient_1);
                 }
 

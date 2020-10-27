@@ -168,7 +168,7 @@
                             android:id="@+id/display_detail_image"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:layout_constraintHeight_min="24dp"
+                            android:minHeight="360dp"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="16dp"
@@ -181,8 +181,7 @@
                             app:layout_constrainedHeight="true"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:srcCompat="@drawable/capsule" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.facebook.shimmer.ShimmerFrameLayout
                             android:id="@+id/display_detail_shimmer_voice"
@@ -246,16 +245,15 @@ Capsule Content will be displayed here "
                             android:layout_height="48dp"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="16dp"
-                            shimmer:duration="800"
-
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
+
                             app:layout_constraintTop_toBottomOf="@id/display_detail_content"
-                            >
+                            shimmer:duration="800">
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/custom_shape_circlee"/>
+                                android:background="@drawable/custom_shape_circlee" />
 
 
                         </com.facebook.shimmer.ShimmerFrameLayout>
@@ -268,11 +266,10 @@ Capsule Content will be displayed here "
                             android:layout_marginTop="16dp"
                             android:scaleType="centerCrop"
 
-                            android:visibility="invisible"
-
                             android:transitionName="capsuleAvatarTN"
 
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:visibility="invisible"
+
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/display_detail_content"
                             app:shapeAppearanceOverlay="@style/circleImageView"
@@ -284,14 +281,13 @@ Capsule Content will be displayed here "
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="32dp"
                             android:text="By"
 
-                            android:textStyle="italic"
                             android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
+                            android:textStyle="italic"
 
                             android:transitionName="capsuleByTN"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/display_detail_capsule_original_user_avatar"
                             app:layout_constraintTop_toBottomOf="@+id/display_detail_content" />
 
@@ -300,14 +296,13 @@ Capsule Content will be displayed here "
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:layout_marginTop="16dp"
+                            android:layout_marginTop="32dp"
                             android:text="Wcs123455"
 
-                            android:textColor="@color/colorPrimary"
                             android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Caption"
+                            android:textColor="@color/colorPrimary"
 
                             android:transitionName="capsuleUsernameTN"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/display_detail_by"
                             app:layout_constraintTop_toBottomOf="@+id/display_detail_content" />
 
