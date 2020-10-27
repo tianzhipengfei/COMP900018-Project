@@ -265,11 +265,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         Log.w("MARKERS-MATCH", m + "");
                         Log.w("MARKERS-MATCH", "******* popup window *******");
 
-                        //remove the marker from the map after an user opens the capsule
-
                         selectedCapsule = (JSONObject) mCapsuleMarkers.get(m);
                         selectedMarker = m;
 
+                        //the capsule marker will be removed from the map after an user opens the capsule
                         PopUpWindowFunction();
 
                         Log.w("After-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
@@ -429,11 +428,17 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         }
 
-        // refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
+        // automatically refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
         if (Math.abs(recorded_latitude - location.getLatitude()) > distanceThresholdToRequest ||
                 Math.abs(recorded_longtitude - location.getLongitude()) > distanceThresholdToRequest) {
             if_refresh = true;
             Log.i("MapsActivity", "if_refresh is true");
+        }
+
+        // automatically refresh capsules if there is no capsule on google map
+        if (mCapsuleMarkers.isEmpty()){
+            if_refresh = true;
+            Log.i("MapsActivity", "there is no capsule on google map");
         }
     }
 
@@ -495,6 +500,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // record capsule information
                 Marker tmp = mGoogleMap.addMarker(capsuleMarker);
                 mCapsuleMarkers.put(tmp, allCapsules.get(i));
+//                Log.d("CAPSULEMARKER", "mCapsuleMarkers: " + mCapsuleMarkers.elements());
 
                 // for testing: how many times the method has run before receiving updated capsules information
                 counts += 1;
@@ -880,6 +886,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             public void run() {
                                 //remove marker after user opens the capsule
                                 selectedMarker.remove();
+                                mCapsuleMarkers.remove(selectedMarker);
+
                                 progress.dismiss();
                                 Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
 //                                pw.dismiss();
