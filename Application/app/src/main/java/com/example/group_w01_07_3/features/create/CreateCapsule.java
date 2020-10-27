@@ -49,9 +49,11 @@ import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
+import com.squareup.picasso.Picasso;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +76,8 @@ public class CreateCapsule extends AppCompatActivity implements
     private DrawerLayout drawerLayout;
     View headerview;
     TextView headerUsername;
-    private String usernameProfileString;
+    ShapeableImageView headerAvatar;
+    private String usernameProfileString, avatarProfileString;
 
     NavigationView navigationView;
 
@@ -126,8 +129,9 @@ public class CreateCapsule extends AppCompatActivity implements
         //the logic to find the header, then update the username from server user profile
         headerview = navigationView.getHeaderView(0);
         headerUsername = headerview.findViewById(R.id.header_username);
+        headerAvatar = headerview.findViewById(R.id.header_avatar);
 
-        updateHeaderUsername();
+        updateHeader();
     }
 
 
@@ -532,7 +536,7 @@ public class CreateCapsule extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeaderUsername() {
+    private void updateHeader() {
         if (!UserUtil.getToken(CreateCapsule.this).isEmpty()) {
             HttpUtil.getProfile(UserUtil.getToken(CreateCapsule.this), new okhttp3.Callback() {
                 @Override
@@ -548,10 +552,19 @@ public class CreateCapsule extends AppCompatActivity implements
                             String userInfo = responseJSON.getString("userInfo");
                             JSONObject userInfoJSON = new JSONObject(userInfo);
                             usernameProfileString = userInfoJSON.getString("uusr");
+                            avatarProfileString =  userInfoJSON.getString("uavatar");
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     headerUsername.setText(usernameProfileString);
+                                    if (!(avatarProfileString == "null")){
+                                        Picasso.with(CreateCapsule.this)
+                                                .load(avatarProfileString)
+                                                .fit()
+                                                .placeholder(R.drawable.logo)
+                                                .into(headerAvatar);
+                                    }
+
                                 }
                             });
                         }

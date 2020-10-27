@@ -38,7 +38,6 @@ import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.util.HttpUtil;
-import com.example.group_w01_07_3.util.LocationUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -53,7 +52,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -89,8 +90,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private View headerview;
+    ShapeableImageView headerAvatar;
     private TextView headerUsername;
-    private String usernameProfileString;
+    private String usernameProfileString, avatarProfileString;
     // ued to check if location permission is granted
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -161,8 +163,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //the logic to find the header, then update the username from server user profile
         headerview = navigationView.getHeaderView(0);
         headerUsername = headerview.findViewById(R.id.header_username);
+        headerAvatar = headerview.findViewById(R.id.header_avatar);
 
-        updateHeaderUsername();
+        updateHeader();
 
         //get current Location in GoogleMap using FusedLocationProviderClient
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -211,7 +214,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeaderUsername() {
+    private void updateHeader() {
         if (!UserUtil.getToken(DiscoverCapsule.this).isEmpty()) {
             HttpUtil.getProfile(UserUtil.getToken(DiscoverCapsule.this), new okhttp3.Callback() {
                 @Override
@@ -227,10 +230,19 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             String userInfo = responseJSON.getString("userInfo");
                             JSONObject userInfoJSON = new JSONObject(userInfo);
                             usernameProfileString = userInfoJSON.getString("uusr");
+                            avatarProfileString =  userInfoJSON.getString("uavatar");
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     headerUsername.setText(usernameProfileString);
+                                    if (!(avatarProfileString == "null")){
+                                        Picasso.with(DiscoverCapsule.this)
+                                                .load(avatarProfileString)
+                                                .fit()
+                                                .placeholder(R.drawable.logo)
+                                                .into(headerAvatar);
+                                    }
+
                                 }
                             });
                         }
