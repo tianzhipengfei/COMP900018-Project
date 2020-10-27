@@ -91,6 +91,7 @@ public class Display extends AppCompatActivity {
         audiolink = capsuleInfo.getString("caudio");
         name=capsuleInfo.getString("cusr");
         avater_link = capsuleInfo.getString("cavatar");
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -140,20 +141,4 @@ public class Display extends AppCompatActivity {
         });
     }
 }
-//    public void audioPlay(View view) throws IOException {
-//        if(startPlay){
-//            mediaPlayer.start();
-//        }else{
-//            mediaPlayer.stop();
-//        }
-//        startPlay=!startPlay;
-//        play=findViewById(R.id.play_button);
-//        media.onPlay(startPlay);
-//        if(startPlay){
-//            play.setText("Stop");
-//        }else{
-//            play.setText("Play");
-//        }
-//        startPlay=!startPlay;
-//    }
 
