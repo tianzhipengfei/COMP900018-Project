@@ -249,7 +249,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        // 'onMapReady' only runs once
         mGoogleMap = googleMap;
 
         // make markers clickable
@@ -316,6 +315,23 @@ public class DiscoverCapsule extends AppCompatActivity implements
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         }
+
+        //move map camera to current location. 1000ms = 1 seconds
+        long curTime = System.currentTimeMillis();
+        if ((curTime - lastUpdate_map) > 1000 && disable_camera == true) {
+            mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+                    lastUpdate_map = System.currentTimeMillis();
+                }
+            });
+            disable_camera = false;
+            Log.d("CAMERA", "disable_camera = false");
+        }
+
+        Log.i("onMapReady", "ends");
     }
 
     @Override
@@ -500,13 +516,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // record capsule information
                 Marker tmp = mGoogleMap.addMarker(capsuleMarker);
                 mCapsuleMarkers.put(tmp, allCapsules.get(i));
-//                Log.d("CAPSULEMARKER", "mCapsuleMarkers: " + mCapsuleMarkers.elements());
 
                 // for testing: how many times the method has run before receiving updated capsules information
                 counts += 1;
                 Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
                 Log.d("CAPSULEMARKER", "if_refresh: " + if_refresh);
                 Log.d("CAPSULEMARKER", "selectedCapsule: " + selectedCapsule);
+
+                if_refresh = false;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -514,12 +531,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
-        // check if capsules updated have received
-        if (old_mCapsuleMarkers != mCapsuleMarkers) {
-            if_refresh = false;
-            can_shake = true;
-            old_mCapsuleMarkers = mCapsuleMarkers;
-        }
+//        // check if capsules updated have received
+//        if (old_mCapsuleMarkers != mCapsuleMarkers) {
+//            if_refresh = false;
+//            can_shake = true;
+//            old_mCapsuleMarkers = mCapsuleMarkers;
+//        }
+
+        can_shake = true;
     }
 
     // redraw google map after users shake and refresh capsules
@@ -539,22 +558,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
-        //move map camera to current location. 1000ms = 1 seconds
-        long curTime = System.currentTimeMillis();
-        if ((curTime - lastUpdate_map) > 1000 && disable_camera == true) {
-            mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                @Override
-                public void onMapLoaded() {
-                    LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
-                    lastUpdate_map = System.currentTimeMillis();
-                }
-            });
-            disable_camera = false;
-        }
-
         //show myCurrentLocation marker title
         mCurrLocationMarker.showInfoWindow();
+
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
