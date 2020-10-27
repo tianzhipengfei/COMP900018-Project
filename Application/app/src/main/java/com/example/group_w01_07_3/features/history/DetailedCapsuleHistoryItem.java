@@ -36,7 +36,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
 
     String titleString,dateString,tagString,usernameString,contentString;
-    String imageLocation, avatarLocation;
+    String imageLocation, avatarLocation, voiceLocation;
 
     OpenedCapsule item;
 
@@ -87,17 +87,17 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         avatarShimmer = findViewById(R.id.history_detail_shimmer_avatar);
         voiceShimmer = findViewById(R.id.history_detail_shimmer_voice);
 
-
+        //find view for all string content
         title = findViewById(R.id.history_detail_title);
         date = findViewById(R.id.history_detail_date);
         username = findViewById(R.id.history_detail_username);
         tag = findViewById(R.id.history_detail_capsule_private_public_tag);
         content = findViewById(R.id.history_detail_content);
 
+        //find view for all non-string content that require loading time
         image = findViewById(R.id.history_detail_image);
         avatar = findViewById(R.id.history_detail_capsule_original_user_avatar);
         voice = findViewById(R.id.history_detail_voice);
-
 
         //get the capsule object
         item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
@@ -122,6 +122,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
         imageLocation = item.getCapsule_url();
         avatarLocation = item.getAvatar_url();
+        voiceLocation = item.getVoice_url();
 
         //Must use  this tree observer to load content image
         image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -192,10 +193,12 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 });
 
 
-        //TODO: @CHENFU ---- testing purpose only, assue finish loading voice from server takes 3 seconds
+        //TODO: @CHENFU ---- testing purpose only, assume finish loading voice from server takes 3 seconds
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
+
                 voiceShimmer.stopShimmer();
                 voiceShimmer.setVisibility(View.GONE);
                 voice.setVisibility(View.VISIBLE);

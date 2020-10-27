@@ -11,12 +11,13 @@ public class OpenedCapsule implements Serializable {
     String tag;
     String content;
     String username;
+    String voice_url;
 
     public OpenedCapsule(){
 
     }
 
-    public OpenedCapsule(String capsule_title, String opened_date, String avatar_url, String capsule_url, String tag, String content, String username) {
+    public OpenedCapsule(String capsule_title, String opened_date, String avatar_url, String capsule_url, String tag, String content, String username, String voice_url) {
         this.capsule_title = capsule_title;
         this.opened_date = opened_date;
         this.avatar_url = avatar_url;
@@ -24,6 +25,7 @@ public class OpenedCapsule implements Serializable {
         this.tag = tag;
         this.content = content;
         this.username = username;
+        this.voice_url = voice_url;
     }
 
     public String getCapsule_title() {
@@ -80,6 +82,14 @@ public class OpenedCapsule implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getVoice_url() {
+        return voice_url;
+    }
+
+    public void setVoice_url(String voice_url) {
+        this.voice_url = voice_url;
     }
 
 }
