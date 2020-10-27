@@ -134,12 +134,28 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
                 if(!imageLocation.equals("null")){
                     loadImage();
+                } else {
+                    imageShimmer.stopShimmer();
+                    imageShimmer.setVisibility(View.GONE);
+                    image.requestLayout();
+                    image.setMinimumHeight(48);
+                    image.setVisibility(View.VISIBLE);
                 }
                 if(!avatarLocation.equals("null")){
                     loadAvatar();
+                } else {
+                    avatarShimmer.stopShimmer();
+                    avatarShimmer.setVisibility(View.GONE);
+                    avatar.setVisibility(View.VISIBLE);
+                    avatar.setImageResource(R.drawable.avatar_sample);
                 }
+
                 if(!voiceLocation.equals("null")){
                     loadVoice();
+                } else {
+                    voiceShimmer.stopShimmer();
+                    voiceShimmer.setVisibility(View.GONE);
+                    voice.setVisibility(View.VISIBLE);
                 }
             }
         });
