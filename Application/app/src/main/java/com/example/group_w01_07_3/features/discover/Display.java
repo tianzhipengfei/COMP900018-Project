@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -15,8 +16,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.history.DetailedCapsuleHistoryItem;
 import com.example.group_w01_07_3.util.ImageUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -50,6 +54,10 @@ public class Display extends AppCompatActivity {
     private String open_date;
     private TextView date;
     private TextView privacy;
+
+    //Shimmer Place hodler Section
+    private ShimmerFrameLayout shimmerImage, shimmerAvatar, shimmerVoice;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,9 +73,34 @@ public class Display extends AppCompatActivity {
         username=(TextView) findViewById(R.id.display_detail_username);
         profile=(ImageView) findViewById(R.id.display_detail_capsule_original_user_avatar);
         date=(TextView) findViewById(R.id.display_detail_date);
+
+        shimmerImage = findViewById(R.id.display_detail_shimmer_image);
+        shimmerAvatar = findViewById(R.id.display_detail_shimmer_avatar);
+        shimmerVoice = findViewById(R.id.display_detail_shimmer_voice);
+
         mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                shimmerVoice.stopShimmer();
+                shimmerVoice.setVisibility(View.GONE);
+                play.setVisibility(View.VISIBLE);
+            }
+        });
+
         startPlay = true;
-        //stop=(Button) findViewById(R.id.stop_button);
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (startPlay) {
+                    mediaPlayer.start();
+                } else {
+                    mediaPlayer.pause();
+                }
+                startPlay = !startPlay;
+            }
+        });
+
         if (extra != null) {
             try {
                 JSONObject capsuleInfo = new JSONObject(extra);
@@ -99,46 +132,125 @@ public class Display extends AppCompatActivity {
                 title.setText(capsuleTitle);
                 content.setText(capsuleContent);
                 username.setText(name);
+
                 if(private_status==1){
                     privacy.setText("public capsule");
                 }else{
                     privacy.setText("private capsule");
                 }
+
                 if (audiolink != "null") {
-                    try {
-                        play.setVisibility(View.VISIBLE);
-                        mediaPlayer.setDataSource(audiolink);
-                        mediaPlayer.prepare();
-                        mediaPlayer.setLooping(true);
-                        
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-//                    media=new RecordAudioUtil(audiolink);
-                    play.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (startPlay) {
-                                mediaPlayer.start();
-                            } else {
-                                mediaPlayer.stop();
-                            }
-                            startPlay = !startPlay;
-                        }
-                    });
+                    loadVoice();
+                } else {
+                    shimmerVoice.stopShimmer();
+                    shimmerVoice.setVisibility(View.GONE);
+                    play.setVisibility(View.VISIBLE);
                 }
-                if (imagelink != "null") {
+
+                if (imagelink != "null"){
+                    loadImage();
+                } else {
+                    shimmerImage.stopShimmer();
+                    shimmerImage.setVisibility(View.GONE);
                     img.setVisibility(View.VISIBLE);
-                    Picasso.with(getApplicationContext()).load(imagelink).into(img);
+                    img.setImageResource(R.drawable.gradient_1);
                 }
-                Log.d(TAG, "run: "+avater_link);
-                if(avater_link!=null){
+
+                if (avater_link!= "null" ){
+                    loadAvatar();
+                } else {
+                    shimmerAvatar.stopShimmer();
+                    shimmerAvatar.setVisibility(View.GONE);
                     profile.setVisibility(View.VISIBLE);
-                    Picasso.with(getApplicationContext()).load(avater_link).into(profile);
-                    Log.d(TAG, "run: "+"Has load the file");
+                    profile.setImageResource(R.drawable.avatar_sample);
                 }
+
             }
         });
+    }
+
+    private void loadImage(){
+        //Must use  this tree observer to load content image
+        img.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Ensure we call this only once
+                img.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                Picasso.with(Display.this)
+                        .load(imagelink)
+                        .resize(img.getWidth(),0)
+                        .into(img, new com.squareup.picasso.Callback() {
+
+                            //once loaded, hide the placeholder shimmer, then show the user image
+                            @Override
+                            public void onSuccess() {
+                                shimmerImage.stopShimmer();
+                                shimmerImage.setVisibility(View.GONE);
+                                img.setVisibility(View.VISIBLE);
+                            }
+
+                            //retry loading one more time
+                            @Override
+                            public void onError() {
+                                Log.d("Debug", "IMAGE - Picasso Errored");
+                                Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load the capsule image",
+                                        Snackbar.LENGTH_LONG)
+                                        .setAction("Retry", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Picasso.with(Display.this).load(imagelink).fit().into(img);
+                                            }
+                                        })
+                                        .show();
+                            }
+                        });
+            }
+        });
+    }
+
+    private void loadAvatar(){
+        //avatar view has fix size, so no need to use viewtree
+        Picasso.with(this)
+                .load(avater_link)
+                .fit()
+                .into(profile, new com.squareup.picasso.Callback() {
+
+                    //once loaded, hide the placeholder shimmer, then show the avatar
+                    @Override
+                    public void onSuccess() {
+                        shimmerAvatar.stopShimmer();
+                        shimmerAvatar.setVisibility(View.GONE);
+                        profile.setVisibility(View.VISIBLE);
+                    }
+
+                    //retry loading one more time
+                    @Override
+                    public void onError() {
+                        Log.d("Debug", "AVATAR - Picasso Errored");
+                        Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load user avatar of the capsule owner",
+                                Snackbar.LENGTH_LONG)
+                                .setAction("Retry", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Picasso.with(Display.this).load(avater_link).fit().into(profile);
+                                    }
+                                })
+                                .show();
+                    }
+                });
+    }
+
+    private void loadVoice(){
+        try {
+//            play.setVisibility(View.VISIBLE);
+            mediaPlayer.setDataSource(audiolink);
+            mediaPlayer.prepare();
+            mediaPlayer.setLooping(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
