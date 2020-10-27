@@ -117,6 +117,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float last_x = 0;
     private float last_y = 0;
     private float last_z = 0;
+    private float last_move_x = 0;
+    private float last_move_y = 0;
+    private float last_move_z = 0;
     private static final int SHAKE_THRESHOLD = 800;
     private long lastUpdate_shaking = System.currentTimeMillis();
     // shake to refresh capsules
@@ -652,30 +655,50 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void onSensorChanged(int sensor, float[] values) {
         // Todo: do not open capsule until user keeps shaking device for at least one second
         //when detect 10 times of slight shake, open the capsule
-        if (open_shake_time == 10) {
+        if (open_shake_time == 3) {
             open_shake_time = 0;
             shakeOpen = true;
             RequestSending();
         }
 
         if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_shake == true) {
+            float x = values[SensorManager.DATA_X];
+            float y = values[SensorManager.DATA_Y];
+            float z = values[SensorManager.DATA_Z];
+            if(last_x == 0 && last_y == 0 && last_z == 0){
+                last_x = x;
+                last_y = y;
+                last_z = z;
+                return;
+            }
+            float cur_move_x = x - last_x;
+            float cur_move_y = y - last_y;
+            float cur_move_z = z - last_z;
             long curTime = System.currentTimeMillis();
             // check if the last movement was not long ago
             if ((curTime - lastUpdate_shaking) > max_pause_between_shakes) {
                 long diffTime = (curTime - lastUpdate_shaking);
                 lastUpdate_shaking = curTime;
-
-                float x = values[SensorManager.DATA_X];
-                float y = values[SensorManager.DATA_Y];
-                float z = values[SensorManager.DATA_Z];
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 //detect the reasonable shake of capsule
-                if (speed > 300 && popUpShake && !shakeOpen) {
-                    open_shake_time += 1;
+                if (popUpShake){
+                    float forceThreshold = (float) 1.5;
+                    if(!shakeOpen){
+                        float cur_move_length = (float) Math.sqrt(cur_move_x*cur_move_x + cur_move_y*cur_move_y + cur_move_z*cur_move_z);
+                        float last_move_length = (float) Math.sqrt(last_move_x*last_move_x + last_move_y*last_move_y + last_move_z*last_move_z);
+                        if (cur_move_length > forceThreshold ) {
+                            float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
+                            float length = cur_move_length * last_move_length;
+                            // Calculate consione
+                            if (product / length < 0.8) {
+                                open_shake_time += 1;
+                            }
+                        }
+                    }
                 }
 
-                if (speed > SHAKE_THRESHOLD && popUpShake == false) {
+                else if (speed > SHAKE_THRESHOLD && popUpShake == false) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // can only detect a shake event after capsules have finished updated
                     can_shake = false;
@@ -689,6 +712,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 last_x = x;
                 last_y = y;
                 last_z = z;
+                last_move_x = cur_move_x;
+                last_move_y = cur_move_y;
+                last_move_z = cur_move_z;
             }
         }
     }
