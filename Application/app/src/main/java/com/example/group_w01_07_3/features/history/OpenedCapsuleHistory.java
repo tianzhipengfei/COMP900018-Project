@@ -6,11 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,8 +27,9 @@ import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
 import com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +44,6 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 import androidx.core.util.Pair;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class OpenedCapsuleHistory extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, CapsuleCallback{
@@ -58,7 +55,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     private DrawerLayout drawerLayout;
     View headerview;
     TextView headerUsername;
-    private String usernameProfileString;
+    ShapeableImageView headerAvatar;
+    private String usernameProfileString, avatarProfileString;
 
     PullLoadMoreRecyclerView recyclerView;
     OpenedCapsuleAdapter openedCapsuleAdapter;
@@ -111,8 +109,9 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //the logic to find the header, then update the username from server user profile
         headerview = navigationView.getHeaderView(0);
         headerUsername = headerview.findViewById(R.id.header_username);
+        headerAvatar = headerview.findViewById(R.id.header_avatar);
 
-        updateHeaderUsername();
+        updateHeader();
 
         //TODO:Image load请一定一定要用,不要自己写function(不然没法做animation) : [Picasso] 或者 [Glide】. 非常简单,有URL他就帮你load,只要几行代码, 详情请谷歌
         //load everything needed to be displyaed in the list
@@ -132,7 +131,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
         //TODO: @CHENFU: 完成第一次拉取历史胶囊数据,拉取3-5个。 在data load的那一刻把shimmerlayout stop+invisible,然后显示真正的data
         //TODO: 假设完成第一轮的下载花了3s， 这里只是假设fetch capsule data用时为3s,请自己写真正的implemenmtation first time fetch的函数
-        //TODO: 假设第一次fectch得到的个数为 = [3]
+        //TODO: 假设第一次fectch得到的个数为 = [3]. 你跟ERIC协商一下具体个数。 我推荐为 --》 5 个/每次
         //TODO: Shimmerlayout教程链接 https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -166,7 +165,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             @Override
             public void onLoadMore() {
 
-                //TODO:逻辑: 每一轮都找server要3-5个胶囊。 然后load. 等完全load好了就notifyDataSetChanged()
+                //TODO:逻辑: 每一轮都找server要 [5] 个胶囊。 然后load. 等完全load好了就notifyDataSetChanged()
                 //TODO: 这样子recycleview就更新了数据(新的胶囊卡片就顺着你add的顺序, 加到列表的末尾了)
                 //TODO: 最后把 recyclerView.setPullLoadMoreCompleted();来关闭底部显示的“loadingm ore, please wait”提示
                 //TODO: 如果某一次server返回说没有更多的opened capsule了--》延时执行 setPullLoadMoreCompleted();-->setPushRefreshEnable(false)
@@ -316,7 +315,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeaderUsername(){
+    private void updateHeader(){
         if(!UserUtil.getToken(OpenedCapsuleHistory.this).isEmpty()){
             HttpUtil.getProfile(UserUtil.getToken(OpenedCapsuleHistory.this), new okhttp3.Callback() {
                 @Override
@@ -332,10 +331,19 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                             String userInfo = responseJSON.getString("userInfo");
                             JSONObject userInfoJSON = new JSONObject(userInfo);
                             usernameProfileString = userInfoJSON.getString("uusr");
+                            avatarProfileString =  userInfoJSON.getString("uavatar");
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     headerUsername.setText(usernameProfileString);
+                                    if (!(avatarProfileString == "null")){
+                                        Picasso.with(OpenedCapsuleHistory.this)
+                                                .load(avatarProfileString)
+                                                .fit()
+                                                .placeholder(R.drawable.logo)
+                                                .into(headerAvatar);
+                                    }
+
                                 }
                             });
                         }
