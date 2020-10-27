@@ -46,4 +46,5 @@ dependencies {
     implementation 'com.squareup.okhttp:okhttp:2.5.0'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    compile 'com.wuxiaolong.pullloadmorerecyclerview:library:1.1.2'
 }

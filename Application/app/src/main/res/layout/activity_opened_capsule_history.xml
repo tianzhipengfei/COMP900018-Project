@@ -56,8 +56,8 @@
 
             </com.facebook.shimmer.ShimmerFrameLayout>
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/history_swipe_refresh_layout"
+            <com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView
+                android:id="@+id/history_opened_capsule_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -66,15 +66,8 @@
                 app:layout_constraintTop_toTopOf="parent">
 
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/history_opened_capsule_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+            </com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView>
 
-
-                </androidx.recyclerview.widget.RecyclerView>
-
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

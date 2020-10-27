@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/detail_history_mega_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorGreyOut"
@@ -142,32 +144,78 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/detail_card_top_layout">
 
+                        <com.facebook.shimmer.ShimmerFrameLayout
+                            android:id="@+id/history_detail_shimmer_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="360dp"
+                            shimmer:duration="800"
+
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="16dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/grey"
+                                />
+
+
+                        </com.facebook.shimmer.ShimmerFrameLayout>
+
                         <ImageView
                             android:id="@+id/history_detail_image"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            app:layout_constraintHeight_min="360dp"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="16dp"
 
                             android:background="@color/colorGreyOut"
-                            android:scaleType="centerCrop"
+
+                            android:visibility="invisible"
+
                             android:transitionName="capsuleImageTN"
                             app:layout_constrainedHeight="true"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHeight_max="256dp"
-                            app:layout_constraintHeight_min="128dp"
+
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:srcCompat="@drawable/capsule" />
 
                         <!-- Apply ripple effect: android:foreground="?attr/selectableItemBackgroundBorderless"-->
-                        <ImageButton
+
+                        <com.facebook.shimmer.ShimmerFrameLayout
+                            android:id="@+id/history_detail_shimmer_voice"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:layout_marginEnd="16dp"
-                            android:background="@drawable/custom_border_all_corner"
+                            shimmer:duration="800"
 
+                            app:layout_constraintBottom_toBottomOf="@+id/history_detail_image"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/history_detail_image">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/custom_shape_circlee"/>
+
+                        </com.facebook.shimmer.ShimmerFrameLayout>
+
+                        <ImageButton
+                            android:id="@+id/history_detail_voice"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="16dp"
+
+                            android:visibility="invisible"
+
+                            android:background="@drawable/custom_border_all_corner"
                             android:backgroundTint="@color/colorPrimary"
                             android:foreground="?attr/selectableItemBackgroundBorderless"
                             android:src="@drawable/ic_baseline_mic_24"
@@ -197,6 +245,28 @@ Capsule Content will be displayed here "
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/history_detail_image" />
 
+                        <com.facebook.shimmer.ShimmerFrameLayout
+                            android:id="@+id/history_detail_shimmer_avatar"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            shimmer:duration="800"
+
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/history_detail_content"
+                            >
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/custom_shape_circlee"/>
+
+
+                        </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/history_detail_capsule_original_user_avatar"
                             android:layout_width="48dp"
@@ -204,6 +274,8 @@ Capsule Content will be displayed here "
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="16dp"
                             android:scaleType="centerCrop"
+
+                            android:visibility="invisible"
 
                             android:transitionName="capsuleAvatarTN"
 

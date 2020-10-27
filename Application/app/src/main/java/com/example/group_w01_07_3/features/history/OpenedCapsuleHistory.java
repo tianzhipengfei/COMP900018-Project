@@ -6,11 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,8 +27,10 @@ import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Picasso;
+import com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -45,7 +44,6 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 import androidx.core.util.Pair;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class OpenedCapsuleHistory extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, CapsuleCallback{
@@ -54,13 +52,13 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
     boolean doubleBackToExitPressedOnce = false;
 
-    SwipeRefreshLayout swipeRefreshLayout;
-
     private DrawerLayout drawerLayout;
     View headerview;
     TextView headerUsername;
-    private String usernameProfileString;
+    ShapeableImageView headerAvatar;
+    private String usernameProfileString, avatarProfileString;
 
+    PullLoadMoreRecyclerView recyclerView;
     OpenedCapsuleAdapter openedCapsuleAdapter;
 
     NavigationView navigationView;
@@ -68,6 +66,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     private Toolbar mToolbar;
 
     private List<OpenedCapsule> testingList;
+
+    private int recycleInt = 0; //TODO: 测试用的，记得删除
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,16 +109,13 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //the logic to find the header, then update the username from server user profile
         headerview = navigationView.getHeaderView(0);
         headerUsername = headerview.findViewById(R.id.header_username);
+        headerAvatar = headerview.findViewById(R.id.header_avatar);
 
-        updateHeaderUsername();
-
-
-
-        //TODO: @CHENFu, 这里是我手动加的测试胶囊,请自行实现对应功能
+        updateHeader();
 
         //TODO:Image load请一定一定要用,不要自己写function(不然没法做animation) : [Picasso] 或者 [Glide】. 非常简单,有URL他就帮你load,只要几行代码, 详情请谷歌
         //load everything needed to be displyaed in the list
-        RecyclerView recyclerView = findViewById(R.id.history_opened_capsule_list);
+        recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<>();
         final String testPurposeLongString = getApplicationContext().getString(R.string.registration_help);
 
@@ -126,28 +123,27 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //set up the recycle view
         openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLinearLayout();
+        recyclerView.setPullRefreshEnable(false);
+        recyclerView.setFooterViewText("Loading More...Please Wait");
 
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
 
-        //TODO: @CHENFU: fetch capsule data into the Arraylist。 在data load的那一刻吧shimmerlayout给干掉,然后显示真正的data
-        //TODO: 这里只是假设fetch capsule data用时为3s,请自己写真正的implemenmtation的函数
-        //todo: Shimmerlayout教程链接 https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/
+        //TODO: @CHENFU: 完成第一次拉取历史胶囊数据,拉取3-5个。 在data load的那一刻把shimmerlayout stop+invisible,然后显示真正的data
+        //TODO: 假设完成第一轮的下载花了3s， 这里只是假设fetch capsule data用时为3s,请自己写真正的implemenmtation first time fetch的函数
+        //TODO: 假设第一次fectch得到的个数为 = [3]. 你跟ERIC协商一下具体个数。 我推荐为 --》 5 个/每次
+        //TODO: Shimmerlayout教程链接 https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
-                //假设终于data完全download好了
                 testingList.clear();
                 testingList.add(new OpenedCapsule("This is a very long title,This is a very long title,This is a very long title" +
-                        "his is a very long title,This is a very long title,This is a very long title", "2019/12/31", R.drawable.avatar_sample, R.drawable.capsule, "Your Private Capsule",testPurposeLongString,"wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: aa", "2018/2/31", R.drawable.slidewindow_capsule, R.drawable.logo,"Public Memory Capsule",testPurposeLongString,"abfsdfb"));
-                testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcv","wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: cc", "2016/4/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule",testPurposeLongString,"wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: dd", "2015/5/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxvxv","wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: ee", "2014/6/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: ff", "2020/7/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","xcvxcvxcvxcxvcvcvxvxc","wcs123455"));
-                testingList.add(new OpenedCapsule("testing input capsule title: gg", "2020/8/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule",testPurposeLongString,"wcs123455"));
+                        "his is a very long title,This is a very long title,This is a very long title", "2019/12/31", "https://i.imgur.com/tGbaZCY.jpg", "https://i.imgur.com/tGbaZCY.jpg", "Your Private Capsule",testPurposeLongString,"wcs123455","12345"));
+                testingList.add(new OpenedCapsule("testing input capsule title: aa", "2018/2/31", "https://i.imgur.com/tGbaZCY.jpg", "https://i.imgur.com/tGbaZCY.jpg","Public Memory Capsule",testPurposeLongString,"abfsdfb","12345"));
+                testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", "https://i.imgur.com/tGbaZCY.jpg", "https://i.imgur.com/tGbaZCY.jpg","Your Private Capsule","xcvxcvxcvxcv","wcs123455","12345"));
+                testingList.add(new OpenedCapsule("testing input capsule title: bb", "2017/3/31", "https://i.imgur.com/tGbaZCY.jpg", "https://i.imgur.com/tGbaZCY.jpg","Your Private Capsule","xcvxcvxcvxcv","wcs123455","12345"));
+
+                //假设终于data完全download好了
                 openedCapsuleAdapter.notifyDataSetChanged();
 
                 // stop animating Shimmer and hide the layout
@@ -157,48 +153,90 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             }
         }, 3000);
 
-        //TODO:@CHENFU, 这一块是负责下拉刷新列表的功能，请自行实现功能
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.history_swipe_refresh_layout);
-
-        swipeRefreshLayout.setColorSchemeColors(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW);//设置进度框颜色的切换
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        recyclerView.setOnPullLoadMoreListener(new PullLoadMoreRecyclerView.PullLoadMoreListener() {
             @Override
-            public void onRefresh () {
+            public void onRefresh() {
+            }
 
-                //TODO: @CHENFU: 自行实现获取最新history的功能
 
-                //Step1: when starting fetch data
-                //set shimmer layout back, clear current recycleview
-                mShimmerViewContainer.setVisibility(View.VISIBLE);
-                mShimmerViewContainer.startShimmer();
-                testingList.clear();
-                openedCapsuleAdapter.notifyDataSetChanged();
+            //TODO: @CHENFU 上拉加载更多功能实现. 在data拉取下来了后用handler delay方法setPullLoadMoreCompleted（），不然会卡主(library的原因)
+            //TODO: @CHENFU 这里就不用管shimmer了
+            //TODO: @CHENFU 请自行实现拉取功能,这里为测试用的秒加capsule
+            @Override
+            public void onLoadMore() {
 
-                //step2: fetch data complete. set shimmer invisible, notify data change
-                //假设终于把刷新的data下载下来花了3s
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        testingList.clear();
+                //TODO:逻辑: 每一轮都找server要 [5] 个胶囊。 然后load. 等完全load好了就notifyDataSetChanged()
+                //TODO: 这样子recycleview就更新了数据(新的胶囊卡片就顺着你add的顺序, 加到列表的末尾了)
+                //TODO: 最后把 recyclerView.setPullLoadMoreCompleted();来关闭底部显示的“loadingm ore, please wait”提示
+                //TODO: 如果某一次server返回说没有更多的opened capsule了--》延时执行 setPullLoadMoreCompleted();-->setPushRefreshEnable(false)
 
-                        testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sfgdfsgsdfsdfgsdfgsdfg","wcs123455"));
-                        testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Public Memory Capsule","sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455"));
-                        testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", R.drawable.avatar_sample, R.drawable.capsule,"Your Private Capsule","sdfgsdgfsdgsdfgsdgsdfgds","wcs123455"));
+                //TODO:这里我模拟了一下加了3轮数据(2次有数据,最后一次server没了)
+                if (recycleInt == 0){
+                    //假设这次花了2s
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerView.setPullLoadMoreCompleted();
+                            recycleInt += 1;
+                            testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603620329.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700200.jpg","Your Private Capsule","sfgdfsgsdfsdfgsdfgsdfg","wcs123455","12345"));
+                            testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700259.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700323.jpg","Public Memory Capsule","sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455","12345"));
+                            testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700356.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700436.jpg","Your Private Capsule","sdfgsdgfsdgsdfgsdgsdfgds","wcs123455","12345"));
+                            openedCapsuleAdapter.notifyDataSetChanged();
+                            Toast.makeText(OpenedCapsuleHistory.this, "first round refresh notified", Toast.LENGTH_SHORT).show();
+                            //必须要晚一点设置complete
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    recyclerView.setPullLoadMoreCompleted();
+                                    return;
+                                }
+                            },100);
+                        }
+                    },2000);
 
-                        openedCapsuleAdapter.notifyDataSetChanged();
+                }
+                if(recycleInt == 1){
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            recycleInt += 1;
+                            testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603620329.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603703210.jpg","Your Private Capsule","sfgdfsgsdfsdfgsdfgsdfg","wcs123455","12345"));
+                            testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603703077.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603703310.jpg","Public Memory Capsule","sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455","12345"));
+                            testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603703141.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603703443.jpg","Your Private Capsule","sdfgsdgfsdgsdfgsdgsdfgds","wcs123455","12345"));
+                            openedCapsuleAdapter.notifyDataSetChanged();
+                            Toast.makeText(OpenedCapsuleHistory.this, "2nd round refresh notified", Toast.LENGTH_SHORT).show();
+                            //必须要晚一点设置complete
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    recyclerView.setPullLoadMoreCompleted();
+                                    return;
+                                }
+                            },100);
 
-                        // stop animating Shimmer and hide the layout
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
+                        }
+                    },2000);
 
-                        swipeRefreshLayout.setRefreshing(false);//取消进度框
+                }
+                if (recycleInt == 2){
+                    //OK, 假设服务器返回说这是最后的capsule了，没有多的了, 然后把上拉添加功能给关闭
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //必须要晚一点设置complete
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    recyclerView.setPullLoadMoreCompleted();
 
-                        View bigView = findViewById(R.id.history_drawer_layout);
-                        Snackbar snackbar = Snackbar.make(bigView, "Refreshed History", Snackbar.LENGTH_SHORT);
-                        snackbar.show();
-                    }
-                },3000);
+                                    recyclerView.setPushRefreshEnable(false);  //一定要用这个,不然会卡主
+                                    return;
+                                }
+                            },100);
+                        }
+                    },2000);
 
+                }
             }
         });
 
@@ -277,7 +315,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeaderUsername(){
+    private void updateHeader(){
         if(!UserUtil.getToken(OpenedCapsuleHistory.this).isEmpty()){
             HttpUtil.getProfile(UserUtil.getToken(OpenedCapsuleHistory.this), new okhttp3.Callback() {
                 @Override
@@ -293,10 +331,19 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                             String userInfo = responseJSON.getString("userInfo");
                             JSONObject userInfoJSON = new JSONObject(userInfo);
                             usernameProfileString = userInfoJSON.getString("uusr");
+                            avatarProfileString =  userInfoJSON.getString("uavatar");
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     headerUsername.setText(usernameProfileString);
+                                    if (!(avatarProfileString == "null")){
+                                        Picasso.with(OpenedCapsuleHistory.this)
+                                                .load(avatarProfileString)
+                                                .fit()
+                                                .placeholder(R.drawable.logo)
+                                                .into(headerAvatar);
+                                    }
+
                                 }
                             });
                         }
