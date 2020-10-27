@@ -248,93 +248,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        popUpShake = false;
-    }
-
-    public void refreshCapsules(JSONArray allCapsules, Location location) {
-        mGoogleMap.clear();
-
-        recorded_latitude = location.getLatitude();
-        recorded_longtitude = location.getLongitude();
-
-        Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
-        Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
-        //place capsule markers on google map
-        for (int i = 0; i < allCapsules.length(); i++) {
-            try {
-                JSONObject objects = allCapsules.getJSONObject(i);
-                Double lat = objects.getDouble("clat");
-                Double lng = objects.getDouble("clon");
-                Log.d("CAPSULEMARKER", "i: " + i);
-                Log.d("CAPSULEMARKER", "lat: " + lat);
-                Log.d("CAPSULEMARKER", "lng: " + lng);
-
-                LatLng lat_Lng = new LatLng(lat, lng);
-                MarkerOptions capsuleMarker = new MarkerOptions();
-                capsuleMarker.position(lat_Lng);
-                capsuleMarker.title("Capsule");
-
-                //change marker color
-                if (i == 0 || i == 10)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                if (i == 1 || i == 11)
-                    capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                if (i == 2 || i == 12)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-                if (i == 3 || i == 13)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                if (i == 4 || i == 14)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                if (i == 5 || i == 15)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-                if (i == 6 || i == 16)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                if (i == 7 || i == 17)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-                if (i == 8 || i == 18)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
-                if (i == 9 || i == 19)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-
-                // record capsule information
-                Marker tmp = mGoogleMap.addMarker(capsuleMarker);
-                mCapsuleMarkers.put(tmp, allCapsules.get(i));
-
-                // for testing: how many times the method has run before receiving updated capsules information
-                counts += 1;
-                Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
-                Log.d("CAPSULEMARKER", "if_refresh: " + if_refresh);
-                Log.d("CAPSULEMARKER", "selectedCapsule: " + selectedCapsule);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //always show myCurrentLocation marker title
-        mCurrLocationMarker.showInfoWindow();
-
-        Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
-
-        // check if capsules updated have received
-        if (old_mCapsuleMarkers != mCapsuleMarkers) {
-            if_refresh = false;
-            can_shake = true;
-            old_mCapsuleMarkers = mCapsuleMarkers;
-        }
-    }
-
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         // 'onMapReady' only runs once
         mGoogleMap = googleMap;
@@ -352,11 +265,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         Log.w("MARKERS-MATCH", m + "");
                         Log.w("MARKERS-MATCH", "******* popup window *******");
 
-                        //remove the marker from the map after an user opens the capsule
-
                         selectedCapsule = (JSONObject) mCapsuleMarkers.get(m);
                         selectedMarker = m;
 
+                        //the capsule marker will be removed from the map after an user opens the capsule
                         PopUpWindowFunction();
 
                         Log.w("After-CLICK", "mCapsuleMarkers:" + mCapsuleMarkers);
@@ -406,6 +318,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        popUpShake = false;
+    }
+
     // get location updates every second
     final LocationCallback mLocationCallback = new LocationCallback() {
         @SuppressLint("MissingPermission")
@@ -444,8 +362,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // the last location in the list is the newest
                 Location location = locationList2.get(locationList2.size() - 1);
 
-                // refresh capsules if user shakes the device,
-                // or if user moves more than a threshold distance (20km, 5.55degree)
+                // refresh capsules if the user shakes the device, or if user moves more than a threshold distance
                 check_ifCapsulesNeedRefresh(location);
 
                 // redraw google map after users shake and refresh capsules
@@ -502,6 +419,109 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    private void check_ifCapsulesNeedRefresh(Location location){
+        // refresh capsules if user shakes the device and there is a http connection.
+        if (if_connected) {
+            if (if_refresh) {
+                refreshCapsules(allCapsules, location);
+                Log.i("MapsActivity", "allCapsules before refresh: " + allCapsules);
+            }
+        }
+
+        // automatically refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
+        if (Math.abs(recorded_latitude - location.getLatitude()) > distanceThresholdToRequest ||
+                Math.abs(recorded_longtitude - location.getLongitude()) > distanceThresholdToRequest) {
+            if_refresh = true;
+            Log.i("MapsActivity", "if_refresh is true");
+        }
+
+        // automatically refresh capsules if there is no capsule on google map
+        if (mCapsuleMarkers.isEmpty()){
+            if_refresh = true;
+            Log.i("MapsActivity", "there is no capsule on google map");
+        }
+    }
+
+    public void refreshCapsules(JSONArray allCapsules, Location location) {
+        mGoogleMap.clear();
+
+        recorded_latitude = location.getLatitude();
+        recorded_longtitude = location.getLongitude();
+
+        Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
+        Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
+
+        //place capsule markers on google map
+        for (int i = 0; i < allCapsules.length(); i++) {
+            try {
+                JSONObject objects = allCapsules.getJSONObject(i);
+                Double lat = objects.getDouble("clat");
+                Double lng = objects.getDouble("clon");
+                Log.d("CAPSULEMARKER", "i: " + i);
+                Log.d("CAPSULEMARKER", "lat: " + lat);
+                Log.d("CAPSULEMARKER", "lng: " + lng);
+
+                LatLng lat_Lng = new LatLng(lat, lng);
+                MarkerOptions capsuleMarker = new MarkerOptions();
+                capsuleMarker.position(lat_Lng);
+                capsuleMarker.title("Capsule");
+
+                //change marker color
+                if (i == 0 || i == 10)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                if (i == 1 || i == 11)
+                    capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                if (i == 2 || i == 12)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                if (i == 3 || i == 13)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                if (i == 4 || i == 14)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                if (i == 5 || i == 15)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                if (i == 6 || i == 16)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                if (i == 7 || i == 17)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                if (i == 8 || i == 18)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                if (i == 9 || i == 19)
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+
+                // record capsule information
+                Marker tmp = mGoogleMap.addMarker(capsuleMarker);
+                mCapsuleMarkers.put(tmp, allCapsules.get(i));
+//                Log.d("CAPSULEMARKER", "mCapsuleMarkers: " + mCapsuleMarkers.elements());
+
+                // for testing: how many times the method has run before receiving updated capsules information
+                counts += 1;
+                Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
+                Log.d("CAPSULEMARKER", "if_refresh: " + if_refresh);
+                Log.d("CAPSULEMARKER", "selectedCapsule: " + selectedCapsule);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
+
+        // check if capsules updated have received
+        if (old_mCapsuleMarkers != mCapsuleMarkers) {
+            if_refresh = false;
+            can_shake = true;
+            old_mCapsuleMarkers = mCapsuleMarkers;
+        }
+    }
+
     // redraw google map after users shake and refresh capsules
     private void redrawGoogleMap(Location location){
         // default location Googleplex: 37.4219983 -122.084
@@ -532,24 +552,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
             });
             disable_camera = false;
         }
-    }
 
-
-    private void check_ifCapsulesNeedRefresh(Location location){
-        // refresh capsules if user shakes the device and there is a http connection.
-        if (if_connected) {
-            if (if_refresh) {
-                refreshCapsules(allCapsules, location);
-                Log.i("MapsActivity", "allCapsules before refresh: " + allCapsules);
-            }
-        }
-
-        // refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
-        if (Math.abs(recorded_latitude - location.getLatitude()) > distanceThresholdToRequest ||
-                Math.abs(recorded_longtitude - location.getLongitude()) > distanceThresholdToRequest) {
-            if_refresh = true;
-            Log.i("MapsActivity", "if_refresh is true");
-        }
+        //show myCurrentLocation marker title
+        mCurrLocationMarker.showInfoWindow();
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -881,6 +886,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             public void run() {
                                 //remove marker after user opens the capsule
                                 selectedMarker.remove();
+                                mCapsuleMarkers.remove(selectedMarker);
+
                                 progress.dismiss();
                                 Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
 //                                pw.dismiss();

@@ -36,6 +36,7 @@ public class Display extends AppCompatActivity {
     private TextView content;
     private ImageButton play;
     //private Button stop;
+    private int private_status;
     private MediaPlayer mediaPlayer;
     private String capsuleTitle;
     private String capsuleContent;
@@ -48,6 +49,7 @@ public class Display extends AppCompatActivity {
     private String avater_link;
     private String open_date;
     private TextView date;
+    private TextView privacy;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,7 @@ public class Display extends AppCompatActivity {
         Bundle extra_information = getIntent().getExtras();
         String extra = getIntent().getStringExtra("capsule");
         Log.d("The intent information", "onCreate: " + extra);
+        privacy=(TextView) findViewById(R.id.display_detail_capsule_private_public_tag);
         img = (ImageView) findViewById(R.id.display_detail_image);
         title = (TextView) findViewById(R.id.display_detail_title);
         content = (TextView) findViewById(R.id.display_detail_content);
@@ -79,6 +82,7 @@ public class Display extends AppCompatActivity {
     }
 
     private void display(JSONObject capsuleInfo) throws JSONException {
+        private_status=capsuleInfo.getInt("cpermission");
         capsuleTitle = capsuleInfo.getString("ctitle");
         capsuleContent = capsuleInfo.getString("ccontent");
         open_date=Calendar.getInstance().getTime().toString();
@@ -94,11 +98,18 @@ public class Display extends AppCompatActivity {
                 title.setText(capsuleTitle);
                 content.setText(capsuleContent);
                 username.setText(name);
+                if(private_status==1){
+                    privacy.setText("public capsule");
+                }else{
+                    privacy.setText("private capsule");
+                }
                 if (audiolink != "null") {
                     try {
                         play.setVisibility(View.VISIBLE);
                         mediaPlayer.setDataSource(audiolink);
                         mediaPlayer.prepare();
+                        mediaPlayer.setLooping(true);
+                        
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
