@@ -61,7 +61,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -82,6 +81,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private Marker selectedMarker;
     private JSONArray allCapsules;
     private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
+    private Hashtable<Marker, Object> old_mCapsuleMarkers = new Hashtable<Marker, Object>();
     // request capsule
     private JSONObject capsuleInfo = new JSONObject();
     private Toolbar mToolbar;
@@ -117,6 +117,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float last_x = 0;
     private float last_y = 0;
     private float last_z = 0;
+    private float last_move_x = 0;
+    private float last_move_y = 0;
+    private float last_move_z = 0;
     private static final int SHAKE_THRESHOLD = 800;
     private long lastUpdate_shaking = System.currentTimeMillis();
     // shake to refresh capsules
@@ -129,7 +132,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private long lastUpdate_map;
     private boolean disable_camera = true;
     private int open_shake_time = 0;
-
+    // record the latest location where a user shaken the device
+    private double recorded_latitude;
+    private double recorded_longtitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,13 +170,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
 
-        try {
-            capsuleInfo.put("max_distance", 5);  // 5km by default
-            capsuleInfo.put("num_capsules", 20);  // 20 capsules by default
-        } catch (JSONException e) {
-            System.out.print("Problems happen during parsing json objects");
-        }
-
         Toast.makeText(DiscoverCapsule.this,
                 "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
 
@@ -183,7 +181,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//        item.setChecked(true);
         drawerLayout.closeDrawers();
 
         int id = item.getItemId();
@@ -256,16 +253,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
         popUpShake = false;
     }
 
-    private int getRandomCow(JSONArray jsonArray) {
-        int length = jsonArray.length();
-        int[] array;
-        array = new int[length - 1];
-        int rnd = new Random().nextInt(array.length);
-        return array[rnd];
-    }
-
-    public void refreshCapsules(JSONArray allCapsules) {
+    public void refreshCapsules(JSONArray allCapsules, Location location) {
         mGoogleMap.clear();
+
+        recorded_latitude = location.getLatitude();
+        recorded_longtitude = location.getLongitude();
 
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
         Log.d("CAPSULEMARKER", "allCapsules.length(): " + allCapsules.length());
@@ -279,8 +271,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Log.d("CAPSULEMARKER", "lat: " + lat);
                 Log.d("CAPSULEMARKER", "lng: " + lng);
 
-                //show capsules on the map when user is nearby that particular area (5km by default)
-                // Latitude: 1 deg = 110.574 km; Longitude: 1 deg = 111.320*cos(latitude) km
                 LatLng lat_Lng = new LatLng(lat, lng);
                 MarkerOptions capsuleMarker = new MarkerOptions();
                 capsuleMarker.position(lat_Lng);
@@ -334,13 +324,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
-        if_refresh = false;
-        can_shake = true;
+        if (old_mCapsuleMarkers != mCapsuleMarkers) {
+            if_refresh = false;
+            can_shake = true;
+            old_mCapsuleMarkers = mCapsuleMarkers;
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        // 'onMapReady' only run once
+        // 'onMapReady' only runs once
         mGoogleMap = googleMap;
 
         // make markers clickable
@@ -372,7 +365,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         });
 
-        mGoogleMap.setPadding(0, 90, 10, 0); // left, top, right, bottom
+        // left, top, right, bottom
+        mGoogleMap.setPadding(0, 155, 10, 0);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         // the location will be updated every locationUpdateInterval second
@@ -408,7 +402,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         public void onLocationResult(LocationResult locationResult) {
             List<Location> locationList = locationResult.getLocations();
             Log.i("locationList", "" + locationList);
-            //the last location in the list is the newest
 
             if (locationList.size() > 0) {
                 //the last location in the list is the newest
@@ -425,7 +418,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     try {
                         capsuleInfo.put("lat", lastRequestLat);
                         capsuleInfo.put("lon", lastRequestLon);
-                        Log.d("UPDATE-LOCATION", capsuleInfo + "");
+                        Log.d("UPDATE-LOCATION", "lat:" + lastRequestLat);
+                        Log.d("UPDATE-LOCATION", "lon:" + lastRequestLon);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -438,7 +432,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Log.d("CAPSULE", "***** No token to get capsule *****");
                 allCapsules = new JSONArray();
                 selectedCapsule = new JSONObject();
-            } else {
+            } else if (if_refresh) {
                 try {
                     String token = UserUtil.getToken(DiscoverCapsule.this);
                     Log.i("SENDING-REQUEST", "token:" + token);
@@ -448,7 +442,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                             Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
-                            String responseData = response.body().string(); //.getClass().getName() java.lang.String
+                            String responseData = response.body().string();
                             // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
                             Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
                             try {
@@ -479,21 +473,27 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 }
             }
 
-            // Todo: call method to make markers clickable
-            if (if_connected && if_refresh) {
-                Log.i("MGOOGLEMAP:", "Connected");
-                refreshCapsules(allCapsules);
-            } else {
-                Log.i("MGOOGLEMAP:", "No connection");
-            }
-
             // redraw google map
             List<Location> locationList2 = locationResult.getLocations();
-            //the last location in the list is the newest
 
             if (locationList2.size() > 0) {
                 //the last location in the list is the newest
                 Location location = locationList2.get(locationList2.size() - 1);
+
+                // refresh capsules if user shakes the device and there is a http connection.
+                if (if_connected) {
+                    if (if_refresh) {
+                        refreshCapsules(allCapsules, location);
+                        Log.i("MapsActivity", "allCapsules before refresh: " + allCapsules);
+                    }
+                }
+
+                // refresh capsules if users are 20km aways from the last-requested location.
+                if (Math.abs(recorded_latitude - location.getLatitude()) > 5.55 ||
+                        Math.abs(recorded_longtitude - location.getLongitude()) > 5.55) {
+                    if_refresh = true;
+                    Log.i("MapsActivity", "if_refresh is true");
+                }
 
                 // default location Googleplex: 37.4219983 -122.084
                 Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
@@ -655,29 +655,50 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void onSensorChanged(int sensor, float[] values) {
         // Todo: do not open capsule until user keeps shaking device for at least one second
         //when detect 10 times of slight shake, open the capsule
-        if (open_shake_time == 10) {
+        if (open_shake_time == 3) {
             open_shake_time = 0;
             shakeOpen = true;
             RequestSending();
         }
+
         if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_shake == true) {
+            float x = values[SensorManager.DATA_X];
+            float y = values[SensorManager.DATA_Y];
+            float z = values[SensorManager.DATA_Z];
+            if(last_x == 0 && last_y == 0 && last_z == 0){
+                last_x = x;
+                last_y = y;
+                last_z = z;
+                return;
+            }
+            float cur_move_x = x - last_x;
+            float cur_move_y = y - last_y;
+            float cur_move_z = z - last_z;
             long curTime = System.currentTimeMillis();
             // check if the last movement was not long ago
             if ((curTime - lastUpdate_shaking) > max_pause_between_shakes) {
                 long diffTime = (curTime - lastUpdate_shaking);
                 lastUpdate_shaking = curTime;
-
-                float x = values[SensorManager.DATA_X];
-                float y = values[SensorManager.DATA_Y];
-                float z = values[SensorManager.DATA_Z];
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 //detect the reasonable shake of capsule
-                if (speed > 300 && speed < SHAKE_THRESHOLD && popUpShake && !shakeOpen) {
-                    open_shake_time += 1;
+                if (popUpShake){
+                    float forceThreshold = (float) 1.5;
+                    if(!shakeOpen){
+                        float cur_move_length = (float) Math.sqrt(cur_move_x*cur_move_x + cur_move_y*cur_move_y + cur_move_z*cur_move_z);
+                        float last_move_length = (float) Math.sqrt(last_move_x*last_move_x + last_move_y*last_move_y + last_move_z*last_move_z);
+                        if (cur_move_length > forceThreshold ) {
+                            float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
+                            float length = cur_move_length * last_move_length;
+                            // Calculate consione
+                            if (product / length < 0.8) {
+                                open_shake_time += 1;
+                            }
+                        }
+                    }
                 }
 
-                if (speed > SHAKE_THRESHOLD && popUpShake == false) {
+                else if (speed > SHAKE_THRESHOLD && popUpShake == false) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // can only detect a shake event after capsules have finished updated
                     can_shake = false;
@@ -691,6 +712,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 last_x = x;
                 last_y = y;
                 last_z = z;
+                last_move_x = cur_move_x;
+                last_move_y = cur_move_y;
+                last_move_z = cur_move_z;
             }
         }
     }
@@ -790,7 +814,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     public void RequestSending() {
         pw.dismiss();
-        final ProgressDialog progress=new ProgressDialog(this);
+        final ProgressDialog progress=new ProgressDialog(DiscoverCapsule.this);
         progress.setTitle("Loading");
         progress.setMessage("Wait for server verficiation");
         progress.show();
