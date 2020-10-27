@@ -119,6 +119,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 Picasso.with(DetailedCapsuleHistoryItem.this)
                         .load(imageLocation)
                         .resize(image.getWidth(),0)
+                        .placeholder(R.drawable.capsule)
                         .into(image);
             }
         });
@@ -128,6 +129,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         Picasso.with(this)
                 .load(avatarLocation)
                 .fit()
+                .placeholder(R.drawable.avatar_sample)
                 .into(avatar);
 
     }
