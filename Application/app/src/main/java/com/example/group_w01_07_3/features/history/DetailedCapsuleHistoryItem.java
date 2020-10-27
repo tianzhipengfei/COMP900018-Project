@@ -115,25 +115,34 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         usernameString = item.getUsername();
         contentString = item.getContent();
 
-        title.setText(titleString);
-        date.setText(dateString);
-        content.setText(contentString);
-        username.setText(usernameString);
-
-        if(tagIndentifier == 1){
-            tag.setText("Public Memory Capsule");
-        } else {
-            tag.setText("Your Private Capsule");
-        }
-
         imageLocation = item.getCapsule_url();
         avatarLocation = item.getAvatar_url();
         voiceLocation = item.getVoice_url();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                title.setText(titleString);
+                date.setText(dateString);
+                content.setText(contentString);
+                username.setText(usernameString);
 
-        loadImage();
-        loadAvatar();
-        loadVoice();
+                if(tagIndentifier == 1){
+                    tag.setText("Public Memory Capsule");
+                } else {
+                    tag.setText("Your Private Capsule");
+                }
 
+                if(imageLocation != "null"){
+                    loadImage();
+                }
+                if(avatarLocation != "null"){
+                    loadAvatar();
+                }
+                if(voiceLocation != "null"){
+                    loadVoice();
+                }
+            }
+        });
 
     }
 
