@@ -35,7 +35,8 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     ImageButton voice;
 
 
-    String titleString,dateString,tagString,usernameString,contentString;
+    String titleString,dateString,usernameString,contentString;
+    int tagIndentifier;
     String imageLocation, avatarLocation, voiceLocation;
 
     OpenedCapsule item;
@@ -110,15 +111,20 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     private void loadCapsule(OpenedCapsule item){
         titleString  = item.getCapsule_title();
         dateString = item.getOpened_date();
-        tagString = item.getTag();
+        tagIndentifier = item.getTag();
         usernameString = item.getUsername();
         contentString = item.getContent();
 
         title.setText(titleString);
         date.setText(dateString);
-        tag.setText(tagString);
         content.setText(contentString);
         username.setText(usernameString);
+
+        if(tagIndentifier == 1){
+            tag.setText("Public Memory Capsule");
+        } else {
+            tag.setText("Your Private Capsule");
+        }
 
         imageLocation = item.getCapsule_url();
         avatarLocation = item.getAvatar_url();
