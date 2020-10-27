@@ -94,7 +94,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationClient;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    // get current location
+    // users' current location
     private GoogleMap mGoogleMap;
     private SupportMapFragment mapFrag;
     private double curLat = 360.0;
@@ -132,7 +132,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private boolean can_refresh = false;
     // only allow one refresh request every 100ms = 0.2s
     private static final int max_pause_between_shakes = 200;
-    // for testing: how many times the method has run before receiving updated capsules information
+    // for testing
     private int counts = 0;
 
     @Override
@@ -534,7 +534,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     }
 
-    // redraw google map after users shake and refresh capsules
+    // redraw google map after users refresh capsules
     private void redrawGoogleMap(Location location){
         // default location Googleplex: 37.4219983 -122.084
         mLastLocation = location;
@@ -566,7 +566,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
-    // Calculate distance by latitude, and longitude (unit: Kilometers)
+    // calculate distance by latitude, and longitude (unit: Kilometers)
     private double getDistance(double lat1, double lon1, double lat2, double lon2) {
         if ((lat1 == lat2) && (lon1 == lon2)) {
             return 0;
