@@ -351,6 +351,48 @@ public class DiscoverCapsule extends AppCompatActivity implements
         Log.i("onMapReady", "ends");
     }
 
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            //no explanation needed for the user, we can request the location permission.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+
+            Log.i("MGOOGLEMAP:", "no explanation needed for the user");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // if request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // if permission was granted, do location-related task
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+
+                        // location permission is granted, restart to retrieve user's current location
+                        Intent intent = new Intent(DiscoverCapsule.this, DiscoverCapsule.class);
+                        startActivity(intent);
+                    }
+                } else{
+                    // if permission was denied, disable relevant functionality
+                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -571,48 +613,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //show myCurrentLocation marker title
         mCurrLocationMarker.showInfoWindow();
 
-    }
-
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            //no explanation needed for the user, we can request the location permission.
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_LOCATION);
-
-            Log.i("MGOOGLEMAP:", "no explanation needed for the user");
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // if request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // if permission was granted, do location-related task
-                    if (ContextCompat.checkSelfPermission(this,
-                            Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-
-                        // location permission is granted, restart to retrieve user's current location
-                        Intent intent = new Intent(DiscoverCapsule.this, DiscoverCapsule.class);
-                        startActivity(intent);
-                        }
-                } else{
-                    // if permission was denied, disable relevant functionality
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
-        }
     }
 
     //The logic is borrowed from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
