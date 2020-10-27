@@ -333,6 +333,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //enable google map current location button
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
+        // Todo: unable to move map camera to current location using phone when user uses the app for the first time,
+        //          but there is no issue when using virtual machine
         //move map camera to current location. 1000ms = 1 seconds
         long curTime = System.currentTimeMillis();
         if ((curTime - lastUpdate_map) > 1000 && disable_camera == true) {
@@ -397,6 +399,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void onPause() {
         super.onPause();
         popUpShake = false;
+        // Todo: disable shake listener after users are not on the map page
     }
 
     // get location updates every second
@@ -504,11 +507,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
 
         // automatically refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
-        if (Math.abs(recorded_latitude - location.getLatitude()) > distanceThresholdToRequest ||
-                Math.abs(recorded_longtitude - location.getLongitude()) > distanceThresholdToRequest) {
+        if (Math.abs(recorded_latitude - location.getLatitude()) > 5.55 ||
+                Math.abs(recorded_longtitude - location.getLongitude()) > 5.55) {
             if_refresh = true;
             Log.i("MapsActivity", "if_refresh is true");
         }
+
+        // Todo: Unsure why auto refresh is no longer working after modifying the refresh feature
+        //       Will try Eric's suggestion - change checkForRequest()
+        //  The issue is the refreshing speed is faster than http request
 
         // automatically refresh capsules if there is no capsule on google map
         if (mCapsuleMarkers.isEmpty()){
