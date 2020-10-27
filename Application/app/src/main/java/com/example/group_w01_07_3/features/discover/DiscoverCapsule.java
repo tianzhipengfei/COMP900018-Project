@@ -169,6 +169,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         Toast.makeText(DiscoverCapsule.this,
                 "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
 
+        //set up sensor manager
         sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorMgr.registerListener(this,
                 SensorManager.SENSOR_ACCELEROMETER,
@@ -322,6 +323,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
+        // check if capsules updated have received
         if (old_mCapsuleMarkers != mCapsuleMarkers) {
             if_refresh = false;
             can_shake = true;
@@ -348,7 +350,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         Log.w("MARKERS-MATCH", "******* popup window *******");
 
                         //remove the marker from the map after an user opens the capsule
-
                         selectedCapsule = (JSONObject) mCapsuleMarkers.get(m);
                         selectedMarker = m;
 
@@ -363,14 +364,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         });
 
-        // left, top, right, bottom
+        // set padding on the map: left, top, right, bottom
         mGoogleMap.setPadding(0, 155, 10, 0);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        //google map zoom in and zoom out
+        //enable google map zoom in and zoom out buttons
         mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
 
-        //google map current location
+        //enable google map current location button
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
         // the location will be updated every locationUpdateInterval second
@@ -379,6 +380,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mLocationRequest.setFastestInterval(locationUpdateInterval);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
+        // check location permission
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -400,6 +402,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    // get location updates every second
     final LocationCallback mLocationCallback = new LocationCallback() {
         @SuppressLint("MissingPermission")
         @Override
@@ -414,7 +417,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 curLon = location.getLongitude();
 
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
-                    // send request
+                    // will send capsule request using the user's current location
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
 
@@ -429,105 +432,121 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 }
             }
 
-            // HTTP GET method
-            if (capsuleInfo.length() == 0) {
-                Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
-                Log.d("CAPSULE", "***** No token to get capsule *****");
-                allCapsules = new JSONArray();
-                selectedCapsule = new JSONObject();
-            } else if (if_refresh) {
-                try {
-                    String token = UserUtil.getToken(DiscoverCapsule.this);
-                    Log.i("SENDING-REQUEST", "token:" + token);
-                    Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
-                    HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
-                        @Override
-                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
-                            String responseData = response.body().string();
-                            // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
-                            Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
-                            try {
-                                JSONObject responseJSON = new JSONObject(responseData);
-                                if (responseJSON.has("success")) {
-                                    String status = responseJSON.getString("success");
-                                    Log.d("DISCOVER-CAPSULE", "getCapsule success: " + status);
+            // request capsule information through HTTP GET method
+            requestCapsuleInfo();
 
-                                    allCapsules = responseJSON.getJSONArray("capsules");
-                                    Log.d("DISCOVER-CAPSULE", "capsuleInfo: " + allCapsules);
-
-                                    if_connected = true;
-                                    Log.d("DISCOVER-CAPSULE", "if_connected: " + if_connected);
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                            e.printStackTrace();
-                            Log.d("CAPSULE", "onFailure()");
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // redraw google map
             List<Location> locationList2 = locationResult.getLocations();
-
             if (locationList2.size() > 0) {
-                //the last location in the list is the newest
+                // the last location in the list is the newest
                 Location location = locationList2.get(locationList2.size() - 1);
 
-                // refresh capsules if user shakes the device and there is a http connection.
-                if (if_connected) {
-                    if (if_refresh) {
-                        refreshCapsules(allCapsules, location);
-                        Log.i("MapsActivity", "allCapsules before refresh: " + allCapsules);
-                    }
-                }
+                // refresh capsules if user shakes the device,
+                // or if user moves more than a threshold distance (20km, 5.55degree)
+                check_ifCapsulesNeedRefresh(location);
 
-                // refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
-                if (Math.abs(recorded_latitude - location.getLatitude()) > distanceThresholdToRequest ||
-                        Math.abs(recorded_longtitude - location.getLongitude()) > distanceThresholdToRequest) {
-                    if_refresh = true;
-                    Log.i("MapsActivity", "if_refresh is true");
-                }
-
-                // default location Googleplex: 37.4219983 -122.084
-                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
-                mLastLocation = location;
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
-                }
-
-                //place current location marker
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.title("Current Position");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-
-                //move map camera to current location. 1000ms = 1 seconds
-                long curTime = System.currentTimeMillis();
-                if ((curTime - lastUpdate_map) > 1000 && disable_camera == true) {
-                    mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                        @Override
-                        public void onMapLoaded() {
-                            LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
-                            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
-                            lastUpdate_map = System.currentTimeMillis();
-                        }
-                    });
-                    disable_camera = false;
-                }
+                // redraw google map after users shake and refresh capsules
+                redrawGoogleMap(location);
             }
         }
     };
+
+    // retrieve capsule information through HTTP GET method
+    private void requestCapsuleInfo(){
+        if (capsuleInfo.length() == 0) {
+            Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
+            Log.d("CAPSULE", "***** No token to get capsule *****");
+            allCapsules = new JSONArray();
+            selectedCapsule = new JSONObject();
+        } else if (if_refresh) {
+            try {
+                String token = UserUtil.getToken(DiscoverCapsule.this);
+                Log.i("SENDING-REQUEST", "token:" + token);
+                Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
+                HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
+                        String responseData = response.body().string();
+                        // {"sucess": true, "capsules": [{dictItem, dictItem}, {dictItem, dictItem}]}
+                        Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
+                        try {
+                            JSONObject responseJSON = new JSONObject(responseData);
+                            if (responseJSON.has("success")) {
+                                String status = responseJSON.getString("success");
+                                Log.d("DISCOVER-CAPSULE", "getCapsule success: " + status);
+
+                                allCapsules = responseJSON.getJSONArray("capsules");
+                                Log.d("DISCOVER-CAPSULE", "capsuleInfo: " + allCapsules);
+
+                                if_connected = true;
+                                Log.d("DISCOVER-CAPSULE", "if_connected: " + if_connected);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        e.printStackTrace();
+                        Log.d("CAPSULE", "onFailure()");
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // redraw google map after users shake and refresh capsules
+    private void redrawGoogleMap(Location location){
+        // default location Googleplex: 37.4219983 -122.084
+        Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
+        mLastLocation = location;
+        if (mCurrLocationMarker != null) {
+            mCurrLocationMarker.remove();
+        }
+
+        //place current location marker
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+
+        //move map camera to current location. 1000ms = 1 seconds
+        long curTime = System.currentTimeMillis();
+        if ((curTime - lastUpdate_map) > 1000 && disable_camera == true) {
+            mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                @Override
+                public void onMapLoaded() {
+                    LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+                    lastUpdate_map = System.currentTimeMillis();
+                }
+            });
+            disable_camera = false;
+        }
+    }
+
+
+    private void check_ifCapsulesNeedRefresh(Location location){
+        // refresh capsules if user shakes the device and there is a http connection.
+        if (if_connected) {
+            if (if_refresh) {
+                refreshCapsules(allCapsules, location);
+                Log.i("MapsActivity", "allCapsules before refresh: " + allCapsules);
+            }
+        }
+
+        // refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
+        if (Math.abs(recorded_latitude - location.getLatitude()) > distanceThresholdToRequest ||
+                Math.abs(recorded_longtitude - location.getLongitude()) > distanceThresholdToRequest) {
+            if_refresh = true;
+            Log.i("MapsActivity", "if_refresh is true");
+        }
+    }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -682,8 +701,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     // shake to refresh capsules
                     if_refresh = true;
 
-                    // Todo: comment out toast message after testing
-//                    Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
+                    // Todo: remove toast message after testing
+                    // Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
                 }
                 last_x = x;
                 last_y = y;
