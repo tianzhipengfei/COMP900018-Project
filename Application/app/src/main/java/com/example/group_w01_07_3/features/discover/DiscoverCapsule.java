@@ -72,66 +72,65 @@ import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
+    // pop-up window
     private boolean popUpShake = false;
     private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
-    private String usernameProfileString;
-    // selected capsule
-    private JSONObject selectedCapsule;
+    // markers
     private Marker selectedMarker;
-    private JSONArray allCapsules;
+    private Marker mCurrLocationMarker;
     private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
     private Hashtable<Marker, Object> old_mCapsuleMarkers = new Hashtable<Marker, Object>();
-    // request capsule
+    // request and receive capsules
     private JSONObject capsuleInfo = new JSONObject();
-    private Toolbar mToolbar;
+    private JSONArray allCapsules;
+    private JSONObject selectedCapsule;
+    // app view
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private View headerview;
     private TextView headerUsername;
-    private NavigationView navigationView;
+    private String usernameProfileString;
+    // ued to check if location permission is granted
+    private LocationRequest mLocationRequest;
+    private FusedLocationProviderClient mFusedLocationClient;
+    // get current location
     private GoogleMap mGoogleMap;
     private SupportMapFragment mapFrag;
-    private LocationRequest mLocationRequest;
-    private Location mLastLocation;
-    private Marker mCurrLocationMarker;
-    private FusedLocationProviderClient mFusedLocationClient;
-    private boolean updateCameraFlag = true;
-    private final int PER_SECOND = 1000;
-    // time interval for updating location
-    private int locationUpdateInterval = 5 * PER_SECOND;
-    // if user moves more than a threshold distance (unit: km), update capsules info
-    private double distanceThresholdToRequest = 0.5;
-    // latitude, and longitude of last request
-    private double lastRequestLat = 360.0;
-    private double lastRequestLon = 360.0;
-    // current latitude, and longitude
     private double curLat = 360.0;
     private double curLon = 360.0;
-    // maximum number of capsules to discover
-    private int capsuleNum = 20;
-    // maximum distance to discover (unit: km)
-    private double discoverCapsuleRange = 3;
-    private boolean shakeOpen = false;
+    //move map camera to current location when app sets up
+    private long lastUpdate_map;
+    private boolean disable_camera = true;
+    // record the location where the user last shakes the device
+    private double recorded_latitude;
+    private double recorded_longtitude;
+    // latitude, and longitude of last request
+    private Location mLastLocation;
+    private double lastRequestLat = 360.0;
+    private double lastRequestLon = 360.0;
+    // time interval for updating location
+    private final int PER_SECOND = 1000;
+    private int locationUpdateInterval = 5 * PER_SECOND;
+    // refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
+    private double distanceThresholdToRequest = 5.55;
     // shake event
     private SensorManager sensorMgr;
+    private boolean shakeOpen = false;
+    private long lastUpdate_shaking = System.currentTimeMillis();
     private float last_x = 0;
     private float last_y = 0;
     private float last_z = 0;
+    private int open_shake_time = 0;
     private static final int SHAKE_THRESHOLD = 800;
-    private long lastUpdate_shaking = System.currentTimeMillis();
-    // shake to refresh capsules
+    // shake event, HTTP GET request and capsule refresh are in time order
+    private boolean if_connected = false;
     private boolean if_refresh = true;
     private boolean can_shake = true;
-    private boolean if_connected = false;
-    private int refresh_counts = 0;
-    // only allow one update every 100ms = 0.2s
+    // only allow one refresh request every 100ms = 0.2s
     private static final int max_pause_between_shakes = 200;
-    private long lastUpdate_map;
-    private boolean disable_camera = true;
-    private int open_shake_time = 0;
-    // record the latest location where a user shaken the device
-    private double recorded_latitude;
-    private double recorded_longtitude;
+    // for testing: how many times the method has run before receiving updated capsules information
+    private int counts = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -308,8 +307,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Marker tmp = mGoogleMap.addMarker(capsuleMarker);
                 mCapsuleMarkers.put(tmp, allCapsules.get(i));
 
-                refresh_counts += 1;
-                Log.d("CAPSULEMARKER", "refresh_counts: " + refresh_counts);
+                // for testing: how many times the method has run before receiving updated capsules information
+                counts += 1;
+                Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
+                Log.d("CAPSULEMARKER", "if_refresh: " + if_refresh);
                 Log.d("CAPSULEMARKER", "selectedCapsule: " + selectedCapsule);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -366,6 +367,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mGoogleMap.setPadding(0, 155, 10, 0);
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+        //google map zoom in and zoom out
+        mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
+        //google map current location
+        mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+
         // the location will be updated every locationUpdateInterval second
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(locationUpdateInterval);
@@ -410,7 +417,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     // send request
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
-                    updateCameraFlag = true;
 
                     try {
                         capsuleInfo.put("lat", lastRequestLat);
@@ -434,7 +440,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     String token = UserUtil.getToken(DiscoverCapsule.this);
                     Log.i("SENDING-REQUEST", "token:" + token);
                     Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
-                    Log.i("SENDING-REQUEST", "refresh_counts:" + refresh_counts);
                     HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -485,9 +490,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 }
 
-                // refresh capsules if users are 20km aways from the last-requested location.
-                if (Math.abs(recorded_latitude - location.getLatitude()) > 5.55 ||
-                        Math.abs(recorded_longtitude - location.getLongitude()) > 5.55) {
+                // refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
+                if (Math.abs(recorded_latitude - location.getLatitude()) > distanceThresholdToRequest ||
+                        Math.abs(recorded_longtitude - location.getLongitude()) > distanceThresholdToRequest) {
                     if_refresh = true;
                     Log.i("MapsActivity", "if_refresh is true");
                 }
@@ -506,12 +511,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 markerOptions.title("Current Position");
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-
-                //google map zoom in and zoom out
-                mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
-
-                //google map current location
-                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
 
                 //move map camera to current location. 1000ms = 1 seconds
                 long curTime = System.currentTimeMillis();
