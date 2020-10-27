@@ -343,33 +343,6 @@
 
         </androidx.core.widget.NestedScrollView>
 
-        <ProgressBar
-            android:id="@+id/create_progress_bar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="200dp"
-            android:background="#EAEAEA"
-            android:indeterminate="true"
-            android:minWidth="100dp"
-            android:minHeight="100dp"
-            android:textAlignment="gravity"
-            android:visibility="invisible"
-            app:layout_anchor="@+id/create_scroll_view"
-            app:layout_anchorGravity="center" />
-
-        <TextView
-            android:id="@+id/waiting_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#EAEAEA"
-            android:text="Please wait........."
-            android:textSize="24sp"
-            android:visibility="invisible"
-            app:layout_anchor="@+id/create_progress_bar"
-            app:layout_anchorGravity="bottom|center" />
-
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/create_fab"
             android:layout_width="wrap_content"
