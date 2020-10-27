@@ -33,6 +33,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.group_w01_07_3.MainActivity;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
@@ -45,6 +46,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -94,6 +96,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // ued to check if location permission is granted
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationClient;
+    private boolean granted_locationPermission = false;
     // get current location
     private GoogleMap mGoogleMap;
     private SupportMapFragment mapFrag;
@@ -247,9 +250,38 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
+
+        // the location will be updated every locationUpdateInterval second
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(locationUpdateInterval);
+        mLocationRequest.setFastestInterval(locationUpdateInterval);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        // check location permission
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                // if location permission is already granted
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                mGoogleMap.setMyLocationEnabled(true);
+                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                Log.i("MGOOGLEMAP:", "permission is already granted");
+            } else {
+                // request location permission when it is the first time users use the app
+                checkLocationPermission();
+
+                Log.i("MGOOGLEMAP:", "checkLocationPermission");
+            }
+        } else {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+            mGoogleMap.setMyLocationEnabled(true);
+            mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        }
 
         // make markers clickable
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -288,33 +320,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         //enable google map current location button
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-
-        // the location will be updated every locationUpdateInterval second
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(locationUpdateInterval);
-        mLocationRequest.setFastestInterval(locationUpdateInterval);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        // check location permission
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                // if location permission is already granted
-                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-                mGoogleMap.setMyLocationEnabled(true);
-                mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-
-            } else {
-                // request location permission
-                checkLocationPermission();
-                Log.i("MGOOGLEMAP:", "checkLocationPermission");
-            }
-        } else {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-            mGoogleMap.setMyLocationEnabled(true);
-            mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-        }
 
         //move map camera to current location. 1000ms = 1 seconds
         long curTime = System.currentTimeMillis();
@@ -531,13 +536,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
-//        // check if capsules updated have received
-//        if (old_mCapsuleMarkers != mCapsuleMarkers) {
-//            if_refresh = false;
-//            can_shake = true;
-//            old_mCapsuleMarkers = mCapsuleMarkers;
-//        }
-
         can_shake = true;
     }
 
@@ -585,6 +583,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 ActivityCompat.requestPermissions(DiscoverCapsule.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                         MY_PERMISSIONS_REQUEST_LOCATION);
+                                // Todo: may remove the if-statement dialog block
+                                Log.i("MGOOGLEMAP:", "onClick");
                             }
                         })
                         .create()
@@ -594,6 +594,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
+
+                Log.i("MGOOGLEMAP:", "no explanation needed for the user");
             }
         }
     }
@@ -611,18 +613,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-                        mGoogleMap.setMyLocationEnabled(true);
-                    }
-                } else {
+
+                        // location permission is granted, restart to retrieve user's current location
+                        Intent intent = new Intent(DiscoverCapsule.this, DiscoverCapsule.class);
+                        startActivity(intent);
+                        }
+                } else{
                     // if permission was denied, disable relevant functionality
                     Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
                 }
-
                 return;
             }
         }
     }
+
     //The logic is borrowed from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
 
     private boolean checkForRequest(double curLat, double curLon) {
