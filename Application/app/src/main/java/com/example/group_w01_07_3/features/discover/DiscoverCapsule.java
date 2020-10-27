@@ -133,9 +133,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private static final int SHAKE_THRESHOLD = 800;
     // shake event, HTTP GET request and capsule refresh are in time order
     private boolean if_connected = false;
-    private boolean if_shakeToRefresh = true;
-    private boolean if_autoRefresh = false;
-    private boolean can_shake = true;
+    private boolean if_needRefresh = true;
+    private boolean can_refresh = false;
     // only allow one refresh request every 100ms = 0.2s
     private static final int max_pause_between_shakes = 200;
     // for testing: how many times the method has run before receiving updated capsules information
@@ -420,7 +419,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 try {
                     if (checkForRequest(location.getLatitude(), location.getLongitude())) {
                         // will send requests to automatically refresh capsules
-                        if_autoRefresh = true;
+                        if_needRefresh = true;
+
                         lastRequestLat = location.getLatitude();
                         lastRequestLon = location.getLongitude();
                         capsuleInfo.put("lat", lastRequestLat);
@@ -463,7 +463,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             Log.d("CAPSULE", "***** No token to get capsule *****");
             allCapsules = new JSONArray();
             selectedCapsule = new JSONObject();
-        } else if (if_shakeToRefresh) {
+        } else if (if_needRefresh) {
             try {
                 String token = UserUtil.getToken(DiscoverCapsule.this);
                 Log.i("SENDING-REQUEST", "token:" + token);
@@ -487,9 +487,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 if_connected = true;
                                 Log.d("DISCOVER-CAPSULE", "if_connected: " + if_connected);
 
-                                if (if_autoRefresh){
-                                    if_shakeToRefresh = true;
-                                }
+                                // refresh capsules only after receiving http response
+                                can_refresh = true;
+                                if_needRefresh = false;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -509,15 +509,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     private void check_ifCapsulesNeedRefresh(Location location){
-        // refresh capsules if user shakes the device and there is a http connection.
-        if (if_connected && if_shakeToRefresh) {
+        // refresh capsules
+        if (if_connected && can_refresh) {
             refreshCapsules(allCapsules, location);
+            can_refresh = false;
             Log.i("MapsActivity", "allCapsules before refresh: " + allCapsules);
         }
 
         // automatically refresh capsules if there is no capsule on google map
         if (mCapsuleMarkers.isEmpty()){
-            if_shakeToRefresh = true;
+            if_needRefresh = true;
             Log.i("MapsActivity", "there is no capsule on google map");
         }
     }
@@ -584,11 +585,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // for testing: how many times the method has run before receiving updated capsules information
                 counts += 1;
                 Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
-                Log.d("CAPSULEMARKER", "if_shakeToRefresh: " + if_shakeToRefresh);
+                Log.d("CAPSULEMARKER", "if_needRefresh: " + if_needRefresh);
                 Log.d("CAPSULEMARKER", "selectedCapsule: " + selectedCapsule);
 
-                if_shakeToRefresh = false;
-                if_connected = false;
+                // if_needRefresh = false;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -596,7 +596,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
-        can_shake = true;
     }
 
     // redraw google map after users shake and refresh capsules
@@ -689,7 +688,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             RequestSending();
         }
 
-        if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_shake == true) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER && if_needRefresh == false) {
             float x = values[SensorManager.DATA_X];
             float y = values[SensorManager.DATA_Y];
             float z = values[SensorManager.DATA_Z];
@@ -728,11 +727,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                 else if (speed > SHAKE_THRESHOLD && popUpShake == false) {
                     Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
-                    // can only detect a shake event after capsules have finished updated
-                    can_shake = false;
-
                     // shake to refresh capsules
-                    if_shakeToRefresh = true;
+                    if_needRefresh = true;
 
                     // Todo: remove toast message after testing
                     // Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
