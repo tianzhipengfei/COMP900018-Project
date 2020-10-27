@@ -132,13 +132,13 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     tag.setText("Your Private Capsule");
                 }
 
-                if(imageLocation != "null"){
+                if(!imageLocation.equals("null")){
                     loadImage();
                 }
-                if(avatarLocation != "null"){
+                if(!avatarLocation.equals("null")){
                     loadAvatar();
                 }
-                if(voiceLocation != "null"){
+                if(!voiceLocation.equals("null")){
                     loadVoice();
                 }
             }
