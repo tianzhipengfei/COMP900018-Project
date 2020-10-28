@@ -154,7 +154,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 //                    image.setMinimumHeight(48);
                     android.view.ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
                     layoutParams.height = 48;
-                    image.setBackgroundColor(0xFFFFFFFF);
+//                    image.setBackgroundColor(0xFFFFFFFF);
                     image.setVisibility(View.VISIBLE);
                 }
 
