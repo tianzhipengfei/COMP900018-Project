@@ -15,4 +15,6 @@
     <color name="colorWarning">#ab3232</color>
 
     <color name="grey">#ded6d5</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 </resources>

@@ -3,8 +3,11 @@ package com.example.group_w01_07_3.features.history;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.transition.Fade;
@@ -23,6 +26,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
@@ -88,6 +92,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DetailedCapsuleHistoryItem.super.onBackPressed();
+//                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
         });
 
@@ -145,8 +150,11 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 } else {
                     imageShimmer.stopShimmer();
                     imageShimmer.setVisibility(View.GONE);
-                    image.requestLayout();
-                    image.setMinimumHeight(48);
+//                    image.requestLayout();
+//                    image.setMinimumHeight(48);
+                    android.view.ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
+                    layoutParams.height = 48;
+//                    image.setBackgroundColor(0xFFFFFFFF);
                     image.setVisibility(View.VISIBLE);
                 }
 
@@ -181,7 +189,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 //use Glide to load image, once successful loaded, turn off shimmer and display image
                 Glide.with(DetailedCapsuleHistoryItem.this)
                         .load(imageLocation)
-                        .apply(new RequestOptions().override(image.getWidth(),0))
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -198,39 +205,25 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                 imageShimmer.stopShimmer();
                                 imageShimmer.setVisibility(View.GONE);
                                 image.setVisibility(View.VISIBLE);
+
+//                                image.setOnClickListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View view) {
+//                                        Intent intent = new Intent(DetailedCapsuleHistoryItem.this, FullScreenImageUtil.class);
+//                                        intent.putExtra("ImageURL", imageLocation);
+//                                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(DetailedCapsuleHistoryItem.this, image, "capsuleImageTN");
+//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//                                            startActivity(intent,options.toBundle());
+//                                        }
+//                                        else
+//                                            startActivity(intent);
+//                                    }
+//                                });
+
                                 return false;
                             }
                         })
                         .into(image);
-
-//                Picasso.with(DetailedCapsuleHistoryItem.this)
-//                        .load(imageLocation)
-//                        .resize(image.getWidth(),0)
-//                        .into(image, new com.squareup.picasso.Callback() {
-//
-//                            //once loaded, hide the placeholder shimmer, then show the user image
-//                            @Override
-//                            public void onSuccess() {
-//                                imageShimmer.stopShimmer();
-//                                imageShimmer.setVisibility(View.GONE);
-//                                image.setVisibility(View.VISIBLE);
-//                            }
-//
-//                            //retry loading one more time
-//                            @Override
-//                            public void onError() {
-//                                Log.d("Debug", "IMAGE - Picasso Errored");
-//                                Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load the capsule image",
-//                                        Snackbar.LENGTH_LONG)
-//                                        .setAction("Retry", new View.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(View view) {
-//                                                Picasso.with(DetailedCapsuleHistoryItem.this).load(imageLocation).fit().into(image);
-//                                            }
-//                                        })
-//                                        .show();
-//                            }
-//                        });
             }
         });
     }
@@ -260,35 +253,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     }
                 })
                 .into(avatar);
-
-//        Picasso.with(this)
-//                .load(avatarLocation)
-//                .fit()
-//                .into(avatar, new com.squareup.picasso.Callback() {
-//
-//                    //once loaded, hide the placeholder shimmer, then show the avatar
-//                    @Override
-//                    public void onSuccess() {
-//                        avatarShimmer.stopShimmer();
-//                        avatarShimmer.setVisibility(View.GONE);
-//                        avatar.setVisibility(View.VISIBLE);
-//                    }
-//
-//                    //retry loading one more time
-//                    @Override
-//                    public void onError() {
-//                        Log.d("Debug", "AVATAR - Picasso Errored");
-//                        Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load user avatar of the capsule owner",
-//                                Snackbar.LENGTH_LONG)
-//                                .setAction("Retry", new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View view) {
-//                                        Picasso.with(DetailedCapsuleHistoryItem.this).load(avatarLocation).fit().into(avatar);
-//                                    }
-//                                })
-//                                .show();
-//                    }
-//                });
     }
 
     //TODO: @CHENFU ---- testing purpose only, assume finish loading voice from server takes 3 seconds
@@ -302,4 +266,10 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             }
         },3000);
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+//    }
 }
