@@ -195,7 +195,7 @@ public class Display extends AppCompatActivity {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                 Log.d("Debug", "IMAGE - Glide Errored");
-                                Snackbar.make(findViewById(R.id.detail_history_mega_layout),
+                                Snackbar.make(findViewById(R.id.display_history_mega_layout),
                                         "Failed to load the capsule image, please check your internet connection",
                                         Snackbar.LENGTH_LONG);
                                 return false;
@@ -222,7 +222,7 @@ public class Display extends AppCompatActivity {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         Log.d("Debug", "IMAGE - Glide Errored");
-                        Snackbar.make(findViewById(R.id.detail_history_mega_layout),
+                        Snackbar.make(findViewById(R.id.display_history_mega_layout),
                                 "Failed to load user avatar of the capsule owner, please check your internet connection",
                                 Snackbar.LENGTH_LONG);
                         return false;
