@@ -92,6 +92,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DetailedCapsuleHistoryItem.super.onBackPressed();
+                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
         });
 
@@ -202,19 +203,20 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                 imageShimmer.setVisibility(View.GONE);
                                 image.setVisibility(View.VISIBLE);
 
-                                image.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Intent intent = new Intent(DetailedCapsuleHistoryItem.this, FullScreenImageUtil.class);
-                                        intent.putExtra("ImageURL", imageLocation);
-                                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(DetailedCapsuleHistoryItem.this, image, "capsuleImageTN");
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                            startActivity(intent,options.toBundle());
-                                        }
-                                        else
-                                            startActivity(intent);
-                                    }
-                                });
+//                                image.setOnClickListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View view) {
+//                                        Intent intent = new Intent(DetailedCapsuleHistoryItem.this, FullScreenImageUtil.class);
+//                                        intent.putExtra("ImageURL", imageLocation);
+//                                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(DetailedCapsuleHistoryItem.this, image, "capsuleImageTN");
+//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//                                            startActivity(intent,options.toBundle());
+//                                        }
+//                                        else
+//                                            startActivity(intent);
+//                                    }
+//                                });
+
                                 return false;
                             }
                         })
@@ -260,5 +262,11 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 voice.setVisibility(View.VISIBLE);
             }
         },3000);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
     }
 }
