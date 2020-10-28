@@ -92,7 +92,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DetailedCapsuleHistoryItem.super.onBackPressed();
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+//                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
         });
 
@@ -264,9 +264,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         },3000);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+//    }
 }
