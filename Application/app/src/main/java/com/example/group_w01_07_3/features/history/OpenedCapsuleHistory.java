@@ -133,6 +133,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //TODO: 假设完成第一轮的下载花了3s， 这里只是假设fetch capsule data用时为3s,请自己写真正的implemenmtation first time fetch的函数
         //TODO: 假设第一次fectch得到的个数为 = [3]. 你跟ERIC协商一下具体个数。 我推荐为 --》 5 个/每次
         //TODO: Shimmerlayout教程链接 https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/
+        //TODO: 在从server时候如果断网了，也记得call stopshimmer + visibility=invisible
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -161,6 +162,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
             //TODO: @CHENFU 上拉加载更多功能实现. 在data拉取下来了后用handler delay方法setPullLoadMoreCompleted（），不然会卡主(library的原因)
             //TODO: @CHENFU 这里就不用管shimmer了
+            //TODO: 在从server 拿data时候如果断网了，一定要记得call setPullLoadMoreCompleted();不然就一辈子卡死
+
             //TODO: @CHENFU 请自行实现拉取功能,这里为测试用的秒加capsule
             @Override
             public void onLoadMore() {
