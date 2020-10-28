@@ -352,13 +352,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        popUpShake = false;
-        // Todo: disable shake listener after users are not on the map page
-    }
-
     // get location updates every second
     final LocationCallback mLocationCallback = new LocationCallback() {
         @SuppressLint("MissingPermission")
@@ -610,6 +603,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        // unregister a listener from the shake sensor
+        sensorMgr.unregisterListener(this);
+        popUpShake = false;
+    }
+
     // detect a shake event and the shake direction
     @Override
     public void onSensorChanged(int sensor, float[] values) {
@@ -659,11 +660,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 }
 
                 else if (speed > SHAKE_THRESHOLD && popUpShake == false) {
-                    Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // shake to refresh capsules
                     if_needRefresh = true;
 
-                    // Todo: remove toast message after testing
+                    Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
                     // Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
                 }
                 last_x = x;
