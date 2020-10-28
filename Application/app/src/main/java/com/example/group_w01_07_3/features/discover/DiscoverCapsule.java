@@ -619,7 +619,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         if (open_shake_time == 3) {
             open_shake_time = 0;
             shakeOpen = true;
-            RequestSending();
+            if(popUpShake){
+                RequestSending();
+            }
+            else{
+                if_needRefresh=true;
+            }
         }
 
         if (sensor == SensorManager.SENSOR_ACCELEROMETER && if_needRefresh == false) {
@@ -643,32 +648,43 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 // shaking speed
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 //detect the reasonable shake of capsule
-                if (popUpShake){
-                    float forceThreshold = (float) 1.5;
-                    if(!shakeOpen){
-                        float cur_move_length = (float) Math.sqrt(cur_move_x*cur_move_x + cur_move_y*cur_move_y + cur_move_z*cur_move_z);
-                        float last_move_length = (float) Math.sqrt(last_move_x*last_move_x + last_move_y*last_move_y + last_move_z*last_move_z);
-                        if (cur_move_length > forceThreshold ) {
-                            float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
-                            float length = cur_move_length * last_move_length;
-                            // Calculate consione
-                            if (product / length < 0.8) {
-                                open_shake_time += 1;
-                            }
+                float cur_move_length = (float) Math.sqrt(cur_move_x*cur_move_x + cur_move_y*cur_move_y + cur_move_z*cur_move_z);
+                float last_move_length = (float) Math.sqrt(last_move_x*last_move_x + last_move_y*last_move_y + last_move_z*last_move_z);
+                if (cur_move_length > forceThreshold ) {
+                    float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
+                    float length = cur_move_length * last_move_length;
+                    if (product / length < 0.8) {
+                        if ((popUpShake&&!shakeOpen)||(popUpShake == false)){
+                            open_shake_time += 1;
                         }
                     }
                 }
-
-                else if (speed > SHAKE_THRESHOLD && popUpShake == false) {
-                    // shake to refresh capsules
-                    if_needRefresh = true;
-
-                    Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
-                    // Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
-                }
-                last_x = x;
-                last_y = y;
-                last_z = z;
+//                if (popUpShake){
+//                    float forceThreshold = (float) 1;
+//                    if(!shakeOpen){
+//                        float cur_move_length = (float) Math.sqrt(cur_move_x*cur_move_x + cur_move_y*cur_move_y + cur_move_z*cur_move_z);
+//                        float last_move_length = (float) Math.sqrt(last_move_x*last_move_x + last_move_y*last_move_y + last_move_z*last_move_z);
+//                        if (cur_move_length > forceThreshold ) {
+//                            float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
+//                            float length = cur_move_length * last_move_length;
+//                            // Calculate consione
+//                            if (product / length < 0.8) {
+//                                open_shake_time += 1;
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                else if (speed > SHAKE_THRESHOLD && popUpShake == false) {
+//                    // shake to refresh capsules
+//                    if_needRefresh = true;
+//
+//                    Log.d("SHAKE-EVENT", "shake detected w/ speed: " + speed);
+//                    Toast.makeText(this, "shake detected w/ speed: " + speed, Toast.LENGTH_SHORT).show();
+//                }
+//                last_x = x;
+//                last_y = y;
+//                last_z = z;
                 last_move_x = cur_move_x;
                 last_move_y = cur_move_y;
                 last_move_z = cur_move_z;
@@ -691,6 +707,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         TextView hint = (TextView) popupview.findViewById(R.id.hint);
         Random choice = new Random();
         int selection = choice.nextInt() % 3;
+        selection=1;
         switch (selection) {
             case 0:
                 hint.setText("Tap the area to open capsule");
