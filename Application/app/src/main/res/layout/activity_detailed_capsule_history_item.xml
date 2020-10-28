@@ -170,17 +170,19 @@
                             android:id="@+id/history_detail_image"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:minHeight="360dp"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="16dp"
+                            android:minHeight="360dp"
 
-                            android:visibility="invisible"
+                            android:adjustViewBounds="true"
+                            android:scaleType="fitXY"
 
                             android:transitionName="capsuleImageTN"
+                            android:visibility="invisible"
                             app:layout_constrainedHeight="true"
-                            app:layout_constraintEnd_toEndOf="parent"
 
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 

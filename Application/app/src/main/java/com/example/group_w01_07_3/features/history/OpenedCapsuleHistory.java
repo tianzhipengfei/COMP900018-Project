@@ -133,6 +133,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //TODO: 假设完成第一轮的下载花了3s， 这里只是假设fetch capsule data用时为3s,请自己写真正的implemenmtation first time fetch的函数
         //TODO: 假设第一次fectch得到的个数为 = [3]. 你跟ERIC协商一下具体个数。 我推荐为 --》 5 个/每次
         //TODO: Shimmerlayout教程链接 https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/
+        //TODO: 在从server时候如果断网了，也记得call stopshimmer + visibility=invisible
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -161,6 +162,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
             //TODO: @CHENFU 上拉加载更多功能实现. 在data拉取下来了后用handler delay方法setPullLoadMoreCompleted（），不然会卡主(library的原因)
             //TODO: @CHENFU 这里就不用管shimmer了
+            //TODO: 在从server 拿data时候如果断网了，一定要记得call setPullLoadMoreCompleted();不然就一辈子卡死
+
             //TODO: @CHENFU 请自行实现拉取功能,这里为测试用的秒加capsule
             @Override
             public void onLoadMore() {
@@ -170,13 +173,13 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 //TODO: 最后把 recyclerView.setPullLoadMoreCompleted();来关闭底部显示的“loadingm ore, please wait”提示
                 //TODO: 如果某一次server返回说没有更多的opened capsule了--》延时执行 setPullLoadMoreCompleted();-->setPushRefreshEnable(false)
 
-                //TODO:这里我模拟了一下加了3轮数据(2次有数据,最后一次server没了)
-                if (recycleInt == 0){
+                //TODO:这里我模拟了一下加了6轮数据(5次有数据,最后一次server提示没了)
+                if (recycleInt == 0 || recycleInt == 2 || recycleInt == 4){
                     //假设这次花了2s
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            recyclerView.setPullLoadMoreCompleted();
+//                            recyclerView.setPullLoadMoreCompleted();
                             recycleInt += 1;
 //                            testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603620329.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700200.jpg",1,"sfgdfsgsdfsdfgsdfgsdfg","wcs123455","12345"));
 //                            testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700259.jpg", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700323.jpg",1,"sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455","12345"));
@@ -184,6 +187,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                             testingList.add(new OpenedCapsule("New one ADDED: 1st", "2016/12/31", "null", "null",1,"sfgdfsgsdfsdfgsdfgsdfg","wcs123455","null"));
                             testingList.add(new OpenedCapsule("New one ADDED: 2nd", "2017/12/31", "null", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700323.jpg",1,"sdfgsdfgdsfgfsdgdsgdsfgs","wcs123455","12345"));
                             testingList.add(new OpenedCapsule("New one ADDED: 3rd", "2018/12/31", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700356.jpg", "null",1,"sdfgsdgfsdgsdfgsdgsdfgds","wcs123455","12345"));
+                            testingList.add(new OpenedCapsule("New one ADDED: 4th", "2018/12/31", "null", "https://www.tianzhipengfei.xin/static/mobile/wcs123455-1603700436.jpg",1,"sdfgsdgfsdgsdfgsdgsdfgds","wcs123455","12345"));
                             openedCapsuleAdapter.notifyDataSetChanged();
                             Toast.makeText(OpenedCapsuleHistory.this, "first round refresh notified", Toast.LENGTH_SHORT).show();
                             //必须要晚一点设置complete
@@ -198,7 +202,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                     },2000);
 
                 }
-                if(recycleInt == 1){
+                if(recycleInt == 1 || recycleInt == 3){
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -221,7 +225,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                     },2000);
 
                 }
-                if (recycleInt == 2){
+
+                if (recycleInt == 5){
                     //OK, 假设服务器返回说这是最后的capsule了，没有多的了, 然后把上拉添加功能给关闭
                     new Handler().postDelayed(new Runnable() {
                         @Override

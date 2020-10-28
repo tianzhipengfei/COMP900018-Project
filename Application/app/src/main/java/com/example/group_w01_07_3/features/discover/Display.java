@@ -2,6 +2,7 @@ package com.example.group_w01_07_3.features.discover;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -15,6 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.history.DetailedCapsuleHistoryItem;
 import com.example.group_w01_07_3.util.ImageUtil;
@@ -144,7 +152,6 @@ public class Display extends AppCompatActivity {
                 } else {
                     shimmerVoice.stopShimmer();
                     shimmerVoice.setVisibility(View.GONE);
-//                    play.setVisibility(View.VISIBLE);
                 }
 
                 if (imagelink != "null"){
@@ -180,68 +187,58 @@ public class Display extends AppCompatActivity {
                 // Ensure we call this only once
                 img.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                Picasso.with(Display.this)
+                //use Glide to load image, once successful loaded, turn off shimmer and display image
+                Glide.with(Display.this)
                         .load(imagelink)
-                        .resize(img.getWidth(),0)
-                        .into(img, new com.squareup.picasso.Callback() {
-
-                            //once loaded, hide the placeholder shimmer, then show the user image
+                        .apply(new RequestOptions().override(img.getWidth(),0))
+                        .listener(new RequestListener<Drawable>() {
                             @Override
-                            public void onSuccess() {
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                Log.d("Debug", "IMAGE - Glide Errored");
+                                Snackbar.make(findViewById(R.id.display_history_mega_layout),
+                                        "Failed to load the capsule image, please check your internet connection",
+                                        Snackbar.LENGTH_LONG)
+                                        .show();
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                                 shimmerImage.stopShimmer();
                                 shimmerImage.setVisibility(View.GONE);
                                 img.setVisibility(View.VISIBLE);
+                                return false;
                             }
-
-                            //retry loading one more time
-                            @Override
-                            public void onError() {
-                                Log.d("Debug", "IMAGE - Picasso Errored");
-                                Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load the capsule image",
-                                        Snackbar.LENGTH_LONG)
-                                        .setAction("Retry", new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                Picasso.with(Display.this).load(imagelink).fit().into(img);
-                                            }
-                                        })
-                                        .show();
-                            }
-                        });
+                        })
+                        .into(img);
             }
         });
     }
 
     private void loadAvatar(){
         //avatar view has fix size, so no need to use viewtree
-        Picasso.with(this)
+        Glide.with(this)
                 .load(avater_link)
-                .fit()
-                .into(profile, new com.squareup.picasso.Callback() {
-
-                    //once loaded, hide the placeholder shimmer, then show the avatar
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public void onSuccess() {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        Log.d("Debug", "IMAGE - Glide Errored");
+                        Snackbar.make(findViewById(R.id.display_history_mega_layout),
+                                "Failed to load user avatar of the capsule owner, please check your internet connection",
+                                Snackbar.LENGTH_LONG)
+                                .show();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         shimmerAvatar.stopShimmer();
                         shimmerAvatar.setVisibility(View.GONE);
                         profile.setVisibility(View.VISIBLE);
+                        return false;
                     }
-
-                    //retry loading one more time
-                    @Override
-                    public void onError() {
-                        Log.d("Debug", "AVATAR - Picasso Errored");
-                        Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load user avatar of the capsule owner",
-                                Snackbar.LENGTH_LONG)
-                                .setAction("Retry", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Picasso.with(Display.this).load(avater_link).fit().into(profile);
-                                    }
-                                })
-                                .show();
-                    }
-                });
+                })
+                .into(profile);
     }
 
     private void loadVoice(){
