@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
@@ -197,6 +199,16 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                 imageShimmer.stopShimmer();
                                 imageShimmer.setVisibility(View.GONE);
                                 image.setVisibility(View.VISIBLE);
+
+                                image.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(DetailedCapsuleHistoryItem.this, FullScreenImageUtil.class);
+                                        intent.putExtra("ImageURL", imageLocation);
+                                        startActivity(intent);
+                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    }
+                                });
                                 return false;
                             }
                         })
