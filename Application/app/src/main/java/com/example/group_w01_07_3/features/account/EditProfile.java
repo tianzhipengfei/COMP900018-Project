@@ -29,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.bumptech.glide.Glide;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.SignIn;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
@@ -260,15 +261,17 @@ public class EditProfile extends AppCompatActivity implements
             }
         });
 
-        handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                onGetProfile();
-                handler.postDelayed(this, 1500);
-            }
-        };
-        handler.postDelayed(runnable, 10);
+        onGetProfile();
+
+//        handler = new Handler();
+//        Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                onGetProfile();
+//                handler.postDelayed(this, 1500);
+//            }
+//        };
+//        handler.postDelayed(runnable, 10);
 
     }
 
@@ -475,14 +478,18 @@ public class EditProfile extends AppCompatActivity implements
                                                   // Toast.makeText(EditProfile.this, "Get profile successfully", Toast.LENGTH_SHORT).show();
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
                                                   if (!(avatarProfileString == "null")) {
-                                                      Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
-                                                      Bitmap bitmap = ImageUtil.getHttpImage(avatarProfileString);
-                                                      //TODO: 请自行解决在bitmap完全下载好后再来的功能，这样子就不是一个空的bitmap
-                                                      if (bitmap != null){
-                                                          Log.d("PROFILE", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                                                      }
-//                                                      Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap,  56 ,56, true);//this bitmap2 you can use only for display
-                                                      avatarDisplay.setImageBitmap(bitmap);
+//                                                      Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
+//                                                      Bitmap bitmap = ImageUtil.getHttpImage(avatarProfileString);
+//                                                      if (bitmap != null){
+//                                                          Log.d("PROFILE", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//                                                      }
+////                                                      Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap,  56 ,56, true);//this bitmap2 you can use only for display
+//                                                      avatarDisplay.setImageBitmap(bitmap);
+
+                                                      //TODO: use Glide solved previus problem of not loaded avatar
+                                                      Glide.with(EditProfile.this)
+                                                              .load(avatarProfileString)
+                                                              .into(avatarDisplay);
                                                   } else {
                                                       Log.d("PROFILE", "avatarProfileString: (else)");
                                                       avatarDisplay.setImageResource(R.drawable.avatar_sample);
@@ -566,6 +573,7 @@ public class EditProfile extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                     }
                 });
             }
@@ -577,10 +585,16 @@ public class EditProfile extends AppCompatActivity implements
         });
     }
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        onGetProfile();
+//    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
+//        handler.removeCallbacksAndMessages(null);
     }
 
     //double backpressed to exit app
