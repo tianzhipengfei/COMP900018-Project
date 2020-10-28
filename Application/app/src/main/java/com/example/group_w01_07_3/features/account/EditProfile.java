@@ -573,6 +573,15 @@ public class EditProfile extends AppCompatActivity implements
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        //Update main page avatar
+                        Glide.with(EditProfile.this)
+                                .load(newAvatarString)
+                                .into(avatarDisplay);
+
+                        //also update the sliding menu header avatar
+                        Glide.with(EditProfile.this)
+                                .load(newAvatarString)
+                                .into(headerAvatar);
 
                     }
                 });
