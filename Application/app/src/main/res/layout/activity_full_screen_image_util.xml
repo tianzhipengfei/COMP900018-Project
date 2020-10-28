@@ -11,6 +11,7 @@
       android:id="@+id/full_screen_image"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:transitionName="capsuleImageTN"
       android:background="#000000"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"

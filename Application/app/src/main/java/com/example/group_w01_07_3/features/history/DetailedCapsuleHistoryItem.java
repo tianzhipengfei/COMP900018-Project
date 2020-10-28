@@ -3,9 +3,11 @@ package com.example.group_w01_07_3.features.history;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.transition.Fade;
@@ -205,8 +207,14 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                     public void onClick(View view) {
                                         Intent intent = new Intent(DetailedCapsuleHistoryItem.this, FullScreenImageUtil.class);
                                         intent.putExtra("ImageURL", imageLocation);
-                                        startActivity(intent);
-                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(DetailedCapsuleHistoryItem.this, image, "capsuleImageTN");
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                            startActivity(intent,options.toBundle());
+                                        }
+                                        else
+                                            startActivity(intent);
+//                                        startActivity(intent);
+//                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                     }
                                 });
                                 return false;
