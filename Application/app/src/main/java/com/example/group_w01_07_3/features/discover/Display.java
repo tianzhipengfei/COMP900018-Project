@@ -249,6 +249,7 @@ public class Display extends AppCompatActivity {
             mediaPlayer.prepareAsync();
             mediaPlayer.setLooping(true);
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                //handle media player lose network connection
                 @Override
                 public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
                     if (i==MediaPlayer.MEDIA_ERROR_SERVER_DIED){
