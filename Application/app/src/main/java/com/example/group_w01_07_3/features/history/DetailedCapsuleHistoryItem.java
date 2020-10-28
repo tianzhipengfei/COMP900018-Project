@@ -150,8 +150,11 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 } else {
                     imageShimmer.stopShimmer();
                     imageShimmer.setVisibility(View.GONE);
-                    image.requestLayout();
-                    image.setMinimumHeight(48);
+//                    image.requestLayout();
+//                    image.setMinimumHeight(48);
+                    android.view.ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
+                    layoutParams.height = 48;
+                    image.setBackgroundColor(0xFFFFFFFF);
                     image.setVisibility(View.VISIBLE);
                 }
 
