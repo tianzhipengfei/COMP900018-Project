@@ -197,7 +197,8 @@ public class Display extends AppCompatActivity {
                                 Log.d("Debug", "IMAGE - Glide Errored");
                                 Snackbar.make(findViewById(R.id.display_history_mega_layout),
                                         "Failed to load the capsule image, please check your internet connection",
-                                        Snackbar.LENGTH_LONG);
+                                        Snackbar.LENGTH_LONG)
+                                        .show();
                                 return false;
                             }
 
@@ -224,7 +225,8 @@ public class Display extends AppCompatActivity {
                         Log.d("Debug", "IMAGE - Glide Errored");
                         Snackbar.make(findViewById(R.id.display_history_mega_layout),
                                 "Failed to load user avatar of the capsule owner, please check your internet connection",
-                                Snackbar.LENGTH_LONG);
+                                Snackbar.LENGTH_LONG)
+                                .show();
                         return false;
                     }
 
