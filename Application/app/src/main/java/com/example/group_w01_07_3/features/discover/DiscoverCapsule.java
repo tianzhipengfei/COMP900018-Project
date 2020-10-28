@@ -508,12 +508,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Marker tmp = mGoogleMap.addMarker(capsuleMarker);
                 mCapsuleMarkers.put(tmp, allCapsules.get(i));
 
-                // for testing
-                counts += 1;
-                Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            // for testing
+            counts += 1;
+            Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
         }
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
@@ -601,9 +602,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     // Todo: set field values
-    private float cosine = (float) 0.5; //cosine,旋转的角度,45"
+    private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45"
     private int num_shakes = 5;
-    private float forceThreshold = (float) 15; //旋转力度, this is rotation force threhold on open capsule.
+    private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule.
 
     // detect a shake event
     @Override
