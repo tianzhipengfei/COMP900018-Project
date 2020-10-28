@@ -615,6 +615,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onSensorChanged(int sensor, float[] values) {
         // Todo: do not open capsule until user keeps shaking device for at least one second
+        float forceThreshold = (float) 15;//this is force threhold on open capsule
+        float cosine=(float)0.7;//cosine,旋转的角度,45"
+
+
         //when detect 10 times of slight shake, open the capsule
         if (open_shake_time == 3) {
             open_shake_time = 0;
@@ -707,7 +711,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         TextView hint = (TextView) popupview.findViewById(R.id.hint);
         Random choice = new Random();
         int selection = choice.nextInt() % 3;
-        selection=1;
         switch (selection) {
             case 0:
                 hint.setText("Tap the area to open capsule");
