@@ -73,18 +73,19 @@ import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
-    // pop-up window
     private boolean popUpShake = false;
     private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
-    // markers
-    private Marker selectedMarker;
-    private Marker mCurrLocationMarker;
-    private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
-    // request and receive capsules
+    // capsules
     private JSONObject capsuleInfo = new JSONObject();
     private JSONArray allCapsules;
     private JSONObject selectedCapsule;
+    private Marker selectedMarker;
+    private Marker mCurrLocationMarker;
+    private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
+    private boolean if_connected = false;
+    private boolean if_needRefresh = true;
+    private boolean can_refresh = false;
     // app view
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -96,31 +97,23 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient mFusedLocationClient;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    // current location
     private GoogleMap mGoogleMap;
     private SupportMapFragment mapFrag;
-    private double curLat = 360.0;
-    private double curLon = 360.0;
-    //move map camera to current location when app sets up
-    private long lastUpdate_map;
-    private boolean disable_camera = true;
-    // record the location where the user last shakes the device
-    private double recorded_latitude;
-    private double recorded_longtitude;
-    // latitude, and longitude of last request
+    // last request location
     private Location mLastLocation;
     private double lastRequestLat = 360.0;
     private double lastRequestLon = 360.0;
-    // time interval for updating location
+    private double curLat = 360.0;
+    private double curLon = 360.0;
+    // map camera
+    private long lastUpdate_map;
+    private boolean disable_camera = true;
+    // time interval for updating current location (unit: ms)
     private final int PER_SECOND = 1000;
     private int locationUpdateInterval = 5 * PER_SECOND;
-    // refresh capsules if user moves more than a threshold distance (20km, 5.55degree)
+    // distance request capsules interval (unit: degree)
     private double distanceThresholdToRequest = 5.55;
-    // shake event, HTTP GET request and capsule refresh are in time order
-    private boolean if_connected = false;
-    private boolean if_needRefresh = true;
-    private boolean can_refresh = false;
-    // only allow one refresh request every 100ms = 0.2s
+    // shake interval (unit: ms)
     private static final int max_pause_between_shakes = 200;
     // shake event
     private SensorManager sensorMgr;
@@ -305,16 +298,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
+        // if request was cancelled, the result arrays are empty.
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // if request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // if permission was granted, do location-related task
+                    // location permission was granted, restart google map
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
-                        // restart to retrieve user's current location
                         Intent intent = new Intent(DiscoverCapsule.this, DiscoverCapsule.class);
                         startActivity(intent);
                     }
@@ -385,9 +377,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
 
-                    //move map camera to current location(1000ms = 1 seconds)
+                    //move map camera to current location
                     long curTime = System.currentTimeMillis();
-                    if ((curTime - lastUpdate_map) > 1000) {
+                    if ((curTime - lastUpdate_map) > PER_SECOND) {
                         mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                             @Override
                             public void onMapLoaded() {
@@ -464,9 +456,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     public void refreshCapsules(JSONArray allCapsules, Location location) {
         mGoogleMap.clear();
-        recorded_latitude = location.getLatitude();
-        recorded_longtitude = location.getLongitude();
-
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
 
         // for testing
@@ -545,11 +534,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         markerOptions.title("Current Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-
-        //show myCurrentLocation marker title
         mCurrLocationMarker.showInfoWindow();
     }
-
     //The logic is borrowed from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
 
     private boolean checkForRequest(double curLat, double curLon) {
@@ -618,7 +604,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float cosine = (float) 0.5; //cosine,旋转的角度,45"
     private int num_shakes = 5;
     private float forceThreshold = (float) 15; //旋转力度, this is rotation force threhold on open capsule.
-
 
     // detect a shake event
     @Override
@@ -785,7 +770,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } catch (JSONException e) {
             e.printStackTrace();
         }
-//        popUpShake =false;
+
         HttpUtil.openCapsule(request, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
