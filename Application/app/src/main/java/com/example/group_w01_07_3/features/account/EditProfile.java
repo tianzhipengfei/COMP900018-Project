@@ -262,17 +262,6 @@ public class EditProfile extends AppCompatActivity implements
         });
 
         onGetProfile();
-
-//        handler = new Handler();
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                onGetProfile();
-//                handler.postDelayed(this, 1500);
-//            }
-//        };
-//        handler.postDelayed(runnable, 10);
-
     }
 
     @Override
@@ -594,16 +583,9 @@ public class EditProfile extends AppCompatActivity implements
         });
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        onGetProfile();
-//    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        handler.removeCallbacksAndMessages(null);
     }
 
     //double backpressed to exit app
