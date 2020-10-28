@@ -181,7 +181,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 //use Glide to load image, once successful loaded, turn off shimmer and display image
                 Glide.with(DetailedCapsuleHistoryItem.this)
                         .load(imageLocation)
-                        .apply(new RequestOptions().override(image.getWidth(),0))
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
