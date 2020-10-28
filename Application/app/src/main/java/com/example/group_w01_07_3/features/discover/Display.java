@@ -245,8 +245,22 @@ public class Display extends AppCompatActivity {
         try {
 //            play.setVisibility(View.VISIBLE);
             mediaPlayer.setDataSource(audiolink);
-            mediaPlayer.prepare();
+//            mediaPlayer.prepare();
+            mediaPlayer.prepareAsync();
             mediaPlayer.setLooping(true);
+            mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                //handle media player lose network connection
+                @Override
+                public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                    if (i==MediaPlayer.MEDIA_ERROR_SERVER_DIED){
+                        Snackbar.make(findViewById(R.id.display_history_mega_layout),
+                                "Failed to Load audio, please check your internet connection",
+                                Snackbar.LENGTH_LONG)
+                                .show();
+                    }
+                    return false;
+                }
+            });
 
         } catch (IOException e) {
             e.printStackTrace();
