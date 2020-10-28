@@ -47,4 +47,6 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     compile 'com.wuxiaolong.pullloadmorerecyclerview:library:1.1.2'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 }

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.group_w01_07_3.R;
 import com.squareup.picasso.Picasso;
 
@@ -62,20 +63,40 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         holder.capsule_content.setText(mData.get(position).getContent());
         holder.username.setText(mData.get(position).getUsername());
 
+
+//        if (!mData.get(position).getCapsule_url().equals("null")){
+//            Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).fit().centerCrop().into(holder.capsule_image);
+//        } else {
+//            Picasso.with(mcontext).cancelRequest(holder.capsule_image);
+//            holder.capsule_image.setImageResource(R.color.colorGreyOut);
+//        }
+//
+//        if (!mData.get(position).getAvatar_url().equals("null")){
+//            Picasso.with(mcontext).load(mData.get(position).getAvatar_url()).fit().into(holder.original_user_avatar);
+//        } else {
+//            Picasso.with(mcontext).cancelRequest(holder.original_user_avatar);
+//            holder.original_user_avatar.setImageResource(R.drawable.avatar_sample);
+//        }
+
         //resize with center crop to make sure not a stretch image display in the material card preview
         // if no resource found "null", then set default image in
-        // must cancel picasso pending requrest then set default image, otherwise mess up image load
+        // must cancel picasso pending request then set default image, otherwise mess up image load
         if (!mData.get(position).getCapsule_url().equals("null")){
-            Picasso.with(mcontext).load(mData.get(position).getCapsule_url()).fit().centerCrop().into(holder.capsule_image);
+            Glide.with(mcontext)
+                    .load((mData.get(position).getCapsule_url()))
+                    .centerCrop()
+                    .into(holder.capsule_image);
         } else {
-            Picasso.with(mcontext).cancelRequest(holder.capsule_image);
+            Glide.with(mcontext).clear(holder.capsule_image);
             holder.capsule_image.setImageResource(R.color.colorGreyOut);
         }
 
-        if (!mData.get(position).getAvatar_url().equals("null")){
-            Picasso.with(mcontext).load(mData.get(position).getAvatar_url()).fit().into(holder.original_user_avatar);
+        if(!mData.get(position).getAvatar_url().equals("null")){
+            Glide.with(mcontext)
+                    .load((mData.get(position).getAvatar_url()))
+                    .into(holder.original_user_avatar);
         } else {
-            Picasso.with(mcontext).cancelRequest(holder.original_user_avatar);
+            Glide.with(mcontext).clear(holder.original_user_avatar);
             holder.original_user_avatar.setImageResource(R.drawable.avatar_sample);
         }
 
