@@ -213,43 +213,12 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                         }
                                         else
                                             startActivity(intent);
-//                                        startActivity(intent);
-//                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                     }
                                 });
                                 return false;
                             }
                         })
                         .into(image);
-
-//                Picasso.with(DetailedCapsuleHistoryItem.this)
-//                        .load(imageLocation)
-//                        .resize(image.getWidth(),0)
-//                        .into(image, new com.squareup.picasso.Callback() {
-//
-//                            //once loaded, hide the placeholder shimmer, then show the user image
-//                            @Override
-//                            public void onSuccess() {
-//                                imageShimmer.stopShimmer();
-//                                imageShimmer.setVisibility(View.GONE);
-//                                image.setVisibility(View.VISIBLE);
-//                            }
-//
-//                            //retry loading one more time
-//                            @Override
-//                            public void onError() {
-//                                Log.d("Debug", "IMAGE - Picasso Errored");
-//                                Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load the capsule image",
-//                                        Snackbar.LENGTH_LONG)
-//                                        .setAction("Retry", new View.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(View view) {
-//                                                Picasso.with(DetailedCapsuleHistoryItem.this).load(imageLocation).fit().into(image);
-//                                            }
-//                                        })
-//                                        .show();
-//                            }
-//                        });
             }
         });
     }
@@ -279,35 +248,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     }
                 })
                 .into(avatar);
-
-//        Picasso.with(this)
-//                .load(avatarLocation)
-//                .fit()
-//                .into(avatar, new com.squareup.picasso.Callback() {
-//
-//                    //once loaded, hide the placeholder shimmer, then show the avatar
-//                    @Override
-//                    public void onSuccess() {
-//                        avatarShimmer.stopShimmer();
-//                        avatarShimmer.setVisibility(View.GONE);
-//                        avatar.setVisibility(View.VISIBLE);
-//                    }
-//
-//                    //retry loading one more time
-//                    @Override
-//                    public void onError() {
-//                        Log.d("Debug", "AVATAR - Picasso Errored");
-//                        Snackbar.make(findViewById(R.id.detail_history_mega_layout), "Failed to load user avatar of the capsule owner",
-//                                Snackbar.LENGTH_LONG)
-//                                .setAction("Retry", new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View view) {
-//                                        Picasso.with(DetailedCapsuleHistoryItem.this).load(avatarLocation).fit().into(avatar);
-//                                    }
-//                                })
-//                                .show();
-//                    }
-//                });
     }
 
     //TODO: @CHENFU ---- testing purpose only, assume finish loading voice from server takes 3 seconds
