@@ -614,6 +614,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onSensorChanged(int sensor, float[] values) {
         // Todo: do not open capsule until user keeps shaking device for at least one second
+        float forceThreshold = (float) 15;//this is force threhold on open capsule
+        float cosine=(float)0.7;//cosine,旋转的角度,45"
+
+
         //when detect 10 times of slight shake, open the capsule
         if (open_shake_time == 3) {
             open_shake_time = 0;
@@ -643,7 +647,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                 //detect the reasonable shake of capsule
                 if (popUpShake){
-                    float forceThreshold = (float) 1.5;
                     if(!shakeOpen){
                         float cur_move_length = (float) Math.sqrt(cur_move_x*cur_move_x + cur_move_y*cur_move_y + cur_move_z*cur_move_z);
                         float last_move_length = (float) Math.sqrt(last_move_x*last_move_x + last_move_y*last_move_y + last_move_z*last_move_z);
@@ -651,7 +654,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
                             float length = cur_move_length * last_move_length;
                             // Calculate consione
-                            if (product / length < 0.8) {
+                            if (product / length < cosine) {
                                 open_shake_time += 1;
                             }
                         }
