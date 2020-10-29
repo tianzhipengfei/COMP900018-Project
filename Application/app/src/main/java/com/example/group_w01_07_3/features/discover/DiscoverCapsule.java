@@ -589,14 +589,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 SensorManager.SENSOR_DELAY_GAME);
     }
 
-//    // Todo: set field values
-//    private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45"
-//    private int num_shakes = 5;
-//    private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule.
+   // Todo: set field values
+   private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45" 
+   private int num_shakes = 5;
+   private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule.
 
-    private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
-    private int num_shakes = 5;
-    private float forceThreshold = (float) 1.5; //旋转力度, this is rotation force threhold on open capsule.
+    // private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
+    // private int num_shakes = 5;
+    // private float forceThreshold = (float) 1.5; //旋转力度, this is rotation force threhold on open capsule.
 
 
     // detect a shake event
