@@ -73,19 +73,6 @@ import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
-    private boolean popUpShake = false;
-    private PopupWindow pw;
-    boolean doubleBackToExitPressedOnce = false;
-    // capsules
-    private JSONObject capsuleInfo = new JSONObject();
-    private JSONArray allCapsules;
-    private JSONObject selectedCapsule;
-    private Marker selectedMarker;
-    private Marker mCurrLocationMarker;
-    private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
-    private boolean if_connected = false;
-    private boolean if_needRefresh = true;
-    private boolean can_refresh = false;
     // app view
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -99,22 +86,30 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private GoogleMap mGoogleMap;
     private SupportMapFragment mapFrag;
+    // map camera
+    private long lastUpdate_map;
+    private boolean disable_camera = true;
+    // capsules
+    private JSONObject capsuleInfo = new JSONObject();
+    private JSONArray allCapsules;
+    private JSONObject selectedCapsule;
+    private Marker selectedMarker;
+    private Marker mCurrLocationMarker;
+    private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
+    private boolean if_connected = false;
+    private boolean if_needRefresh = true;
+    private boolean can_refresh = false;
     // last request location
     private Location mLastLocation;
     private double lastRequestLat = 360.0;
     private double lastRequestLon = 360.0;
     private double curLat = 360.0;
     private double curLon = 360.0;
-    // map camera
-    private long lastUpdate_map;
-    private boolean disable_camera = true;
     // time interval for updating current location (unit: ms)
     private final int PER_SECOND = 1000;
     private int locationUpdateInterval = 5 * PER_SECOND;
     // distance request capsules interval (unit: degree)
     private double distanceThresholdToRequest = 5.55;
-    // shake interval (unit: ms)
-    private static final int max_pause_between_shakes = 200;
     // shake event
     private SensorManager sensorMgr;
     private boolean shakeOpen = false;
@@ -126,6 +121,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float last_move_y = 0;
     private float last_move_z = 0;
     private int open_shake_time = 0;
+    private static final int max_pause_between_shakes = 200;  // unit: ms
+    // pop-up window
+    private boolean popUpShake = false;
+    private PopupWindow pw;
+    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,7 +232,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                                 .placeholder(R.drawable.logo)
                                                 .into(headerAvatar);
                                     }
-
                                 }
                             });
                         }
@@ -240,7 +239,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                 }
-
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
@@ -269,12 +267,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
-                // if location permission is already granted
+                // location permission was granted
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 mGoogleMap.setMyLocationEnabled(true);
                 mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
-                // request location permission when it is the first time users use the app
                 checkLocationPermission();
             }
         } else {
@@ -287,7 +284,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            //no explanation needed for the user, request the location permission.
+            // request location permission when it is the first time users use the app
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_LOCATION);
@@ -354,7 +351,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
             List<Location> locationList = locationResult.getLocations();
             if (locationList.size() > 0) {
-                // the last location in the list is the newest
                 Location location = locationList.get(locationList.size() - 1);
                 check_ifCapsulesNeedRefresh(location);
                 redrawGoogleMap(location);
@@ -374,6 +370,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             try {
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
                     if_needRefresh = true;
+
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
 
@@ -517,7 +514,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
         }
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
-
+        registerShakeSensor();
     }
 
     // redraw google map after users refresh capsules
@@ -596,9 +593,22 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
+        popUpShake = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         // unregister a listener from the shake sensor
         sensorMgr.unregisterListener(this);
-        popUpShake = false;
+    }
+
+    private void registerShakeSensor(){
+        //set up sensor manager
+        sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensorMgr.registerListener(this,
+                SensorManager.SENSOR_ACCELEROMETER,
+                SensorManager.SENSOR_DELAY_GAME);
     }
 
     // Todo: set field values
@@ -611,6 +621,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     public void onSensorChanged(int sensor, float[] values) {
         //when detect 10 times of slight shake, open the capsule
         if (open_shake_time == num_shakes) {
+            sensorMgr.unregisterListener(this);
+
             open_shake_time = 0;
             shakeOpen = true;
             if (popUpShake) {
@@ -692,6 +704,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 });
                 break;
             case 1:
+                registerShakeSensor();
+
                 popUpShake = true;
                 shakeOpen = false;
                 hint.setText("Shake slightly to open the capsule");
