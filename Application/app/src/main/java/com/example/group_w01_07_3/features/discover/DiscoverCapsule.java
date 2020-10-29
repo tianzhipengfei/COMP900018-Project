@@ -165,11 +165,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         Toast.makeText(DiscoverCapsule.this,
                 "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
 
-        //set up sensor manager
-        sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensorMgr.registerListener(this,
-                SensorManager.SENSOR_ACCELEROMETER,
-                SensorManager.SENSOR_DELAY_GAME);
+        registerShakeSensor();
     }
 
     @Override
@@ -399,6 +395,31 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    private boolean checkForRequest(double curLat, double curLon) {
+        if (lastRequestLat == 360 && lastRequestLon == 360) {
+            return true;
+        } else if (getDistance(curLat, curLon, lastRequestLat, lastRequestLon) > distanceThresholdToRequest) {
+            System.out.println(getDistance(curLat, curLon, lastRequestLat, lastRequestLon));
+            return true;
+        }
+        return false;
+    }
+
+    // calculate distance by latitude, and longitude (unit: Kilometers)
+    private double getDistance(double lat1, double lon1, double lat2, double lon2) {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        } else {
+            double theta = lon1 - lon2;
+            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) +
+                    Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+            dist = Math.acos(dist);
+            dist = Math.toDegrees(dist);
+            dist = dist * 111.18957696;
+            return dist;
+        }
+    }
+
     // retrieve capsule information through HTTP GET method
     private void requestCapsuleInfo() {
         if (capsuleInfo.length() == 0) {
@@ -536,36 +557,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
     //The logic is borrowed from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
 
-    private boolean checkForRequest(double curLat, double curLon) {
-        if (lastRequestLat == 360 && lastRequestLon == 360) {
-            return true;
-        } else if (getDistance(curLat, curLon, lastRequestLat, lastRequestLon) > distanceThresholdToRequest) {
-            System.out.println(getDistance(curLat, curLon, lastRequestLat, lastRequestLon));
-            return true;
-        }
-        return false;
-    }
-
-    // calculate distance by latitude, and longitude (unit: Kilometers)
-    private double getDistance(double lat1, double lon1, double lat2, double lon2) {
-        if ((lat1 == lat2) && (lon1 == lon2)) {
-            return 0;
-        } else {
-            double theta = lon1 - lon2;
-            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) +
-                    Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
-            dist = Math.acos(dist);
-            dist = Math.toDegrees(dist);
-            dist = dist * 111.18957696;
-            return dist;
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     //double backpressed to exit app
     //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
     @Override
@@ -590,19 +581,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        popUpShake = false;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        // unregister a listener from the shake sensor
-        sensorMgr.unregisterListener(this);
-    }
-
     private void registerShakeSensor(){
         //set up sensor manager
         sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -611,10 +589,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 SensorManager.SENSOR_DELAY_GAME);
     }
 
-    // Todo: set field values
-    private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45"
+//    // Todo: set field values
+//    private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45"
+//    private int num_shakes = 5;
+//    private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule.
+
+    private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
     private int num_shakes = 5;
-    private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule.
+    private float forceThreshold = (float) 1.5; //旋转力度, this is rotation force threhold on open capsule.
+
 
     // detect a shake event
     @Override
@@ -828,6 +811,24 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        popUpShake = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // unregister a listener from the shake sensor
+        sensorMgr.unregisterListener(this);
     }
 }
 
