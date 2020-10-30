@@ -54,6 +54,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +123,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float last_move_y = 0;
     private float last_move_z = 0;
     private int open_shake_time = 0;
-    private static final int max_pause_between_shakes = 200;  // unit: ms
+    private static final int MAX_PAUSE_BETWEEN_SHAKES = 200;  // unit: ms
     // pop-up window
     private boolean popUpShake = false;
     private PopupWindow pw;
@@ -458,6 +459,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
                         e.printStackTrace();
+                        Snackbar snackbar = Snackbar
+                                .make(drawerLayout, "Oops. Looks like you lost Internet connection\nReconnecting...", Snackbar.LENGTH_LONG);
+                        snackbar.show();
                     }
                 });
             } catch (JSONException e) {
@@ -469,9 +473,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private void check_ifCanRefreshMarkers(Location location) {
         if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true) {
             refreshMarkers(allCapsules, location);
-            can_i_shake = true;
-            can_i_retrieve_http = false;
-            can_i_fresh_markers = false;
+
+            //ensure there is a 3 seconds gap between [next shake event] & [current completed marker fresh]
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    can_i_shake = true;
+                    can_i_retrieve_http = false;
+                    can_i_fresh_markers = false;
+                }
+            },2000);
         }
         if (mCapsuleMarkers.isEmpty()) {
             can_i_shake = false;
@@ -647,7 +658,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             float cur_move_z = z - last_z;
             long curTime = System.currentTimeMillis();
             // check if the last movement was not long ago
-            if ((curTime - lastUpdate_shaking) > max_pause_between_shakes) {
+            if ((curTime - lastUpdate_shaking) > MAX_PAUSE_BETWEEN_SHAKES) {
                 lastUpdate_shaking = curTime;
                 //detect the reasonable shake of capsule
                 float cur_move_length = (float) Math.sqrt(cur_move_x * cur_move_x + cur_move_y * cur_move_y + cur_move_z * cur_move_z);
