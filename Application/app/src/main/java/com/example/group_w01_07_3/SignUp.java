@@ -250,7 +250,10 @@ public class SignUp extends AppCompatActivity {
                                     if (responseJSON.has("success")) {
                                         String status = responseJSON.getString("success");
                                         Log.d("SIGNUP", "uploadAvatar success: " + status);
-                                        avatarFileLink = responseJSON.getString("file");
+
+                                        JSONObject data = responseJSON.getJSONObject("data");
+                                        System.out.println(data.getString("url"));
+                                        avatarFileLink = data.getString("url");
                                         Log.d("SIGNUP", "avatarFileLink: " + avatarFileLink);
                                         onSignUp();
                                     } else if (responseJSON.has("error")) {

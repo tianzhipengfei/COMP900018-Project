@@ -28,6 +28,7 @@ public class HttpUtil {
     private static final MediaType JPG = MediaType.parse("image/jpg");
     private static final MediaType AAC = MediaType.parse("audio/aac");
     private static String address = "https://www.tianzhipengfei.xin/mobile/";
+    private static String smmsURL = "https://sm.ms/api/v2/upload";
 
     public static void signUp(String[] paras, okhttp3.Callback callback) {
         JSONObject json = new JSONObject();
@@ -64,13 +65,14 @@ public class HttpUtil {
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("usr", username)
-                .addFormDataPart("myfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
+                .addFormDataPart("format", username)
+                .addFormDataPart("smfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
                 .build();
         Request request = new Request.Builder()
-                .url(HttpUtil.address + "uploadAvatar")
-                .header("enctype", "multipart/form-data")
+                .url(HttpUtil.smmsURL)
+                .header("Authorization", "P6cnD1swearDYSV4bY7Y9eY836efVyUt")
                 .header("Content-Type", "multipart/form-data")
+                .header("User-Agent", "PostmanRuntime/7.26.5")
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);
@@ -128,26 +130,17 @@ public class HttpUtil {
                 .get()
                 .build();
         client.newCall(request).enqueue(callback);
-
-//        Request request = new Request.Builder()
-//                .url(HttpUtil.address + "discoverCapsule?" + "tkn=" + token
-//                        + "&lat=" + capsuleInfo.get("lat")
-//                        + "&lon=" + capsuleInfo.get("lon")
-//                        + "&max_distance=5&min_distance=0.5&num_capsules=20")
-//                .get()
-//                .build();
     }
 
     public static void uploadImage(String token, File avatarFile, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
-        String smmsURL = "https://sm.ms/api/v2/upload";
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("format", "jpg")
                 .addFormDataPart("smfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
                 .build();
         Request request = new Request.Builder()
-                .url(smmsURL)
+                .url(HttpUtil.smmsURL)
                 .header("Authorization", "P6cnD1swearDYSV4bY7Y9eY836efVyUt")
                 .header("Content-Type", "multipart/form-data")
                 .header("User-Agent", "PostmanRuntime/7.26.5")
