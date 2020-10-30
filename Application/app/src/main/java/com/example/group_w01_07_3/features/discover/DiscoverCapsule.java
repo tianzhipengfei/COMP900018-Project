@@ -598,9 +598,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
    // Todo: set field values
-   private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45" 
-   private int num_shakes = 5;
-   private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule.
+   private int num_shakes = 5; //valid shake how many times to open capsule
+   private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
+   private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
 
     // private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
     // private int num_shakes = 5;
