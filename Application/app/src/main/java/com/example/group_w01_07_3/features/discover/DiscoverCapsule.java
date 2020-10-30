@@ -465,7 +465,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     private void check_ifCapsulesNeedRefresh(Location location) {
         if (if_connected && can_i_fresh_markers) {
-            refreshMarkerss(allCapsules, location);
+            refreshMarkers(allCapsules, location);
             can_i_fresh_markers = false;
         }
         if (mCapsuleMarkers.isEmpty()) {
@@ -473,7 +473,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    public void refreshMarkerss(JSONArray allCapsules, Location location) {
+    public void refreshMarkers(JSONArray allCapsules, Location location) {
         mGoogleMap.clear();
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
 
