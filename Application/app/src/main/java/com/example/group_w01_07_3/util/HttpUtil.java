@@ -1,8 +1,17 @@
 package com.example.group_w01_07_3.util;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -10,6 +19,8 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+
+import static androidx.core.content.ContextCompat.getSystemService;
 
 public class HttpUtil {
 
@@ -213,6 +224,15 @@ public class HttpUtil {
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);
+    }
+
+    public static boolean isOnline(AppCompatActivity activity) {
+        ConnectivityManager cm;
+        cm = (ConnectivityManager) activity.getApplicationContext().
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null &&
+                cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
 
 }
