@@ -27,6 +27,7 @@ import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.history.DetailedCapsuleHistoryItem;
 import com.example.group_w01_07_3.util.ImageUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
+import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
@@ -266,5 +267,6 @@ public class Display extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 }
 
