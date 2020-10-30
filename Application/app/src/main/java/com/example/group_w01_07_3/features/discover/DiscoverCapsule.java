@@ -535,7 +535,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
             Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
         }
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
-        registerShakeSensor();
+
+//        registerShakeSensor();
+        // handle the case of finish current activity but the delayed response register shake
+        // again in another activity. So need to check if my self has been destroyed or not
+        if(this.isDestroyed()){
+
+        } else{
+            registerShakeSensor();
+        }
     }
 
     // redraw google map after users refresh capsules
@@ -687,7 +695,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 });
                 break;
             case 1:
-                registerShakeSensor();
+                if(this.isDestroyed()){
+
+                } else{
+                    registerShakeSensor();
+                }
 
                 popUpShake = true;
                 shakeOpen = false;
