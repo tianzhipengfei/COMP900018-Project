@@ -623,7 +623,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         }
 
-        if (sensor == SensorManager.SENSOR_ACCELEROMETER && if_needRefresh == false) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER && if_needRefresh == false && can_refresh == false) {
             float x = values[SensorManager.DATA_X];
             float y = values[SensorManager.DATA_Y];
             float z = values[SensorManager.DATA_Z];
