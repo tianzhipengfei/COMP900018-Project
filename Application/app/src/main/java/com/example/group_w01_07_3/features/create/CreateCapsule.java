@@ -459,10 +459,14 @@ public class CreateCapsule extends AppCompatActivity implements
 
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Toast.makeText(CreateCapsule.this,
-                            "Cannot upload audio",
-                            Toast.LENGTH_SHORT).show();
-                    progressbar.dismiss();
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(CreateCapsule.this,
+                                    "Cannot upload audio",
+                                    Toast.LENGTH_SHORT).show();
+                            progressbar.dismiss();
+                        }
+                    });
                 }
             });
 
@@ -499,10 +503,14 @@ public class CreateCapsule extends AppCompatActivity implements
 
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Toast.makeText(CreateCapsule.this,
-                            "Cannot upload img",
-                            Toast.LENGTH_SHORT).show();
-                    progressbar.dismiss();
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(CreateCapsule.this,
+                                    "Cannot upload img",
+                                    Toast.LENGTH_SHORT).show();
+                            progressbar.dismiss();
+                        }
+                    });
                 }
             });
         } else {
@@ -518,9 +526,13 @@ public class CreateCapsule extends AppCompatActivity implements
 
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Toast.makeText(CreateCapsule.this, "connection fail", Toast.LENGTH_SHORT)
-                        .show();
-                progressbar.dismiss();
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(CreateCapsule.this, "connection fail", Toast.LENGTH_SHORT)
+                                .show();
+                        progressbar.dismiss();
+                    }
+                });
             }
 
             @Override
