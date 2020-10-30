@@ -135,9 +135,6 @@ public class EditProfile extends AppCompatActivity implements
         headerUsername = headerview.findViewById(R.id.header_username);
         headerAvatar = headerview.findViewById(R.id.header_avatar);
 
-        updateHeader();
-
-
         MaterialButton changePasswordBtn = (MaterialButton) findViewById(R.id.edit_profile_btn_change_password);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -298,62 +295,6 @@ public class EditProfile extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeader(){
-        if(!UserUtil.getToken(EditProfile.this).isEmpty()){
-            HttpUtil.getProfile(UserUtil.getToken(EditProfile.this), new okhttp3.Callback() {
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.d("PROFILE", "***** getProfile onResponse *****");
-                    String responseData = response.body().string();
-                    Log.d("PROFILE", "getProfile: " + responseData);
-                    try {
-                        JSONObject responseJSON = new JSONObject(responseData);
-                        if (responseJSON.has("success")) {
-                            String status = responseJSON.getString("success");
-                            Log.d("PROFILE", "getProfile success: " + status);
-                            String userInfo = responseJSON.getString("userInfo");
-                            JSONObject userInfoJSON = new JSONObject(userInfo);
-                            usernameProfileString = userInfoJSON.getString("uusr");
-                            avatarProfileString =  userInfoJSON.getString("uavatar");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (!EditProfile.this.isDestroyed()){
-                                        if (!(avatarProfileString == "null")){
-                                                Picasso.with(EditProfile.this)
-                                                        .load(avatarProfileString)
-                                                        .fit()
-                                                        .placeholder(R.drawable.logo)
-                                                        .into(headerAvatar);
-                                        }
-                                        headerUsername.setText(usernameProfileString);
-                                    } else {
-                                        Log.d("FINISHED", "run: Activity has been finished, don't load Glide for update header avatar & username");
-                                    }
-
-                                }
-                            });
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    e.printStackTrace();
-                    //retry to update every 3 seconds. handle the case that enter the activity
-                    //with no internet at all(which okHTTP will not retry for you)
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateHeader();
-                        }
-                    },3000);
-                }
-            });
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -488,10 +429,17 @@ public class EditProfile extends AppCompatActivity implements
                                                               Glide.with(EditProfile.this)
                                                                       .load(avatarProfileString)
                                                                       .into(avatarDisplay);
+                                                          Picasso.with(EditProfile.this)
+                                                                  .load(avatarProfileString)
+                                                                  .fit()
+                                                                  .placeholder(R.drawable.logo)
+                                                                  .into(headerAvatar);
                                                       } else {
                                                           Log.d("PROFILE", "avatarProfileString: (else)");
                                                           avatarDisplay.setImageResource(R.drawable.avatar_sample);
                                                       }
+                                                      headerUsername.setText(usernameProfileString);
+
                                                       usernameDisplay.setText(usernameProfileString);
                                                       emailDisplay.setText(emailProfileString);
                                                       dobDisplay.setText(dobProfileString);
@@ -542,12 +490,15 @@ public class EditProfile extends AppCompatActivity implements
 
                     //retry to get profile every 3 seconds. handle the case that enter the activity
                     //with no internet at all(which okHTTP will not retry for you)
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            onGetProfile();
-                        }
-                    },3000);
+                    // don't attempt to retry if activity has already been finished
+                    if(!EditProfile.this.isDestroyed()){
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                onGetProfile();
+                            }
+                        },3000);
+                    }
                 }
             });
         }
@@ -575,12 +526,14 @@ public class EditProfile extends AppCompatActivity implements
                 e.printStackTrace();
                 //retry to upload avatar every 3 seconds. handle the case that enter the activity
                 //with no internet at all(which okHTTP will not retry for you)
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onUploadImage();
-                    }
-                },3000);
+                if (!EditProfile.this.isDestroyed()){
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onUploadImage();
+                        }
+                    },3000);
+                }
             }
         });
     }
@@ -617,12 +570,14 @@ public class EditProfile extends AppCompatActivity implements
                 e.printStackTrace();
                 //retry to update avatar display every 3 seconds. handle the case that enter the activity
                 //with no internet at all(which okHTTP will not retry for you)
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onChangeAvatar();
-                    }
-                },3000);
+                if (!EditProfile.this.isDestroyed()){
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onChangeAvatar();
+                        }
+                    },3000);
+                }
             }
         });
     }
