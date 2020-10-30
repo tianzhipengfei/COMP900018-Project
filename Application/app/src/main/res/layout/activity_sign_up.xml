@@ -83,7 +83,10 @@
                         android:id="@+id/edittext_sign_up_username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="12sp" />
+                        android:singleLine="true"
+                        android:textSize="12sp">
+                        <requestFocus/>
+                    </com.google.android.material.textfield.TextInputEditText>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -116,6 +119,7 @@
                         android:id="@+id/edittext_sign_up_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:singleLine="true"
                         android:textSize="12sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -148,6 +152,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edittext_sign_up_password"
                         android:layout_width="match_parent"
+                        android:password="true"
+                        android:singleLine="true"
                         android:layout_height="wrap_content"
                         android:textSize="12sp" />
 
@@ -180,6 +186,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edittext_sign_up_re_enter_password"
                         android:layout_width="match_parent"
+                        android:singleLine="true"
+                        android:password="true"
                         android:layout_height="wrap_content"
                         android:textSize="12sp" />
 
