@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         /**
-         * If token exists, jump to HomeActivity, else SignIn
+         * If token exists, redirect already logged in users to Discover, else SignIn
          */
         if (UserUtil.getToken(MainActivity.this).isEmpty()) {
             Intent intent = new Intent(MainActivity.this, SignIn.class);
