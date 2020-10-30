@@ -97,8 +97,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private Marker mCurrLocationMarker;
     private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
     private boolean if_connected = false;
-    private boolean if_needRefresh = true;
-    private boolean can_refresh = false;
+    private boolean can_i_shake = false;
+    private boolean can_i_retrieve_http = true;
+    private boolean can_i_fresh_markers = false;
     // last request location
     private Location mLastLocation;
     private double lastRequestLat = 360.0;
@@ -258,7 +259,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mLocationRequest.setFastestInterval(locationUpdateInterval);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        // check location permission
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -268,9 +268,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 mGoogleMap.setMyLocationEnabled(true);
                 mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
+                // request location permission when it is the first time users use the app
                 checkLocationPermission();
             }
         } else {
+            // location permission was granted
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -280,7 +282,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // request location permission when it is the first time users use the app
+            // request location permission
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_LOCATION);
@@ -296,7 +298,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // location permission was granted, restart google map
+                    // location permission was granted, and restart google map
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
@@ -348,7 +350,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             List<Location> locationList = locationResult.getLocations();
             if (locationList.size() > 0) {
                 Location location = locationList.get(locationList.size() - 1);
-                check_ifCapsulesNeedRefresh(location);
+                check_ifCanRefreshMarkers(location);
                 redrawGoogleMap(location);
             }
         }
@@ -365,7 +367,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
             try {
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
-                    if_needRefresh = true;
+                    can_i_shake = false;
+                    can_i_retrieve_http = true;
+                    can_i_fresh_markers = false;
 
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
@@ -427,7 +431,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             Log.d("CAPSULE", "***** No token to get capsule *****");
             allCapsules = new JSONArray();
             selectedCapsule = new JSONObject();
-        } else if (if_needRefresh) {
+        } else if (can_i_shake == false && can_i_retrieve_http == true && can_i_fresh_markers == false) {
             try {
                 String token = UserUtil.getToken(DiscoverCapsule.this);
                 Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
@@ -442,9 +446,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             if (responseJSON.has("success")) {
                                 allCapsules = responseJSON.getJSONArray("capsules");
                                 // refresh capsules only after receiving http response
-                                can_refresh = true;
-                                if_needRefresh = false;
-                                if_connected = true;
+                                can_i_shake = false;
+                                can_i_retrieve_http = false;
+                                can_i_fresh_markers = true;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -462,17 +466,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    private void check_ifCapsulesNeedRefresh(Location location) {
-        if (if_connected && can_refresh) {
-            refreshCapsules(allCapsules, location);
-            can_refresh = false;
+    private void check_ifCanRefreshMarkers(Location location) {
+        if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true) {
+            refreshMarkers(allCapsules, location);
+            can_i_shake = true;
+            can_i_retrieve_http = false;
+            can_i_fresh_markers = false;
         }
         if (mCapsuleMarkers.isEmpty()) {
-            if_needRefresh = true;
+            can_i_shake = false;
+            can_i_retrieve_http = true;
+            can_i_fresh_markers = false;
         }
     }
 
-    public void refreshCapsules(JSONArray allCapsules, Location location) {
+    public void refreshMarkers(JSONArray allCapsules, Location location) {
         mGoogleMap.clear();
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
 
@@ -536,14 +544,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
-//        registerShakeSensor();
-        // handle the case of finish current activity but the delayed response register shake
-        // again in another activity. So need to check if my self has been destroyed or not
-        if(this.isDestroyed()){
-
-        } else{
-            registerShakeSensor();
-        }
+        registerShakeSensor();
     }
 
     // redraw google map after users refresh capsules
@@ -590,17 +591,23 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     private void registerShakeSensor(){
-        //set up sensor manager
-        sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensorMgr.registerListener(this,
-                SensorManager.SENSOR_ACCELEROMETER,
-                SensorManager.SENSOR_DELAY_GAME);
+        // handle the case of finish current activity but the delayed response register shake
+        // again in another activity. So need to check if my self has been destroyed or not
+        if(this.isDestroyed()){
+
+        } else{
+            //set up sensor manager
+            sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+            sensorMgr.registerListener(this,
+                    SensorManager.SENSOR_ACCELEROMETER,
+                    SensorManager.SENSOR_DELAY_GAME);
+        }
     }
 
-   // Todo: set field values
-   private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45" 
-   private int num_shakes = 5;
-   private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule.
+    // Todo: set field values
+    private int num_shakes = 5; //valid shake how many times to open capsule
+    private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
+    private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
 
     // private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
     // private int num_shakes = 5;
@@ -619,11 +626,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
             if (popUpShake) {
                 RequestSending();
             } else {
-                if_needRefresh = true;
+                can_i_shake = false;
+                can_i_retrieve_http = true;
+                can_i_fresh_markers = false;
             }
         }
 
-        if (sensor == SensorManager.SENSOR_ACCELEROMETER && if_needRefresh == false) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_i_shake == true && can_i_retrieve_http == false && can_i_fresh_markers == false) {
             float x = values[SensorManager.DATA_X];
             float y = values[SensorManager.DATA_Y];
             float z = values[SensorManager.DATA_Z];
@@ -695,11 +704,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 });
                 break;
             case 1:
-                if(this.isDestroyed()){
-
-                } else{
-                    registerShakeSensor();
-                }
+                registerShakeSensor();
 
                 popUpShake = true;
                 shakeOpen = false;
