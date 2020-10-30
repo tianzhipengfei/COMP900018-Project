@@ -186,25 +186,27 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 // Ensure we call this only once
                 image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                //use Glide to load image, once successful loaded, turn off shimmer and display image
-                Glide.with(DetailedCapsuleHistoryItem.this)
-                        .load(imageLocation)
-                        .listener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                Log.d("Debug", "IMAGE - Glide Errored");
-                                Snackbar.make(findViewById(R.id.detail_history_mega_layout),
-                                        "Failed to load the capsule image, please check your internet connection",
-                                        Snackbar.LENGTH_LONG)
-                                        .show();
-                                return false;
-                            }
+                //ONLY load if the activity is still alive
+                if(!DetailedCapsuleHistoryItem.this.isDestroyed()){
+                    //use Glide to load image, once successful loaded, turn off shimmer and display image
+                    Glide.with(DetailedCapsuleHistoryItem.this)
+                            .load(imageLocation)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    Log.d("Debug", "IMAGE - Glide Errored");
+                                    Snackbar.make(findViewById(R.id.detail_history_mega_layout),
+                                            "Failed to load the capsule image, please check your internet connection",
+                                            Snackbar.LENGTH_LONG)
+                                            .show();
+                                    return false;
+                                }
 
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                imageShimmer.stopShimmer();
-                                imageShimmer.setVisibility(View.GONE);
-                                image.setVisibility(View.VISIBLE);
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    imageShimmer.stopShimmer();
+                                    imageShimmer.setVisibility(View.GONE);
+                                    image.setVisibility(View.VISIBLE);
 
 //                                image.setOnClickListener(new View.OnClickListener() {
 //                                    @Override
@@ -220,10 +222,15 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 //                                    }
 //                                });
 
-                                return false;
-                            }
-                        })
-                        .into(image);
+                                    return false;
+                                }
+                            })
+                            .into(image);
+                }
+                else {
+                    Log.d("FINISHED", "run: Activity has been finished, don't load Glide for image");
+                }
+
             }
         });
     }
@@ -231,40 +238,50 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     private void loadAvatar(){
         //avatar view has fix size, so no need to use viewtree
         //use Glide to load avatar, once successful loaded, turn off shimmer and display avatar
-        Glide.with(this)
-                .load(avatarLocation)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        Log.d("Debug", "IMAGE - Glide Errored");
-                        Snackbar.make(findViewById(R.id.detail_history_mega_layout),
-                                "Failed to load user avatar of the capsule owner, please check your internet connection",
-                                Snackbar.LENGTH_LONG)
-                                .show();
-                        return false;
-                    }
 
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        avatarShimmer.stopShimmer();
-                        avatarShimmer.setVisibility(View.GONE);
-                        avatar.setVisibility(View.VISIBLE);
-                        return false;
-                    }
-                })
-                .into(avatar);
+        //ONLY load if the activity is still alive
+        if (!DetailedCapsuleHistoryItem.this.isDestroyed()){
+            Glide.with(this)
+                    .load(avatarLocation)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            Log.d("Debug", "IMAGE - Glide Errored");
+                            Snackbar.make(findViewById(R.id.detail_history_mega_layout),
+                                    "Failed to load user avatar of the capsule owner, please check your internet connection",
+                                    Snackbar.LENGTH_LONG)
+                                    .show();
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            avatarShimmer.stopShimmer();
+                            avatarShimmer.setVisibility(View.GONE);
+                            avatar.setVisibility(View.VISIBLE);
+                            return false;
+                        }
+                    })
+                    .into(avatar);
+        } else {
+            Log.d("FINISHED", "run: Activity has been finished, don't load Glide for avatar");
+        }
     }
 
     //TODO: @CHENFU ---- testing purpose only, assume finish loading voice from server takes 3 seconds
     private void loadVoice(){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                voiceShimmer.stopShimmer();
-                voiceShimmer.setVisibility(View.GONE);
-                voice.setVisibility(View.VISIBLE);
-            }
-        },3000);
+        //ONLY load if the activity is still alive
+        if (!DetailedCapsuleHistoryItem.this.isDestroyed()){
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    voiceShimmer.stopShimmer();
+                    voiceShimmer.setVisibility(View.GONE);
+                    voice.setVisibility(View.VISIBLE);
+                }
+            },3000);
+        }
     }
 
 //    @Override
