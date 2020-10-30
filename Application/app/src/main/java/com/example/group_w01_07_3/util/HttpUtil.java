@@ -140,15 +140,17 @@ public class HttpUtil {
 
     public static void uploadImage(String token, File avatarFile, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
+        String smmsURL = "https://sm.ms/api/v2/upload";
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("tkn", token)
-                .addFormDataPart("myfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
+                .addFormDataPart("format", "jpg")
+                .addFormDataPart("smfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
                 .build();
         Request request = new Request.Builder()
-                .url(HttpUtil.address + "uploadImage")
-                .header("enctype", "multipart/form-data")
+                .url(smmsURL)
+                .header("Authorization", "P6cnD1swearDYSV4bY7Y9eY836efVyUt")
                 .header("Content-Type", "multipart/form-data")
+                .header("User-Agent", "PostmanRuntime/7.26.5")
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);
