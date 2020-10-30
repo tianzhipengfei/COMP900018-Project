@@ -111,7 +111,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // distance request capsules interval (unit: degree)
     private double distanceThresholdToRequest = 5.55;
     // shake event
-    private SensorManager sensorMgr;
+    public SensorManager sensorMgr;
     private boolean shakeOpen = false;
     private long lastUpdate_shaking = System.currentTimeMillis();
     private float last_x = 0;
@@ -828,17 +828,22 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("shake", "onResume from Discover: called, registerShakeSensor");
+        registerShakeSensor();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("shake", "onPause from Discover: called, unregisterListener");
+        sensorMgr.unregisterListener(this);
         popUpShake = false;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("shake", "onDestroy from Discover: called, unregisterListener");
         // unregister a listener from the shake sensor
         sensorMgr.unregisterListener(this);
     }
