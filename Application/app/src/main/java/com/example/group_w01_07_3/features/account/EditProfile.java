@@ -318,14 +318,19 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    headerUsername.setText(usernameProfileString);
-                                    if (!(avatarProfileString == "null")){
-                                        Picasso.with(EditProfile.this)
-                                                .load(avatarProfileString)
-                                                .fit()
-                                                .placeholder(R.drawable.logo)
-                                                .into(headerAvatar);
+                                    if (!EditProfile.this.isDestroyed()){
+                                        if (!(avatarProfileString == "null")){
+                                                Picasso.with(EditProfile.this)
+                                                        .load(avatarProfileString)
+                                                        .fit()
+                                                        .placeholder(R.drawable.logo)
+                                                        .into(headerAvatar);
+                                        }
+                                        headerUsername.setText(usernameProfileString);
+                                    } else {
+                                        Log.d("FINISHED", "run: Activity has been finished, don't load Glide for update header avatar & username");
                                     }
+
                                 }
                             });
                         }
@@ -475,30 +480,24 @@ public class EditProfile extends AppCompatActivity implements
                                               public void run() {
                                                   // Toast.makeText(EditProfile.this, "Get profile successfully", Toast.LENGTH_SHORT).show();
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
-                                                  if (!(avatarProfileString == "null")) {
-//                                                      Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
-//                                                      Bitmap bitmap = ImageUtil.getHttpImage(avatarProfileString);
-//                                                      if (bitmap != null){
-//                                                          Log.d("PROFILE", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//                                                      }
-////                                                      Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap,  56 ,56, true);//this bitmap2 you can use only for display
-//                                                      avatarDisplay.setImageBitmap(bitmap);
 
-                                                      if (!EditProfile.this.isDestroyed()){
-                                                          //TODO: use Glide solved previus problem of not loaded avatar
-                                                          Glide.with(EditProfile.this)
-                                                                  .load(avatarProfileString)
-                                                                  .into(avatarDisplay);
+                                                  //only update profile if the activity is still alive
+                                                  if (!EditProfile.this.isDestroyed()){
+                                                      if (!(avatarProfileString == "null")) {
+                                                              //TODO: use Glide solved previus problem of not loaded avatar
+                                                              Glide.with(EditProfile.this)
+                                                                      .load(avatarProfileString)
+                                                                      .into(avatarDisplay);
                                                       } else {
-                                                          Log.d("FINISHED", "run: Activity has been finished, don't load Glide");
+                                                          Log.d("PROFILE", "avatarProfileString: (else)");
+                                                          avatarDisplay.setImageResource(R.drawable.avatar_sample);
                                                       }
+                                                      usernameDisplay.setText(usernameProfileString);
+                                                      emailDisplay.setText(emailProfileString);
+                                                      dobDisplay.setText(dobProfileString);
                                                   } else {
-                                                      Log.d("PROFILE", "avatarProfileString: (else)");
-                                                      avatarDisplay.setImageResource(R.drawable.avatar_sample);
+                                                      Log.d("FINISHED", "run: Activity has been finished, don't load Glide for profile avatar & other info");
                                                   }
-                                                  usernameDisplay.setText(usernameProfileString);
-                                                  emailDisplay.setText(emailProfileString);
-                                                  dobDisplay.setText(dobProfileString);
                                               }
                                           }
                             );
@@ -508,10 +507,12 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
-                                                  usernameDisplay.setText("null");
-                                                  emailDisplay.setText("null");
-                                                  dobDisplay.setText("null");
+                                                  if (!EditProfile.this.isDestroyed()){
+                                                      Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                                      usernameDisplay.setText("null");
+                                                      emailDisplay.setText("null");
+                                                      dobDisplay.setText("null");
+                                                  }
                                               }
                                           }
                             );
@@ -520,10 +521,12 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  Toast.makeText(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
-                                                  usernameDisplay.setText("null");
-                                                  emailDisplay.setText("null");
-                                                  dobDisplay.setText("null");
+                                                  if (!EditProfile.this.isDestroyed()){
+                                                      Toast.makeText(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                      usernameDisplay.setText("null");
+                                                      emailDisplay.setText("null");
+                                                      dobDisplay.setText("null");
+                                                  }
                                               }
                                           }
                             );
@@ -603,7 +606,7 @@ public class EditProfile extends AppCompatActivity implements
                                     .load(newAvatarString)
                                     .into(headerAvatar);
                         } else {
-                            Log.d("FINISHED", "run: Activity has been finished, don't load Glide");
+                            Log.d("FINISHED", "run: Activity has been finished, don't load Glide for avatar during onChangeAvatar");
                         }
                     }
                 });
