@@ -222,13 +222,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    headerUsername.setText(usernameProfileString);
-                                    if (!(avatarProfileString == "null")) {
-                                        Picasso.with(DiscoverCapsule.this)
-                                                .load(avatarProfileString)
-                                                .fit()
-                                                .placeholder(R.drawable.logo)
-                                                .into(headerAvatar);
+                                    if (!DiscoverCapsule.this.isDestroyed()){
+                                        headerUsername.setText(usernameProfileString);
+                                        if (!(avatarProfileString == "null")) {
+                                            Picasso.with(DiscoverCapsule.this)
+                                                    .load(avatarProfileString)
+                                                    .fit()
+                                                    .placeholder(R.drawable.logo)
+                                                    .into(headerAvatar);
+                                        }
                                     }
                                 }
                             });
@@ -240,6 +242,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
+                    //retry to update every 3 seconds. handle the case that enter the activity
+                    //with no internet at all(which okHTTP will not retry for you)
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateHeader();
+                        }
+                    },3000);
                 }
             });
         }
