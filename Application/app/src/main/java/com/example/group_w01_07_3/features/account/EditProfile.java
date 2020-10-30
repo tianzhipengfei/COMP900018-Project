@@ -544,12 +544,15 @@ public class EditProfile extends AppCompatActivity implements
 
                     //retry to get profile every 3 seconds. handle the case that enter the activity
                     //with no internet at all(which okHTTP will not retry for you)
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            onGetProfile();
-                        }
-                    },3000);
+                    // don't attempt to retry if activity has already been finished
+                    if(!EditProfile.this.isDestroyed()){
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                onGetProfile();
+                            }
+                        },3000);
+                    }
                 }
             });
         }
@@ -577,12 +580,14 @@ public class EditProfile extends AppCompatActivity implements
                 e.printStackTrace();
                 //retry to upload avatar every 3 seconds. handle the case that enter the activity
                 //with no internet at all(which okHTTP will not retry for you)
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onUploadImage();
-                    }
-                },3000);
+                if (!EditProfile.this.isDestroyed()){
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onUploadImage();
+                        }
+                    },3000);
+                }
             }
         });
     }
@@ -619,12 +624,14 @@ public class EditProfile extends AppCompatActivity implements
                 e.printStackTrace();
                 //retry to update avatar display every 3 seconds. handle the case that enter the activity
                 //with no internet at all(which okHTTP will not retry for you)
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onChangeAvatar();
-                    }
-                },3000);
+                if (!EditProfile.this.isDestroyed()){
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onChangeAvatar();
+                        }
+                    },3000);
+                }
             }
         });
     }
