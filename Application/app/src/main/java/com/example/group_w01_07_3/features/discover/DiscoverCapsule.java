@@ -231,6 +231,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                                     .placeholder(R.drawable.logo)
                                                     .into(headerAvatar);
                                         }
+                                    } else {
+                                        Log.d("FINISHED", "run: Activity has been finished, don't load Glide for update header avatar & username");
                                     }
                                 }
                             });
