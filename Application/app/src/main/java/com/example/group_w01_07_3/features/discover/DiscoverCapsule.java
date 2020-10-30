@@ -97,7 +97,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private Marker mCurrLocationMarker;
     private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
     private boolean if_connected = false;
-    private boolean if_needRefresh = true;
+    private boolean can_i_shake = false;
+    private boolean can_i_retrieve_http = true;
     private boolean can_i_fresh_markers = false;
     // last request location
     private Location mLastLocation;
@@ -349,7 +350,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             List<Location> locationList = locationResult.getLocations();
             if (locationList.size() > 0) {
                 Location location = locationList.get(locationList.size() - 1);
-                check_ifCapsulesNeedRefresh(location);
+                check_ifCanRefreshMarkers(location);
                 redrawGoogleMap(location);
             }
         }
@@ -366,7 +367,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
             try {
                 if (checkForRequest(location.getLatitude(), location.getLongitude())) {
-                    if_needRefresh = true;
+                    can_i_shake = false;
+                    can_i_retrieve_http = true;
+                    can_i_fresh_markers = false;
 
                     lastRequestLat = location.getLatitude();
                     lastRequestLon = location.getLongitude();
@@ -428,7 +431,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             Log.d("CAPSULE", "***** No token to get capsule *****");
             allCapsules = new JSONArray();
             selectedCapsule = new JSONObject();
-        } else if (if_needRefresh) {
+        } else if (can_i_shake == false && can_i_retrieve_http == true && can_i_fresh_markers == false) {
             try {
                 String token = UserUtil.getToken(DiscoverCapsule.this);
                 Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
@@ -443,9 +446,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             if (responseJSON.has("success")) {
                                 allCapsules = responseJSON.getJSONArray("capsules");
                                 // refresh capsules only after receiving http response
+                                can_i_shake = false;
+                                can_i_retrieve_http = false;
                                 can_i_fresh_markers = true;
-                                if_needRefresh = false;
-                                if_connected = true;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -463,13 +466,17 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    private void check_ifCapsulesNeedRefresh(Location location) {
-        if (if_connected && can_i_fresh_markers) {
+    private void check_ifCanRefreshMarkers(Location location) {
+        if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true) {
             refreshMarkers(allCapsules, location);
+            can_i_shake = true;
+            can_i_retrieve_http = false;
             can_i_fresh_markers = false;
         }
         if (mCapsuleMarkers.isEmpty()) {
-            if_needRefresh = true;
+            can_i_shake = false;
+            can_i_retrieve_http = true;
+            can_i_fresh_markers = false;
         }
     }
 
@@ -619,11 +626,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
             if (popUpShake) {
                 RequestSending();
             } else {
-                if_needRefresh = true;
+                can_i_shake = false;
+                can_i_retrieve_http = true;
+                can_i_fresh_markers = false;
             }
         }
 
-        if (sensor == SensorManager.SENSOR_ACCELEROMETER && if_needRefresh == false && can_i_fresh_markers == false) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_i_shake == true && can_i_retrieve_http == false && can_i_fresh_markers == false) {
             float x = values[SensorManager.DATA_X];
             float y = values[SensorManager.DATA_Y];
             float z = values[SensorManager.DATA_Z];
