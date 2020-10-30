@@ -336,7 +336,7 @@ public class EditProfile extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
-                    //retry to get profile every 3 seconds. handle the case that enter the activity
+                    //retry to update every 3 seconds. handle the case that enter the activity
                     //with no internet at all(which okHTTP will not retry for you)
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
@@ -484,10 +484,14 @@ public class EditProfile extends AppCompatActivity implements
 ////                                                      Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap,  56 ,56, true);//this bitmap2 you can use only for display
 //                                                      avatarDisplay.setImageBitmap(bitmap);
 
-                                                      //TODO: use Glide solved previus problem of not loaded avatar
-                                                      Glide.with(EditProfile.this)
-                                                              .load(avatarProfileString)
-                                                              .into(avatarDisplay);
+                                                      if (!EditProfile.this.isDestroyed()){
+                                                          //TODO: use Glide solved previus problem of not loaded avatar
+                                                          Glide.with(EditProfile.this)
+                                                                  .load(avatarProfileString)
+                                                                  .into(avatarDisplay);
+                                                      } else {
+                                                          Log.d("FINISHED", "run: Activity has been finished, don't load Glide");
+                                                      }
                                                   } else {
                                                       Log.d("PROFILE", "avatarProfileString: (else)");
                                                       avatarDisplay.setImageResource(R.drawable.avatar_sample);
@@ -566,7 +570,7 @@ public class EditProfile extends AppCompatActivity implements
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
-                //retry to get profile every 3 seconds. handle the case that enter the activity
+                //retry to upload avatar every 3 seconds. handle the case that enter the activity
                 //with no internet at all(which okHTTP will not retry for you)
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
@@ -589,15 +593,18 @@ public class EditProfile extends AppCompatActivity implements
                     @Override
                     public void run() {
                         //Update main page avatar
-                        Glide.with(EditProfile.this)
-                                .load(newAvatarString)
-                                .into(avatarDisplay);
-
-                        //also update the sliding menu header avatar
-                        Glide.with(EditProfile.this)
-                                .load(newAvatarString)
-                                .into(headerAvatar);
-
+                        if (!EditProfile.this.isDestroyed()){
+                            //TODO: use Glide solved previus problem of not loaded avatar
+                            Glide.with(EditProfile.this)
+                                    .load(newAvatarString)
+                                    .into(avatarDisplay);
+                            //also update the sliding menu header avatar
+                            Glide.with(EditProfile.this)
+                                    .load(newAvatarString)
+                                    .into(headerAvatar);
+                        } else {
+                            Log.d("FINISHED", "run: Activity has been finished, don't load Glide");
+                        }
                     }
                 });
             }
@@ -605,6 +612,14 @@ public class EditProfile extends AppCompatActivity implements
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
+                //retry to update avatar display every 3 seconds. handle the case that enter the activity
+                //with no internet at all(which okHTTP will not retry for you)
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onChangeAvatar();
+                    }
+                },3000);
             }
         });
     }
