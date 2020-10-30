@@ -111,7 +111,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     // distance request capsules interval (unit: degree)
     private double distanceThresholdToRequest = 5.55;
     // shake event
-    private SensorManager sensorMgr;
+    public SensorManager sensorMgr;
     private boolean shakeOpen = false;
     private long lastUpdate_shaking = System.currentTimeMillis();
     private float last_x = 0;
@@ -535,7 +535,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
             Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
         }
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
-        registerShakeSensor();
+
+//        registerShakeSensor();
+        // handle the case of finish current activity but the delayed response register shake
+        // again in another activity. So need to check if my self has been destroyed or not
+        if(this.isDestroyed()){
+
+        } else{
+            registerShakeSensor();
+        }
     }
 
     // redraw google map after users refresh capsules
@@ -589,14 +597,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 SensorManager.SENSOR_DELAY_GAME);
     }
 
-//    // Todo: set field values
-//    private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45"
-//    private int num_shakes = 5;
-//    private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule.
+   // Todo: set field values
+   private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45" 
+   private int num_shakes = 5;
+   private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule.
 
-    private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
-    private int num_shakes = 5;
-    private float forceThreshold = (float) 1.5; //旋转力度, this is rotation force threhold on open capsule.
+    // private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
+    // private int num_shakes = 5;
+    // private float forceThreshold = (float) 1.5; //旋转力度, this is rotation force threhold on open capsule.
 
 
     // detect a shake event
@@ -687,7 +695,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 });
                 break;
             case 1:
-                registerShakeSensor();
+                if(this.isDestroyed()){
+
+                } else{
+                    registerShakeSensor();
+                }
 
                 popUpShake = true;
                 shakeOpen = false;
@@ -817,17 +829,22 @@ public class DiscoverCapsule extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("shake", "onResume from Discover: called, registerShakeSensor");
+        registerShakeSensor();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("shake", "onPause from Discover: called, unregisterListener");
+        sensorMgr.unregisterListener(this);
         popUpShake = false;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("shake", "onDestroy from Discover: called, unregisterListener");
         // unregister a listener from the shake sensor
         sensorMgr.unregisterListener(this);
     }

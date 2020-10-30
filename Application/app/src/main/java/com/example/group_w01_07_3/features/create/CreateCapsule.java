@@ -40,6 +40,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -51,7 +52,7 @@ import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.ImageUtil;
-import com.example.group_w01_07_3.util.LocationUtil;
+
 import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.widget.BottomDialog;
@@ -64,6 +65,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.squareup.picasso.Picasso;
@@ -167,61 +169,6 @@ public class CreateCapsule extends AppCompatActivity implements
         } else {
             permiSwitch.setText("Create Private Memory Capsule");
         }
-    }
-
-    public boolean checkLocationPermission() {
-        int fineLocation = ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (fineLocation != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_PERMISSION_FINE_LOCATION);
-        }
-        int corseLocation = ActivityCompat.checkSelfPermission
-                (this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        if (corseLocation != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{
-                            Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_PERMISSION_COARSE_LOCATION);
-        }
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission
-                (this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-
-
-    private boolean getOtherInfo() {
-        EditText capsuleTitle = findViewById(R.id.create_capsule_title);
-        EditText capsuleContent = findViewById(R.id.create_capsule_content);
-        if (capsuleTitle.getText().toString().isEmpty()) {
-            Toast.makeText(CreateCapsule.this, "Please enter the title",
-                    Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (capsuleContent.getText().toString().isEmpty()) {
-            Toast.makeText(CreateCapsule.this, "Please enter the content",
-                    Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        try {
-            capsuleInfo.put("title", capsuleTitle.getText());
-            capsuleInfo.put("content", capsuleContent.getText());
-            capsuleInfo.put("time", Calendar.getInstance().getTime());
-            capsuleInfo.put("permission", permission);
-            capsuleInfo.put("tkn", this.token);
-            //for testing
-
-        } catch (JSONException e) {
-            System.out.print("Problems happen during parsing json objects");
-        }
-        return true;
     }
 
     // for recording and playing audio
@@ -385,6 +332,61 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     // Upload functions
+    // check text info are filled in
+    private boolean getOtherInfo() {
+        EditText capsuleTitle = findViewById(R.id.create_capsule_title);
+        EditText capsuleContent = findViewById(R.id.create_capsule_content);
+        if (capsuleTitle.getText().toString().isEmpty()) {
+            Toast.makeText(CreateCapsule.this, "Please enter the title",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (capsuleContent.getText().toString().isEmpty()) {
+            Toast.makeText(CreateCapsule.this, "Please enter the content",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        try {
+            capsuleInfo.put("title", capsuleTitle.getText());
+            capsuleInfo.put("content", capsuleContent.getText());
+            capsuleInfo.put("time", Calendar.getInstance().getTime());
+            capsuleInfo.put("permission", permission);
+            capsuleInfo.put("tkn", this.token);
+            //for testing
+
+        } catch (JSONException e) {
+            System.out.print("Problems happen during parsing json objects");
+        }
+        return true;
+    }
+
+    // Get location
+    public boolean checkLocationPermission() {
+        int fineLocation = ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (fineLocation != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_PERMISSION_FINE_LOCATION);
+        }
+        int corseLocation = ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        if (corseLocation != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                            Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQUEST_PERMISSION_COARSE_LOCATION);
+        }
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission
+                (this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private void getLocation() throws JSONException {
 
         if (checkLocationPermission()) {
@@ -422,6 +424,7 @@ public class CreateCapsule extends AppCompatActivity implements
 
     }
 
+    // Get audio url
     private void uploadAudio() {
         final File audioFile = recorderUtil.getAudioFile();
 
@@ -468,6 +471,7 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
+    // Get img url
     private void uploadImg() {
         if (imageFile!=null && imageFile.exists()) {
             HttpUtil.uploadImage(token, imageFile, new okhttp3.Callback() {
@@ -506,6 +510,7 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
+    // Upload all info
     private void uploadOther() {
         Log.i("CapsuleInfo", capsuleInfo.toString());
 
@@ -568,17 +573,28 @@ public class CreateCapsule extends AppCompatActivity implements
         mLastClickTime = SystemClock.elapsedRealtime();
 
         if (getOtherInfo()) {
-            //collect info;
-            progressbar=new ProgressDialog(CreateCapsule.this);
+            progressbar = new ProgressDialog(CreateCapsule.this);
             progressbar.setTitle("Loading");
             progressbar.setMessage("Creating capsule, please wait....");
             progressbar.show();
-            getLocation();
+            if(HttpUtil.isOnline(this)) {
+                //collect info;
+
+                getLocation();
+            }else{
+                progressbar.dismiss();
+                Snackbar snackbar = Snackbar
+                        .make(drawerLayout, "Please connect to internet first", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
 
 
         }
     }
 
+
+
+    // For layout
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawers();

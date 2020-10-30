@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.group_w01_07_3" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.group_w01_07_3">
     <!-- get location permission at runtime -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -31,7 +32,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".features.discover.DiscoverCapsule" />
+        <activity
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:name=".features.discover.DiscoverCapsule" />
         <activity android:name=".features.discover.Display" />
         <activity android:name=".features.create.CreateCapsule" />
         <activity android:name=".features.history.OpenedCapsuleHistory" />
