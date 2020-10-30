@@ -98,7 +98,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
     private boolean if_connected = false;
     private boolean if_needRefresh = true;
-    private boolean can_refresh = false;
+    private boolean can_i_fresh_markers = false;
     // last request location
     private Location mLastLocation;
     private double lastRequestLat = 360.0;
@@ -443,7 +443,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             if (responseJSON.has("success")) {
                                 allCapsules = responseJSON.getJSONArray("capsules");
                                 // refresh capsules only after receiving http response
-                                can_refresh = true;
+                                can_i_fresh_markers = true;
                                 if_needRefresh = false;
                                 if_connected = true;
                             }
@@ -464,9 +464,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     private void check_ifCapsulesNeedRefresh(Location location) {
-        if (if_connected && can_refresh) {
+        if (if_connected && can_i_fresh_markers) {
             refreshCapsules(allCapsules, location);
-            can_refresh = false;
+            can_i_fresh_markers = false;
         }
         if (mCapsuleMarkers.isEmpty()) {
             if_needRefresh = true;
@@ -597,10 +597,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-   // Todo: set field values
-   private int num_shakes = 5; //valid shake how many times to open capsule
-   private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
-   private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
+    // Todo: set field values
+    private int num_shakes = 5; //valid shake how many times to open capsule
+    private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
+    private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
 
     // private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
     // private int num_shakes = 5;
@@ -623,7 +623,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         }
 
-        if (sensor == SensorManager.SENSOR_ACCELEROMETER && if_needRefresh == false && can_refresh == false) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER && if_needRefresh == false && can_i_fresh_markers == false) {
             float x = values[SensorManager.DATA_X];
             float y = values[SensorManager.DATA_Y];
             float z = values[SensorManager.DATA_Z];
