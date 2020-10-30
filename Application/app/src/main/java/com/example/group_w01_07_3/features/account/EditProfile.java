@@ -514,7 +514,8 @@ public class EditProfile extends AppCompatActivity implements
                 String responseData = response.body().string();
                 try {
                     JSONObject responseJSON = new JSONObject(responseData);
-                    newAvatarString = responseJSON.getString("file");
+                    JSONObject data = responseJSON.getJSONObject("data");
+                    newAvatarString = data.getString("url");
                     onChangeAvatar();
                 } catch (JSONException e) {
                     e.printStackTrace();

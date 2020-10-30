@@ -490,7 +490,9 @@ public class CreateCapsule extends AppCompatActivity implements
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
                             Log.i("ImageUrl", status);
-                            capsuleInfo.put("img", responseJSON.getString("file"));
+                            JSONObject data = responseJSON.getJSONObject("data");
+                            System.out.println(data.getString("url"));
+                            capsuleInfo.put("img", data.getString("url"));
                             uploadOther();
                         }
                     } catch (JSONException e) {

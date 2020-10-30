@@ -1,5 +1,6 @@
 package com.example.group_w01_07_3;
 
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -250,7 +252,10 @@ public class SignUp extends AppCompatActivity {
                                     if (responseJSON.has("success")) {
                                         String status = responseJSON.getString("success");
                                         Log.d("SIGNUP", "uploadAvatar success: " + status);
-                                        avatarFileLink = responseJSON.getString("file");
+
+                                        JSONObject data = responseJSON.getJSONObject("data");
+                                        System.out.println(data.getString("url"));
+                                        avatarFileLink = data.getString("url");
                                         Log.d("SIGNUP", "avatarFileLink: " + avatarFileLink);
                                         onSignUp();
                                     } else if (responseJSON.has("error")) {
