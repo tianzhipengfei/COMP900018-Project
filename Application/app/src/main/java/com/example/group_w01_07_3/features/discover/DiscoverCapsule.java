@@ -777,7 +777,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     @Override
                     public void run() {
                         progress.dismiss();
-                        Toast.makeText(DiscoverCapsule.this, "No Internet to send request", Toast.LENGTH_SHORT);
+                        Log.d("Lost connection test", "run: "+"fail to send request");
+                        Toast.makeText(DiscoverCapsule.this, "No Internet to send request", Toast.LENGTH_LONG).show();
                     }
                 });
                 //Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
