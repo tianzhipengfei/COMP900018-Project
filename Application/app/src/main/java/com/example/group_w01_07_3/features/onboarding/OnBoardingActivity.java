@@ -23,24 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tutorial was taken to build the Onboarding activity. The way to add dots is borrowed.
- * However, the implementation and design were modified to suit our APP, implementation logic
- * As well as the Material Design Guideline
+ * Tutorial was taken to build the Onboarding activity
+ * The detail implementation and design were modified to suit our APP & implementation logic
+ * & the Material Design Guideline
  * Anyway, the tutorials listed below must be credited
  * Tutorial: https://www.youtube.com/watch?v=pwcG6npiXyo&t=79s
  */
 public class OnBoardingActivity extends AppCompatActivity {
-
+    // App View
+    private TabLayout tabLayout;
     private ViewPager onboardingPager;
-    OnboardingViewPagerAdapter onboardingViewPagerAdapter;
-
-    TabLayout tabLayout;
-
-    MaterialButton btnGetStarted;
-
-    private LinearLayout dotLayout;
-    private TextView[] dotIndicators;
-
+    private OnboardingViewPagerAdapter onboardingViewPagerAdapter;
+    private MaterialButton btnGetStarted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +44,7 @@ public class OnBoardingActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        //Check if onboarding activity has been finished or or
+        //Check if onBoarding activity has been finished or not
         if (restorePrefData()) {
             Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class );
             startActivity(mainActivity);
@@ -60,9 +54,35 @@ public class OnBoardingActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_on_boarding);
 
-        //apply alert sound
-        final MediaPlayer mediaPlayer = MediaPlayer.create(OnBoardingActivity.this, R.raw.hero);
+        initOnboardingPager();
+        initStartBtn();
 
+    }
+
+    /**
+     * @return
+     */
+    private boolean restorePrefData() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
+        Boolean isIntroActivityOpnendBefore = pref.getBoolean("isIntroOpnend",false);
+        return  isIntroActivityOpnendBefore;
+
+    }
+
+    /**
+     *
+     */
+    private void savePrefsData() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("isIntroOpnend",true);
+        editor.commit();
+    }
+
+    /**
+     *
+     */
+    private void initOnboardingPager(){
         //initialize views
         tabLayout = findViewById(R.id.onboarding_dot);
         btnGetStarted = findViewById(R.id.onboarding_started);
@@ -103,7 +123,14 @@ public class OnBoardingActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    /**
+     *
+     */
+    private void initStartBtn(){
+        //apply alert sound
+        final MediaPlayer mediaPlayer = MediaPlayer.create(OnBoardingActivity.this, R.raw.hero);
         btnGetStarted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,20 +145,6 @@ public class OnBoardingActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
-
-    private boolean restorePrefData() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
-        Boolean isIntroActivityOpnendBefore = pref.getBoolean("isIntroOpnend",false);
-        return  isIntroActivityOpnendBefore;
-
-    }
-
-    private void savePrefsData() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean("isIntroOpnend",true);
-        editor.commit();
     }
 
 }
