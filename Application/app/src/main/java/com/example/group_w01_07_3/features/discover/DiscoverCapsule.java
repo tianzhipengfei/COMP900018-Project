@@ -811,7 +811,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 mCapsuleMarkers.remove(selectedMarker);
 
                                 progress.dismiss();
-                                Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
+                                Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT).show();
 //                                pw.dismiss();
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
