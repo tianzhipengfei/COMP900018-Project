@@ -11,6 +11,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -335,6 +336,14 @@ public class EditProfile extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
+                    //retry to get profile every 3 seconds. handle the case that enter the activity
+                    //with no internet at all(which okHTTP will not retry for you)
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateHeader();
+                        }
+                    },3000);
                 }
             });
         }
@@ -523,6 +532,15 @@ public class EditProfile extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
+
+                    //retry to get profile every 3 seconds. handle the case that enter the activity
+                    //with no internet at all(which okHTTP will not retry for you)
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onGetProfile();
+                        }
+                    },3000);
                 }
             });
         }
