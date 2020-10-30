@@ -537,14 +537,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
         Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
-//        registerShakeSensor();
-        // handle the case of finish current activity but the delayed response register shake
-        // again in another activity. So need to check if my self has been destroyed or not
-        if(this.isDestroyed()){
-
-        } else{
-            registerShakeSensor();
-        }
+        registerShakeSensor();
     }
 
     // redraw google map after users refresh capsules
@@ -591,11 +584,17 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     private void registerShakeSensor(){
-        //set up sensor manager
-        sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensorMgr.registerListener(this,
-                SensorManager.SENSOR_ACCELEROMETER,
-                SensorManager.SENSOR_DELAY_GAME);
+        // handle the case of finish current activity but the delayed response register shake
+        // again in another activity. So need to check if my self has been destroyed or not
+        if(this.isDestroyed()){
+
+        } else{
+            //set up sensor manager
+            sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+            sensorMgr.registerListener(this,
+                    SensorManager.SENSOR_ACCELEROMETER,
+                    SensorManager.SENSOR_DELAY_GAME);
+        }
     }
 
    // Todo: set field values
@@ -696,11 +695,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 });
                 break;
             case 1:
-                if(this.isDestroyed()){
-
-                } else{
-                    registerShakeSensor();
-                }
+                registerShakeSensor();
 
                 popUpShake = true;
                 shakeOpen = false;
