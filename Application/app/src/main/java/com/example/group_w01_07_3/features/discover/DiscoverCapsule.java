@@ -222,13 +222,17 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    headerUsername.setText(usernameProfileString);
-                                    if (!(avatarProfileString == "null")) {
-                                        Picasso.with(DiscoverCapsule.this)
-                                                .load(avatarProfileString)
-                                                .fit()
-                                                .placeholder(R.drawable.logo)
-                                                .into(headerAvatar);
+                                    if (!DiscoverCapsule.this.isDestroyed()){
+                                        headerUsername.setText(usernameProfileString);
+                                        if (!(avatarProfileString == "null")) {
+                                            Picasso.with(DiscoverCapsule.this)
+                                                    .load(avatarProfileString)
+                                                    .fit()
+                                                    .placeholder(R.drawable.logo)
+                                                    .into(headerAvatar);
+                                        }
+                                    } else {
+                                        Log.d("FINISHED", "run: Activity has been finished, don't load Glide for update header avatar & username");
                                     }
                                 }
                             });
@@ -240,6 +244,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
+                    //retry to update every 3 seconds. handle the case that enter the activity
+                    //with no internet at all(which okHTTP will not retry for you)
+                    if (!DiscoverCapsule.this.isDestroyed()){
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateHeader();
+                            }
+                        },3000);
+                    }
                 }
             });
         }
@@ -427,67 +441,80 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     // retrieve capsule information through HTTP GET method
     private void requestCapsuleInfo() {
-        if (capsuleInfo.length() == 0) {
-            Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
-            Log.d("CAPSULE", "***** No token to get capsule *****");
-            allCapsules = new JSONArray();
-            selectedCapsule = new JSONObject();
-        } else if (can_i_shake == false && can_i_retrieve_http == true && can_i_fresh_markers == false) {
-            try {
-                String token = UserUtil.getToken(DiscoverCapsule.this);
-                Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
-                HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
-                    @Override
-                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
-                        String responseData = response.body().string();
-                        Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
-                        try {
-                            JSONObject responseJSON = new JSONObject(responseData);
-                            if (responseJSON.has("success")) {
-                                allCapsules = responseJSON.getJSONArray("capsules");
-                                // refresh capsules only after receiving http response
-                                can_i_shake = false;
-                                can_i_retrieve_http = false;
-                                can_i_fresh_markers = true;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        e.printStackTrace();
-                        Snackbar snackbar = Snackbar
-                                .make(drawerLayout, "Oops. Looks like you lost Internet connection\nReconnecting...", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                    }
-                });
-            } catch (JSONException e) {
-                e.printStackTrace();
+        // Only request capsule from server if discover is still alive
+        // handled the case if switch between activity, then we will have a stack of capsule list to updated
+        // no matter online or offline
+        if (!this.isDestroyed()){
+            if (capsuleInfo.length() == 0) {
+                Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
+                Log.d("CAPSULE", "***** No token to get capsule *****");
+                allCapsules = new JSONArray();
+                selectedCapsule = new JSONObject();
+            } else if (can_i_shake == false && can_i_retrieve_http == true && can_i_fresh_markers == false) {
+                try {
+                    String token = UserUtil.getToken(DiscoverCapsule.this);
+                    Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
+                    HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
+                        @Override
+                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                            Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
+                            String responseData = response.body().string();
+                            Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
+                            try {
+                                JSONObject responseJSON = new JSONObject(responseData);
+                                if (responseJSON.has("success")) {
+                                    allCapsules = responseJSON.getJSONArray("capsules");
+                                    // refresh capsules only after receiving http response
+                                    can_i_shake = false;
+                                    can_i_retrieve_http = false;
+                                    can_i_fresh_markers = true;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                            e.printStackTrace();
+                            Snackbar snackbar = Snackbar
+                                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\nReconnecting...", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.d("FINISHED", "requestCapsuleInfo: Don't send HTTP request if finishing Discover.class");
             }
         }
+
     }
 
     private void check_ifCanRefreshMarkers(Location location) {
-        if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true) {
-            refreshMarkers(allCapsules, location);
 
-            //ensure there is a 3 seconds gap between [next shake event] & [current completed marker fresh]
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    can_i_shake = true;
-                    can_i_retrieve_http = false;
-                    can_i_fresh_markers = false;
-                }
-            },2000);
-        }
-        if (mCapsuleMarkers.isEmpty()) {
-            can_i_shake = false;
-            can_i_retrieve_http = true;
-            can_i_fresh_markers = false;
+        //Same reason, don't drawer marker if discover activity has been finished
+        if (!this.isDestroyed()){
+            if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true) {
+                refreshMarkers(allCapsules, location);
+
+                //ensure there is a 3 seconds gap between [next shake event] & [current completed marker fresh]
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        can_i_shake = true;
+                        can_i_retrieve_http = false;
+                        can_i_fresh_markers = false;
+                    }
+                },2000);
+            }
+            if (mCapsuleMarkers.isEmpty()) {
+                can_i_shake = false;
+                can_i_retrieve_http = true;
+                can_i_fresh_markers = false;
+            }
         }
     }
 

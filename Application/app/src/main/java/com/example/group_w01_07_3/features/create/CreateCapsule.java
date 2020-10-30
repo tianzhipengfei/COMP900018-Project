@@ -15,6 +15,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -663,13 +664,17 @@ public class CreateCapsule extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    headerUsername.setText(usernameProfileString);
-                                    if (!(avatarProfileString == "null")){
-                                        Picasso.with(CreateCapsule.this)
-                                                .load(avatarProfileString)
-                                                .fit()
-                                                .placeholder(R.drawable.logo)
-                                                .into(headerAvatar);
+                                    if (!CreateCapsule.this.isDestroyed()){
+                                        headerUsername.setText(usernameProfileString);
+                                        if (!(avatarProfileString == "null")){
+                                            Picasso.with(CreateCapsule.this)
+                                                    .load(avatarProfileString)
+                                                    .fit()
+                                                    .placeholder(R.drawable.logo)
+                                                    .into(headerAvatar);
+                                        }
+                                    } else {
+                                        Log.d("FINISHED", "run: Activity has been finished, don't load Glide for update header avatar & username");
                                     }
 
                                 }
@@ -683,6 +688,16 @@ public class CreateCapsule extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
+                    //retry to update every 3 seconds. handle the case that enter the activity
+                    //with no internet at all(which okHTTP will not retry for you)
+                    if (!CreateCapsule.this.isDestroyed()){
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateHeader();
+                            }
+                        },3000);
+                    }
                 }
             });
         }

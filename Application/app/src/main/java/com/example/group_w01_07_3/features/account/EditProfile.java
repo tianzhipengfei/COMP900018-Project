@@ -135,9 +135,6 @@ public class EditProfile extends AppCompatActivity implements
         headerUsername = headerview.findViewById(R.id.header_username);
         headerAvatar = headerview.findViewById(R.id.header_avatar);
 
-        updateHeader();
-
-
         MaterialButton changePasswordBtn = (MaterialButton) findViewById(R.id.edit_profile_btn_change_password);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -298,57 +295,6 @@ public class EditProfile extends AppCompatActivity implements
         return false;
     }
 
-    private void updateHeader(){
-        if(!UserUtil.getToken(EditProfile.this).isEmpty()){
-            HttpUtil.getProfile(UserUtil.getToken(EditProfile.this), new okhttp3.Callback() {
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.d("PROFILE", "***** getProfile onResponse *****");
-                    String responseData = response.body().string();
-                    Log.d("PROFILE", "getProfile: " + responseData);
-                    try {
-                        JSONObject responseJSON = new JSONObject(responseData);
-                        if (responseJSON.has("success")) {
-                            String status = responseJSON.getString("success");
-                            Log.d("PROFILE", "getProfile success: " + status);
-                            String userInfo = responseJSON.getString("userInfo");
-                            JSONObject userInfoJSON = new JSONObject(userInfo);
-                            usernameProfileString = userInfoJSON.getString("uusr");
-                            avatarProfileString =  userInfoJSON.getString("uavatar");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    headerUsername.setText(usernameProfileString);
-                                    if (!(avatarProfileString == "null")){
-                                        Picasso.with(EditProfile.this)
-                                                .load(avatarProfileString)
-                                                .fit()
-                                                .placeholder(R.drawable.logo)
-                                                .into(headerAvatar);
-                                    }
-                                }
-                            });
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    e.printStackTrace();
-                    //retry to update every 3 seconds. handle the case that enter the activity
-                    //with no internet at all(which okHTTP will not retry for you)
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateHeader();
-                        }
-                    },3000);
-                }
-            });
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -475,30 +421,31 @@ public class EditProfile extends AppCompatActivity implements
                                               public void run() {
                                                   // Toast.makeText(EditProfile.this, "Get profile successfully", Toast.LENGTH_SHORT).show();
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
-                                                  if (!(avatarProfileString == "null")) {
-//                                                      Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
-//                                                      Bitmap bitmap = ImageUtil.getHttpImage(avatarProfileString);
-//                                                      if (bitmap != null){
-//                                                          Log.d("PROFILE", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//                                                      }
-////                                                      Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap,  56 ,56, true);//this bitmap2 you can use only for display
-//                                                      avatarDisplay.setImageBitmap(bitmap);
 
-                                                      if (!EditProfile.this.isDestroyed()){
-                                                          //TODO: use Glide solved previus problem of not loaded avatar
-                                                          Glide.with(EditProfile.this)
+                                                  //only update profile if the activity is still alive
+                                                  if (!EditProfile.this.isDestroyed()){
+                                                      if (!(avatarProfileString == "null")) {
+                                                              //TODO: use Glide solved previus problem of not loaded avatar
+                                                              Glide.with(EditProfile.this)
+                                                                      .load(avatarProfileString)
+                                                                      .into(avatarDisplay);
+                                                          Picasso.with(EditProfile.this)
                                                                   .load(avatarProfileString)
-                                                                  .into(avatarDisplay);
+                                                                  .fit()
+                                                                  .placeholder(R.drawable.logo)
+                                                                  .into(headerAvatar);
                                                       } else {
-                                                          Log.d("FINISHED", "run: Activity has been finished, don't load Glide");
+                                                          Log.d("PROFILE", "avatarProfileString: (else)");
+                                                          avatarDisplay.setImageResource(R.drawable.avatar_sample);
                                                       }
+                                                      headerUsername.setText(usernameProfileString);
+
+                                                      usernameDisplay.setText(usernameProfileString);
+                                                      emailDisplay.setText(emailProfileString);
+                                                      dobDisplay.setText(dobProfileString);
                                                   } else {
-                                                      Log.d("PROFILE", "avatarProfileString: (else)");
-                                                      avatarDisplay.setImageResource(R.drawable.avatar_sample);
+                                                      Log.d("FINISHED", "run: Activity has been finished, don't load Glide for profile avatar & other info");
                                                   }
-                                                  usernameDisplay.setText(usernameProfileString);
-                                                  emailDisplay.setText(emailProfileString);
-                                                  dobDisplay.setText(dobProfileString);
                                               }
                                           }
                             );
@@ -508,10 +455,12 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
-                                                  usernameDisplay.setText("null");
-                                                  emailDisplay.setText("null");
-                                                  dobDisplay.setText("null");
+                                                  if (!EditProfile.this.isDestroyed()){
+                                                      Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                                      usernameDisplay.setText("null");
+                                                      emailDisplay.setText("null");
+                                                      dobDisplay.setText("null");
+                                                  }
                                               }
                                           }
                             );
@@ -520,10 +469,12 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  Toast.makeText(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
-                                                  usernameDisplay.setText("null");
-                                                  emailDisplay.setText("null");
-                                                  dobDisplay.setText("null");
+                                                  if (!EditProfile.this.isDestroyed()){
+                                                      Toast.makeText(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                      usernameDisplay.setText("null");
+                                                      emailDisplay.setText("null");
+                                                      dobDisplay.setText("null");
+                                                  }
                                               }
                                           }
                             );
@@ -539,12 +490,15 @@ public class EditProfile extends AppCompatActivity implements
 
                     //retry to get profile every 3 seconds. handle the case that enter the activity
                     //with no internet at all(which okHTTP will not retry for you)
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            onGetProfile();
-                        }
-                    },3000);
+                    // don't attempt to retry if activity has already been finished
+                    if(!EditProfile.this.isDestroyed()){
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                onGetProfile();
+                            }
+                        },3000);
+                    }
                 }
             });
         }
@@ -572,12 +526,14 @@ public class EditProfile extends AppCompatActivity implements
                 e.printStackTrace();
                 //retry to upload avatar every 3 seconds. handle the case that enter the activity
                 //with no internet at all(which okHTTP will not retry for you)
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onUploadImage();
-                    }
-                },3000);
+                if (!EditProfile.this.isDestroyed()){
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onUploadImage();
+                        }
+                    },3000);
+                }
             }
         });
     }
@@ -603,7 +559,7 @@ public class EditProfile extends AppCompatActivity implements
                                     .load(newAvatarString)
                                     .into(headerAvatar);
                         } else {
-                            Log.d("FINISHED", "run: Activity has been finished, don't load Glide");
+                            Log.d("FINISHED", "run: Activity has been finished, don't load Glide for avatar during onChangeAvatar");
                         }
                     }
                 });
@@ -614,12 +570,14 @@ public class EditProfile extends AppCompatActivity implements
                 e.printStackTrace();
                 //retry to update avatar display every 3 seconds. handle the case that enter the activity
                 //with no internet at all(which okHTTP will not retry for you)
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onChangeAvatar();
-                    }
-                },3000);
+                if (!EditProfile.this.isDestroyed()){
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            onChangeAvatar();
+                        }
+                    },3000);
+                }
             }
         });
     }
