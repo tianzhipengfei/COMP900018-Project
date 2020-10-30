@@ -246,12 +246,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     e.printStackTrace();
                     //retry to update every 3 seconds. handle the case that enter the activity
                     //with no internet at all(which okHTTP will not retry for you)
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateHeader();
-                        }
-                    },3000);
+                    if (!DiscoverCapsule.this.isDestroyed()){
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateHeader();
+                            }
+                        },3000);
+                    }
                 }
             });
         }
