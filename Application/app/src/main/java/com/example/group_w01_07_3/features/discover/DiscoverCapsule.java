@@ -258,7 +258,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mLocationRequest.setFastestInterval(locationUpdateInterval);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        // check location permission
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -268,9 +267,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 mGoogleMap.setMyLocationEnabled(true);
                 mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
+                // request location permission when it is the first time users use the app
                 checkLocationPermission();
             }
         } else {
+            // location permission was granted
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -280,7 +281,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // request location permission when it is the first time users use the app
+            // request location permission
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_LOCATION);
@@ -296,7 +297,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // location permission was granted, restart google map
+                    // location permission was granted, and restart google map
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
