@@ -91,6 +91,8 @@ public class EditProfile extends AppCompatActivity implements
 
     private Handler handler;
 
+    private boolean snackbarShowFlag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -272,6 +274,7 @@ public class EditProfile extends AppCompatActivity implements
             }
         });
 
+        snackbarShowFlag = true;
         onGetProfile();
     }
 
@@ -412,13 +415,6 @@ public class EditProfile extends AppCompatActivity implements
             emailDisplay.setText("null");
             dobDisplay.setText("null");
         } else {
-            boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
-            if(!internetFlag){
-                Snackbar snackbar = Snackbar
-                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
-                snackbar.show();
-                return ;
-            }
             HttpUtil.getProfile(UserUtil.getToken(EditProfile.this), new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -463,6 +459,8 @@ public class EditProfile extends AppCompatActivity implements
                                                       usernameDisplay.setText(usernameProfileString);
                                                       emailDisplay.setText(emailProfileString);
                                                       dobDisplay.setText(dobProfileString);
+
+                                                      snackbarShowFlag = true;
                                                   } else {
                                                       Log.d("FINISHED", "run: Activity has been finished, don't load Glide for profile avatar & other info");
                                                   }
@@ -480,6 +478,7 @@ public class EditProfile extends AppCompatActivity implements
                                                       usernameDisplay.setText("null");
                                                       emailDisplay.setText("null");
                                                       dobDisplay.setText("null");
+                                                      snackbarShowFlag = true;
                                                   }
                                               }
                                           }
@@ -494,6 +493,7 @@ public class EditProfile extends AppCompatActivity implements
                                                       usernameDisplay.setText("null");
                                                       emailDisplay.setText("null");
                                                       dobDisplay.setText("null");
+                                                      snackbarShowFlag = true;
                                                   }
                                               }
                                           }
@@ -515,6 +515,13 @@ public class EditProfile extends AppCompatActivity implements
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d("RETRY", "run: RETRY onGetProfile");
+                                if (snackbarShowFlag){
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", 5000);
+                                    snackbar.show();
+                                    snackbarShowFlag = false;
+                                }
                                 onGetProfile();
                             }
                         },3000);
@@ -525,13 +532,6 @@ public class EditProfile extends AppCompatActivity implements
     }
 
     private void onUploadImage() {
-        boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
-        if(!internetFlag){
-            Snackbar snackbar = Snackbar
-                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
-            snackbar.show();
-            return ;
-        }
         // token null
         HttpUtil.uploadImage(UserUtil.getToken(EditProfile.this), newAvatarFile, new okhttp3.Callback() {
             @Override
@@ -544,6 +544,7 @@ public class EditProfile extends AppCompatActivity implements
                     JSONObject data = responseJSON.getJSONObject("data");
                     newAvatarString = data.getString("url");
                     onChangeAvatar();
+                    snackbarShowFlag = true;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -558,6 +559,13 @@ public class EditProfile extends AppCompatActivity implements
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            if (snackbarShowFlag){
+                                Snackbar snackbar = Snackbar
+                                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", 3000);
+                                snackbar.show();
+                                snackbarShowFlag = false;
+                            }
+
                             onUploadImage();
                         }
                     },3000);
@@ -568,13 +576,6 @@ public class EditProfile extends AppCompatActivity implements
 
     private void onChangeAvatar() {
         // token null
-        boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
-        if(!internetFlag){
-            Snackbar snackbar = Snackbar
-                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
-            snackbar.show();
-            return ;
-        }
         HttpUtil.changeAvatar(UserUtil.getToken(EditProfile.this), newAvatarString, new okhttp3.Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -593,6 +594,7 @@ public class EditProfile extends AppCompatActivity implements
                             Glide.with(EditProfile.this)
                                     .load(newAvatarString)
                                     .into(headerAvatar);
+                            snackbarShowFlag = true;
                         } else {
                             Log.d("FINISHED", "run: Activity has been finished, don't load Glide for avatar during onChangeAvatar");
                         }
@@ -609,6 +611,12 @@ public class EditProfile extends AppCompatActivity implements
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
+                            if (snackbarShowFlag){
+                                Snackbar snackbar = Snackbar
+                                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", 3000);
+                                snackbar.show();
+                                snackbarShowFlag = false;
+                            }
                             onChangeAvatar();
                         }
                     },3000);

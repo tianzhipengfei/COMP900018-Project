@@ -81,15 +81,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     ShapeableImageView headerAvatar;
     private TextView headerUsername;
     private String usernameProfileString, avatarProfileString;
-    // location permission
-    private LocationRequest mLocationRequest;
-    private FusedLocationProviderClient mFusedLocationClient;
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    private GoogleMap mGoogleMap;
-    private SupportMapFragment mapFrag;
-    // map camera
-    private long lastUpdate_map;
-    private boolean disable_camera = true;
     // capsules
     private JSONObject capsuleInfo = new JSONObject();
     private JSONArray allCapsules;
@@ -101,17 +92,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private boolean can_i_shake = false;
     private boolean can_i_retrieve_http = true;
     private boolean can_i_fresh_markers = false;
-    // last request location
-    private Location mLastLocation;
-    private double lastRequestLat = 360.0;
-    private double lastRequestLon = 360.0;
-    private double curLat = 360.0;
-    private double curLon = 360.0;
-    // time interval for updating current location (unit: ms)
-    private final int PER_SECOND = 1000;
-    private int locationUpdateInterval = 5 * PER_SECOND;
-    // distance request capsules interval (unit: degree)
-    private double distanceThresholdToRequest = 5.55;
+    // location permission
+    private LocationRequest mLocationRequest;
+    private FusedLocationProviderClient mFusedLocationClient;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private GoogleMap mGoogleMap;
+    private SupportMapFragment mapFrag;
+    private boolean disable_camera = true;
     // shake event
     public SensorManager sensorMgr;
     private boolean shakeOpen = false;
@@ -124,6 +111,18 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float last_move_z = 0;
     private int open_shake_time = 0;
     private static final int MAX_PAUSE_BETWEEN_SHAKES = 200;  // unit: ms
+    // last location requested
+    private Location mLastLocation;
+    private double lastRequestLat = 360.0;
+    private double lastRequestLon = 360.0;
+    private long lastUpdate_time;
+    private double curLat = 360.0;
+    private double curLon = 360.0;
+    // time interval for updating current location (unit: ms)
+    private final int PER_SECOND = 1000;
+    private int locationUpdateInterval = 5 * PER_SECOND;
+    // distance capsules request interval (unit: degree)
+    private double distanceThresholdToRequest = 5.55;
     // pop-up window
     private boolean popUpShake = false;
     private PopupWindow pw;
@@ -222,7 +221,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (!DiscoverCapsule.this.isDestroyed()){
+                                    if (!DiscoverCapsule.this.isDestroyed()) {
                                         headerUsername.setText(usernameProfileString);
                                         if (!(avatarProfileString == "null")) {
                                             Picasso.with(DiscoverCapsule.this)
@@ -241,18 +240,19 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         e.printStackTrace();
                     }
                 }
+
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
                     //retry to update every 3 seconds. handle the case that enter the activity
                     //with no internet at all(which okHTTP will not retry for you)
-                    if (!DiscoverCapsule.this.isDestroyed()){
+                    if (!DiscoverCapsule.this.isDestroyed()) {
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 updateHeader();
                             }
-                        },3000);
+                        }, 3000);
                     }
                 }
             });
@@ -391,13 +391,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                     //move map camera to current location
                     long curTime = System.currentTimeMillis();
-                    if ((curTime - lastUpdate_map) > PER_SECOND) {
+                    if ((curTime - lastUpdate_time) > PER_SECOND) {
                         mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                             @Override
                             public void onMapLoaded() {
                                 LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
                                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
-                                lastUpdate_map = System.currentTimeMillis();
+                                lastUpdate_time = System.currentTimeMillis();
                             }
                         });
                     }
@@ -445,7 +445,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         // Only request capsule from server if discover is still alive
         // handled the case if switch between activity, then we will have a stack of capsule list to updated
         // no matter online or offline
-        if (!this.isDestroyed()){
+        if (!this.isDestroyed()) {
             if (capsuleInfo.length() == 0) {
                 Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
                 Log.d("CAPSULE", "***** No token to get capsule *****");
@@ -496,7 +496,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private void check_ifCanRefreshMarkers(Location location) {
 
         //Same reason, don't drawer marker if discover activity has been finished
-        if (!this.isDestroyed()){
+        if (!this.isDestroyed()) {
             if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true) {
                 refreshMarkers(allCapsules, location);
 
@@ -508,7 +508,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         can_i_retrieve_http = false;
                         can_i_fresh_markers = false;
                     }
-                },2000);
+                }, 2000);
             }
             if (mCapsuleMarkers.isEmpty()) {
                 can_i_shake = false;
@@ -540,9 +540,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 //change marker color
                 if (i == 0 || i == 10)
                     capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
                 if (i == 1 || i == 11)
-                    capsuleMarker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
                 if (i == 2 || i == 12)
                     capsuleMarker.icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
@@ -564,9 +565,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 if (i == 8 || i == 18)
                     capsuleMarker.icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
-                if (i == 9 || i == 19)
+                if (i == 9)
                     capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                            .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                else
+                    capsuleMarker.icon(BitmapDescriptorFactory
+                            .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
 
                 // capsule markers
                 Marker tmp = mGoogleMap.addMarker(capsuleMarker);
@@ -598,7 +602,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
         mCurrLocationMarker.showInfoWindow();
     }
@@ -628,12 +632,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    private void registerShakeSensor(){
+    private void registerShakeSensor() {
         // handle the case of finish current activity but the delayed response register shake
         // again in another activity. So need to check if my self has been destroyed or not
-        if(this.isDestroyed()){
+        if (this.isDestroyed()) {
 
-        } else{
+        } else {
             //set up sensor manager
             sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
             sensorMgr.registerListener(this,
@@ -714,26 +718,28 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     public void PopUpWindowFunction() {
         LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View popupview = in.inflate(R.layout.popup_window_layout, null);
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
         int height = LinearLayout.LayoutParams.MATCH_PARENT;
 
-        TextView hint = (TextView) popupview.findViewById(R.id.hint);
         Random choice = new Random();
         int selection = choice.nextInt() % 3;
         switch (selection) {
             case 0:
-                hint.setText("Tap the area to open capsule");
-                pw = new PopupWindow(popupview, width, height, true);
-                pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
-                Button button = (Button) popupview.findViewById(R.id.dismiss);
+                final View popupview_tap = in.inflate(R.layout.popup_tap, null);
+                TextView hint_pop = (TextView) popupview_tap.findViewById(R.id.hint);
+                hint_pop.setText("Tap the area to open capsule");
+                pw = new PopupWindow(popupview_tap, width, height, true);
+                pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
+
+                Button button = (Button) popupview_tap.findViewById(R.id.dismiss);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         pw.dismiss();
                     }
                 });
-                View img = popupview.findViewById(R.id.tap_me);
+
+                View img = popupview_tap.findViewById(R.id.tap_me);
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -743,15 +749,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 break;
             case 1:
                 registerShakeSensor();
-
+                final View popupview_shake = in.inflate(R.layout.popup_shake, null); //TODO: Don't set final layout, but inflate layout in each case
                 popUpShake = true;
                 shakeOpen = false;
-                hint.setText("Shake slightly to open the capsule");
-                pw = new PopupWindow(popupview, width, height, true);
-                pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
-                img = popupview.findViewById(R.id.tap_me);
-                img.setVisibility(View.INVISIBLE);
-                button = (Button) popupview.findViewById(R.id.dismiss);
+                TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
+                hint_shake.setText("Shake slightly to open the capsule");
+                pw = new PopupWindow(popupview_shake, width, height, true);
+                pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
+
+                button = (Button) popupview_shake.findViewById(R.id.dismiss);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -767,6 +773,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 final VerificationSeekBar seekbar = (VerificationSeekBar) slideview.findViewById(R.id.sb_progress);
                 pw = new PopupWindow(slideview, width, height, true);
                 pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
+
                 slideValidationView.setListener(new SlideListener() {
                     @Override
                     public void onSuccess() {
