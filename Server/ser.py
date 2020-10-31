@@ -471,8 +471,11 @@ class GetCapsuleHistory:
 
         usr = user['uusr']
 
+        start_index = i.get('start') if i.get('start') else 0
+        history_num = i.get('num') if i.get('num') else 5
+
         capsules_his = db.query("SELECT * FROM capsules_history where husr='{}' ORDER BY\
-         htime DESC".format(usr))
+         htime DESC LIMIT {}, {}".format(usr, start_index, start_index+history_num))
         res = []
         cid_list = []
         for his in capsules_his:
