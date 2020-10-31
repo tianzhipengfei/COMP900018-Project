@@ -570,7 +570,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 if (i == 9)
                     capsuleMarker.icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-                else
+                if (i == 19)
                     capsuleMarker.icon(BitmapDescriptorFactory
                             .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
 
@@ -604,7 +604,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
         mCurrLocationMarker.showInfoWindow();
     }
