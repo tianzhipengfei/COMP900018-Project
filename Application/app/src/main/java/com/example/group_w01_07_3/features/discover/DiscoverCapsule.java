@@ -18,7 +18,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -763,6 +767,32 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 pw = new PopupWindow(popupview_shake, width, height, true);
                 pw.setAnimationStyle(R.style.popup_window_animation);
                 pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
+
+                final ImageView shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
+                //looping the shake animation for popup window every 2 seconds
+                                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
+                                    animation.setAnimationListener(new Animation.AnimationListener() {
+                                        @Override
+                                        public void onAnimationStart(Animation animation) {
+
+                                        }
+
+                                        @Override
+                                        public void onAnimationEnd(final Animation animation) {
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    shakeImg.startAnimation(animation);
+                                                }
+                                            },2000);
+                                        }
+
+                                        @Override
+                                        public void onAnimationRepeat(Animation animation) {
+
+                                        }
+                                    });
+                shakeImg.startAnimation(animation);
 
                 button = (Button) popupview_shake.findViewById(R.id.dismiss);
                 button.setOnClickListener(new View.OnClickListener() {
