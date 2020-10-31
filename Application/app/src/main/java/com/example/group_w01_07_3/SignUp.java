@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
@@ -37,6 +39,7 @@ import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -85,10 +88,14 @@ public class SignUp extends AppCompatActivity {
     private File avatarFile = null;
     private String avatarFileLink = null;
 
+    private DrawerLayout drawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
 
         //don't pop uo keyboard when entering the screen.
         getWindow().setSoftInputMode(
@@ -235,12 +242,28 @@ public class SignUp extends AppCompatActivity {
                 }
 
                 if (allRequiredFinished(username, email, password, reEnterPassword, dob)) {
+                    boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+                    if(!internetFlag){
+                        Snackbar snackbar = Snackbar
+                                .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        signUpButton.setEnabled(true);
+                        return ;
+                    }
                     Log.d("SIGNUP", "username: " + username);
                     Log.d("SIGNUP", "email: " + email);
                     Log.d("SIGNUP", "password: " + password);
                     Log.d("SIGNUP", "reEnterPassword: " + reEnterPassword);
                     Log.d("SIGNUP", "dob: " + dob);
                     if (avatarFile != null) {
+                        internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+                        if(!internetFlag){
+                            Snackbar snackbar = Snackbar
+                                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                            signUpButton.setEnabled(true);
+                            return ;
+                        }
                         HttpUtil.uploadAvatar(username, avatarFile, new okhttp3.Callback() {
                             @Override
                             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -516,6 +539,14 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void onSignUp() {
+        boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+        if(!internetFlag){
+            Snackbar snackbar = Snackbar
+                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            signUpButton.setEnabled(true);
+            return ;
+        }
         HttpUtil.signUp(new String[]{username, password, email, dob, avatarFileLink}, new okhttp3.Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
