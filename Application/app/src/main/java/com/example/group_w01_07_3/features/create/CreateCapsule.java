@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -123,6 +124,9 @@ public class CreateCapsule extends AppCompatActivity implements
         UserUtil userUtil = new UserUtil();
         token = userUtil.getToken(this.getApplicationContext());
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        ShapeableImageView placeholder = findViewById(R.id.create_capsule_piture_preview);
+        ;
 
         //don't pop up keyboard automatically when entering the screen.
         getWindow().setSoftInputMode(
@@ -429,7 +433,7 @@ public class CreateCapsule extends AppCompatActivity implements
     private void uploadAudio() {
         final File audioFile = recorderUtil.getAudioFile();
 
-        if (audioFile!=null && audioFile.exists()) {
+        if (audioFile != null && audioFile.exists()) {
 
             HttpUtil.uploadAudio(token, audioFile, new okhttp3.Callback() {
 
@@ -478,7 +482,7 @@ public class CreateCapsule extends AppCompatActivity implements
 
     // Get img url
     private void uploadImg() {
-        if (imageFile!=null && imageFile.exists()) {
+        if (imageFile != null && imageFile.exists()) {
             HttpUtil.uploadImage(token, imageFile, new okhttp3.Callback() {
 
                 @Override
@@ -487,19 +491,35 @@ public class CreateCapsule extends AppCompatActivity implements
                     Log.i("CREATE CAPSULE", responseData);
                     try {
                         JSONObject responseJSON = new JSONObject(responseData);
+
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
-                            Log.i("ImageUrl", status);
-                            JSONObject data = responseJSON.getJSONObject("data");
-                            System.out.println(data.getString("url"));
-                            capsuleInfo.put("img", data.getString("url"));
-                            uploadOther();
+                            if (status == "false") {
+                                runOnUiThread(new Runnable() {
+
+                                    public void run() {
+
+                                        progressbar.dismiss();
+                                        Toast.makeText(CreateCapsule.this,
+                                                "Upload image fail, repeated upload" ,
+                                                Toast.LENGTH_LONG);
+                                    }
+                                });
+
+                            }else {
+
+                                Log.i("ImageUrl", status);
+                                JSONObject data = responseJSON.getJSONObject("data");
+                                System.out.println(data.getString("url"));
+                                capsuleInfo.put("img", data.getString("url"));
+                                uploadOther();
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Toast.makeText(CreateCapsule.this,
                                 "Cannot upload img",
-                                Toast.LENGTH_SHORT).show();
+                                Toast.LENGTH_LONG).show();
                         progressbar.dismiss();
                     }
                 }
@@ -559,17 +579,23 @@ public class CreateCapsule extends AppCompatActivity implements
                                               capsuleTitle.setText("");
                                               capsuleContent.setText("");
                                               capsuleInfo = new JSONObject();
-                                             /*
-                                              if(imageFile!=null) {
-                                                  ImageView placeholder = (ImageView) findViewById(R.id.create_capsule_piture_preview);
-                                                  placeholder.setImageBitmap(null);
-                                                  imageFile.delete();
-                                              }
 
-                                              */
+                                              if (imageFile != null) {
+                                                  ImageView placeholder = (ImageView) findViewById
+                                                          (R.id.create_capsule_piture_preview);
+                                                  imageFile.delete();
+                                                  placeholder.setImageResource(R.drawable.ic_camera);
+                                                  placeholder.setOnClickListener(new View.OnClickListener() {
+                                                      public void onClick(View v) {
+                                                          takePicture(v);
+                                                      }
+                                                  });
+                                              }
                                           }
                                       }
                         );
+
+                    } else {
 
                     }
                 } catch (JSONException e) {
@@ -592,11 +618,11 @@ public class CreateCapsule extends AppCompatActivity implements
             progressbar.setTitle("Loading");
             progressbar.setMessage("Creating capsule, please wait....");
             progressbar.show();
-            if(HttpUtil.isOnline(this)) {
+            if (HttpUtil.isOnline(this)) {
                 //collect info;
 
                 getLocation();
-            }else{
+            } else {
                 progressbar.dismiss();
                 Snackbar snackbar = Snackbar
                         .make(drawerLayout, "Please connect to internet first", Snackbar.LENGTH_LONG);
@@ -606,7 +632,6 @@ public class CreateCapsule extends AppCompatActivity implements
 
         }
     }
-
 
 
     // For layout
@@ -660,13 +685,13 @@ public class CreateCapsule extends AppCompatActivity implements
                             String userInfo = responseJSON.getString("userInfo");
                             JSONObject userInfoJSON = new JSONObject(userInfo);
                             usernameProfileString = userInfoJSON.getString("uusr");
-                            avatarProfileString =  userInfoJSON.getString("uavatar");
+                            avatarProfileString = userInfoJSON.getString("uavatar");
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (!CreateCapsule.this.isDestroyed()){
+                                    if (!CreateCapsule.this.isDestroyed()) {
                                         headerUsername.setText(usernameProfileString);
-                                        if (!(avatarProfileString == "null")){
+                                        if (!(avatarProfileString == "null")) {
                                             Picasso.with(CreateCapsule.this)
                                                     .load(avatarProfileString)
                                                     .fit()
@@ -690,13 +715,13 @@ public class CreateCapsule extends AppCompatActivity implements
                     e.printStackTrace();
                     //retry to update every 3 seconds. handle the case that enter the activity
                     //with no internet at all(which okHTTP will not retry for you)
-                    if (!CreateCapsule.this.isDestroyed()){
+                    if (!CreateCapsule.this.isDestroyed()) {
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 updateHeader();
                             }
-                        },3000);
+                        }, 3000);
                     }
                 }
             });
