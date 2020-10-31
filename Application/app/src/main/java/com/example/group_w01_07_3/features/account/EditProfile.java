@@ -89,8 +89,6 @@ public class EditProfile extends AppCompatActivity implements
     private String emailProfileString;
     private String dobProfileString;
 
-    private ConstraintLayout constraintLayout;
-
     private Handler handler;
 
     @Override
@@ -107,7 +105,7 @@ public class EditProfile extends AppCompatActivity implements
 //
         setContentView(R.layout.activity_edit_profile);
 
-        constraintLayout = findViewById(R.id.sign_up_mega_layout);
+        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
 
         //apply alert sound
         final MediaPlayer mediaPlayer = MediaPlayer.create(EditProfile.this, R.raw.alert);
@@ -192,9 +190,10 @@ public class EditProfile extends AppCompatActivity implements
                             boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                             if(!internetFlag){
                                 Snackbar snackbar = Snackbar
-                                        .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                                 snackbar.show();
                                 signOutButton.setEnabled(true);
+                                System.out.println(123);
                                 return ;
                             }
                             HttpUtil.signOut(token, new okhttp3.Callback() {
