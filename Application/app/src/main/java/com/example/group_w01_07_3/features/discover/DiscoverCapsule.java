@@ -625,8 +625,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     // Todo: set field values
-    private int num_shakes = 3; //5,valid shake how many times to open capsule
-    private float cosine = (float) 0.8; //0.5,cosine,旋转的角度,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
+    private int num_shakes = 5; //5,valid shake how many times to open capsule
+    private float cosine = (float) 0.5; //0.5,cosine,旋转的角度,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
     private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
 
     // private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
@@ -695,7 +695,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     public void PopUpWindowFunction() {
+        //first thing to do is disable shake function for discover activity when window is poped
         discover_refresh=false;
+
         Log.w("MARKERS-MATCH", "******* FIRE POP WINDOW*******");
 //        Intent intent = new Intent(DiscoverCapsule.this, ChangePassword.class);
 //        startActivity(intent);
@@ -720,6 +722,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onDismiss() {
                             Log.d("POPWINDOW", "onDismiss: ");
+
+                            //as popshake is already closed, so just need to reopen discover shake
                             discover_refresh=true;
                         }});
                     pw.setOutsideTouchable(false);
@@ -742,7 +746,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     break;
                 case 1:
                     registerShakeSensor();
-                    final View popupview_shake = in.inflate(R.layout.popup_shake, null); //TODO: Don't set final layout, but inflate layout in each case
+                    final View popupview_shake = in.inflate(R.layout.popup_shake, null); 
                     popUpShake = true;//only on case 2, pop up shake would be true
                     shakeOpen = false;
                     TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
@@ -752,6 +756,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onDismiss() {
                             Log.d("POPWINDOW", "onDismiss: ");
+
+                            //turn pop shake off and reopen discover shake function
                             popUpShake = false;
                             discover_refresh=true;
                         }});
@@ -956,7 +962,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     public void RequestSending() {
-        discover_refresh=true;
+//        discover_refresh=true;
         pw.dismiss();
         final ProgressDialog progress = new ProgressDialog(DiscoverCapsule.this);
         progress.setTitle("Loading");
@@ -988,6 +994,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     @Override
                     public void run() {
                         progress.dismiss();
+
+                        //now enable discover shake function
+                        discover_refresh=true;
+
                         Snackbar snackbar = Snackbar
                             .make(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -1011,6 +1021,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 mCapsuleMarkers.remove(selectedMarker);
 
                                 progress.dismiss();
+                                //now enable discover shake function
+                                discover_refresh=true;
+
                                 Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
 //                                pw.dismiss();
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
