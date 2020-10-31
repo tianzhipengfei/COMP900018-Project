@@ -839,7 +839,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     @Override
                     public void run() {
                         progress.dismiss();
-                        Toast.makeText(DiscoverCapsule.this, "No Internet to send request", Toast.LENGTH_SHORT);
+                        Snackbar snackbar = Snackbar
+                            .make(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                        snackbar.show();
                     }
                 });
                 //Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);

@@ -509,7 +509,7 @@ public class CreateCapsule extends AppCompatActivity implements
                     runOnUiThread(new Runnable() {
                         public void run() {
                             Toast.makeText(CreateCapsule.this,
-                                    "Cannot upload img",
+                                    "Cannot upload image",
                                     Toast.LENGTH_SHORT).show();
                             progressbar.dismiss();
                         }
@@ -531,7 +531,7 @@ public class CreateCapsule extends AppCompatActivity implements
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(CreateCapsule.this, "connection fail", Toast.LENGTH_SHORT)
+                        Toast.makeText(CreateCapsule.this, "Connection fail", Toast.LENGTH_SHORT)
                                 .show();
                         progressbar.dismiss();
                     }

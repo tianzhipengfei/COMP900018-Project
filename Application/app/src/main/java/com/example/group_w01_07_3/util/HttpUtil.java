@@ -10,9 +10,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -30,6 +32,8 @@ public class HttpUtil {
     private static final MediaType AAC = MediaType.parse("audio/aac");
     private static String address = "https://www.tianzhipengfei.xin/mobile/";
     private static String smmsURL = "https://sm.ms/api/v2/upload";
+    private static int POST_TIMEOUT_SECOND = 5;
+    private static int UPLOAD_TIMEOUT_SECOND = 15;
 
     public static void signUp(String[] paras, okhttp3.Callback callback) {
         JSONObject json = new JSONObject();
@@ -53,7 +57,9 @@ public class HttpUtil {
                 e.printStackTrace();
             }
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "signUp")
@@ -63,7 +69,9 @@ public class HttpUtil {
     }
 
     public static void uploadAvatar(String username, File avatarFile, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client =  new OkHttpClient.Builder()
+                .callTimeout(UPLOAD_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("format", username)
@@ -87,7 +95,9 @@ public class HttpUtil {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "signIn")
@@ -103,7 +113,9 @@ public class HttpUtil {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "signOut")
@@ -134,7 +146,9 @@ public class HttpUtil {
     }
 
     public static void uploadImage(String token, File avatarFile, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client =  new OkHttpClient.Builder()
+                .callTimeout(UPLOAD_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("format", "jpg")
@@ -158,7 +172,9 @@ public class HttpUtil {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "changeAvatar")
@@ -168,7 +184,9 @@ public class HttpUtil {
     }
 
     public static void createCapsule(JSONObject capsuleInfo,okhttp3.Callback callback){
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(capsuleInfo.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "createCapsule")
@@ -186,7 +204,9 @@ public class HttpUtil {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "changePassword")
@@ -195,18 +215,21 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
     public static void openCapsule(JSONObject requestInfo,okhttp3.Callback callback){
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(requestInfo.toString(), HttpUtil.JSON);
         Request request=new Request.Builder()
                 .url(HttpUtil.address+"openCapsule")
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);
-
     }
 
     public static void uploadAudio(String token, File audioFile, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(UPLOAD_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("tkn", token)
