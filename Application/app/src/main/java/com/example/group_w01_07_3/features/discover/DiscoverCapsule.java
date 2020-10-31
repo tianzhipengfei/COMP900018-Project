@@ -62,6 +62,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -672,8 +673,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
         int height = LinearLayout.LayoutParams.MATCH_PARENT;
 
         TextView hint = (TextView) popupview.findViewById(R.id.hint);
-        Random choice = new Random();
-        int selection = choice.nextInt() % 3;
+        List<Integer> givenList = Arrays.asList(0, 1, 2);
+        Random rand = new Random();
+        int selection = givenList.get(rand.nextInt(givenList.size()));
+
         switch (selection) {
             case 0:
                 hint.setText("Tap the area to open capsule");
