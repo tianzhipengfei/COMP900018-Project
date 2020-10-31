@@ -90,7 +90,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     ShapeableImageView headerAvatar;
     private TextView headerUsername;
     private String usernameProfileString, avatarProfileString;
-    private boolean discover_refresh=true;
     // capsules
     private JSONObject capsuleInfo = new JSONObject();
     private JSONArray allCapsules;
@@ -111,6 +110,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private boolean disable_camera = true;
     // shake event
     public SensorManager sensorMgr;
+    private boolean discover_refresh = true;
     private boolean shakeOpen = false;
     private long lastUpdate_shaking = System.currentTimeMillis();
     private float last_x = 0;
@@ -461,7 +461,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Log.d("CAPSULE", "***** No token to get capsule *****");
                 allCapsules = new JSONArray();
                 selectedCapsule = new JSONObject();
-            } else if (can_i_shake == false && can_i_retrieve_http == true && can_i_fresh_markers == false) {
+            } else if (can_i_shake == false && can_i_retrieve_http == true && can_i_fresh_markers == false && discover_refresh == true) {
                 try {
                     String token = UserUtil.getToken(DiscoverCapsule.this);
                     Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
@@ -507,7 +507,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         //Same reason, don't drawer marker if discover activity has been finished
         if (!this.isDestroyed()) {
-            if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true) {
+            if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true && discover_refresh == true) {
                 refreshMarkers(allCapsules);
 
                 //ensure there is a 3 seconds gap between [next shake event] & [current completed marker fresh]
@@ -542,7 +542,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Double lat = objects.getDouble("clat");
                 Double lng = objects.getDouble("clon");
                 Integer permission = objects.getInt("cpermission");
-                Log.d("CAPSULEMARKER", "cpermission:"+permission);
+                Log.d("CAPSULEMARKER", "cpermission:" + permission);
 
                 LatLng lat_Lng = new LatLng(lat, lng);
                 MarkerOptions capsuleMarker = new MarkerOptions();
@@ -566,7 +566,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         registerShakeSensor();
     }
-    
+
     // redraw google map after users refresh capsules
     private void redrawGoogleMap(Location location) {
         // default location Googleplex: 37.4219983 -122.084
@@ -646,13 +646,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
             if (popUpShake) {
                 RequestSending();
             } else {
+                // shake to refresh capsules
                 can_i_shake = false;
                 can_i_retrieve_http = true;
                 can_i_fresh_markers = false;
             }
         }
 
-        if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_i_shake == true && can_i_retrieve_http == false && can_i_fresh_markers == false) {
+        if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_i_shake == true
+                && can_i_retrieve_http == false && can_i_fresh_markers == false) {
             float x = values[SensorManager.DATA_X];
             float y = values[SensorManager.DATA_Y];
             float z = values[SensorManager.DATA_Z];
@@ -696,7 +698,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     public void PopUpWindowFunction() {
         //first thing to do is disable shake function for discover activity when window is poped
-        discover_refresh=false;
+        discover_refresh = false;
 
         Log.w("MARKERS-MATCH", "******* FIRE POP WINDOW*******");
 //        Intent intent = new Intent(DiscoverCapsule.this, ChangePassword.class);
@@ -707,7 +709,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //        int height = LinearLayout.LayoutParams.MATCH_PARENT;
         int width = (getWindowManager().getDefaultDisplay().getWidth() * 2) / 4;
         int height = (getWindowManager().getDefaultDisplay().getHeight() * 2) / 4;
-        if (pw != null && pw.isShowing()){
+        if (pw != null && pw.isShowing()) {
             Log.d("popwindow", "PopUpWindowFunction: one window already showing, don't pop another");
         } else {
             Random choice = new Random();
@@ -724,8 +726,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             Log.d("POPWINDOW", "onDismiss: ");
 
                             //as popshake is already closed, so just need to reopen discover shake
-                            discover_refresh=true;
-                        }});
+                            discover_refresh = true;
+                        }
+                    });
                     pw.setOutsideTouchable(false);
                     pw.setAnimationStyle(R.style.popup_window_animation);
                     pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
@@ -746,7 +749,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     break;
                 case 1:
                     registerShakeSensor();
-                    final View popupview_shake = in.inflate(R.layout.popup_shake, null); 
+                    final View popupview_shake = in.inflate(R.layout.popup_shake, null);
                     popUpShake = true;//only on case 1, pop up shake would be true
                     shakeOpen = false;
                     TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
@@ -759,8 +762,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                             //turn pop shake off and reopen discover shake function
                             popUpShake = false;
-                            discover_refresh=true;
-                        }});
+                            discover_refresh = true;
+                        }
+                    });
                     pw.setOutsideTouchable(false);
                     pw.setAnimationStyle(R.style.popup_window_animation);
                     pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
@@ -780,7 +784,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 public void run() {
                                     shakeImg.startAnimation(animation);
                                 }
-                            },2000);
+                            }, 2000);
                         }
 
                         @Override
@@ -814,6 +818,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             seekbar.setProgress(0);
                             RequestSending();
                         }
+
                         public void onFail() {
                             Toast.makeText(slideview.getContext(), "Fail!Try again", Toast.LENGTH_SHORT).show();
                             seekbar.setProgress(0);
@@ -823,8 +828,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onDismiss() {
                             Log.d("POPWINDOW", "onDismiss: ");
-                            discover_refresh=true;
-                        }});
+                            discover_refresh = true;
+                        }
+                    });
                     seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -997,10 +1003,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                         //now enable discover shake function
                         popUpShake = false;
-                        discover_refresh=true;
+                        discover_refresh = true;
 
                         Snackbar snackbar = Snackbar
-                            .make(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                .make(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
                 });
@@ -1024,7 +1030,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 progress.dismiss();
                                 //now enable discover shake function
                                 popUpShake = false;
-                                discover_refresh=true;
+                                discover_refresh = true;
 
                                 Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
 //                                pw.dismiss();
