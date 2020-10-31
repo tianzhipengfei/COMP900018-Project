@@ -1,32 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@color/colorGreyOut"
     android:orientation="vertical">
-    <ImageView
+
+    <TextView
+        android:id="@+id/hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:alpha="0.8"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:text="REMEMBER TO PLACE TITLE HERE: Shake to open the capsule"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/pop_shake_image"
         android:layout_width="match_parent"
         android:layout_height="360dp"
         android:adjustViewBounds="true"
         android:src="@drawable/ic_shake_phone"
-        android:paddingTop="20dp"/>
-    <TextView
-        android:id="@+id/hint"
-        android:paddingTop="20dp"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="20dp"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:alpha="0.8"
-        android:text="       Shake to open the capsule"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hint" />
+
     <Button
-        android:layout_gravity="center"
         android:id="@+id/dismiss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dismiss"/>
-</LinearLayout>
+        android:layout_gravity="center"
+        android:text="Dismiss"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pop_shake_image" />
+</androidx.constraintlayout.widget.ConstraintLayout>

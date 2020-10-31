@@ -731,7 +731,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         int height = LinearLayout.LayoutParams.MATCH_PARENT;
 
         Random choice = new Random();
-        int selection = choice.nextInt() % 3;
+        int selection = choice.nextInt(3);
         switch (selection) {
             case 0:
                 final View popupview_tap = in.inflate(R.layout.popup_tap, null);
