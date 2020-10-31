@@ -1,4 +1,5 @@
 package com.example.group_w01_07_3.features.discover;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -564,7 +565,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         registerShakeSensor();
     }
-
+    
     // redraw google map after users refresh capsules
     private void redrawGoogleMap(Location location) {
         // default location Googleplex: 37.4219983 -122.084
@@ -741,28 +742,28 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                 final ImageView shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
                 //looping the shake animation for popup window every 2 seconds
-                AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
-                animation.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
+                                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
+                                    animation.setAnimationListener(new Animation.AnimationListener() {
+                                        @Override
+                                        public void onAnimationStart(Animation animation) {
 
-                    }
+                                        }
 
-                    @Override
-                    public void onAnimationEnd(final Animation animation) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                shakeImg.startAnimation(animation);
-                            }
-                        },2000);
-                    }
+                                        @Override
+                                        public void onAnimationEnd(final Animation animation) {
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    shakeImg.startAnimation(animation);
+                                                }
+                                            },2000);
+                                        }
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
+                                        @Override
+                                        public void onAnimationRepeat(Animation animation) {
 
-                    }
-                });
+                                        }
+                                    });
                 shakeImg.startAnimation(animation);
 
                 button = (Button) popupview_shake.findViewById(R.id.dismiss);
@@ -849,7 +850,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     public void run() {
                         progress.dismiss();
                         Snackbar snackbar = Snackbar
-                                .make(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                            .make(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         snackbar.show();
                     }
                 });
