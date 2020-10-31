@@ -309,6 +309,9 @@ public class SignUp extends AppCompatActivity {
                             @Override
                             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                                 e.printStackTrace();
+                                Snackbar snackbar = Snackbar
+                                    .make(drawerLayout, "Upload avatar timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                snackbar.show();
                             }
                         });
                     } else {
@@ -584,6 +587,16 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Snackbar snackbar = Snackbar
+                                .make(drawerLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        signUpButton.setEnabled(true);
+                    }
+                });
+                return ;
             }
         });
     }

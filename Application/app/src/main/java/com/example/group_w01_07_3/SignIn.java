@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -224,6 +225,16 @@ public class SignIn extends AppCompatActivity {
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                             e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Snackbar snackbar = Snackbar
+                                            .make(constraintLayout, "Sign in timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    snackbar.show();
+                                    signInButton.setEnabled(true);
+                                }
+                            });
+                            return ;
                         }
                     });
                 }

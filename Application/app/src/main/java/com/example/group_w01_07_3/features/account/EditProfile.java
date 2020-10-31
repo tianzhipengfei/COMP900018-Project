@@ -256,6 +256,16 @@ public class EditProfile extends AppCompatActivity implements
                                 @Override
                                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                                     e.printStackTrace();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Snackbar snackbar = Snackbar
+                                                    .make(drawerLayout, "Sign out timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                            snackbar.show();
+                                            signOutButton.setEnabled(true);
+                                        }
+                                    });
+                                    return ;
                                 }
                             });
                         }
@@ -570,6 +580,11 @@ public class EditProfile extends AppCompatActivity implements
                         }
                     },3000);
                 }
+
+//                // If don't want to retry automatically, please comment above if condition and code and uncomment code below
+//                Snackbar snackbar = Snackbar
+//                        .make(drawerLayout, "Upload avatar timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+//                snackbar.show();
             }
         });
     }
