@@ -2,6 +2,7 @@ package com.example.group_w01_07_3.features.account;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
@@ -24,6 +25,7 @@ import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.ImageUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.progressindicator.ProgressIndicator;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -51,11 +53,15 @@ public class ChangePassword extends AppCompatActivity {
     private String newPassword;
     private String reNewPassword;
 
+    private ConstraintLayout constraintLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_change_password);
+
+        constraintLayout = findViewById(R.id.change_password_mega_layout);
 
         //don't pop uo keyboard when entering the screen.
         getWindow().setSoftInputMode(
@@ -150,6 +156,14 @@ public class ChangePassword extends AppCompatActivity {
                     reNewPasswordET.setText("");
                     confirmChange.setEnabled(true);
                 } else {
+                    boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+                    if(!internetFlag){
+                        Snackbar snackbar = Snackbar
+                                .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        confirmChange.setEnabled(true);
+                        return ;
+                    }
                     onChangePassword();
                 }
             }
@@ -236,6 +250,16 @@ public class ChangePassword extends AppCompatActivity {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar snackbar = Snackbar
+                                    .make(constraintLayout, "Change password timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                            confirmChange.setEnabled(true);
+                        }
+                    });
+                    return ;
                 }
             });
         }

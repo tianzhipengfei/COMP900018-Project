@@ -1,5 +1,6 @@
 package com.example.group_w01_07_3;
 
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -18,6 +20,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,6 +30,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
@@ -35,6 +40,7 @@ import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -83,10 +89,16 @@ public class SignUp extends AppCompatActivity {
     private File avatarFile = null;
     private String avatarFileLink = null;
 
+    private DrawerLayout drawerLayout;
+
+    private long mLastClickTime = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
 
         //don't pop uo keyboard when entering the screen.
         getWindow().setSoftInputMode(
@@ -172,32 +184,14 @@ public class SignUp extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signUpButton.setEnabled(false);
 
-//                ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signup);
-//                progress.show();
-//                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-//                View pageLayout = findViewById(R.id.sign_up_mega_layout);
-//                View root = pageLayout.getRootView();
-//                root.setBackgroundColor(ContextCompat.getColor(SignUp.this, R.color.colorGreyOut));
-//
-//                //Replace this part to login successful or fail, which hide progress bar and display message
-//                //will change background to indicate the process
-//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //Do something here
-//                        ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signup);
-//                        progress.hide();
-//                        View pageLayout = findViewById(R.id.sign_up_mega_layout);
-//                        View root = pageLayout.getRootView();
-//                        root.setBackgroundColor(ContextCompat.getColor(SignUp.this, R.color.colorResetWhite));
-//                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-//
-//                        Toast.makeText(SignUp.this, "checked state and implement logic accordingly", Toast.LENGTH_SHORT).show();
-//                    }
-//                }, 3000);
+                // Preventing multiple clicks, using threshold of 2 second
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                signUpButton.setEnabled(false);
 
                 username = usernameET.getText().toString().toLowerCase();
                 email = emailET.getText().toString();
@@ -233,12 +227,28 @@ public class SignUp extends AppCompatActivity {
                 }
 
                 if (allRequiredFinished(username, email, password, reEnterPassword, dob)) {
+                    boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+                    if(!internetFlag){
+                        Snackbar snackbar = Snackbar
+                                .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        signUpButton.setEnabled(true);
+                        return ;
+                    }
                     Log.d("SIGNUP", "username: " + username);
                     Log.d("SIGNUP", "email: " + email);
                     Log.d("SIGNUP", "password: " + password);
                     Log.d("SIGNUP", "reEnterPassword: " + reEnterPassword);
                     Log.d("SIGNUP", "dob: " + dob);
                     if (avatarFile != null) {
+                        internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+                        if(!internetFlag){
+                            Snackbar snackbar = Snackbar
+                                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                            signUpButton.setEnabled(true);
+                            return ;
+                        }
                         HttpUtil.uploadAvatar(username, avatarFile, new okhttp3.Callback() {
                             @Override
                             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -250,7 +260,10 @@ public class SignUp extends AppCompatActivity {
                                     if (responseJSON.has("success")) {
                                         String status = responseJSON.getString("success");
                                         Log.d("SIGNUP", "uploadAvatar success: " + status);
-                                        avatarFileLink = responseJSON.getString("file");
+
+                                        JSONObject data = responseJSON.getJSONObject("data");
+                                        System.out.println(data.getString("url"));
+                                        avatarFileLink = data.getString("url");
                                         Log.d("SIGNUP", "avatarFileLink: " + avatarFileLink);
                                         onSignUp();
                                     } else if (responseJSON.has("error")) {
@@ -296,6 +309,9 @@ public class SignUp extends AppCompatActivity {
                             @Override
                             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                                 e.printStackTrace();
+                                Snackbar snackbar = Snackbar
+                                    .make(drawerLayout, "Upload avatar timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                snackbar.show();
                             }
                         });
                     } else {
@@ -511,6 +527,14 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void onSignUp() {
+        boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+        if(!internetFlag){
+            Snackbar snackbar = Snackbar
+                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            signUpButton.setEnabled(true);
+            return ;
+        }
         HttpUtil.signUp(new String[]{username, password, email, dob, avatarFileLink}, new okhttp3.Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -563,6 +587,16 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Snackbar snackbar = Snackbar
+                                .make(drawerLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        signUpButton.setEnabled(true);
+                    }
+                });
+                return ;
             }
         });
     }

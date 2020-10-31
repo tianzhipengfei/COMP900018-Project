@@ -2,6 +2,7 @@ package com.example.group_w01_07_3.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,9 +10,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -28,6 +31,9 @@ public class HttpUtil {
     private static final MediaType JPG = MediaType.parse("image/jpg");
     private static final MediaType AAC = MediaType.parse("audio/aac");
     private static String address = "https://www.tianzhipengfei.xin/mobile/";
+    private static String smmsURL = "https://sm.ms/api/v2/upload";
+    private static int POST_TIMEOUT_SECOND = 5;
+    private static int UPLOAD_TIMEOUT_SECOND = 15;
 
     public static void signUp(String[] paras, okhttp3.Callback callback) {
         JSONObject json = new JSONObject();
@@ -51,7 +57,9 @@ public class HttpUtil {
                 e.printStackTrace();
             }
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "signUp")
@@ -61,16 +69,19 @@ public class HttpUtil {
     }
 
     public static void uploadAvatar(String username, File avatarFile, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client =  new OkHttpClient.Builder()
+                .callTimeout(UPLOAD_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("usr", username)
-                .addFormDataPart("myfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
+                .addFormDataPart("format", username)
+                .addFormDataPart("smfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
                 .build();
         Request request = new Request.Builder()
-                .url(HttpUtil.address + "uploadAvatar")
-                .header("enctype", "multipart/form-data")
+                .url(HttpUtil.smmsURL)
+                .header("Authorization", "P6cnD1swearDYSV4bY7Y9eY836efVyUt")
                 .header("Content-Type", "multipart/form-data")
+                .header("User-Agent", "PostmanRuntime/7.26.5")
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);
@@ -84,7 +95,9 @@ public class HttpUtil {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "signIn")
@@ -100,7 +113,9 @@ public class HttpUtil {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "signOut")
@@ -128,27 +143,22 @@ public class HttpUtil {
                 .get()
                 .build();
         client.newCall(request).enqueue(callback);
-
-//        Request request = new Request.Builder()
-//                .url(HttpUtil.address + "discoverCapsule?" + "tkn=" + token
-//                        + "&lat=" + capsuleInfo.get("lat")
-//                        + "&lon=" + capsuleInfo.get("lon")
-//                        + "&max_distance=5&min_distance=0.5&num_capsules=20")
-//                .get()
-//                .build();
     }
 
     public static void uploadImage(String token, File avatarFile, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client =  new OkHttpClient.Builder()
+                .callTimeout(UPLOAD_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("tkn", token)
-                .addFormDataPart("myfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
+                .addFormDataPart("format", "jpg")
+                .addFormDataPart("smfile", avatarFile.getName(), RequestBody.create(avatarFile, HttpUtil.JPG))
                 .build();
         Request request = new Request.Builder()
-                .url(HttpUtil.address + "uploadImage")
-                .header("enctype", "multipart/form-data")
+                .url(HttpUtil.smmsURL)
+                .header("Authorization", "P6cnD1swearDYSV4bY7Y9eY836efVyUt")
                 .header("Content-Type", "multipart/form-data")
+                .header("User-Agent", "PostmanRuntime/7.26.5")
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);
@@ -162,7 +172,9 @@ public class HttpUtil {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "changeAvatar")
@@ -172,7 +184,9 @@ public class HttpUtil {
     }
 
     public static void createCapsule(JSONObject capsuleInfo,okhttp3.Callback callback){
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(capsuleInfo.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "createCapsule")
@@ -190,7 +204,9 @@ public class HttpUtil {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(json.toString(), HttpUtil.JSON);
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "changePassword")
@@ -199,18 +215,21 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
     public static void openCapsule(JSONObject requestInfo,okhttp3.Callback callback){
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = RequestBody.create(requestInfo.toString(), HttpUtil.JSON);
         Request request=new Request.Builder()
                 .url(HttpUtil.address+"openCapsule")
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);
-
     }
 
     public static void uploadAudio(String token, File audioFile, okhttp3.Callback callback) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(UPLOAD_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("tkn", token)
@@ -234,5 +253,13 @@ public class HttpUtil {
         return cm.getActiveNetworkInfo() != null &&
                 cm.getActiveNetworkInfo().isConnectedOrConnecting();
     }
+
+    // Check whether user connects to Internet or not
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        return (info != null && info.isConnected());
+    }
+
 
 }

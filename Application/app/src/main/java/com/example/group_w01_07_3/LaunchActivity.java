@@ -15,7 +15,7 @@ import com.example.group_w01_07_3.features.onboarding.OnBoardingActivity;
 
 public class LaunchActivity extends AppCompatActivity {
 
-    private  static int SPLASH_TIME_OUT = 2000;
+    private  static int SPLASH_TIME_OUT = 2000; //animation duration
 
     Animation logoAnim, textAnim;
 
@@ -55,7 +55,6 @@ public class LaunchActivity extends AppCompatActivity {
                 */
                 Intent intent = new Intent(LaunchActivity.this, OnBoardingActivity.class);
                 startActivity(intent);
-                //kill MainActivity
                 finish();
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }

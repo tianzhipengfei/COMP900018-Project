@@ -174,6 +174,8 @@
 | Property | Type | Required | Description |
 |---|---|---|---|
 | tkn | string | yes | token |
+| start | int | no | start index | 
+| num | int | no | number of records|
 * Returns:
 	* Success: {"sucess": true, "hisotry": [{"cid": 1, "cusr": "test", "ccontent": "Test content", "ctitle": "Test Title", "cimage": null, "caudio": null, "ccount": 0, "clat": -37.813629, "clon": 144.963058, "cavatar": null}, {"cid": 2, "cusr": "test", "ccontent": "Test content1", "ctitle": "Test Title1", "cimage": null, "caudio": null, "ccount": 0, "clat": -37.813629, "clon": 144.963058, "cavatar": null}]}
 	* Fail:

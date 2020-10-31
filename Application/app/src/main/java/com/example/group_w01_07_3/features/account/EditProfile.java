@@ -11,6 +11,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -27,6 +28,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
@@ -43,6 +45,7 @@ import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -88,6 +91,8 @@ public class EditProfile extends AppCompatActivity implements
 
     private Handler handler;
 
+    private boolean snackbarShowFlag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +106,8 @@ public class EditProfile extends AppCompatActivity implements
 //
 //
         setContentView(R.layout.activity_edit_profile);
+
+        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
 
         //apply alert sound
         final MediaPlayer mediaPlayer = MediaPlayer.create(EditProfile.this, R.raw.alert);
@@ -133,9 +140,6 @@ public class EditProfile extends AppCompatActivity implements
         headerview = navigationView.getHeaderView(0);
         headerUsername = headerview.findViewById(R.id.header_username);
         headerAvatar = headerview.findViewById(R.id.header_avatar);
-
-        updateHeader();
-
 
         MaterialButton changePasswordBtn = (MaterialButton) findViewById(R.id.edit_profile_btn_change_password);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
@@ -185,6 +189,15 @@ public class EditProfile extends AppCompatActivity implements
                             startActivity(intent);
                             finish();
                         } else {
+                            boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+                            if(!internetFlag){
+                                Snackbar snackbar = Snackbar
+                                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                                snackbar.show();
+                                signOutButton.setEnabled(true);
+                                System.out.println(123);
+                                return ;
+                            }
                             HttpUtil.signOut(token, new okhttp3.Callback() {
                                 @Override
                                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -243,6 +256,16 @@ public class EditProfile extends AppCompatActivity implements
                                 @Override
                                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                                     e.printStackTrace();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Snackbar snackbar = Snackbar
+                                                    .make(drawerLayout, "Sign out timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                            snackbar.show();
+                                            signOutButton.setEnabled(true);
+                                        }
+                                    });
+                                    return ;
                                 }
                             });
                         }
@@ -261,6 +284,7 @@ public class EditProfile extends AppCompatActivity implements
             }
         });
 
+        snackbarShowFlag = true;
         onGetProfile();
     }
 
@@ -295,49 +319,6 @@ public class EditProfile extends AppCompatActivity implements
                 return true;
         }
         return false;
-    }
-
-    private void updateHeader(){
-        if(!UserUtil.getToken(EditProfile.this).isEmpty()){
-            HttpUtil.getProfile(UserUtil.getToken(EditProfile.this), new okhttp3.Callback() {
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.d("PROFILE", "***** getProfile onResponse *****");
-                    String responseData = response.body().string();
-                    Log.d("PROFILE", "getProfile: " + responseData);
-                    try {
-                        JSONObject responseJSON = new JSONObject(responseData);
-                        if (responseJSON.has("success")) {
-                            String status = responseJSON.getString("success");
-                            Log.d("PROFILE", "getProfile success: " + status);
-                            String userInfo = responseJSON.getString("userInfo");
-                            JSONObject userInfoJSON = new JSONObject(userInfo);
-                            usernameProfileString = userInfoJSON.getString("uusr");
-                            avatarProfileString =  userInfoJSON.getString("uavatar");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    headerUsername.setText(usernameProfileString);
-                                    if (!(avatarProfileString == "null")){
-                                        Picasso.with(EditProfile.this)
-                                                .load(avatarProfileString)
-                                                .fit()
-                                                .placeholder(R.drawable.logo)
-                                                .into(headerAvatar);
-                                    }
-                                }
-                            });
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
     }
 
     @Override
@@ -466,26 +447,33 @@ public class EditProfile extends AppCompatActivity implements
                                               public void run() {
                                                   // Toast.makeText(EditProfile.this, "Get profile successfully", Toast.LENGTH_SHORT).show();
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
-                                                  if (!(avatarProfileString == "null")) {
-//                                                      Log.d("PROFILE", "avatarProfileString: (if) " + avatarProfileString);
-//                                                      Bitmap bitmap = ImageUtil.getHttpImage(avatarProfileString);
-//                                                      if (bitmap != null){
-//                                                          Log.d("PROFILE", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//                                                      }
-////                                                      Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap,  56 ,56, true);//this bitmap2 you can use only for display
-//                                                      avatarDisplay.setImageBitmap(bitmap);
 
-                                                      //TODO: use Glide solved previus problem of not loaded avatar
-                                                      Glide.with(EditProfile.this)
-                                                              .load(avatarProfileString)
-                                                              .into(avatarDisplay);
+                                                  //only update profile if the activity is still alive
+                                                  if (!EditProfile.this.isDestroyed()){
+                                                      if (!(avatarProfileString == "null")) {
+                                                              //TODO: use Glide solved previus problem of not loaded avatar
+                                                              Glide.with(EditProfile.this)
+                                                                      .load(avatarProfileString)
+                                                                      .into(avatarDisplay);
+                                                          Picasso.with(EditProfile.this)
+                                                                  .load(avatarProfileString)
+                                                                  .fit()
+                                                                  .placeholder(R.drawable.logo)
+                                                                  .into(headerAvatar);
+                                                      } else {
+                                                          Log.d("PROFILE", "avatarProfileString: (else)");
+                                                          avatarDisplay.setImageResource(R.drawable.avatar_sample);
+                                                      }
+                                                      headerUsername.setText(usernameProfileString);
+
+                                                      usernameDisplay.setText(usernameProfileString);
+                                                      emailDisplay.setText(emailProfileString);
+                                                      dobDisplay.setText(dobProfileString);
+
+                                                      snackbarShowFlag = true;
                                                   } else {
-                                                      Log.d("PROFILE", "avatarProfileString: (else)");
-                                                      avatarDisplay.setImageResource(R.drawable.avatar_sample);
+                                                      Log.d("FINISHED", "run: Activity has been finished, don't load Glide for profile avatar & other info");
                                                   }
-                                                  usernameDisplay.setText(usernameProfileString);
-                                                  emailDisplay.setText(emailProfileString);
-                                                  dobDisplay.setText(dobProfileString);
                                               }
                                           }
                             );
@@ -495,10 +483,13 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
-                                                  usernameDisplay.setText("null");
-                                                  emailDisplay.setText("null");
-                                                  dobDisplay.setText("null");
+                                                  if (!EditProfile.this.isDestroyed()){
+                                                      Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                                      usernameDisplay.setText("null");
+                                                      emailDisplay.setText("null");
+                                                      dobDisplay.setText("null");
+                                                      snackbarShowFlag = true;
+                                                  }
                                               }
                                           }
                             );
@@ -507,10 +498,13 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  Toast.makeText(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
-                                                  usernameDisplay.setText("null");
-                                                  emailDisplay.setText("null");
-                                                  dobDisplay.setText("null");
+                                                  if (!EditProfile.this.isDestroyed()){
+                                                      Toast.makeText(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                      usernameDisplay.setText("null");
+                                                      emailDisplay.setText("null");
+                                                      dobDisplay.setText("null");
+                                                      snackbarShowFlag = true;
+                                                  }
                                               }
                                           }
                             );
@@ -523,6 +517,25 @@ public class EditProfile extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
+
+                    //retry to get profile every 3 seconds. handle the case that enter the activity
+                    //with no internet at all(which okHTTP will not retry for you)
+                    // don't attempt to retry if activity has already been finished
+                    if(!EditProfile.this.isDestroyed()){
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("RETRY", "run: RETRY onGetProfile");
+                                if (snackbarShowFlag){
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", 5000);
+                                    snackbar.show();
+                                    snackbarShowFlag = false;
+                                }
+                                onGetProfile();
+                            }
+                        },3000);
+                    }
                 }
             });
         }
@@ -538,8 +551,10 @@ public class EditProfile extends AppCompatActivity implements
                 String responseData = response.body().string();
                 try {
                     JSONObject responseJSON = new JSONObject(responseData);
-                    newAvatarString = responseJSON.getString("file");
+                    JSONObject data = responseJSON.getJSONObject("data");
+                    newAvatarString = data.getString("url");
                     onChangeAvatar();
+                    snackbarShowFlag = true;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -548,6 +563,28 @@ public class EditProfile extends AppCompatActivity implements
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
+                //retry to upload avatar every 3 seconds. handle the case that enter the activity
+                //with no internet at all(which okHTTP will not retry for you)
+                if (!EditProfile.this.isDestroyed()){
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (snackbarShowFlag){
+                                Snackbar snackbar = Snackbar
+                                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", 3000);
+                                snackbar.show();
+                                snackbarShowFlag = false;
+                            }
+
+                            onUploadImage();
+                        }
+                    },3000);
+                }
+
+//                // If don't want to retry automatically, please comment above if condition and code and uncomment code below
+//                Snackbar snackbar = Snackbar
+//                        .make(drawerLayout, "Upload avatar timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+//                snackbar.show();
             }
         });
     }
@@ -563,15 +600,19 @@ public class EditProfile extends AppCompatActivity implements
                     @Override
                     public void run() {
                         //Update main page avatar
-                        Glide.with(EditProfile.this)
-                                .load(newAvatarString)
-                                .into(avatarDisplay);
-
-                        //also update the sliding menu header avatar
-                        Glide.with(EditProfile.this)
-                                .load(newAvatarString)
-                                .into(headerAvatar);
-
+                        if (!EditProfile.this.isDestroyed()){
+                            //TODO: use Glide solved previus problem of not loaded avatar
+                            Glide.with(EditProfile.this)
+                                    .load(newAvatarString)
+                                    .into(avatarDisplay);
+                            //also update the sliding menu header avatar
+                            Glide.with(EditProfile.this)
+                                    .load(newAvatarString)
+                                    .into(headerAvatar);
+                            snackbarShowFlag = true;
+                        } else {
+                            Log.d("FINISHED", "run: Activity has been finished, don't load Glide for avatar during onChangeAvatar");
+                        }
                     }
                 });
             }
@@ -579,6 +620,22 @@ public class EditProfile extends AppCompatActivity implements
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
+                //retry to update avatar display every 3 seconds. handle the case that enter the activity
+                //with no internet at all(which okHTTP will not retry for you)
+                if (!EditProfile.this.isDestroyed()){
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (snackbarShowFlag){
+                                Snackbar snackbar = Snackbar
+                                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", 3000);
+                                snackbar.show();
+                                snackbarShowFlag = false;
+                            }
+                            onChangeAvatar();
+                        }
+                    },3000);
+                }
             }
         });
     }

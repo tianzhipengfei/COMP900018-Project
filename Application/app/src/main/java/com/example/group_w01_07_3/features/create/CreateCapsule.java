@@ -15,6 +15,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -459,10 +460,14 @@ public class CreateCapsule extends AppCompatActivity implements
 
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Toast.makeText(CreateCapsule.this,
-                            "Cannot upload audio",
-                            Toast.LENGTH_SHORT).show();
-                    progressbar.dismiss();
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(CreateCapsule.this,
+                                    "Cannot upload audio",
+                                    Toast.LENGTH_SHORT).show();
+                            progressbar.dismiss();
+                        }
+                    });
                 }
             });
 
@@ -485,7 +490,9 @@ public class CreateCapsule extends AppCompatActivity implements
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
                             Log.i("ImageUrl", status);
-                            capsuleInfo.put("img", responseJSON.getString("file"));
+                            JSONObject data = responseJSON.getJSONObject("data");
+                            System.out.println(data.getString("url"));
+                            capsuleInfo.put("img", data.getString("url"));
                             uploadOther();
                         }
                     } catch (JSONException e) {
@@ -499,10 +506,14 @@ public class CreateCapsule extends AppCompatActivity implements
 
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Toast.makeText(CreateCapsule.this,
-                            "Cannot upload img",
-                            Toast.LENGTH_SHORT).show();
-                    progressbar.dismiss();
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(CreateCapsule.this,
+                                    "Cannot upload image",
+                                    Toast.LENGTH_SHORT).show();
+                            progressbar.dismiss();
+                        }
+                    });
                 }
             });
         } else {
@@ -518,9 +529,13 @@ public class CreateCapsule extends AppCompatActivity implements
 
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Toast.makeText(CreateCapsule.this, "connection fail", Toast.LENGTH_SHORT)
-                        .show();
-                progressbar.dismiss();
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(CreateCapsule.this, "Connection fail", Toast.LENGTH_SHORT)
+                                .show();
+                        progressbar.dismiss();
+                    }
+                });
             }
 
             @Override
@@ -649,13 +664,17 @@ public class CreateCapsule extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    headerUsername.setText(usernameProfileString);
-                                    if (!(avatarProfileString == "null")){
-                                        Picasso.with(CreateCapsule.this)
-                                                .load(avatarProfileString)
-                                                .fit()
-                                                .placeholder(R.drawable.logo)
-                                                .into(headerAvatar);
+                                    if (!CreateCapsule.this.isDestroyed()){
+                                        headerUsername.setText(usernameProfileString);
+                                        if (!(avatarProfileString == "null")){
+                                            Picasso.with(CreateCapsule.this)
+                                                    .load(avatarProfileString)
+                                                    .fit()
+                                                    .placeholder(R.drawable.logo)
+                                                    .into(headerAvatar);
+                                        }
+                                    } else {
+                                        Log.d("FINISHED", "run: Activity has been finished, don't load Glide for update header avatar & username");
                                     }
 
                                 }
@@ -669,6 +688,16 @@ public class CreateCapsule extends AppCompatActivity implements
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
+                    //retry to update every 3 seconds. handle the case that enter the activity
+                    //with no internet at all(which okHTTP will not retry for you)
+                    if (!CreateCapsule.this.isDestroyed()){
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateHeader();
+                            }
+                        },3000);
+                    }
                 }
             });
         }
