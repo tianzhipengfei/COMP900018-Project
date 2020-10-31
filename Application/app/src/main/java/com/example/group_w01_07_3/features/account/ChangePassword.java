@@ -250,6 +250,16 @@ public class ChangePassword extends AppCompatActivity {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar snackbar = Snackbar
+                                    .make(constraintLayout, "Change password timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                            snackbar.show();
+                            confirmChange.setEnabled(true);
+                        }
+                    });
+                    return ;
                 }
             });
         }
