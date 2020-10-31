@@ -699,122 +699,247 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //        startActivity(intent);
 //        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+//        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+//        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+        int width = (getWindowManager().getDefaultDisplay().getWidth() * 2) / 4;
+        int height = (getWindowManager().getDefaultDisplay().getHeight() * 2) / 4;
 
-        Random choice = new Random();
-        int selection = choice.nextInt(3);
-        switch (selection) {
-            case 0:
-                final View popupview_tap = in.inflate(R.layout.popup_tap, null);
-                TextView hint_pop = (TextView) popupview_tap.findViewById(R.id.hint);
-                hint_pop.setText("Tap the area to open capsule");
-                pw = new PopupWindow(popupview_tap, width, height, true);
-                pw.setAnimationStyle(R.style.popup_window_animation);
-                pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
+        if (pw != null && pw.isShowing()){
+            Log.d("popwindow", "PopUpWindowFunction: one window already showing, don't pop another");
+        } else {
+            Random choice = new Random();
+            int selection = choice.nextInt(3);
+            switch (selection) {
+                case 0:
+                    final View popupview_tap = in.inflate(R.layout.popup_tap, null);
+                    TextView hint_pop = (TextView) popupview_tap.findViewById(R.id.hint);
+                    hint_pop.setText("Tap the area to open capsule");
+                    pw = new PopupWindow(popupview_tap, width, height, true);
+                    pw.setOutsideTouchable(false);
+                    pw.setAnimationStyle(R.style.popup_window_animation);
+                    pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
 
-                Button button = (Button) popupview_tap.findViewById(R.id.dismiss);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        pw.dismiss();
-                    }
-                });
+                    Button button = (Button) popupview_tap.findViewById(R.id.dismiss);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            pw.dismiss();
+                        }
+                    });
 
-                View img = popupview_tap.findViewById(R.id.tap_me);
-                img.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        RequestSending();
-                    }
-                });
-                break;
-            case 1:
-                registerShakeSensor();
-                final View popupview_shake = in.inflate(R.layout.popup_shake, null); //TODO: Don't set final layout, but inflate layout in each case
-                popUpShake = true;
-                shakeOpen = false;
-                TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
-                hint_shake.setText("Shake slightly to open the capsule");
-                pw = new PopupWindow(popupview_shake, width, height, true);
-                pw.setAnimationStyle(R.style.popup_window_animation);
-                pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
+                    View img = popupview_tap.findViewById(R.id.tap_me);
+                    img.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            RequestSending();
+                        }
+                    });
+                    break;
+                case 1:
+                    registerShakeSensor();
+                    final View popupview_shake = in.inflate(R.layout.popup_shake, null); //TODO: Don't set final layout, but inflate layout in each case
+                    popUpShake = true;
+                    shakeOpen = false;
+                    TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
+                    hint_shake.setText("Shake slightly to open the capsule");
+                    pw = new PopupWindow(popupview_shake, width, height, true);
+                    pw.setOutsideTouchable(false);
+                    pw.setAnimationStyle(R.style.popup_window_animation);
+                    pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
 
-                final ImageView shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
-                //looping the shake animation for popup window every 2 seconds
-                                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
-                                    animation.setAnimationListener(new Animation.AnimationListener() {
-                                        @Override
-                                        public void onAnimationStart(Animation animation) {
+                    final ImageView shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
+                    //looping the shake animation for popup window every 2 seconds
+                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
+                    animation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
 
-                                        }
+                        }
 
-                                        @Override
-                                        public void onAnimationEnd(final Animation animation) {
-                                            new Handler().postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    shakeImg.startAnimation(animation);
-                                                }
-                                            },2000);
-                                        }
+                        @Override
+                        public void onAnimationEnd(final Animation animation) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    shakeImg.startAnimation(animation);
+                                }
+                            },2000);
+                        }
 
-                                        @Override
-                                        public void onAnimationRepeat(Animation animation) {
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
 
-                                        }
-                                    });
-                shakeImg.startAnimation(animation);
+                        }
+                    });
+                    shakeImg.startAnimation(animation);
 
-                button = (Button) popupview_shake.findViewById(R.id.dismiss);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        pw.dismiss();
-                        popUpShake = false;
-                    }
-                });
-                break;
-            case 2:
-                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final View slideview = inflater.inflate(R.layout.popup_slider, null);
-                final SlideValidationView slideValidationView = (SlideValidationView) slideview.findViewById(R.id.slideView);
-                final VerificationSeekBar seekbar = (VerificationSeekBar) slideview.findViewById(R.id.sb_progress);
-                pw = new PopupWindow(slideview, width, height, true);
-                pw.setAnimationStyle(R.style.popup_window_animation);
-                pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
+                    button = (Button) popupview_shake.findViewById(R.id.dismiss);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            pw.dismiss();
+                            popUpShake = false;
+                        }
+                    });
+                    break;
+                case 2:
+                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    final View slideview = inflater.inflate(R.layout.popup_slider, null);
+                    final SlideValidationView slideValidationView = (SlideValidationView) slideview.findViewById(R.id.slideView);
+                    final VerificationSeekBar seekbar = (VerificationSeekBar) slideview.findViewById(R.id.sb_progress);
+                    pw = new PopupWindow(slideview, width, height, true);
+                    pw.setOutsideTouchable(false);
+                    pw.setAnimationStyle(R.style.popup_window_animation);
+                    pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
 
-                slideValidationView.setListener(new SlideListener() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(slideview.getContext(), "Success!", Toast.LENGTH_SHORT).show();
-                        seekbar.setProgress(0);
-                        RequestSending();
-                    }
+                    slideValidationView.setListener(new SlideListener() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(slideview.getContext(), "Success!", Toast.LENGTH_SHORT).show();
+                            seekbar.setProgress(0);
+                            RequestSending();
+                        }
 
-                    public void onFail() {
-                        Toast.makeText(slideview.getContext(), "Fail!Try again", Toast.LENGTH_SHORT).show();
-                        seekbar.setProgress(0);
-                    }
-                });
-                seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                        System.out.println("Current Progress" + progress);
-                        slideValidationView.setOffsetX(progress);
-                    }
+                        public void onFail() {
+                            Toast.makeText(slideview.getContext(), "Fail!Try again", Toast.LENGTH_SHORT).show();
+                            seekbar.setProgress(0);
+                        }
+                    });
+                    seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            System.out.println("Current Progress" + progress);
+                            slideValidationView.setOffsetX(progress);
+                        }
 
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-                    }
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+                        }
 
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-                        slideValidationView.deal();
-                    }
-                });
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                            slideValidationView.deal();
+                        }
+                    });
 
+            }
         }
+//        Random choice = new Random();
+//        int selection = choice.nextInt(3);
+//        switch (selection) {
+//            case 0:
+//                final View popupview_tap = in.inflate(R.layout.popup_tap, null);
+//                TextView hint_pop = (TextView) popupview_tap.findViewById(R.id.hint);
+//                hint_pop.setText("Tap the area to open capsule");
+//                pw = new PopupWindow(popupview_tap, width, height, true);
+//                pw.setOutsideTouchable(false);
+//                pw.setAnimationStyle(R.style.popup_window_animation);
+//                pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
+//
+//                Button button = (Button) popupview_tap.findViewById(R.id.dismiss);
+//                button.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        pw.dismiss();
+//                    }
+//                });
+//
+//                View img = popupview_tap.findViewById(R.id.tap_me);
+//                img.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        RequestSending();
+//                    }
+//                });
+//                break;
+//            case 1:
+//                registerShakeSensor();
+//                final View popupview_shake = in.inflate(R.layout.popup_shake, null); //TODO: Don't set final layout, but inflate layout in each case
+//                popUpShake = true;
+//                shakeOpen = false;
+//                TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
+//                hint_shake.setText("Shake slightly to open the capsule");
+//                pw = new PopupWindow(popupview_shake, width, height, true);
+//                pw.setOutsideTouchable(false);
+//                pw.setAnimationStyle(R.style.popup_window_animation);
+//                pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
+//
+//                final ImageView shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
+//                //looping the shake animation for popup window every 2 seconds
+//                                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
+//                                    animation.setAnimationListener(new Animation.AnimationListener() {
+//                                        @Override
+//                                        public void onAnimationStart(Animation animation) {
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void onAnimationEnd(final Animation animation) {
+//                                            new Handler().postDelayed(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+//                                                    shakeImg.startAnimation(animation);
+//                                                }
+//                                            },2000);
+//                                        }
+//
+//                                        @Override
+//                                        public void onAnimationRepeat(Animation animation) {
+//
+//                                        }
+//                                    });
+//                shakeImg.startAnimation(animation);
+//
+//                button = (Button) popupview_shake.findViewById(R.id.dismiss);
+//                button.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        pw.dismiss();
+//                        popUpShake = false;
+//                    }
+//                });
+//                break;
+//            case 2:
+//                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                final View slideview = inflater.inflate(R.layout.popup_slider, null);
+//                final SlideValidationView slideValidationView = (SlideValidationView) slideview.findViewById(R.id.slideView);
+//                final VerificationSeekBar seekbar = (VerificationSeekBar) slideview.findViewById(R.id.sb_progress);
+//                pw = new PopupWindow(slideview, width, height, true);
+//                pw.setOutsideTouchable(false);
+//                pw.setAnimationStyle(R.style.popup_window_animation);
+//                pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
+//
+//                slideValidationView.setListener(new SlideListener() {
+//                    @Override
+//                    public void onSuccess() {
+//                        Toast.makeText(slideview.getContext(), "Success!", Toast.LENGTH_SHORT).show();
+//                        seekbar.setProgress(0);
+//                        RequestSending();
+//                    }
+//
+//                    public void onFail() {
+//                        Toast.makeText(slideview.getContext(), "Fail!Try again", Toast.LENGTH_SHORT).show();
+//                        seekbar.setProgress(0);
+//                    }
+//                });
+//                seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//                    @Override
+//                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                        System.out.println("Current Progress" + progress);
+//                        slideValidationView.setOffsetX(progress);
+//                    }
+//
+//                    @Override
+//                    public void onStartTrackingTouch(SeekBar seekBar) {
+//                    }
+//
+//                    @Override
+//                    public void onStopTrackingTouch(SeekBar seekBar) {
+//                        slideValidationView.deal();
+//                    }
+//                });
+//
+//        }
     }
 
     public void RequestSending() {
