@@ -596,7 +596,10 @@ public class CreateCapsule extends AppCompatActivity implements
                         );
 
                     } else {
-
+                        progressbar.dismiss();
+                        Toast.makeText(CreateCapsule.this,
+                                "Fail to create the capsule",
+                                Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
