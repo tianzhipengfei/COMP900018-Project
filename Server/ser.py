@@ -475,7 +475,7 @@ class GetCapsuleHistory:
         history_num = int(i.get('num')) if i.get('num') else 5
 
         query = "SELECT * FROM capsules_history where husr='{}' ORDER BY\
-         htime DESC LIMIT {}, {}".format(usr, str(start_index), str(start_index+history_num))
+         htime DESC LIMIT {}, {}".format(usr, str(start_index), str(history_num))
         capsules_his = db.query(query)
         res = []
         cid_list = []
