@@ -125,9 +125,6 @@ public class CreateCapsule extends AppCompatActivity implements
         token = userUtil.getToken(this.getApplicationContext());
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        ShapeableImageView placeholder = findViewById(R.id.create_capsule_piture_preview);
-        ;
-
         //don't pop up keyboard automatically when entering the screen.
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
