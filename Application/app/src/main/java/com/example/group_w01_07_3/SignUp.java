@@ -12,6 +12,7 @@ import android.icu.util.Calendar;
 import android.icu.util.TimeZone;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -89,6 +90,8 @@ public class SignUp extends AppCompatActivity {
     private String avatarFileLink = null;
 
     private DrawerLayout drawerLayout;
+
+    private long mLastClickTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,32 +184,14 @@ public class SignUp extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signUpButton.setEnabled(false);
 
-//                ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signup);
-//                progress.show();
-//                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-//                View pageLayout = findViewById(R.id.sign_up_mega_layout);
-//                View root = pageLayout.getRootView();
-//                root.setBackgroundColor(ContextCompat.getColor(SignUp.this, R.color.colorGreyOut));
-//
-//                //Replace this part to login successful or fail, which hide progress bar and display message
-//                //will change background to indicate the process
-//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //Do something here
-//                        ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signup);
-//                        progress.hide();
-//                        View pageLayout = findViewById(R.id.sign_up_mega_layout);
-//                        View root = pageLayout.getRootView();
-//                        root.setBackgroundColor(ContextCompat.getColor(SignUp.this, R.color.colorResetWhite));
-//                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-//
-//                        Toast.makeText(SignUp.this, "checked state and implement logic accordingly", Toast.LENGTH_SHORT).show();
-//                    }
-//                }, 3000);
+                // Preventing multiple clicks, using threshold of 2 second
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                signUpButton.setEnabled(false);
 
                 username = usernameET.getText().toString().toLowerCase();
                 email = emailET.getText().toString();

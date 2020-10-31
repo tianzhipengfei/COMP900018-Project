@@ -118,7 +118,7 @@ public class Display extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(getApplicationContext(), "There is problem on openning capsule", Toast.LENGTH_SHORT);
+            Toast.makeText(getApplicationContext(), "There is problem on the opening capsule", Toast.LENGTH_LONG);
             Log.d(TAG, "onCreate: " + "There is problem on capsule Information");
         }
     }
@@ -134,50 +134,53 @@ public class Display extends AppCompatActivity {
         name=capsuleInfo.getString("cusr");
         avater_link = capsuleInfo.getString("cavatar");
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                date.setText(open_date);
-                title.setText(capsuleTitle);
-                content.setText(capsuleContent);
-                username.setText(name);
+        //TODO: @myself --> ADD check if activity is destroyed here, as a MEGA-IF COVER whole UI thread
+        if (!this.isDestroyed()){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    date.setText(open_date);
+                    title.setText(capsuleTitle);
+                    content.setText(capsuleContent);
+                    username.setText(name);
 
-                if(private_status==1){
-                    privacy.setText("public capsule");
-                }else{
-                    privacy.setText("private capsule");
-                }
+                    if(private_status==1){
+                        privacy.setText("public capsule");
+                    }else{
+                        privacy.setText("private capsule");
+                    }
 
-                if (audiolink != "null") {
-                    loadVoice();
-                } else {
-                    shimmerVoice.stopShimmer();
-                    shimmerVoice.setVisibility(View.GONE);
-                }
+                    if (audiolink != "null") {
+                        loadVoice();
+                    } else {
+                        shimmerVoice.stopShimmer();
+                        shimmerVoice.setVisibility(View.GONE);
+                    }
 
-                if (imagelink != "null"){
-                    loadImage();
-                } else {
-                    shimmerImage.stopShimmer();
-                    shimmerImage.setVisibility(View.GONE);
-                    img.requestLayout();
-                    img.setMinimumHeight(48);
-                    img.setVisibility(View.VISIBLE);
+                    if (imagelink != "null"){
+                        loadImage();
+                    } else {
+                        shimmerImage.stopShimmer();
+                        shimmerImage.setVisibility(View.GONE);
+                        img.requestLayout();
+                        img.setMinimumHeight(48);
+                        img.setVisibility(View.VISIBLE);
 
 //                    img.setImageResource(R.drawable.gradient_1);
-                }
+                    }
 
-                if (avater_link!= "null" ){
-                    loadAvatar();
-                } else {
-                    shimmerAvatar.stopShimmer();
-                    shimmerAvatar.setVisibility(View.GONE);
-                    profile.setVisibility(View.VISIBLE);
-                    profile.setImageResource(R.drawable.avatar_sample);
-                }
+                    if (avater_link!= "null" ){
+                        loadAvatar();
+                    } else {
+                        shimmerAvatar.stopShimmer();
+                        shimmerAvatar.setVisibility(View.GONE);
+                        profile.setVisibility(View.VISIBLE);
+                        profile.setImageResource(R.drawable.avatar_sample);
+                    }
 
-            }
-        });
+                }
+            });
+        }
     }
 
     private void loadImage(){

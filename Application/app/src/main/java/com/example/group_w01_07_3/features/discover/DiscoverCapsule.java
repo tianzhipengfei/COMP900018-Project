@@ -877,18 +877,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     @Override
     public void onPause() {
-        super.onPause();
         Log.d("shake", "onPause from Discover: called, unregisterListener");
         sensorMgr.unregisterListener(this);
         popUpShake = false;
+
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d("shake", "onDestroy from Discover: called, unregisterListener");
         // unregister a listener from the shake sensor
         sensorMgr.unregisterListener(this);
+
+        super.onDestroy();
     }
 }
 
