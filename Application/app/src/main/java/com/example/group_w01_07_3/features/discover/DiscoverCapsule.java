@@ -542,53 +542,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 MarkerOptions capsuleMarker = new MarkerOptions();
                 capsuleMarker.position(lat_Lng);
                 capsuleMarker.title("Capsule");
+                capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker));
 
-                //change marker color
-
-
-                List<Integer> sequentialIntegers = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                                        10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
-
-                Random rand = new Random();
-                int randomElement = sequentialIntegers.get(rand.nextInt(sequentialIntegers.size()));
-
-                // customize the marker image based on capsule mode
-                if (permission == 0) {
-                    // private capsule
-                    capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_private));
-                } else {
-                    // public capsule
-                    capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
-
-
-// Version 2: multiple colours
-//                    if (i == 0 || i == 10) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
-//                    } else if (i == 1 || i == 11) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public2));
-//                    } else if (i == 2 || i == 12) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public3));
-//                    } else if (i == 3 || i == 13) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
-//                    } else if (i == 4 || i == 14) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public2));
-//                    } else if (i == 5 || i == 15) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public3));
-//                    } else if (i == 6 || i == 16) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
-//                    } else if (i == 7 || i == 17) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public2));
-//                    } else if (i == 8 || i == 18) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public3));
-//                    } else if (i == 9 || i == 19) {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
-//                    } else {
-//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public2));
-//                    }
-
-                    // Icon source, https://icons8.com/icons/set/private-capsule
-                }
-                // capsule markers
+                // add capsule markers
                 Marker tmp = mGoogleMap.addMarker(capsuleMarker);
                 mCapsuleMarkers.put(tmp, allCapsules.get(i));
 
