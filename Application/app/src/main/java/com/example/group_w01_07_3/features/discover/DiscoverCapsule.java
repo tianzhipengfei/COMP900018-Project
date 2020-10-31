@@ -718,26 +718,28 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     public void PopUpWindowFunction() {
         LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View popupview = in.inflate(R.layout.popup_window_layout, null);
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
         int height = LinearLayout.LayoutParams.MATCH_PARENT;
 
-        TextView hint = (TextView) popupview.findViewById(R.id.hint);
         Random choice = new Random();
         int selection = choice.nextInt() % 3;
         switch (selection) {
             case 0:
-                hint.setText("Tap the area to open capsule");
-                pw = new PopupWindow(popupview, width, height, true);
-                pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
-                Button button = (Button) popupview.findViewById(R.id.dismiss);
+                final View popupview_tap = in.inflate(R.layout.popup_tap, null);
+                TextView hint_pop = (TextView) popupview_tap.findViewById(R.id.hint);
+                hint_pop.setText("Tap the area to open capsule");
+                pw = new PopupWindow(popupview_tap, width, height, true);
+                pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
+
+                Button button = (Button) popupview_tap.findViewById(R.id.dismiss);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         pw.dismiss();
                     }
                 });
-                View img = popupview.findViewById(R.id.tap_me);
+
+                View img = popupview_tap.findViewById(R.id.tap_me);
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -747,15 +749,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 break;
             case 1:
                 registerShakeSensor();
-
+                final View popupview_shake = in.inflate(R.layout.popup_shake, null); //TODO: Don't set final layout, but inflate layout in each case
                 popUpShake = true;
                 shakeOpen = false;
-                hint.setText("Shake slightly to open the capsule");
-                pw = new PopupWindow(popupview, width, height, true);
-                pw.showAtLocation(popupview, Gravity.CENTER, 0, 0);
-                img = popupview.findViewById(R.id.tap_me);
-                img.setVisibility(View.INVISIBLE);
-                button = (Button) popupview.findViewById(R.id.dismiss);
+                TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
+                hint_shake.setText("Shake slightly to open the capsule");
+                pw = new PopupWindow(popupview_shake, width, height, true);
+                pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
+
+                button = (Button) popupview_shake.findViewById(R.id.dismiss);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -771,6 +773,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 final VerificationSeekBar seekbar = (VerificationSeekBar) slideview.findViewById(R.id.sb_progress);
                 pw = new PopupWindow(slideview, width, height, true);
                 pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
+
                 slideValidationView.setListener(new SlideListener() {
                     @Override
                     public void onSuccess() {
