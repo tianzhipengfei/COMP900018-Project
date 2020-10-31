@@ -63,10 +63,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -540,40 +544,50 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 capsuleMarker.title("Capsule");
 
                 //change marker color
-                if (i == 0 || i == 10)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                if (i == 1 || i == 11)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                if (i == 2 || i == 12)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-                if (i == 3 || i == 13)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                if (i == 4 || i == 14)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                if (i == 5 || i == 15)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-                if (i == 6 || i == 16)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                if (i == 7 || i == 17)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-                if (i == 8 || i == 18)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
-                if (i == 9)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
-                if (i == 19)
-                    capsuleMarker.icon(BitmapDescriptorFactory
-                            .defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
 
+
+                List<Integer> sequentialIntegers = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                                        10, 11, 12, 13, 14, 15, 16, 17, 18, 19);
+
+                Random rand = new Random();
+                int randomElement = sequentialIntegers.get(rand.nextInt(sequentialIntegers.size()));
+
+                // customize the marker image based on capsule mode
+                if (permission == 0) {
+                    // private capsule
+                    capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_private));
+                } else {
+                    // public capsule
+                    capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
+
+
+// Version 2: multiple colours
+//                    if (i == 0 || i == 10) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
+//                    } else if (i == 1 || i == 11) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public2));
+//                    } else if (i == 2 || i == 12) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public3));
+//                    } else if (i == 3 || i == 13) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
+//                    } else if (i == 4 || i == 14) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public2));
+//                    } else if (i == 5 || i == 15) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public3));
+//                    } else if (i == 6 || i == 16) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
+//                    } else if (i == 7 || i == 17) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public2));
+//                    } else if (i == 8 || i == 18) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public3));
+//                    } else if (i == 9 || i == 19) {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public));
+//                    } else {
+//                        capsuleMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.capsule_marker_public2));
+//                    }
+
+                    // Icon source, https://icons8.com/icons/set/private-capsule
+                }
                 // capsule markers
                 Marker tmp = mGoogleMap.addMarker(capsuleMarker);
                 mCapsuleMarkers.put(tmp, allCapsules.get(i));
@@ -590,7 +604,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         registerShakeSensor();
     }
-
+    
     // redraw google map after users refresh capsules
     private void redrawGoogleMap(Location location) {
         // default location Googleplex: 37.4219983 -122.084
