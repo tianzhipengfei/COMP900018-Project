@@ -18,7 +18,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -34,6 +38,7 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.account.ChangePassword;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
@@ -689,18 +694,23 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     public void PopUpWindowFunction() {
+        Log.w("MARKERS-MATCH", "******* FIRE POP WINDOW*******");
+//        Intent intent = new Intent(DiscoverCapsule.this, ChangePassword.class);
+//        startActivity(intent);
+//        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         int width = LinearLayout.LayoutParams.MATCH_PARENT;
         int height = LinearLayout.LayoutParams.MATCH_PARENT;
 
         Random choice = new Random();
-        int selection = choice.nextInt() % 3;
+        int selection = choice.nextInt(3);
         switch (selection) {
             case 0:
                 final View popupview_tap = in.inflate(R.layout.popup_tap, null);
                 TextView hint_pop = (TextView) popupview_tap.findViewById(R.id.hint);
                 hint_pop.setText("Tap the area to open capsule");
                 pw = new PopupWindow(popupview_tap, width, height, true);
+                pw.setAnimationStyle(R.style.popup_window_animation);
                 pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
 
                 Button button = (Button) popupview_tap.findViewById(R.id.dismiss);
@@ -727,7 +737,34 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
                 hint_shake.setText("Shake slightly to open the capsule");
                 pw = new PopupWindow(popupview_shake, width, height, true);
+                pw.setAnimationStyle(R.style.popup_window_animation);
                 pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
+
+                final ImageView shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
+                //looping the shake animation for popup window every 2 seconds
+                                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
+                                    animation.setAnimationListener(new Animation.AnimationListener() {
+                                        @Override
+                                        public void onAnimationStart(Animation animation) {
+
+                                        }
+
+                                        @Override
+                                        public void onAnimationEnd(final Animation animation) {
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    shakeImg.startAnimation(animation);
+                                                }
+                                            },2000);
+                                        }
+
+                                        @Override
+                                        public void onAnimationRepeat(Animation animation) {
+
+                                        }
+                                    });
+                shakeImg.startAnimation(animation);
 
                 button = (Button) popupview_shake.findViewById(R.id.dismiss);
                 button.setOnClickListener(new View.OnClickListener() {
@@ -744,6 +781,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 final SlideValidationView slideValidationView = (SlideValidationView) slideview.findViewById(R.id.slideView);
                 final VerificationSeekBar seekbar = (VerificationSeekBar) slideview.findViewById(R.id.sb_progress);
                 pw = new PopupWindow(slideview, width, height, true);
+                pw.setAnimationStyle(R.style.popup_window_animation);
                 pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
 
                 slideValidationView.setListener(new SlideListener() {
