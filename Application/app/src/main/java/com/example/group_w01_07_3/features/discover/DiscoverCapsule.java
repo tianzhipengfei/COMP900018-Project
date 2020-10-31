@@ -90,6 +90,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     ShapeableImageView headerAvatar;
     private TextView headerUsername;
     private String usernameProfileString, avatarProfileString;
+    private boolean discover_refresh=true;
     // capsules
     private JSONObject capsuleInfo = new JSONObject();
     private JSONArray allCapsules;
@@ -624,8 +625,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     // Todo: set field values
-    private int num_shakes = 5; //valid shake how many times to open capsule
-    private float cosine = (float) 0.5; //cosine,旋转的角度,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
+    private int num_shakes = 3; //5,valid shake how many times to open capsule
+    private float cosine = (float) 0.8; //0.5,cosine,旋转的角度,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
     private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
 
     // private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
@@ -675,7 +676,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
                     float length = cur_move_length * last_move_length;
                     if (product / length < cosine) {
-                        if ((popUpShake && !shakeOpen) || (popUpShake == false)) {
+                        if ((popUpShake && !shakeOpen) || (discover_refresh)) {
                             open_shake_time += 1;
                         }
                     }
@@ -694,6 +695,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     public void PopUpWindowFunction() {
+        discover_refresh=false;
         Log.w("MARKERS-MATCH", "******* FIRE POP WINDOW*******");
 //        Intent intent = new Intent(DiscoverCapsule.this, ChangePassword.class);
 //        startActivity(intent);
@@ -703,7 +705,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //        int height = LinearLayout.LayoutParams.MATCH_PARENT;
         int width = (getWindowManager().getDefaultDisplay().getWidth() * 2) / 4;
         int height = (getWindowManager().getDefaultDisplay().getHeight() * 2) / 4;
-
         if (pw != null && pw.isShowing()){
             Log.d("popwindow", "PopUpWindowFunction: one window already showing, don't pop another");
         } else {
@@ -715,18 +716,22 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     TextView hint_pop = (TextView) popupview_tap.findViewById(R.id.hint);
                     hint_pop.setText("Tap the area to open capsule");
                     pw = new PopupWindow(popupview_tap, width, height, true);
+                    pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                        @Override
+                        public void onDismiss() {
+                            Log.d("POPWINDOW", "onDismiss: ");
+                            discover_refresh=true;
+                        }});
                     pw.setOutsideTouchable(false);
                     pw.setAnimationStyle(R.style.popup_window_animation);
                     pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
-
-                    Button button = (Button) popupview_tap.findViewById(R.id.dismiss);
+                    Button button = (Button) popupview_tap.findViewById(R.id.dismiss1);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             pw.dismiss();
                         }
                     });
-
                     View img = popupview_tap.findViewById(R.id.tap_me);
                     img.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -738,15 +743,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 case 1:
                     registerShakeSensor();
                     final View popupview_shake = in.inflate(R.layout.popup_shake, null); //TODO: Don't set final layout, but inflate layout in each case
-                    popUpShake = true;
+                    popUpShake = true;//only on case 2, pop up shake would be true
                     shakeOpen = false;
                     TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
                     hint_shake.setText("Shake slightly to open the capsule");
                     pw = new PopupWindow(popupview_shake, width, height, true);
+                    pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                        @Override
+                        public void onDismiss() {
+                            Log.d("POPWINDOW", "onDismiss: ");
+                            popUpShake = false;
+                            discover_refresh=true;
+                        }});
                     pw.setOutsideTouchable(false);
                     pw.setAnimationStyle(R.style.popup_window_animation);
                     pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
-
                     final ImageView shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
                     //looping the shake animation for popup window every 2 seconds
                     AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
@@ -778,7 +789,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onClick(View view) {
                             pw.dismiss();
-                            popUpShake = false;
                         }
                     });
                     break;
@@ -791,7 +801,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     pw.setOutsideTouchable(false);
                     pw.setAnimationStyle(R.style.popup_window_animation);
                     pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
-
                     slideValidationView.setListener(new SlideListener() {
                         @Override
                         public void onSuccess() {
@@ -799,12 +808,17 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             seekbar.setProgress(0);
                             RequestSending();
                         }
-
                         public void onFail() {
                             Toast.makeText(slideview.getContext(), "Fail!Try again", Toast.LENGTH_SHORT).show();
                             seekbar.setProgress(0);
                         }
                     });
+                    pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                        @Override
+                        public void onDismiss() {
+                            Log.d("POPWINDOW", "onDismiss: ");
+                            discover_refresh=true;
+                        }});
                     seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -821,7 +835,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             slideValidationView.deal();
                         }
                     });
-
             }
         }
 //        Random choice = new Random();
@@ -943,6 +956,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     public void RequestSending() {
+        discover_refresh=true;
         pw.dismiss();
         final ProgressDialog progress = new ProgressDialog(DiscoverCapsule.this);
         progress.setTitle("Loading");
