@@ -498,7 +498,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //Same reason, don't drawer marker if discover activity has been finished
         if (!this.isDestroyed()) {
             if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true) {
-                refreshMarkers(allCapsules, location);
+                refreshMarkers(allCapsules);
 
                 //ensure there is a 3 seconds gap between [next shake event] & [current completed marker fresh]
                 new Handler().postDelayed(new Runnable() {
@@ -518,7 +518,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    public void refreshMarkers(JSONArray allCapsules, Location location) {
+    public void refreshMarkers(JSONArray allCapsules) {
         mGoogleMap.clear();
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
 
@@ -531,6 +531,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 JSONObject objects = allCapsules.getJSONObject(i);
                 Double lat = objects.getDouble("clat");
                 Double lng = objects.getDouble("clon");
+                Integer permission = objects.getInt("cpermission");
+                Log.d("CAPSULEMARKER", "cpermission:"+permission);
 
                 LatLng lat_Lng = new LatLng(lat, lng);
                 MarkerOptions capsuleMarker = new MarkerOptions();
