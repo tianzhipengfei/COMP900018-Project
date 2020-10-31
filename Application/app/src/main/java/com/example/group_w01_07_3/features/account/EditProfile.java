@@ -28,6 +28,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
@@ -44,6 +45,7 @@ import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -87,6 +89,8 @@ public class EditProfile extends AppCompatActivity implements
     private String emailProfileString;
     private String dobProfileString;
 
+    private ConstraintLayout constraintLayout;
+
     private Handler handler;
 
     @Override
@@ -102,6 +106,8 @@ public class EditProfile extends AppCompatActivity implements
 //
 //
         setContentView(R.layout.activity_edit_profile);
+
+        constraintLayout = findViewById(R.id.sign_up_mega_layout);
 
         //apply alert sound
         final MediaPlayer mediaPlayer = MediaPlayer.create(EditProfile.this, R.raw.alert);
@@ -183,6 +189,14 @@ public class EditProfile extends AppCompatActivity implements
                             startActivity(intent);
                             finish();
                         } else {
+                            boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+                            if(!internetFlag){
+                                Snackbar snackbar = Snackbar
+                                        .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                                snackbar.show();
+                                signOutButton.setEnabled(true);
+                                return ;
+                            }
                             HttpUtil.signOut(token, new okhttp3.Callback() {
                                 @Override
                                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -399,6 +413,13 @@ public class EditProfile extends AppCompatActivity implements
             emailDisplay.setText("null");
             dobDisplay.setText("null");
         } else {
+            boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+            if(!internetFlag){
+                Snackbar snackbar = Snackbar
+                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                snackbar.show();
+                return ;
+            }
             HttpUtil.getProfile(UserUtil.getToken(EditProfile.this), new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -505,6 +526,13 @@ public class EditProfile extends AppCompatActivity implements
     }
 
     private void onUploadImage() {
+        boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+        if(!internetFlag){
+            Snackbar snackbar = Snackbar
+                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return ;
+        }
         // token null
         HttpUtil.uploadImage(UserUtil.getToken(EditProfile.this), newAvatarFile, new okhttp3.Callback() {
             @Override
@@ -541,6 +569,13 @@ public class EditProfile extends AppCompatActivity implements
 
     private void onChangeAvatar() {
         // token null
+        boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+        if(!internetFlag){
+            Snackbar snackbar = Snackbar
+                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return ;
+        }
         HttpUtil.changeAvatar(UserUtil.getToken(EditProfile.this), newAvatarString, new okhttp3.Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {

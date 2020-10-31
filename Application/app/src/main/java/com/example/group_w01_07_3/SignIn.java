@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -15,6 +17,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.CaesarCipherUtil;
@@ -41,10 +47,14 @@ public class SignIn extends AppCompatActivity {
 
     private long mLastClickTime = 0;
 
+    private ConstraintLayout constraintLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        constraintLayout = findViewById(R.id.sign_in_mega_layout);
 
         //don't pop uo keyboard when entering the screen.
         getWindow().setSoftInputMode(
@@ -116,6 +126,15 @@ public class SignIn extends AppCompatActivity {
                     Toast.makeText(SignIn.this, "Password is required", Toast.LENGTH_SHORT).show();
                     signInButton.setEnabled(true);
                 } else {
+                    boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
+                    if(!internetFlag){
+                        Snackbar snackbar = Snackbar
+                                .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        signInButton.setEnabled(true);
+                        return ;
+                    }
+
                     editor = pref.edit();
                     if (rememberCB.isChecked()) {
                         editor.putBoolean("remember", true);
