@@ -22,6 +22,10 @@
 <!--        <item name="materialCardViewStyle">@style/Widget.App.CardView</item>-->
     </style>
 
+    <style name="popup_window_animation">
+        <item name="android:windowEnterAnimation">@anim/pop_up</item>
+        <item name="android:windowExitAnimation">@anim/pop_in</item>
+    </style>
 
     <style name="TextAppearance.MdcTypographyStyles.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
         <item name="fontFamily">@font/cherry_swash</item>

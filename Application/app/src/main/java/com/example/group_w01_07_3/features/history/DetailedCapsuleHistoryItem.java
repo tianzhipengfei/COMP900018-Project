@@ -15,6 +15,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -207,6 +210,31 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                     imageShimmer.stopShimmer();
                                     imageShimmer.setVisibility(View.GONE);
                                     image.setVisibility(View.VISIBLE);
+
+                                    //looping the shake animation for popup window every 2 seconds
+//                                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DetailedCapsuleHistoryItem.this, R.anim.shake);
+//                                    animation.setAnimationListener(new Animation.AnimationListener() {
+//                                        @Override
+//                                        public void onAnimationStart(Animation animation) {
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void onAnimationEnd(final Animation animation) {
+//                                            new Handler().postDelayed(new Runnable() {
+//                                                @Override
+//                                                public void run() {
+//                                                    image.startAnimation(animation);
+//                                                }
+//                                            },2000);
+//                                        }
+//
+//                                        @Override
+//                                        public void onAnimationRepeat(Animation animation) {
+//
+//                                        }
+//                                    });
+//                                    image.startAnimation(animation);
 
 //                                image.setOnClickListener(new View.OnClickListener() {
 //                                    @Override
