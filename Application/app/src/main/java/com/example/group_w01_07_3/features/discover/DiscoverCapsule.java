@@ -747,7 +747,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 case 1:
                     registerShakeSensor();
                     final View popupview_shake = in.inflate(R.layout.popup_shake, null); 
-                    popUpShake = true;//only on case 2, pop up shake would be true
+                    popUpShake = true;//only on case 1, pop up shake would be true
                     shakeOpen = false;
                     TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
                     hint_shake.setText("Shake slightly to open the capsule");
@@ -996,6 +996,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         progress.dismiss();
 
                         //now enable discover shake function
+                        popUpShake = false;
                         discover_refresh=true;
 
                         Snackbar snackbar = Snackbar
@@ -1022,6 +1023,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                                 progress.dismiss();
                                 //now enable discover shake function
+                                popUpShake = false;
                                 discover_refresh=true;
 
                                 Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
