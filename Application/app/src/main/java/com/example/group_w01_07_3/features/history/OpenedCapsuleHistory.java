@@ -76,6 +76,10 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
     private int records_num_pere_request = 5;
 
+    //Placeholder View for Disconnection logic
+    TextView placeholder_emptyHistoryText;
+    ImageView placeholder_retryImage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,8 +129,10 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //load everything needed to be displyaed in the list
         recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<OpenedCapsule>();
-        final String testPurposeLongString = getApplicationContext().getString(R.string.registration_help);
 
+        //placeholder View
+        placeholder_emptyHistoryText = findViewById(R.id.history_opened_capsule_no_history_text);
+        placeholder_retryImage = findViewById(R.id.history_opened_capsule_plz_retry_img);
 
         //set up the recycle view
         openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
@@ -136,12 +142,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         recyclerView.setFooterViewText("Loading More...Please Wait");
 
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
-
-        //TODO: @CHENFU: 完成第一次拉取历史胶囊数据,拉取3-5个。 在data load的那一刻把shimmerlayout stop+invisible,然后显示真正的data
-        //TODO: 假设完成第一轮的下载花了3s， 这里只是假设fetch capsule data用时为3s,请自己写真正的implemenmtation first time fetch的函数
-        //TODO: 假设第一次fectch得到的个数为 = [3]. 你跟ERIC协商一下具体个数。 我推荐为 --》 5 个/每次
-        //TODO: Shimmerlayout教程链接 https://www.androidhive.info/2018/01/android-content-placeholder-animation-like-facebook-using-shimmer/
-        //TODO: 在从server时候如果断网了，也记得call stopshimmer + visibility=invisible
 
         testingList.clear();
 
@@ -153,23 +153,9 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             public void onRefresh() {
             }
 
-
-            //TODO: @CHENFU 上拉加载更多功能实现. 在data拉取下来了后用handler delay方法setPullLoadMoreCompleted（），不然会卡主(library的原因)
-            //TODO: @CHENFU 这里就不用管shimmer了
-            //TODO: 在从server 拿data时候如果断网了，一定要记得call setPullLoadMoreCompleted();不然就一辈子卡死
-
-            //TODO: @CHENFU 请自行实现拉取功能,这里为测试用的秒加capsule
             @Override
             public void onLoadMore() {
-
-                //TODO:逻辑: 每一轮都找server要 [5] 个胶囊。 然后load. 等完全load好了就notifyDataSetChanged()
-                //TODO: 这样子recycleview就更新了数据(新的胶囊卡片就顺着你add的顺序, 加到列表的末尾了)
-                //TODO: 最后把 recyclerView.setPullLoadMoreCompleted();来关闭底部显示的“loading more, please wait”提示
-                //TODO: 如果某一次server返回说没有更多的opened capsule了--》延时执行 setPullLoadMoreCompleted();-->setPushRefreshEnable(false)
-
-                //TODO:这里我模拟了一下加了6轮数据(5次有数据,最后一次server提示没了)
                 onGetHistory();
-
             }
         });
 
