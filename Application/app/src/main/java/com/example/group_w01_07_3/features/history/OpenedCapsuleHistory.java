@@ -201,7 +201,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 String voice_url = record.getString("caudio");
                                 testingList.add(new OpenedCapsule(capsule_title, opened_date, avatar_url, capsule_url, tag, content, username, voice_url));
                             }
-
                             OpenedCapsuleHistory.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -242,11 +241,20 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 }
                             });
                         }
-
-
                     } else if (responseJSON.has("error")) {
                         String status = responseJSON.getString("error");
-                        Log.d("GET HISTORY", "GET HISTORY error: " + status);
+                        Log.d("PROFILE", "getProfile error: " + status);
+                        OpenedCapsuleHistory.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UserUtil.clearToken(OpenedCapsuleHistory.this);
+                                Toast.makeText(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(OpenedCapsuleHistory.this, SignIn.class);
+                                startActivity(intent);
+                                finish();
+                                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                            }
+                        });
                     } else {
                         Log.d("GET HISTORY", "GET HISTORY: Invalid form");
                     }
