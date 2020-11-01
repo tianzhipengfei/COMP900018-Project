@@ -653,43 +653,59 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         }
 
+        // increment of shake success event. valid for three conditions
+        // 1: no pop window, 2: discover in request info state, but pop window(shake) opened
+        // 3: discover in refresh map state, , but pop window(shake) opened
         if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_i_shake == true
                 && can_i_retrieve_http == false && can_i_fresh_markers == false) {
-            float x = values[SensorManager.DATA_X];
-            float y = values[SensorManager.DATA_Y];
-            float z = values[SensorManager.DATA_Z];
-            if (last_x == 0 && last_y == 0 && last_z == 0) {
-                last_x = x;
-                last_y = y;
-                last_z = z;
-                return;
-            }
-            float cur_move_x = x - last_x;
-            float cur_move_y = y - last_y;
-            float cur_move_z = z - last_z;
-            long curTime = System.currentTimeMillis();
-            // check if the last movement was not long ago
-            if ((curTime - lastUpdate_shaking) > MAX_PAUSE_BETWEEN_SHAKES) {
-                lastUpdate_shaking = curTime;
-                //detect the reasonable shake of capsule
-                float cur_move_length = (float) Math.sqrt(cur_move_x * cur_move_x + cur_move_y * cur_move_y + cur_move_z * cur_move_z);
-                float last_move_length = (float) Math.sqrt(last_move_x * last_move_x + last_move_y * last_move_y + last_move_z * last_move_z);
-                if (cur_move_length > forceThreshold) {
-                    float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
-                    float length = cur_move_length * last_move_length;
-                    if (product / length < cosine) {
-                        if ((popUpShake && !shakeOpen) || (discover_refresh)) {
-                            open_shake_time += 1;
-                        }
-                    }
-                }
-                last_move_x = cur_move_x;
-                last_move_y = cur_move_y;
-                last_move_z = cur_move_z;
-            }
+            addShakeSuccessCount(values);
+        } else if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_i_shake == false
+                && can_i_retrieve_http == true && can_i_fresh_markers == false
+                && discover_refresh == false && popUpShake == true) {
+            addShakeSuccessCount(values);
+        } else if (sensor == SensorManager.SENSOR_ACCELEROMETER && can_i_shake == false
+                && can_i_retrieve_http == false && can_i_fresh_markers == true
+                && discover_refresh == false && popUpShake == true) {
+            addShakeSuccessCount(values);
         }
     }
     //The logic is borrowed from https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android
+
+    private void addShakeSuccessCount (float[] values){
+        float x = values[SensorManager.DATA_X];
+        float y = values[SensorManager.DATA_Y];
+        float z = values[SensorManager.DATA_Z];
+        if (last_x == 0 && last_y == 0 && last_z == 0) {
+            last_x = x;
+            last_y = y;
+            last_z = z;
+            return;
+        }
+        float cur_move_x = x - last_x;
+        float cur_move_y = y - last_y;
+        float cur_move_z = z - last_z;
+        long curTime = System.currentTimeMillis();
+        // check if the last movement was not long ago
+        if ((curTime - lastUpdate_shaking) > MAX_PAUSE_BETWEEN_SHAKES) {
+            lastUpdate_shaking = curTime;
+            //detect the reasonable shake of capsule
+            float cur_move_length = (float) Math.sqrt(cur_move_x * cur_move_x + cur_move_y * cur_move_y + cur_move_z * cur_move_z);
+            float last_move_length = (float) Math.sqrt(last_move_x * last_move_x + last_move_y * last_move_y + last_move_z * last_move_z);
+            if (cur_move_length > forceThreshold) {
+                float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
+                float length = cur_move_length * last_move_length;
+                if (product / length < cosine) {
+                    if ((popUpShake && !shakeOpen) || (discover_refresh)) {
+                        open_shake_time += 1;
+                        Log.d("SHAKE", "onSensorChanged: shake success + 1");
+                    }
+                }
+            }
+            last_move_x = cur_move_x;
+            last_move_y = cur_move_y;
+            last_move_z = cur_move_z;
+        }
+    }
 
     @Override
     public void onAccuracyChanged(int i, int i1) {
