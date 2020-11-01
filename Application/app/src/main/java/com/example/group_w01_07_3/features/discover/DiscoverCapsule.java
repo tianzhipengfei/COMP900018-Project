@@ -138,6 +138,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private boolean popUpShake = false;
     private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
+    private View popupview_tap;
+    private View popupview_shake;
+    private View popview_slide;
     //Message Section
     Toast toast = null;
 
@@ -707,6 +710,23 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     }
 
+    private void initPopWindow(View view, int width, int height){
+        pw = new PopupWindow(view, width, height, true);
+        pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                Log.d("POPWINDOW", "onDismiss: ");
+
+                //turn pop shake off and reopen discover shake function
+                popUpShake = false;
+                discover_refresh = true;
+            }
+        });
+        pw.setOutsideTouchable(false);
+        pw.setAnimationStyle(R.style.popup_window_animation);
+        pw.showAtLocation(view, Gravity.CENTER, 0, 0);
+    }
+
     public void PopUpWindowFunction() {
         //first thing to do is disable shake function for discover activity when window is poped
         discover_refresh = false;
@@ -714,6 +734,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         Log.w("MARKERS-MATCH", "******* FIRE POP WINDOW*******");
 
         LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ImageView dismiss;
+        final ImageView shakeImg;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         int width = (getWindowManager().getDefaultDisplay().getWidth() * 3) / 4;
 
@@ -724,55 +746,37 @@ public class DiscoverCapsule extends AppCompatActivity implements
             int selection = choice.nextInt(3);
             switch (selection) {
                 case 0:
-                    final View popupview_tap = in.inflate(R.layout.popup_tap, null);
-                    pw = new PopupWindow(popupview_tap, width, height, true);
-                    pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                        @Override
-                        public void onDismiss() {
-                            Log.d("POPWINDOW", "onDismiss: ");
-
-                            //as popshake is already closed, so just need to reopen discover shake
-                            discover_refresh = true;
-                        }
-                    });
-                    pw.setOutsideTouchable(false);
-                    pw.setAnimationStyle(R.style.popup_window_animation);
-                    pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
-                    ImageView button = (ImageView) popupview_tap.findViewById(R.id.dismiss);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            pw.dismiss();
-                        }
-                    });
+                    popupview_tap = in.inflate(R.layout.popup_tap, null);
+                    dismiss = (ImageView) popupview_tap.findViewById(R.id.dismiss);
                     View img = popupview_tap.findViewById(R.id.tap_me);
+
+                    initPopWindow(popupview_tap, width, height);
+
                     img.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             RequestSending();
                         }
                     });
+
+                    dismiss.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            pw.dismiss();
+                        }
+                    });
                     break;
                 case 1:
                     registerShakeSensor();
-                    final View popupview_shake = in.inflate(R.layout.popup_shake, null);
+                    popupview_shake = in.inflate(R.layout.popup_shake, null);
+                    dismiss = (ImageView) popupview_shake.findViewById(R.id.dismiss);
+                    shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
+
                     popUpShake = true;//only on case 1, pop up shake would be true
                     shakeOpen = false;
-                    pw = new PopupWindow(popupview_shake, width, height, true);
-                    pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                        @Override
-                        public void onDismiss() {
-                            Log.d("POPWINDOW", "onDismiss: ");
 
-                            //turn pop shake off and reopen discover shake function
-                            popUpShake = false;
-                            discover_refresh = true;
-                        }
-                    });
-                    pw.setOutsideTouchable(false);
-                    pw.setAnimationStyle(R.style.popup_window_animation);
-                    pw.showAtLocation(popupview_shake, Gravity.CENTER, 0, 0);
-                    final ImageView shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
+                    initPopWindow(popupview_shake, width, height);
+
                     //looping the shake animation for popup window every 2 seconds
                     AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
                     animation.setAnimationListener(new Animation.AnimationListener() {
@@ -798,8 +802,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     });
                     shakeImg.startAnimation(animation);
 
-                    button = (ImageView) popupview_shake.findViewById(R.id.dismiss);
-                    button.setOnClickListener(new View.OnClickListener() {
+                    dismiss.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             pw.dismiss();
@@ -807,14 +810,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     });
                     break;
                 case 2:
-                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    final View slideview = inflater.inflate(R.layout.popup_slider, null);
-                    final SlideValidationView slideValidationView = (SlideValidationView) slideview.findViewById(R.id.slideView);
-                    final VerificationSeekBar seekbar = (VerificationSeekBar) slideview.findViewById(R.id.sb_progress);
-                    pw = new PopupWindow(slideview, width, height, true);
-                    pw.setOutsideTouchable(false);
-                    pw.setAnimationStyle(R.style.popup_window_animation);
-                    pw.showAtLocation(slideview, Gravity.CENTER, 0, 0);
+                    popview_slide = in.inflate(R.layout.popup_slider, null);
+                    dismiss = (ImageView) popview_slide.findViewById(R.id.dismiss);
+                    final SlideValidationView slideValidationView = (SlideValidationView) popview_slide.findViewById(R.id.slideView);
+                    final VerificationSeekBar seekbar = (VerificationSeekBar) popview_slide.findViewById(R.id.sb_progress);
+
+                    initPopWindow(popview_slide, width, height);
+
                     slideValidationView.setListener(new SlideListener() {
                         @Override
                         public void onSuccess() {
@@ -823,17 +825,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         }
 
                         public void onFail() {
-                            displayToast(slideview.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
+                            displayToast(popview_slide.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
                             seekbar.setProgress(0);
                         }
                     });
-                    pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                        @Override
-                        public void onDismiss() {
-                            Log.d("POPWINDOW", "onDismiss: ");
-                            discover_refresh = true;
-                        }
-                    });
+
                     seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                         @Override
                         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -851,8 +847,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         }
                     });
 
-                    button = (ImageView) slideview.findViewById(R.id.dismiss);
-                    button.setOnClickListener(new View.OnClickListener() {
+                    dismiss.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             pw.dismiss();
@@ -863,7 +858,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     public void RequestSending() {
-//        discover_refresh=true;
         pw.dismiss();
         final ProgressDialog progress = new ProgressDialog(DiscoverCapsule.this);
         progress.setTitle("Loading");
@@ -905,8 +899,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         snackbar.show();
                     }
                 });
-                //Toast.makeText(getApplicationContext(),"No Internet to send request",Toast.LENGTH_SHORT);
-                //pw.dismiss();
             }
 
             @Override
@@ -923,11 +915,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 mCapsuleMarkers.remove(selectedMarker);
 
                                 progress.dismiss();
+
                                 //now enable discover shake function
                                 popUpShake = false;
                                 discover_refresh = true;
-
-                                displayToast(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
 
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
