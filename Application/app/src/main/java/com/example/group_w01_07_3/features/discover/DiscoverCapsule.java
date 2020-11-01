@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -38,7 +37,6 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.R;
-import com.example.group_w01_07_3.features.account.ChangePassword;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
@@ -68,14 +66,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -120,7 +114,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float last_move_y = 0;
     private float last_move_z = 0;
     private int open_shake_time = 0;
-    private static final int MAX_PAUSE_BETWEEN_SHAKES = 200;  // unit: ms
+
+    private static final int MAX_PAUSE_BETWEEN_SHAKES = 200;  // unit: default 200 ms
+    private static final int NUM_SHAKES = 5; //5,valid shake how many times to open capsule
+    private static final float COSINE = (float) 0.5; //0.5,cosine,rotation angle,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
+    private static final float FORCE_THRESHOLD = (float) 10; //rotation force, this is rotation force threshold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
     // last location requested
     private Location mLastLocation;
     private double lastRequestLat = 360.0;
@@ -624,21 +622,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    // Todo: set field values
-    private int num_shakes = 5; //5,valid shake how many times to open capsule
-    private float cosine = (float) 0.5; //0.5,cosine,旋转的角度,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
-    private float forceThreshold = (float) 10; //旋转力度, this is rotation force threhold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
-
-    // private float cosine = (float) 0.8; //cosine,旋转的角度,0.8, 45"
-    // private int num_shakes = 5;
-    // private float forceThreshold = (float) 1.5; //旋转力度, this is rotation force threhold on open capsule.
-
-
     // detect a shake event
     @Override
     public void onSensorChanged(int sensor, float[] values) {
         //when detect 10 times of slight shake, open the capsule
-        if (open_shake_time == num_shakes) {
+        if (open_shake_time == NUM_SHAKES) {
             sensorMgr.unregisterListener(this);
 
             open_shake_time = 0;
@@ -691,10 +679,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
             //detect the reasonable shake of capsule
             float cur_move_length = (float) Math.sqrt(cur_move_x * cur_move_x + cur_move_y * cur_move_y + cur_move_z * cur_move_z);
             float last_move_length = (float) Math.sqrt(last_move_x * last_move_x + last_move_y * last_move_y + last_move_z * last_move_z);
-            if (cur_move_length > forceThreshold) {
+            if (cur_move_length > FORCE_THRESHOLD) {
                 float product = cur_move_x * last_move_x + cur_move_y * last_move_y + cur_move_z * last_move_z;
                 float length = cur_move_length * last_move_length;
-                if (product / length < cosine) {
+                if (product / length < COSINE) {
                     if ((popUpShake && !shakeOpen) || (discover_refresh)) {
                         open_shake_time += 1;
                         Log.d("SHAKE", "onSensorChanged: shake success + 1");
@@ -722,9 +710,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
 //        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-//        int height = LinearLayout.LayoutParams.MATCH_PARENT;
-        int width = (getWindowManager().getDefaultDisplay().getWidth() * 2) / 4;
-        int height = (getWindowManager().getDefaultDisplay().getHeight() * 2) / 4;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int width = (getWindowManager().getDefaultDisplay().getWidth() * 3) / 4;
+//        int height = (getWindowManager().getDefaultDisplay().getHeight() * 3) / 4;
+
         if (pw != null && pw.isShowing()) {
             Log.d("popwindow", "PopUpWindowFunction: one window already showing, don't pop another");
         } else {
@@ -748,7 +737,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     pw.setOutsideTouchable(false);
                     pw.setAnimationStyle(R.style.popup_window_animation);
                     pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
-                    Button button = (Button) popupview_tap.findViewById(R.id.dismiss1);
+                    ImageView button = (ImageView) popupview_tap.findViewById(R.id.dismiss1);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -810,7 +799,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     });
                     shakeImg.startAnimation(animation);
 
-                    button = (Button) popupview_shake.findViewById(R.id.dismiss);
+                    button = (ImageView) popupview_shake.findViewById(R.id.dismiss);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -1053,6 +1042,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
+                                overridePendingTransition(R.anim.pop_up,R.anim.stay);
                             }
                         });
                     }

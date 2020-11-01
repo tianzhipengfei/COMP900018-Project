@@ -73,12 +73,11 @@ public class ChangePassword extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Change Password");
 
-        //navigate back to account page. 请自己根据activity life cycle来写返回功能
+        //navigate back to account page.
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                onBackPressed();
             }
         });
 
