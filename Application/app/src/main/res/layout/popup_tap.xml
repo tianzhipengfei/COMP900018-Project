@@ -11,7 +11,7 @@
         android:id="@+id/pop_tap_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="16dp"
         android:orientation="vertical"
         android:background="@drawable/custom_border_all_corner"
         android:backgroundTint="@color/white"
@@ -30,7 +30,7 @@
         <ImageView
             android:id="@+id/tap_me"
             android:layout_width="match_parent"
-            android:layout_height="360dp"
+            android:layout_height="320dp"
             android:adjustViewBounds="true"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
