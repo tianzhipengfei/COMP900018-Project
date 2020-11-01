@@ -727,6 +727,74 @@ public class DiscoverCapsule extends AppCompatActivity implements
         pw.showAtLocation(view, Gravity.CENTER, 0, 0);
     }
 
+    private void initDismissListener(ImageView dismiss){
+        dismiss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pw.dismiss();
+            }
+        });
+    }
+
+    private void initSlideVerificationListener(final SlideValidationView slideValidationView, final VerificationSeekBar seekbar){
+        slideValidationView.setListener(new SlideListener() {
+            @Override
+            public void onSuccess() {
+                seekbar.setProgress(0);
+                RequestSending();
+            }
+
+            public void onFail() {
+                displayToast(popview_slide.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
+                seekbar.setProgress(0);
+            }
+        });
+
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                System.out.println("Current Progress" + progress);
+                slideValidationView.setOffsetX(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                slideValidationView.deal();
+            }
+        });
+    }
+
+    private void initShakeImageAnimation(final ImageView shakeImg){
+        //looping the shake animation for popup window every 2 seconds
+        AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(final Animation animation) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        shakeImg.startAnimation(animation);
+                    }
+                }, 2000);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        shakeImg.startAnimation(animation);
+    }
+
     public void PopUpWindowFunction() {
         //first thing to do is disable shake function for discover activity when window is poped
         discover_refresh = false;
@@ -751,18 +819,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     View img = popupview_tap.findViewById(R.id.tap_me);
 
                     initPopWindow(popupview_tap, width, height);
+                    initDismissListener(dismiss);
 
                     img.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             RequestSending();
-                        }
-                    });
-
-                    dismiss.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            pw.dismiss();
                         }
                     });
                     break;
@@ -776,38 +838,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     shakeOpen = false;
 
                     initPopWindow(popupview_shake, width, height);
+                    initDismissListener(dismiss);
+                    initShakeImageAnimation(shakeImg);
 
-                    //looping the shake animation for popup window every 2 seconds
-                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
-                    animation.setAnimationListener(new Animation.AnimationListener() {
-                        @Override
-                        public void onAnimationStart(Animation animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(final Animation animation) {
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    shakeImg.startAnimation(animation);
-                                }
-                            }, 2000);
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animation animation) {
-
-                        }
-                    });
-                    shakeImg.startAnimation(animation);
-
-                    dismiss.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            pw.dismiss();
-                        }
-                    });
                     break;
                 case 2:
                     popview_slide = in.inflate(R.layout.popup_slider, null);
@@ -816,43 +849,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     final VerificationSeekBar seekbar = (VerificationSeekBar) popview_slide.findViewById(R.id.sb_progress);
 
                     initPopWindow(popview_slide, width, height);
+                    initDismissListener(dismiss);
+                    initSlideVerificationListener(slideValidationView, seekbar);
 
-                    slideValidationView.setListener(new SlideListener() {
-                        @Override
-                        public void onSuccess() {
-                            seekbar.setProgress(0);
-                            RequestSending();
-                        }
-
-                        public void onFail() {
-                            displayToast(popview_slide.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
-                            seekbar.setProgress(0);
-                        }
-                    });
-
-                    seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                        @Override
-                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                            System.out.println("Current Progress" + progress);
-                            slideValidationView.setOffsetX(progress);
-                        }
-
-                        @Override
-                        public void onStartTrackingTouch(SeekBar seekBar) {
-                        }
-
-                        @Override
-                        public void onStopTrackingTouch(SeekBar seekBar) {
-                            slideValidationView.deal();
-                        }
-                    });
-
-                    dismiss.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            pw.dismiss();
-                        }
-                    });
             }
         }
     }
