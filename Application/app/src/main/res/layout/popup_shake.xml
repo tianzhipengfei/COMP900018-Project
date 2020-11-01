@@ -5,17 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/custom_border_all_corner"
-    android:backgroundTint="@color/white"
-    android:orientation="vertical">
+    android:backgroundTint="@color/colorGreyOut">
 
     <LinearLayout
         android:id="@+id/pop_shake_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:orientation="horizontal"
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        android:background="@drawable/custom_border_all_corner"
+        android:backgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -25,37 +24,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Shake Your Phone  To Open The Capsule"
+            android:text="Shake Your Phone To Open The Capsule"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
             android:textStyle="bold" />
 
-
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/pop_shake_image"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_shake_phone" />
     </LinearLayout>
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/pop_shake_image"
-        android:layout_width="match_parent"
-        android:layout_height="360dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:adjustViewBounds="true"
-        android:src="@drawable/ic_shake_phone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pop_shake_top_layout" />
-
-    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/dismiss"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:text="Dismiss"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pop_shake_image"
+        app:layout_constraintTop_toBottomOf="@+id/pop_shake_top_layout"
         app:srcCompat="@drawable/cancel" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

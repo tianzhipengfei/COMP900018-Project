@@ -155,15 +155,15 @@ public class Display extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    date.setText(open_date);
+                    date.setText( "Opened at: " + open_date);
                     title.setText(capsuleTitle);
                     content.setText(capsuleContent);
                     username.setText(name);
 
                     if(private_status==1){
-                        privacy.setText("public capsule");
+                        privacy.setText("Public Memory Capsule");
                     }else{
-                        privacy.setText("private capsule");
+                        privacy.setText("Your Private Memory Capsule");
                     }
 
                     if (audiolink != "null") {
