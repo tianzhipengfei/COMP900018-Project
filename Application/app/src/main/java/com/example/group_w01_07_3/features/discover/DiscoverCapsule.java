@@ -156,7 +156,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //use toolbar at top of screen across all activities
         Toolbar toolbar = findViewById(R.id.toolbar_discover);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Discover Memory Capsule");
+        getSupportActionBar().setTitle("Shake & Discover Memory Capsule");
 
         drawerLayout = findViewById(R.id.discover_drawer_layout);
 

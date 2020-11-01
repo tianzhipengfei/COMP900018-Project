@@ -11,11 +11,12 @@
         android:id="@+id/pop_shake_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="16dp"
         android:orientation="vertical"
         android:background="@drawable/custom_border_all_corner"
         android:backgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -32,7 +33,7 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/pop_shake_image"
             android:layout_width="match_parent"
-            android:layout_height="360dp"
+            android:layout_height="320dp"
             android:adjustViewBounds="true"
             android:src="@drawable/ic_shake_phone" />
     </LinearLayout>
