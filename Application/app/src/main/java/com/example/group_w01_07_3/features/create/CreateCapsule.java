@@ -47,6 +47,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.group_w01_07_3.SignIn;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.R;
@@ -449,6 +450,21 @@ public class CreateCapsule extends AppCompatActivity implements
                             audioFile.delete();
                             uploadImg();
 
+                        } else if (responseJSON.has("error")) {
+                            String status = responseJSON.getString("error");
+                            if (status.equalsIgnoreCase("Not logged in")) {
+                                CreateCapsule.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        UserUtil.clearToken(CreateCapsule.this);
+                                        Toast.makeText(CreateCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(CreateCapsule.this, SignIn.class);
+                                        startActivity(intent);
+                                        finish();
+                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    }
+                                });
+                            }
                         }
                     } catch (JSONException e) {
                         Toast.makeText(CreateCapsule.this,
@@ -481,35 +497,45 @@ public class CreateCapsule extends AppCompatActivity implements
     private void uploadImg() {
         if (imageFile != null && imageFile.exists()) {
             HttpUtil.uploadImage(token, imageFile, new okhttp3.Callback() {
-
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String responseData = response.body().string();
                     Log.i("CREATE CAPSULE", responseData);
                     try {
                         JSONObject responseJSON = new JSONObject(responseData);
-
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
                             if (status == "false") {
                                 runOnUiThread(new Runnable() {
 
                                     public void run() {
-
                                         progressbar.dismiss();
                                         Toast.makeText(CreateCapsule.this,
                                                 "Upload image fail, repeated upload" ,
                                                 Toast.LENGTH_LONG);
                                     }
                                 });
-
                             }else {
-
                                 Log.i("ImageUrl", status);
                                 JSONObject data = responseJSON.getJSONObject("data");
                                 System.out.println(data.getString("url"));
                                 capsuleInfo.put("img", data.getString("url"));
                                 uploadOther();
+                            }
+                        } else if (responseJSON.has("error")) {
+                            String status = responseJSON.getString("error");
+                            if (status.equalsIgnoreCase("Not logged in")) {
+                                CreateCapsule.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        UserUtil.clearToken(CreateCapsule.this);
+                                        Toast.makeText(CreateCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(CreateCapsule.this, SignIn.class);
+                                        startActivity(intent);
+                                        finish();
+                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    }
+                                });
                             }
                         }
                     } catch (JSONException e) {
@@ -543,7 +569,6 @@ public class CreateCapsule extends AppCompatActivity implements
         Log.i("CapsuleInfo", capsuleInfo.toString());
 
         HttpUtil.createCapsule(capsuleInfo, new okhttp3.Callback() {
-
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 runOnUiThread(new Runnable() {
@@ -592,6 +617,21 @@ public class CreateCapsule extends AppCompatActivity implements
                                       }
                         );
 
+                    } else if (responseJSON.has("error")) {
+                        String status = responseJSON.getString("error");
+                        if (status.equalsIgnoreCase("Not logged in")) {
+                            CreateCapsule.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    UserUtil.clearToken(CreateCapsule.this);
+                                    Toast.makeText(CreateCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(CreateCapsule.this, SignIn.class);
+                                    startActivity(intent);
+                                    finish();
+                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                }
+                            });
+                        }
                     } else {
                         progressbar.dismiss();
                         Toast.makeText(CreateCapsule.this,
@@ -704,6 +744,21 @@ public class CreateCapsule extends AppCompatActivity implements
 
                                 }
                             });
+                        } else if (responseJSON.has("error")) {
+                            String status = responseJSON.getString("error");
+                            if (status.equalsIgnoreCase("Not logged in")) {
+                                CreateCapsule.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        UserUtil.clearToken(CreateCapsule.this);
+                                        Toast.makeText(CreateCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(CreateCapsule.this, SignIn.class);
+                                        startActivity(intent);
+                                        finish();
+                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    }
+                                });
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

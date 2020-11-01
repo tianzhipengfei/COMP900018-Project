@@ -478,22 +478,19 @@ public class EditProfile extends AppCompatActivity implements
                                           }
                             );
                         } else if (responseJSON.has("error")) {
-                            
                             String status = responseJSON.getString("error");
                             Log.d("PROFILE", "getProfile error: " + status);
-                            runOnUiThread(new Runnable() {
-                                              @Override
-                                              public void run() {
-                                                  if (!EditProfile.this.isDestroyed()){
-                                                      Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
-                                                      usernameDisplay.setText("null");
-                                                      emailDisplay.setText("null");
-                                                      dobDisplay.setText("null");
-                                                      snackbarShowFlag = true;
-                                                  }
-                                              }
-                                          }
-                            );
+                            EditProfile.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    UserUtil.clearToken(EditProfile.this);
+                                    Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(EditProfile.this, SignIn.class);
+                                    startActivity(intent);
+                                    finish();
+                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                }
+                            });
                         } else {
                             Log.d("PROFILE", "getProfile: Invalid form");
                             runOnUiThread(new Runnable() {
