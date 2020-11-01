@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -42,6 +43,7 @@ import java.util.Calendar;
 
 public class Display extends AppCompatActivity {
     private static final String TAG = "Display Activity";
+    private Toolbar mToolbar;
     private JSONObject capsuleInfo;
     private ImageView img;
     private RecordAudioUtil media;
@@ -71,6 +73,21 @@ public class Display extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display);
+
+        mToolbar = findViewById(R.id.display_history_capsule_back_toolbar);
+        mToolbar.setNavigationIcon(R.drawable.ic_back);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("Opened Capsule");
+
+        //navigate back to account page.
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+
         Bundle extra_information = getIntent().getExtras();
         String extra = getIntent().getStringExtra("capsule");
         Log.d("The intent information", "onCreate: " + extra);
@@ -134,7 +151,6 @@ public class Display extends AppCompatActivity {
         name=capsuleInfo.getString("cusr");
         avater_link = capsuleInfo.getString("cavatar");
 
-        //TODO: @myself --> ADD check if activity is destroyed here, as a MEGA-IF COVER whole UI thread
         if (!this.isDestroyed()){
             runOnUiThread(new Runnable() {
                 @Override
@@ -271,5 +287,10 @@ public class Display extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.stay,R.anim.pop_in);
+    }
 }
 
