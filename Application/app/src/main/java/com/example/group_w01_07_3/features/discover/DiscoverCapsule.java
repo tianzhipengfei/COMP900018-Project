@@ -122,7 +122,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private static final int NUM_SHAKES = 5; //5,valid shake how many times to open capsule
     private static final float COSINE = (float) 0.5; //0.5,cosine,rotation angle,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
     private static final float FORCE_THRESHOLD = (float) 10; //rotation force, this is rotation force threshold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
-    // last location requested
+    // last requested location
     private Location mLastLocation;
     private double lastRequestLat = 360.0;
     private double lastRequestLon = 360.0;
@@ -144,6 +144,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
     //Message Section
     Toast toast = null;
 
+    /**
+     * Performs basic application startup logic that happens only once for the entire life of the activity.
+     *
+     * @param savedInstanceState: a Bundle object containing the activity's previously saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -275,16 +280,23 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Called when the map is ready to be used.
+     *
+     * @param googleMap: a non-null instance of a GoogleMap that defines the callback
+     */
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        // request location permission
-        requestLocation();
+        checkLocationPermission();
         mapLayout();
     }
 
-    private void requestLocation() {
+    /**
+     * Checks location permissions for LocationManager.
+     */
+    private void checkLocationPermission() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(locationUpdateInterval);
         mLocationRequest.setFastestInterval(locationUpdateInterval);
@@ -294,50 +306,56 @@ public class DiscoverCapsule extends AppCompatActivity implements
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
-                // location permission was granted
+                // enables the my-location layer because the permission was granted
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 mGoogleMap.setMyLocationEnabled(true);
                 mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
-                // request location permission when it is the first time users use the app
-                checkLocationPermission();
+                // request location permission
+                requestLocationPermission();
             }
         } else {
-            // location permission was granted
+            // enables the my-location layer because the permission was granted
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         }
     }
 
-    private void checkLocationPermission() {
+    /**
+     * Requests location permissions at runtime
+     */
+    private void requestLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // request location permission
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_LOCATION);
         }
     }
 
-    // the result of location permission request
+    /**
+     * Callback for receiving the results for permission requests.
+     *
+     * @param requestCode the request intent that came back
+     * @param permissions the requested permissions
+     * @param grantResults the grant results for the corresponding permissions
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
-        // if request was cancelled, the result arrays are empty.
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // location permission was granted, and restart google map
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
+                        // restart DiscoverCapsule activity if the location permission was granted
                         Intent intent = new Intent(DiscoverCapsule.this, DiscoverCapsule.class);
                         startActivity(intent);
                     }
                 } else {
-                    // permission was denied
                     displayToast(this, "permission denied", Toast.LENGTH_LONG);
                 }
                 return;
@@ -345,9 +363,17 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Organizes map information so that it clearly communicates that information to the map's audience.
+     */
     private void mapLayout() {
-        // clickable markers
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            /**
+             * Clicks a capsule marker to open a popup window
+             *
+             * @param marker a clickable capsule marker
+             * @return true if one of the capsule markers is clicked, otherwise false.
+             */
             @Override
             public boolean onMarkerClick(Marker marker) {
                 for (Marker m : mCapsuleMarkers.keySet()) {
@@ -369,24 +395,32 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
 
-    // get location updates every second
+    /**
+     * Used for receiving notifications when the device location has changed or can no longer be determined
+     */
     final LocationCallback mLocationCallback = new LocationCallback() {
         @SuppressLint("MissingPermission")
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            // send http capsule request using users' current location
+            // request capsule information using users' current locations
             updateCapsuleRequestLocation(locationResult);
             requestCapsuleInfo();
 
             List<Location> locationList = locationResult.getLocations();
             if (locationList.size() > 0) {
+                // get current location
                 Location location = locationList.get(locationList.size() - 1);
-                check_ifCanRefreshMarkers(location);
-                redrawGoogleMap(location);
+                check_ifCanRefreshMarkers();
+                drawGoogleMapLayout(location);
             }
         }
     };
 
+    /**
+     * Stores user's current location in 'capsuleInfo' which will be later used to make an HTTP get request
+     *
+     * @param locationResult user's location history
+     */
     private void updateCapsuleRequestLocation(LocationResult locationResult) {
         List<Location> locationList = locationResult.getLocations();
 
@@ -430,6 +464,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Checks if user's current location is further than the location when he last refreshed capsule.
+     *
+     * @param curLat current latitude
+     * @param curLon current longitude
+     * @return true if distance threshold is met, otherwise false.
+     */
     private boolean checkForRequest(double curLat, double curLon) {
         if (lastRequestLat == 360 && lastRequestLon == 360) {
             return true;
@@ -440,7 +481,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
-    // calculate distance by latitude, and longitude (unit: Kilometers)
+    /**
+     * Calculates the distance between two locations by latitude and longitude (unit: Kilometers)
+     *
+     * @param lat1 latitude1
+     * @param lon1 longitude1
+     * @param lat2 latitude2
+     * @param lon2 longitude2
+     * @return distance value
+     */
     private double getDistance(double lat1, double lon1, double lat2, double lon2) {
         if ((lat1 == lat2) && (lon1 == lon2)) {
             return 0;
@@ -455,7 +504,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    // retrieve capsule information through HTTP GET method
+    /**
+     * Makes an HTTP get request to retrieve capsule information.
+     */
     private void requestCapsuleInfo() {
 
         // Only request capsule from server if discover is still alive
@@ -509,9 +560,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     }
 
-    private void check_ifCanRefreshMarkers(Location location) {
+    /**
+     * Checks if a capsule refresh condition has been met.
+     */
+    private void check_ifCanRefreshMarkers() {
 
-        //Same reason, don't drawer marker if discover activity has been finished
+        //Same reason, do not drawer marker if discover activity has been finished
         if (!this.isDestroyed()) {
             if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true && discover_refresh == true) {
                 refreshMarkers(allCapsules);
@@ -534,6 +588,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Places capsule markers on google maps after receiving the latest capsule information via a HTTP get request.
+     *
+     * @param allCapsules capsule information
+     */
     public void refreshMarkers(JSONArray allCapsules) {
         mGoogleMap.clear();
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
@@ -541,7 +600,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         // for testing
         int counts = 0;
 
-        //place capsule markers on google map
+        //place capsule markers on google maps
         for (int i = 0; i < allCapsules.length(); i++) {
             try {
                 JSONObject objects = allCapsules.getJSONObject(i);
@@ -563,7 +622,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             // for testing
             counts += 1;
             Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
@@ -573,8 +631,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         registerShakeSensor();
     }
 
-    // redraw google map after users refresh capsules
-    private void redrawGoogleMap(Location location) {
+    /**
+     * Redraws the layout google maps including buttons and markers.
+     *
+     * @param location user's current location
+     */
+    private void drawGoogleMapLayout(Location location) {
         // default location Googleplex: 37.4219983 -122.084
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
@@ -591,6 +653,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mCurrLocationMarker.showInfoWindow();
     }
     //The logic is borrowed from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
+
 
     //double backpressed to exit app
     //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
@@ -616,6 +679,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Sets up sensor manager.
+     */
     private void registerShakeSensor() {
         // handle the case of finish current activity but the delayed response register shake
         // again in another activity. So need to check if my self has been destroyed or not
@@ -630,7 +696,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    // detect a shake event
+    /**
+     * Called when the values of shake sensor have changed.
+     *
+     * @param sensor the ID of the sensor being monitored
+     * @param values the values of x,y,z for the shake sensor
+     */
     @Override
     public void onSensorChanged(int sensor, float[] values) {
         //when detect 10 times of slight shake, open the capsule
@@ -669,7 +740,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
     //The logic is borrowed from https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android
 
-    private void addShakeSuccessCount (float[] values){
+    /**
+     * Counts the number of shakes.
+     *
+     * @param values the values of x,y,z for the shake sensor
+     */
+    private void addShakeSuccessCount(float[] values) {
         float x = values[SensorManager.DATA_X];
         float y = values[SensorManager.DATA_Y];
         float z = values[SensorManager.DATA_Z];
@@ -710,7 +786,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     }
 
-    private void initPopWindow(View view, int width, int height){
+    private void initPopWindow(View view, int width, int height) {
         pw = new PopupWindow(view, width, height, true);
         pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
@@ -727,7 +803,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         pw.showAtLocation(view, Gravity.CENTER, 0, 0);
     }
 
-    private void initDismissListener(ImageView dismiss){
+    private void initDismissListener(ImageView dismiss) {
         dismiss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -736,7 +812,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
-    private void initSlideVerificationListener(final SlideValidationView slideValidationView, final VerificationSeekBar seekbar){
+    private void initSlideVerificationListener(final SlideValidationView slideValidationView, final VerificationSeekBar seekbar) {
         slideValidationView.setListener(new SlideListener() {
             @Override
             public void onSuccess() {
@@ -768,7 +844,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
-    private void initShakeImageAnimation(final ImageView shakeImg){
+    private void initShakeImageAnimation(final ImageView shakeImg) {
         //looping the shake animation for popup window every 2 seconds
         AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -922,7 +998,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
-                                overridePendingTransition(R.anim.pop_up,R.anim.stay);
+                                overridePendingTransition(R.anim.pop_up, R.anim.stay);
                             }
                         });
                     }
@@ -933,13 +1009,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
-    private void displayToast(Context context, String msg, int length){
-        if (toast == null || !toast.getView().isShown()){
+    private void displayToast(Context context, String msg, int length) {
+        if (toast == null || !toast.getView().isShown()) {
             toast = Toast.makeText(context, msg, length);
             toast.show();
         }
     }
 
+    /**
+     * Called when the activity that was hidden comes back to view on the screen.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -947,6 +1026,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         registerShakeSensor();
     }
 
+    /**
+     * Commits to the backing content provider or file any changes the user has made.
+     */
     @Override
     public void onPause() {
         Log.d("shake", "onPause from Discover: called, unregisterListener");
@@ -956,6 +1038,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         super.onPause();
     }
 
+    /**
+     * The final call before the activity is destroyed.
+     */
     @Override
     public void onDestroy() {
         Log.d("shake", "onDestroy from Discover: called, unregisterListener");
@@ -965,33 +1050,3 @@ public class DiscoverCapsule extends AppCompatActivity implements
         super.onDestroy();
     }
 }
-
-/* HTTP GET Method
- Returns
-    {"sucess": true,
-     "capsules": [
-            {"cid": 1,
-            "cusr": "test",
-            "ccontent": "Test content",
-            "ctitle": "Test Title",
-            "cimage": null,
-            "caudio": null,
-            "ccount": 0,
-            "clat": -37.813629,
-            "clon": 144.963058,
-            "cpermission": 1, where 0 means private and 1 means public
-            "cavatar": null},
-            {"cid": 2,
-            "cusr": "test",
-            "ccontent": "Test content1",
-            "ctitle": "Test Title1",
-            "cimage": null,
-            "caudio": null,
-            "ccount": 0,
-            "clat": -37.813629,
-            "clon": 144.963058,
-            "cpermission": 1,
-            "cavatar": null}
-        ]
-    }
-}*/
