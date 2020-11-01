@@ -10,9 +10,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSeekBar;
 public class VerificationSeekBar extends AppCompatSeekBar {
     private boolean isInterception=true;
+
+    /**
+     * constructor of seekbar
+     * @param context the global information of the context
+     */
     public VerificationSeekBar(@NonNull Context context) {
         super(context);
     }
+
+    /**
+     * constructor of seekbar
+     * @param context the global information of the context
+     * @param attrs the style attribute of the capsule
+     */
     public VerificationSeekBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
@@ -20,6 +31,12 @@ public class VerificationSeekBar extends AppCompatSeekBar {
         super(context, attrs, defStyleAttr);
     }
 
+    /**
+     * listener to the movement of thumb of the seekbar, to avoid the click rather than
+     * drag, limit the bound of distance each movement
+     * @param event the motion event of thumb
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if(event.getAction()==MotionEvent.ACTION_DOWN){
