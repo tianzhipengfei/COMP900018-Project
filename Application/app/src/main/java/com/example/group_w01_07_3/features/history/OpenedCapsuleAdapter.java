@@ -1,6 +1,7 @@
 package com.example.group_w01_07_3.features.history;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,7 +134,18 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+//                    Log.d("getAdapterPosition()", String.valueOf(getAdapterPosition()));
+//                    Log.d("capsule_title" , String.valueOf(capsule_title == null));
+//                    Log.d("opened_date" , String.valueOf(opened_date == null));
+//                    Log.d("capsule_image" , String.valueOf(capsule_image == null));
+//                    Log.d("private_tag" , String.valueOf(private_tag == null));
+//                    Log.d("capsule_content" , String.valueOf(capsule_content == null));
+//                    Log.d("original_user_avatar" , String.valueOf(original_user_avatar == null));
+//                    Log.d("static_text_by" , String.valueOf(static_text_by == null));
+//                    Log.d("username" , String.valueOf(username == null));
+//                    Log.d("callback", String.valueOf(callback == null));
                     callback.onCapsuleItemClick(getAdapterPosition(), capsule_title, opened_date, capsule_image, private_tag, capsule_content, original_user_avatar,static_text_by, username);
+//                    Log.d("callback", String.valueOf(callback == null));
                 }
             });
         }

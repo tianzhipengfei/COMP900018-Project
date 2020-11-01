@@ -12,7 +12,7 @@
         android:id="@+id/pop_slide_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="16dp"
         android:orientation="vertical"
         android:background="@drawable/custom_border_all_corner"
         android:backgroundTint="@color/white"
@@ -35,7 +35,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:adjustViewBounds="true"
-            android:maxHeight="360dp"
+            android:maxHeight="320dp"
             android:src="@drawable/pop_slide_capsule" />
 
         <com.example.group_w01_07_3.features.discover.VerificationSeekBar
