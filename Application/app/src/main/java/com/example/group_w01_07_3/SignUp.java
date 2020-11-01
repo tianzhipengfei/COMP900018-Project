@@ -257,49 +257,18 @@ public class SignUp extends AppCompatActivity {
                                 Log.d("SIGNUP", "uploadAvatar: " + responseData);
                                 try {
                                     JSONObject responseJSON = new JSONObject(responseData);
-                                    if (responseJSON.has("success")) {
-                                        String status = responseJSON.getString("success");
-                                        Log.d("SIGNUP", "uploadAvatar success: " + status);
-
+                                    String code = responseJSON.getString("code");
+                                    if (code.equalsIgnoreCase("success")) {
+                                        Log.d("SIGNUP", "uploadAvatar success: " + code);
                                         JSONObject data = responseJSON.getJSONObject("data");
-                                        System.out.println(data.getString("url"));
                                         avatarFileLink = data.getString("url");
                                         Log.d("SIGNUP", "avatarFileLink: " + avatarFileLink);
                                         onSignUp();
-                                    } else if (responseJSON.has("error")) {
-                                        String status = responseJSON.getString("error");
-                                        Log.d("SIGNUP", "uploadAvatar error: " + status);
-                                        if (status.equalsIgnoreCase("userExist - user already exist")) {
-                                            runOnUiThread(new Runnable() {
-                                                              @Override
-                                                              public void run() {
-                                                                  usernameET.setText("");
-                                                                  Toast.makeText(SignUp.this, "Username exists, please change it", Toast.LENGTH_SHORT).show();
-                                                                  signUpButton.setEnabled(true);
-                                                              }
-                                                          }
-                                            );
-                                        } else if (status.equalsIgnoreCase("Invalid format")) {
-                                            Log.d("SIGNUP", "uploadAvatar error: " + status);
-                                            runOnUiThread(new Runnable() {
-                                                              @Override
-                                                              public void run() {
-                                                                  Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
-                                                                  signUpButton.setEnabled(true);
-                                                              }
-                                                          }
-                                            );
-                                        }
-                                    } else {
-                                        Log.d("SIGNUP", "uploadAvatar: Invalid form");
-                                        runOnUiThread(new Runnable() {
-                                                          @Override
-                                                          public void run() {
-                                                              Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
-                                                              signUpButton.setEnabled(true);
-                                                          }
-                                                      }
-                                        );
+                                    } else if (code.equalsIgnoreCase("image_repeated")) {
+                                        Log.d("SIGNUP", "uploadAvatar success: " + code);
+                                        avatarFileLink = responseJSON.getString("images");
+                                        Log.d("SIGNUP", "avatarFileLink: " + avatarFileLink);
+                                        onSignUp();
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();

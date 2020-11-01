@@ -261,5 +261,15 @@ public class HttpUtil {
         return (info != null && info.isConnected());
     }
 
-
+    public static void getHistory(String token, int start, int num, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
+                .build();
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "getCapsuleHistory?tkn=" + token + "&start=" +
+                        String.valueOf(start) + "&num=" + String.valueOf(num))
+                .get()
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
 }

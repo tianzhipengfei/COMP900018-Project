@@ -13,8 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,12 +37,13 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.SignIn;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
+import com.example.group_w01_07_3.util.FeedbackUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
-import com.example.group_w01_07_3.util.FeedbackUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -122,7 +121,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private static final int NUM_SHAKES = 5; //5,valid shake how many times to open capsule
     private static final float COSINE = (float) 0.5; //0.5,cosine,rotation angle,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
     private static final float FORCE_THRESHOLD = (float) 10; //rotation force, this is rotation force threshold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
-    // last location requested
+    // last requested location
     private Location mLastLocation;
     private double lastRequestLat = 360.0;
     private double lastRequestLon = 360.0;
@@ -144,6 +143,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
     //Message Section
     Toast toast = null;
 
+    /**
+     * Performs basic application startup logic that happens only once for the entire life of the activity.
+     *
+     * @param savedInstanceState: a Bundle object containing the activity's previously saved state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -251,6 +255,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     }
                                 }
                             });
+                        } else if (responseJSON.has("error")) {
+                            String status = responseJSON.getString("error");
+                            Log.d("PROFILE", "getProfile error: " + status);
+                            DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    UserUtil.clearToken(DiscoverCapsule.this);
+                                    Toast.makeText(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
+                                    startActivity(intent);
+                                    finish();
+                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                }
+                            });
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -275,16 +293,23 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Called when the map is ready to be used.
+     *
+     * @param googleMap: a non-null instance of a GoogleMap that defines the callback
+     */
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-        // request location permission
-        requestLocation();
+        checkLocationPermission();
         mapLayout();
     }
 
-    private void requestLocation() {
+    /**
+     * Checks location permissions for LocationManager.
+     */
+    private void checkLocationPermission() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(locationUpdateInterval);
         mLocationRequest.setFastestInterval(locationUpdateInterval);
@@ -294,50 +319,56 @@ public class DiscoverCapsule extends AppCompatActivity implements
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
-                // location permission was granted
+                // enables the my-location layer because the permission was granted
                 mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
                 mGoogleMap.setMyLocationEnabled(true);
                 mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
-                // request location permission when it is the first time users use the app
-                checkLocationPermission();
+                // request location permission
+                requestLocationPermission();
             }
         } else {
-            // location permission was granted
+            // enables the my-location layer because the permission was granted
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
         }
     }
 
-    private void checkLocationPermission() {
+    /**
+     * Requests location permissions at runtime
+     */
+    private void requestLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // request location permission
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_LOCATION);
         }
     }
 
-    // the result of location permission request
+    /**
+     * Callback for receiving the results for permission requests.
+     *
+     * @param requestCode the request intent that came back
+     * @param permissions the requested permissions
+     * @param grantResults the grant results for the corresponding permissions
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
-        // if request was cancelled, the result arrays are empty.
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // location permission was granted, and restart google map
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
+                        // restart DiscoverCapsule activity if the location permission was granted
                         Intent intent = new Intent(DiscoverCapsule.this, DiscoverCapsule.class);
                         startActivity(intent);
                     }
                 } else {
-                    // permission was denied
                     displayToast(this, "permission denied", Toast.LENGTH_LONG);
                 }
                 return;
@@ -345,9 +376,17 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Organizes map information so that it clearly communicates that information to the map's audience.
+     */
     private void mapLayout() {
-        // clickable markers
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            /**
+             * Clicks a capsule marker to open a popup window
+             *
+             * @param marker a clickable capsule marker
+             * @return true if one of the capsule markers is clicked, otherwise false.
+             */
             @Override
             public boolean onMarkerClick(Marker marker) {
                 for (Marker m : mCapsuleMarkers.keySet()) {
@@ -369,24 +408,32 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
     }
 
-    // get location updates every second
+    /**
+     * Used for receiving notifications when the device location has changed or can no longer be determined
+     */
     final LocationCallback mLocationCallback = new LocationCallback() {
         @SuppressLint("MissingPermission")
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            // send http capsule request using users' current location
+            // request capsule information using users' current locations
             updateCapsuleRequestLocation(locationResult);
             requestCapsuleInfo();
 
             List<Location> locationList = locationResult.getLocations();
             if (locationList.size() > 0) {
+                // get current location
                 Location location = locationList.get(locationList.size() - 1);
-                check_ifCanRefreshMarkers(location);
-                redrawGoogleMap(location);
+                check_ifCanRefreshMarkers();
+                drawGoogleMapLayout(location);
             }
         }
     };
 
+    /**
+     * Stores user's current location in 'capsuleInfo' which will be later used to make an HTTP get request
+     *
+     * @param locationResult user's location history
+     */
     private void updateCapsuleRequestLocation(LocationResult locationResult) {
         List<Location> locationList = locationResult.getLocations();
 
@@ -430,6 +477,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Checks if user's current location is further than the location when he last refreshed capsule.
+     *
+     * @param curLat current latitude
+     * @param curLon current longitude
+     * @return true if distance threshold is met, otherwise false.
+     */
     private boolean checkForRequest(double curLat, double curLon) {
         if (lastRequestLat == 360 && lastRequestLon == 360) {
             return true;
@@ -440,7 +494,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
-    // calculate distance by latitude, and longitude (unit: Kilometers)
+    /**
+     * Calculates the distance between two locations by latitude and longitude (unit: Kilometers)
+     *
+     * @param lat1 latitude1
+     * @param lon1 longitude1
+     * @param lat2 latitude2
+     * @param lon2 longitude2
+     * @return distance value
+     */
     private double getDistance(double lat1, double lon1, double lat2, double lon2) {
         if ((lat1 == lat2) && (lon1 == lon2)) {
             return 0;
@@ -455,7 +517,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    // retrieve capsule information through HTTP GET method
+    /**
+     * Makes an HTTP get request to retrieve capsule information.
+     */
     private void requestCapsuleInfo() {
 
         // Only request capsule from server if discover is still alive
@@ -485,6 +549,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     can_i_shake = false;
                                     can_i_retrieve_http = false;
                                     can_i_fresh_markers = true;
+                                } else if (responseJSON.has("error")) {
+                                    String status = responseJSON.getString("error");
+                                    Log.d("GETCAPSULE", "getCapsule error: " + status);
+                                    DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            UserUtil.clearToken(DiscoverCapsule.this);
+                                            Toast.makeText(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
+                                            startActivity(intent);
+                                            finish();
+                                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                        }
+                                    });
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -509,9 +587,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     }
 
-    private void check_ifCanRefreshMarkers(Location location) {
+    /**
+     * Checks if a capsule refresh condition has been met.
+     */
+    private void check_ifCanRefreshMarkers() {
 
-        //Same reason, don't drawer marker if discover activity has been finished
+        //Same reason, do not drawer marker if discover activity has been finished
         if (!this.isDestroyed()) {
             if (can_i_shake == false && can_i_retrieve_http == false && can_i_fresh_markers == true && discover_refresh == true) {
                 refreshMarkers(allCapsules);
@@ -534,6 +615,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Places capsule markers on google maps after receiving the latest capsule information via a HTTP get request.
+     *
+     * @param allCapsules capsule information
+     */
     public void refreshMarkers(JSONArray allCapsules) {
         mGoogleMap.clear();
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
@@ -541,7 +627,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         // for testing
         int counts = 0;
 
-        //place capsule markers on google map
+        //place capsule markers on google maps
         for (int i = 0; i < allCapsules.length(); i++) {
             try {
                 JSONObject objects = allCapsules.getJSONObject(i);
@@ -563,7 +649,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
             // for testing
             counts += 1;
             Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
@@ -573,8 +658,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         registerShakeSensor();
     }
 
-    // redraw google map after users refresh capsules
-    private void redrawGoogleMap(Location location) {
+    /**
+     * Redraws the layout google maps including buttons and markers.
+     *
+     * @param location user's current location
+     */
+    private void drawGoogleMapLayout(Location location) {
         // default location Googleplex: 37.4219983 -122.084
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
@@ -591,6 +680,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mCurrLocationMarker.showInfoWindow();
     }
     //The logic is borrowed from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
+
 
     //double backpressed to exit app
     //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
@@ -616,6 +706,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Sets up sensor manager.
+     */
     private void registerShakeSensor() {
         // handle the case of finish current activity but the delayed response register shake
         // again in another activity. So need to check if my self has been destroyed or not
@@ -630,7 +723,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    // detect a shake event
+    /**
+     * Called when the values of shake sensor have changed.
+     *
+     * @param sensor the ID of the sensor being monitored
+     * @param values the values of x,y,z for the shake sensor
+     */
     @Override
     public void onSensorChanged(int sensor, float[] values) {
         //when detect 10 times of slight shake, open the capsule
@@ -669,7 +767,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
     //The logic is borrowed from https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android
 
-    private void addShakeSuccessCount (float[] values){
+    /**
+     * Counts the number of shakes.
+     *
+     * @param values the values of x,y,z for the shake sensor
+     */
+    private void addShakeSuccessCount(float[] values) {
         float x = values[SensorManager.DATA_X];
         float y = values[SensorManager.DATA_Y];
         float z = values[SensorManager.DATA_Z];
@@ -710,13 +813,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     }
 
-    /**
-     * Initializes new popup window with inflated view, width, height and location, add dismiss listener.
-     * @param view   inflated view of the popup window
-     * @param width  width of popup window
-     * @param height  height of popup window
-     */
-    private void initPopWindow(View view, int width, int height){
+    private void initPopWindow(View view, int width, int height) {
         pw = new PopupWindow(view, width, height, true);
         pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
@@ -733,11 +830,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         pw.showAtLocation(view, Gravity.CENTER, 0, 0);
     }
 
-    /**
-     *the listener receive click event from image view, then dismiss the popup window
-     * @param dismiss image view allows for user's click
-     */
-    private void initDismissListener(ImageView dismiss){
+    private void initDismissListener(ImageView dismiss) {
         dismiss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -746,43 +839,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
-
-    /**
-     * Adds listener to verfication image view of popup window-slider, check the position of captcha
-     * matches the position of puzzle
-     * @param slideValidationView   image of puzzle
-     * @param seekbar    the slider with draggable thumb
-     */
-    private void initSlideVerificationListener(final SlideValidationView slideValidationView, final VerificationSeekBar seekbar){
+    private void initSlideVerificationListener(final SlideValidationView slideValidationView, final VerificationSeekBar seekbar) {
         slideValidationView.setListener(new SlideListener() {
-
-            /**
-             * Check if the position of thumb equals to position of puzzle, send request to server, place
-             * thumb back to start position.
-             */
             @Override
             public void onSuccess() {
                 seekbar.setProgress(0);
                 RequestSending();
             }
 
-            /**
-             * Check if position of thumb does not match position of puzzle, display fail message to user
-             * place thumb back to start position.
-             */
             public void onFail() {
                 displayToast(popview_slide.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
                 seekbar.setProgress(0);
             }
         });
-        //add listener to listener to drag of thumb of seekbar
+
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            /**
-             * notifies clients when the progress level of seekbar has been changed
-             * @param seekBar  progress bar used for verification
-             * @param progress The current progress level
-             * @param fromUser true if the progress change was initiated by the user
-             */
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 System.out.println("Current Progress" + progress);
@@ -793,10 +864,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
 
-            /**
-             * Checks if user pass the verification, when the user has finished a touch gesture.
-             * @param seekBar the SeekBar in which the touch gesture began
-             */
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 slideValidationView.deal();
@@ -804,11 +871,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
-    /**
-     * Initializes animation for shake popup window
-     * @param shakeImg image view of shake popup window
-     */
-    private void initShakeImageAnimation(final ImageView shakeImg){
+    private void initShakeImageAnimation(final ImageView shakeImg) {
         //looping the shake animation for popup window every 2 seconds
         AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -835,39 +898,33 @@ public class DiscoverCapsule extends AppCompatActivity implements
         shakeImg.startAnimation(animation);
     }
 
-    /**
-     * Creates a new pop-up window randomly from three type: tap a clickable image area,shake phone
-     * and slide seekbar to match puzzle.
-     */
     public void PopUpWindowFunction() {
         //first thing to do is disable shake function for discover activity when window is poped
         discover_refresh = false;
 
         Log.w("MARKERS-MATCH", "******* FIRE POP WINDOW*******");
+
         LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ImageView dismiss;
         final ImageView shakeImg;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         int width = (getWindowManager().getDefaultDisplay().getWidth() * 3) / 4;
+
         if (pw != null && pw.isShowing()) {
             Log.d("popwindow", "PopUpWindowFunction: one window already showing, don't pop another");
         } else {
-            //choose a type of pop-up window randonly
             Random choice = new Random();
             int selection = choice.nextInt(3);
             switch (selection) {
                 case 0:
-                    //create a pop-up window with a clickable area
                     popupview_tap = in.inflate(R.layout.popup_tap, null);
                     dismiss = (ImageView) popupview_tap.findViewById(R.id.dismiss);
                     View img = popupview_tap.findViewById(R.id.tap_me);
+
                     initPopWindow(popupview_tap, width, height);
                     initDismissListener(dismiss);
+
                     img.setOnClickListener(new View.OnClickListener() {
-                        /**
-                         *Invokes when a view is clicked, open the capsule successfully.
-                         * @param view clickable image
-                         */
                         @Override
                         public void onClick(View view) {
                             RequestSending();
@@ -875,20 +932,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     });
                     break;
                 case 1:
-                    //create popup window that need shake from user
-                    //register shake listener to listen to shake form user
                     registerShakeSensor();
                     popupview_shake = in.inflate(R.layout.popup_shake, null);
                     dismiss = (ImageView) popupview_shake.findViewById(R.id.dismiss);
                     shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
+
                     popUpShake = true;//only on case 1, pop up shake would be true
                     shakeOpen = false;
+
                     initPopWindow(popupview_shake, width, height);
                     initDismissListener(dismiss);
                     initShakeImageAnimation(shakeImg);
+
                     break;
                 case 2:
-                    //create popup window that uses puzzle verification
                     popview_slide = in.inflate(R.layout.popup_slider, null);
                     dismiss = (ImageView) popview_slide.findViewById(R.id.dismiss);
                     final SlideValidationView slideValidationView = (SlideValidationView) popview_slide.findViewById(R.id.slideView);
@@ -902,13 +959,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Send open capsule request to server, check the confidential of user and display the content
-     * of capsule if the request is accepted by server
-     */
     public void RequestSending() {
         pw.dismiss();
-        //create a progress bar to notify user to wait for server reply
         final ProgressDialog progress = new ProgressDialog(DiscoverCapsule.this);
         progress.setTitle("Loading");
         progress.setMessage("Wait for server verficiation");
@@ -919,7 +971,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         Log.d("PopupWindow", "onMarkerClick: " + "Longtitude is " + lon + "The latitude is" + lat);
         Log.d("PopupWindow", "Compare with the location of last position" + mLastLocation.getLatitude() + "Longtitude is " + mLastLocation.getLongitude());
         Log.d("PopupWindow", "onMarkerClick: " + "get the information of selected capsule" + selectedCapsule.toString());
-        //create a request object containing all information for request
         final JSONObject request = new JSONObject();
         try {
             request.put("tkn", token);
@@ -931,27 +982,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //send request to server and handle the response from server
+
         HttpUtil.openCapsule(request, new Callback() {
-            /**
-             * Receives network failures error from server, dismiss the progress bar, notify user about
-             * internet error and stay in current activity
-             * @param call  a request that has been prepared for execution
-             * @param e  network error
-             */
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.d("PopUpWindow information send", "onFailure: ");
                 DiscoverCapsule.this.runOnUiThread(new Runnable() {
-                    /**
-                     * Dismiss the progress bar, notify the user on network failure
-                     */
                     @Override
                     public void run() {
                         progress.dismiss();
+
                         //now enable discover shake function
                         popUpShake = false;
                         discover_refresh = true;
+
                         Snackbar snackbar = Snackbar
                                 .make(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -959,27 +1003,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 });
             }
 
-            /**
-             * Receives response from server, if the server reply contains success, the request is
-             * approved by server, switch to display page.
-             * @param call   a request that has been prepared for execution
-             * @param response response received from user
-             * @throws IOException exception of reading reply
-             */
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
                     JSONObject replyJSON = new JSONObject(response.body().string());
                     Log.d("Response from server", "onResponse: " + replyJSON.toString());
-                    //if the server approve the request
                     if (replyJSON.has("success")) {
                         DiscoverCapsule.this.runOnUiThread(new Runnable() {
-                            /**
-                             * Removes the marker from map, dismiss the progress bar, switch to display
-                             * page if the request is approved  by server.
-                             */
                             @Override
-
                             public void run() {
                                 //remove marker after user opens the capsule
                                 selectedMarker.remove();
@@ -994,7 +1025,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
-                                overridePendingTransition(R.anim.pop_up,R.anim.stay);
+                                overridePendingTransition(R.anim.pop_up, R.anim.stay);
+                            }
+                        });
+                    } else if (replyJSON.has("error")) {
+                        String status = replyJSON.getString("error");
+                        Log.d("OPENCAPSULE", "openCapsule error: " + status);
+                        DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UserUtil.clearToken(DiscoverCapsule.this);
+                                Toast.makeText(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
+                                startActivity(intent);
+                                finish();
+                                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                             }
                         });
                     }
@@ -1005,13 +1050,16 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
-    private void displayToast(Context context, String msg, int length){
-        if (toast == null || !toast.getView().isShown()){
+    private void displayToast(Context context, String msg, int length) {
+        if (toast == null || !toast.getView().isShown()) {
             toast = Toast.makeText(context, msg, length);
             toast.show();
         }
     }
 
+    /**
+     * Called when the activity that was hidden comes back to view on the screen.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -1019,6 +1067,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         registerShakeSensor();
     }
 
+    /**
+     * Commits to the backing content provider or file any changes the user has made.
+     */
     @Override
     public void onPause() {
         Log.d("shake", "onPause from Discover: called, unregisterListener");
@@ -1028,6 +1079,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         super.onPause();
     }
 
+    /**
+     * The final call before the activity is destroyed.
+     */
     @Override
     public void onDestroy() {
         Log.d("shake", "onDestroy from Discover: called, unregisterListener");
@@ -1037,33 +1091,3 @@ public class DiscoverCapsule extends AppCompatActivity implements
         super.onDestroy();
     }
 }
-
-/* HTTP GET Method
- Returns
-    {"sucess": true,
-     "capsules": [
-            {"cid": 1,
-            "cusr": "test",
-            "ccontent": "Test content",
-            "ctitle": "Test Title",
-            "cimage": null,
-            "caudio": null,
-            "ccount": 0,
-            "clat": -37.813629,
-            "clon": 144.963058,
-            "cpermission": 1, where 0 means private and 1 means public
-            "cavatar": null},
-            {"cid": 2,
-            "cusr": "test",
-            "ccontent": "Test content1",
-            "ctitle": "Test Title1",
-            "cimage": null,
-            "caudio": null,
-            "ccount": 0,
-            "clat": -37.813629,
-            "clon": 144.963058,
-            "cpermission": 1,
-            "cavatar": null}
-        ]
-    }
-}*/
