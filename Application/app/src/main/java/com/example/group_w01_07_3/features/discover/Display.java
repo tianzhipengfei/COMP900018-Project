@@ -355,5 +355,21 @@ public class Display extends AppCompatActivity {
             mediaPlayer.stop();
         }
     }
+    //stop music if click home button
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mediaPlayer!=null){
+            mediaPlayer.stop();
+        }
+    }
+    //stop the music if current page is pause 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mediaPlayer!=null){
+            mediaPlayer.stop();
+        }
+    }
 }
 
