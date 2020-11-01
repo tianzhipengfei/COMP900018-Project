@@ -196,8 +196,8 @@ public class EditProfile extends AppCompatActivity implements
                                         .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                                 snackbar.show();
                                 signOutButton.setEnabled(true);
-                                System.out.println(123);
-                                return ;
+                                Log.d("SIGNOUT", "No Internet Connection");
+                                return;
                             }
                             HttpUtil.signOut(token, new okhttp3.Callback() {
                                 @Override
@@ -222,7 +222,7 @@ public class EditProfile extends AppCompatActivity implements
                                                 }
                                             });
                                         } else if (responseJSON.has("error")) {
-                                            String status = responseJSON.getString("success");
+                                            String status = responseJSON.getString("error");
                                             Log.d("SIGNOUT", "signOut error: " + status);
                                             EditProfile.this.runOnUiThread(new Runnable() {
                                                 @Override
@@ -257,7 +257,7 @@ public class EditProfile extends AppCompatActivity implements
                                 @Override
                                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                                     e.printStackTrace();
-                                    runOnUiThread(new Runnable() {
+                                    EditProfile.this.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             Snackbar snackbar = Snackbar
@@ -266,7 +266,7 @@ public class EditProfile extends AppCompatActivity implements
                                             signOutButton.setEnabled(true);
                                         }
                                     });
-                                    return ;
+                                    return;
                                 }
                             });
                         }
@@ -280,7 +280,6 @@ public class EditProfile extends AppCompatActivity implements
                     }
                 });
                 mediaPlayer.start();
-
                 builder.show();
             }
         });
@@ -479,6 +478,7 @@ public class EditProfile extends AppCompatActivity implements
                                           }
                             );
                         } else if (responseJSON.has("error")) {
+                            
                             String status = responseJSON.getString("error");
                             Log.d("PROFILE", "getProfile error: " + status);
                             runOnUiThread(new Runnable() {
