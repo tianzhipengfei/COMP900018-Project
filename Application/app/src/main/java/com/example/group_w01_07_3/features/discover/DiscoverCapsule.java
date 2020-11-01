@@ -813,7 +813,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     }
 
-    private void initPopWindow(View view, int width, int height) {
+    /**
+     * Initializes new popup window with inflated view, width, height and location, add dismiss listener.
+     * @param view   inflated view of the popup window
+     * @param width  width of popup window
+     * @param height  height of popup window
+     */
+    private void initPopWindow(View view, int width, int height){
         pw = new PopupWindow(view, width, height, true);
         pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
@@ -830,7 +836,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
         pw.showAtLocation(view, Gravity.CENTER, 0, 0);
     }
 
-    private void initDismissListener(ImageView dismiss) {
+    /**
+     *the listener receive click event from image view, then dismiss the popup window
+     * @param dismiss image view allows for user's click
+     */
+    private void initDismissListener(ImageView dismiss){
         dismiss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -839,21 +849,43 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
-    private void initSlideVerificationListener(final SlideValidationView slideValidationView, final VerificationSeekBar seekbar) {
+
+    /**
+     * Adds listener to verfication image view of popup window-slider, check the position of captcha
+     * matches the position of puzzle
+     * @param slideValidationView   image of puzzle
+     * @param seekbar    the slider with draggable thumb
+     */
+    private void initSlideVerificationListener(final SlideValidationView slideValidationView, final VerificationSeekBar seekbar){
         slideValidationView.setListener(new SlideListener() {
+
+            /**
+             * Check if the position of thumb equals to position of puzzle, send request to server, place
+             * thumb back to start position.
+             */
             @Override
             public void onSuccess() {
                 seekbar.setProgress(0);
                 RequestSending();
             }
 
+            /**
+             * Check if position of thumb does not match position of puzzle, display fail message to user
+             * place thumb back to start position.
+             */
             public void onFail() {
                 displayToast(popview_slide.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
                 seekbar.setProgress(0);
             }
         });
-
+        //add listener to listener to drag of thumb of seekbar
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            /**
+             * notifies clients when the progress level of seekbar has been changed
+             * @param seekBar  progress bar used for verification
+             * @param progress The current progress level
+             * @param fromUser true if the progress change was initiated by the user
+             */
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 System.out.println("Current Progress" + progress);
@@ -864,6 +896,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
 
+            /**
+             * Checks if user pass the verification, when the user has finished a touch gesture.
+             * @param seekBar the SeekBar in which the touch gesture began
+             */
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 slideValidationView.deal();
@@ -871,7 +907,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
-    private void initShakeImageAnimation(final ImageView shakeImg) {
+    /**
+     * Initializes animation for shake popup window
+     * @param shakeImg image view of shake popup window
+     */
+    private void initShakeImageAnimation(final ImageView shakeImg){
         //looping the shake animation for popup window every 2 seconds
         AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -898,33 +938,39 @@ public class DiscoverCapsule extends AppCompatActivity implements
         shakeImg.startAnimation(animation);
     }
 
+    /**
+     * Creates a new pop-up window randomly from three type: tap a clickable image area,shake phone
+     * and slide seekbar to match puzzle.
+     */
     public void PopUpWindowFunction() {
         //first thing to do is disable shake function for discover activity when window is poped
         discover_refresh = false;
 
         Log.w("MARKERS-MATCH", "******* FIRE POP WINDOW*******");
-
         LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ImageView dismiss;
         final ImageView shakeImg;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         int width = (getWindowManager().getDefaultDisplay().getWidth() * 3) / 4;
-
         if (pw != null && pw.isShowing()) {
             Log.d("popwindow", "PopUpWindowFunction: one window already showing, don't pop another");
         } else {
+            //choose a type of pop-up window randonly
             Random choice = new Random();
             int selection = choice.nextInt(3);
             switch (selection) {
                 case 0:
+                    //create a pop-up window with a clickable area
                     popupview_tap = in.inflate(R.layout.popup_tap, null);
                     dismiss = (ImageView) popupview_tap.findViewById(R.id.dismiss);
                     View img = popupview_tap.findViewById(R.id.tap_me);
-
                     initPopWindow(popupview_tap, width, height);
                     initDismissListener(dismiss);
-
                     img.setOnClickListener(new View.OnClickListener() {
+                        /**
+                         *Invokes when a view is clicked, open the capsule successfully.
+                         * @param view clickable image
+                         */
                         @Override
                         public void onClick(View view) {
                             RequestSending();
@@ -932,20 +978,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     });
                     break;
                 case 1:
+                    //create popup window that need shake from user
+                    //register shake listener to listen to shake form user
                     registerShakeSensor();
                     popupview_shake = in.inflate(R.layout.popup_shake, null);
                     dismiss = (ImageView) popupview_shake.findViewById(R.id.dismiss);
                     shakeImg = (ImageView) popupview_shake.findViewById(R.id.pop_shake_image);
-
                     popUpShake = true;//only on case 1, pop up shake would be true
                     shakeOpen = false;
-
                     initPopWindow(popupview_shake, width, height);
                     initDismissListener(dismiss);
                     initShakeImageAnimation(shakeImg);
-
                     break;
                 case 2:
+                    //create popup window that uses puzzle verification
                     popview_slide = in.inflate(R.layout.popup_slider, null);
                     dismiss = (ImageView) popview_slide.findViewById(R.id.dismiss);
                     final SlideValidationView slideValidationView = (SlideValidationView) popview_slide.findViewById(R.id.slideView);
@@ -959,8 +1005,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * Send open capsule request to server, check the confidential of user and display the content
+     * of capsule if the request is accepted by server
+     */
     public void RequestSending() {
         pw.dismiss();
+        //create a progress bar to notify user to wait for server reply
         final ProgressDialog progress = new ProgressDialog(DiscoverCapsule.this);
         progress.setTitle("Loading");
         progress.setMessage("Wait for server verficiation");
@@ -971,6 +1022,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         Log.d("PopupWindow", "onMarkerClick: " + "Longtitude is " + lon + "The latitude is" + lat);
         Log.d("PopupWindow", "Compare with the location of last position" + mLastLocation.getLatitude() + "Longtitude is " + mLastLocation.getLongitude());
         Log.d("PopupWindow", "onMarkerClick: " + "get the information of selected capsule" + selectedCapsule.toString());
+        //create a request object containing all information for request
         final JSONObject request = new JSONObject();
         try {
             request.put("tkn", token);
@@ -982,20 +1034,27 @@ public class DiscoverCapsule extends AppCompatActivity implements
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+        //send request to server and handle the response from server
         HttpUtil.openCapsule(request, new Callback() {
+            /**
+             * Receives network failures error from server, dismiss the progress bar, notify user about
+             * internet error and stay in current activity
+             * @param call  a request that has been prepared for execution
+             * @param e  network error
+             */
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.d("PopUpWindow information send", "onFailure: ");
                 DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                    /**
+                     * Dismiss the progress bar, notify the user on network failure
+                     */
                     @Override
                     public void run() {
                         progress.dismiss();
-
                         //now enable discover shake function
                         popUpShake = false;
                         discover_refresh = true;
-
                         Snackbar snackbar = Snackbar
                                 .make(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         snackbar.show();
@@ -1003,14 +1062,27 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 });
             }
 
+            /**
+             * Receives response from server, if the server reply contains success, the request is
+             * approved by server, switch to display page.
+             * @param call   a request that has been prepared for execution
+             * @param response response received from user
+             * @throws IOException exception of reading reply
+             */
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
                     JSONObject replyJSON = new JSONObject(response.body().string());
                     Log.d("Response from server", "onResponse: " + replyJSON.toString());
+                    //if the server approve the request
                     if (replyJSON.has("success")) {
                         DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                            /**
+                             * Removes the marker from map, dismiss the progress bar, switch to display
+                             * page if the request is approved  by server.
+                             */
                             @Override
+
                             public void run() {
                                 //remove marker after user opens the capsule
                                 selectedMarker.remove();
@@ -1025,21 +1097,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
-                                overridePendingTransition(R.anim.pop_up, R.anim.stay);
-                            }
-                        });
-                    } else if (replyJSON.has("error")) {
-                        String status = replyJSON.getString("error");
-                        Log.d("OPENCAPSULE", "openCapsule error: " + status);
-                        DiscoverCapsule.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                UserUtil.clearToken(DiscoverCapsule.this);
-                                Toast.makeText(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
-                                startActivity(intent);
-                                finish();
-                                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                overridePendingTransition(R.anim.pop_up,R.anim.stay);
                             }
                         });
                     }
@@ -1049,6 +1107,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
         });
     }
+
 
     private void displayToast(Context context, String msg, int length) {
         if (toast == null || !toast.getView().isShown()) {

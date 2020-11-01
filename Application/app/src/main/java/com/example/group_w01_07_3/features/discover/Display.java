@@ -344,6 +344,23 @@ public class Display extends AppCompatActivity {
     }
 
     /**
+     * Stop music playing when there is need to switch pages or click home button
+     */
+    private void releaseMediaPlayer() {
+        try {
+            if (mediaPlayer != null) {
+                if (mediaPlayer.isPlaying())
+                    mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
      * Back to the discover capsule page.
      */
     @Override
@@ -351,25 +368,19 @@ public class Display extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.stay,R.anim.pop_in);
         //stop the audio play, if the user
-        if(mediaPlayer!=null){
-            mediaPlayer.stop();
-        }
+        releaseMediaPlayer();
     }
     //stop music if click home button
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mediaPlayer!=null){
-            mediaPlayer.stop();
-        }
+        releaseMediaPlayer();
     }
     //stop the music if current page is pause 
     @Override
     protected void onPause() {
         super.onPause();
-        if(mediaPlayer!=null){
-            mediaPlayer.stop();
-        }
+        releaseMediaPlayer();
     }
 }
 
