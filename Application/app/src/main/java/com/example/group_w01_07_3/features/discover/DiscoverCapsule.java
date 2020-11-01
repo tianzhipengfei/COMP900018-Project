@@ -116,8 +116,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private int open_shake_time = 0;
 
     private static final int MAX_PAUSE_BETWEEN_SHAKES = 200;  // unit: default 200 ms
-    private static final int RESET_SHAKE_GAP = 5000; // reset user shake state to if no valid shake in 5 second
-    private static final int NUM_SHAKES = 4; //5,valid shake how many times to open capsule
+    private static final int NUM_SHAKES = 5; //5,valid shake how many times to open capsule
     private static final float COSINE = (float) 0.5; //0.5,cosine,rotation angle,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
     private static final float FORCE_THRESHOLD = (float) 10; //rotation force, this is rotation force threshold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
     // last location requested
