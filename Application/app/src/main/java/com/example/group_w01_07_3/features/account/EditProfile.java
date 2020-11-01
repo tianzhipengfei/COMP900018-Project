@@ -43,6 +43,7 @@ import com.example.group_w01_07_3.util.ImageUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -173,9 +174,9 @@ public class EditProfile extends AppCompatActivity implements
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(EditProfile.this);
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(EditProfile.this);
                 builder.setIcon(R.drawable.warning);
-                builder.setTitle("Warning");
+                builder.setTitle("Sign Out Confirmation");
                 builder.setMessage("Do you want to sign out?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
