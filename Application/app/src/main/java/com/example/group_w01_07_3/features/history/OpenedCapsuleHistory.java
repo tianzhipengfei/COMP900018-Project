@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.SignIn;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
@@ -380,6 +381,20 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                         Log.d("FINISHED", "run: Activity has been finished, don't load Glide for update header avatar & username");
                                     }
 
+                                }
+                            });
+                        } else if (responseJSON.has("error")) {
+                            String status = responseJSON.getString("error");
+                            Log.d("PROFILE", "getProfile error: " + status);
+                            OpenedCapsuleHistory.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    UserUtil.clearToken(OpenedCapsuleHistory.this);
+                                    Toast.makeText(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(OpenedCapsuleHistory.this, SignIn.class);
+                                    startActivity(intent);
+                                    finish();
+                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                 }
                             });
                         }
