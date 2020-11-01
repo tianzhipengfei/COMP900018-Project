@@ -68,6 +68,31 @@
 
             </com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView>
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/history_opened_capsule_no_history_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Body1"
+                android:text="Oops! Looks like you have not opened any memory capsule yet. Discover More"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/history_opened_capsule_plz_retry_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="360dp"
+                android:adjustViewBounds="true"
+                android:visibility="invisible"
+                android:src="@drawable/ic_capsule_tap"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
