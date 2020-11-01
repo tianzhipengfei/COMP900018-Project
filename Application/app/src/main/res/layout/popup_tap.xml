@@ -4,46 +4,53 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorGreyOut"
-    android:orientation="vertical">
+    android:background="@drawable/custom_border_all_corner"
+    android:backgroundTint="@color/colorGreyOut">
 
-    <TextView
-        android:id="@+id/hint"
+    <LinearLayout
+        android:id="@+id/pop_tap_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:alpha="0.8"
-        android:text="        Tap the area below to open the capsule"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold"
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        android:background="@drawable/custom_border_all_corner"
+        android:backgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <ImageView
-        android:id="@+id/tap_me"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:adjustViewBounds="true"
-        android:maxHeight="360dp"
-        android:src="@drawable/ic_capsule_tap"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hint" />
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tap To Open The Capsule"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
+            android:textStyle="bold"/>
+
+        <ImageView
+            android:id="@+id/tap_me"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"
+            android:adjustViewBounds="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_capsule_tap"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground"/>
+
+    </LinearLayout>
+
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/dismiss1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/dismiss"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_gravity="center"
-        android:text="Dismiss"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tap_me"
+        app:layout_constraintTop_toBottomOf="@+id/pop_tap_top_layout"
         app:srcCompat="@drawable/cancel" />
 </androidx.constraintlayout.widget.ConstraintLayout>

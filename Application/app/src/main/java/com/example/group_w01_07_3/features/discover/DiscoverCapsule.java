@@ -135,6 +135,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private boolean popUpShake = false;
     private PopupWindow pw;
     boolean doubleBackToExitPressedOnce = false;
+    //Message Section
+    Toast toast = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,8 +173,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
 
-        Toast.makeText(DiscoverCapsule.this,
-                "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT).show();
+        displayToast(DiscoverCapsule.this,
+                "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT);
 
         registerShakeSensor();
     }
@@ -330,7 +332,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 } else {
                     // permission was denied
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                    displayToast(this, "permission denied", Toast.LENGTH_LONG);
                 }
                 return;
             }
@@ -455,7 +457,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         // no matter online or offline
         if (!this.isDestroyed()) {
             if (capsuleInfo.length() == 0) {
-                Toast.makeText(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT).show();
+                displayToast(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT);
                 Log.d("CAPSULE", "***** No token to get capsule *****");
                 allCapsules = new JSONArray();
                 selectedCapsule = new JSONObject();
@@ -560,7 +562,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             counts += 1;
             Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
         }
-        Toast.makeText(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
+        displayToast(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
         registerShakeSensor();
     }
@@ -597,7 +599,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
 
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+            displayToast(this, "Press back again to exit", Toast.LENGTH_SHORT);
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -705,14 +707,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
         discover_refresh = false;
 
         Log.w("MARKERS-MATCH", "******* FIRE POP WINDOW*******");
-//        Intent intent = new Intent(DiscoverCapsule.this, ChangePassword.class);
-//        startActivity(intent);
-//        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+
         LayoutInflater in = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        int width = LinearLayout.LayoutParams.MATCH_PARENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         int width = (getWindowManager().getDefaultDisplay().getWidth() * 3) / 4;
-//        int height = (getWindowManager().getDefaultDisplay().getHeight() * 3) / 4;
 
         if (pw != null && pw.isShowing()) {
             Log.d("popwindow", "PopUpWindowFunction: one window already showing, don't pop another");
@@ -722,8 +720,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             switch (selection) {
                 case 0:
                     final View popupview_tap = in.inflate(R.layout.popup_tap, null);
-                    TextView hint_pop = (TextView) popupview_tap.findViewById(R.id.hint);
-                    hint_pop.setText("Tap the area to open capsule");
                     pw = new PopupWindow(popupview_tap, width, height, true);
                     pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
                         @Override
@@ -737,7 +733,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     pw.setOutsideTouchable(false);
                     pw.setAnimationStyle(R.style.popup_window_animation);
                     pw.showAtLocation(popupview_tap, Gravity.CENTER, 0, 0);
-                    ImageView button = (ImageView) popupview_tap.findViewById(R.id.dismiss1);
+                    ImageView button = (ImageView) popupview_tap.findViewById(R.id.dismiss);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -757,8 +753,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     final View popupview_shake = in.inflate(R.layout.popup_shake, null);
                     popUpShake = true;//only on case 1, pop up shake would be true
                     shakeOpen = false;
-                    TextView hint_shake = (TextView) popupview_shake.findViewById(R.id.hint);
-                    hint_shake.setText("Shake slightly to open the capsule");
                     pw = new PopupWindow(popupview_shake, width, height, true);
                     pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
                         @Override
@@ -819,13 +813,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     slideValidationView.setListener(new SlideListener() {
                         @Override
                         public void onSuccess() {
-                            Toast.makeText(slideview.getContext(), "Success!", Toast.LENGTH_SHORT).show();
                             seekbar.setProgress(0);
                             RequestSending();
                         }
 
                         public void onFail() {
-                            Toast.makeText(slideview.getContext(), "Fail!Try again", Toast.LENGTH_SHORT).show();
+                            displayToast(slideview.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
                             seekbar.setProgress(0);
                         }
                     });
@@ -850,6 +843,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onStopTrackingTouch(SeekBar seekBar) {
                             slideValidationView.deal();
+                        }
+                    });
+
+                    button = (ImageView) slideview.findViewById(R.id.dismiss);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            pw.dismiss();
                         }
                     });
             }
@@ -1037,8 +1038,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 popUpShake = false;
                                 discover_refresh = true;
 
-                                Toast.makeText(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
-//                                pw.dismiss();
+                                displayToast(DiscoverCapsule.this, "Success! Wait for loading capsule!", Toast.LENGTH_SHORT);
+
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
@@ -1051,6 +1052,13 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    private void displayToast(Context context, String msg, int length){
+        if (toast == null || !toast.getView().isShown()){
+            toast = Toast.makeText(context, msg, length);
+            toast.show();
+        }
     }
 
     @Override

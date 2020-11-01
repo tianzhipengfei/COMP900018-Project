@@ -5,48 +5,60 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorGreyOut"
-    tools:context=".MainActivity">
+    android:background="@drawable/custom_border_all_corner"
+    android:backgroundTint="@color/colorGreyOut">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/materialTextView2"
+    <LinearLayout
+        android:id="@+id/pop_slide_top_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title goes here"
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        android:background="@drawable/custom_border_all_corner"
+        android:backgroundTint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Complete The Puzzle To Open The Capsule"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
+            android:textStyle="bold"/>
 
-    <com.example.group_w01_07_3.features.discover.SlideValidationView
-        android:id="@+id/slideView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        <com.example.group_w01_07_3.features.discover.SlideValidationView
+            android:id="@+id/slideView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:adjustViewBounds="true"
+            android:maxHeight="360dp"
+            android:src="@drawable/pop_slide_capsule" />
+
+        <com.example.group_w01_07_3.features.discover.VerificationSeekBar
+            android:id="@+id/sb_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clickable="false"
+            android:progress="0"
+            android:progressDrawable="@drawable/bg_seekbar"
+            android:thumb="@drawable/circle_green"
+            android:thumbOffset="-1dp" />
+    </LinearLayout>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/dismiss"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:adjustViewBounds="true"
-        android:maxHeight="360dp"
-        android:src="@drawable/pop_slide_capsule"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialTextView2" />
-
-    <com.example.group_w01_07_3.features.discover.VerificationSeekBar
-        android:id="@+id/sb_progress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:clickable="false"
-        android:max="100"
-        android:maxHeight="45dp"
-        android:minHeight="45dp"
-        android:padding="1dp"
-        android:progress="0"
-        android:progressDrawable="@drawable/bg_seekbar"
-        android:thumb="@drawable/seekbar_thumb"
-        android:thumbOffset="-1dp"
-        app:layout_constraintEnd_toStartOf="@+id/materialTextView2"
-        app:layout_constraintStart_toEndOf="@+id/materialTextView2"
-        app:layout_constraintTop_toBottomOf="@+id/slideView" />
+        app:layout_constraintTop_toBottomOf="@+id/pop_slide_top_layout"
+        app:srcCompat="@drawable/cancel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
