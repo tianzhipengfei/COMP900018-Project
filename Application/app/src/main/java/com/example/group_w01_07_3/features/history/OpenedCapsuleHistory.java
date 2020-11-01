@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -301,14 +302,29 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         Pair<View,String> p10 = Pair.create(navigationBar,Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME); // second arg is the transition string Name
         Pair<View,String> p11 = Pair.create((View)toolbar,"capsuleToolbarTN"); // second arg is the transition string Name
 
+//        Log.d("this", String.valueOf(this == null));
+//        Log.d("p1 == null", String.valueOf(p1 == null));
+//        Log.d("p2 == null", String.valueOf(p2 == null));
+//        Log.d("p3 == null", String.valueOf(p3 == null));
+//        Log.d("p4 == null", String.valueOf(p4 == null));
+//        Log.d("p5 == null", String.valueOf(p5 == null));
+//        Log.d("p6 == null", String.valueOf(p6 == null));
+//        Log.d("p7 == null", String.valueOf(p7 == null));
+//        Log.d("p8 == null", String.valueOf(p8 == null));
+//        Log.d("p9 == null", String.valueOf(p9 == null));
+//        Log.d("p10 == null", String.valueOf(p10 == null));
+//        Log.d("p11 == null", String.valueOf(p11 == null));
+
         //这里设置的就是到底哪几个view的transition被开启运作
         ActivityOptionsCompat optionsCompat =
                 ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11);
 
+//        Log.d("optionsCompat", String.valueOf(optionsCompat == null));
+
         // start the activity with scene transition
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            startActivity(intent,optionsCompat.toBundle());
+            ActivityCompat.startActivity(OpenedCapsuleHistory.this, intent,optionsCompat.toBundle());
         }
         else
             startActivity(intent);
