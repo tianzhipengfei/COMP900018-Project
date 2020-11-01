@@ -506,36 +506,24 @@ public class CreateCapsule extends AppCompatActivity implements
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
                             if (status == "false") {
-                                runOnUiThread(new Runnable() {
-
-                                    public void run() {
-                                        progressbar.dismiss();
-                                        Toast.makeText(CreateCapsule.this,
-                                                "Upload image fail, repeated upload" ,
-                                                Toast.LENGTH_LONG);
-                                    }
-                                });
-                            }else {
+//                                runOnUiThread(new Runnable() {
+//                                    public void run() {
+//                                        progressbar.dismiss();
+//                                        Toast.makeText(CreateCapsule.this,
+//                                                "Upload image fail, repeated upload" ,
+//                                                Toast.LENGTH_LONG);
+//                                    }
+//                                });
+                                Log.i("ImageUrl", status);
+                                System.out.println(responseJSON.getString("images"));
+                                capsuleInfo.put("img", responseJSON.getString("images"));
+                                uploadOther();
+                            } else {
                                 Log.i("ImageUrl", status);
                                 JSONObject data = responseJSON.getJSONObject("data");
                                 System.out.println(data.getString("url"));
                                 capsuleInfo.put("img", data.getString("url"));
                                 uploadOther();
-                            }
-                        } else if (responseJSON.has("error")) {
-                            String status = responseJSON.getString("error");
-                            if (status.equalsIgnoreCase("Not logged in")) {
-                                CreateCapsule.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        UserUtil.clearToken(CreateCapsule.this);
-                                        Toast.makeText(CreateCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(CreateCapsule.this, SignIn.class);
-                                        startActivity(intent);
-                                        finish();
-                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-                                    }
-                                });
                             }
                         }
                     } catch (JSONException e) {

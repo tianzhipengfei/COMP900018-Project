@@ -25,10 +25,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
@@ -547,12 +545,20 @@ public class EditProfile extends AppCompatActivity implements
                 Log.d("avatar", "1");
                 // log comments
                 String responseData = response.body().string();
+                Log.d("avatar", responseData);
                 try {
                     JSONObject responseJSON = new JSONObject(responseData);
-                    JSONObject data = responseJSON.getJSONObject("data");
-                    newAvatarString = data.getString("url");
-                    onChangeAvatar();
-                    snackbarShowFlag = true;
+                    String code = responseJSON.getString("code");
+                    if (code.equalsIgnoreCase("success")) {
+                        JSONObject data = responseJSON.getJSONObject("data");
+                        newAvatarString = data.getString("url");
+                        onChangeAvatar();
+                        snackbarShowFlag = true;
+                    } else if (code.equalsIgnoreCase("image_repeated")) {
+                        newAvatarString = responseJSON.getString("images");
+                        onChangeAvatar();
+                        snackbarShowFlag = true;
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -594,25 +600,48 @@ public class EditProfile extends AppCompatActivity implements
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 // log comments
                 Log.d("avatar", "2");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Update main page avatar
-                        if (!EditProfile.this.isDestroyed()){
-                            //TODO: use Glide solved previus problem of not loaded avatar
-                            Glide.with(EditProfile.this)
-                                    .load(newAvatarString)
-                                    .into(avatarDisplay);
-                            //also update the sliding menu header avatar
-                            Glide.with(EditProfile.this)
-                                    .load(newAvatarString)
-                                    .into(headerAvatar);
-                            snackbarShowFlag = true;
-                        } else {
-                            Log.d("FINISHED", "run: Activity has been finished, don't load Glide for avatar during onChangeAvatar");
-                        }
+                String responseData = response.body().string();
+                Log.d("avatar", responseData);
+                try {
+                    JSONObject responseJSON = new JSONObject(responseData);
+                    if (responseJSON.has("success")) {
+                        EditProfile.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Update main page avatar
+                                if (!EditProfile.this.isDestroyed()){
+                                    //TODO: use Glide solved previus problem of not loaded avatar
+                                    Glide.with(EditProfile.this)
+                                            .load(newAvatarString)
+                                            .into(avatarDisplay);
+                                    //also update the sliding menu header avatar
+                                    Glide.with(EditProfile.this)
+                                            .load(newAvatarString)
+                                            .into(headerAvatar);
+                                    snackbarShowFlag = true;
+                                } else {
+                                    Log.d("FINISHED", "run: Activity has been finished, don't load Glide for avatar during onChangeAvatar");
+                                }
+                            }
+                        });
+                    } else if (responseJSON.has("error")) {
+                        String status = responseJSON.getString("error");
+                        Log.d("PROFILE", "changeAvatar error: " + status);
+                        EditProfile.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UserUtil.clearToken(EditProfile.this);
+                                Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(EditProfile.this, SignIn.class);
+                                startActivity(intent);
+                                finish();
+                                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                            }
+                        });
                     }
-                });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override

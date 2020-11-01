@@ -13,8 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,12 +37,13 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.SignIn;
 import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
+import com.example.group_w01_07_3.util.FeedbackUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
-import com.example.group_w01_07_3.util.FeedbackUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -254,6 +253,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     } else {
                                         Log.d("FINISHED", "run: Activity has been finished, don't load Glide for update header avatar & username");
                                     }
+                                }
+                            });
+                        } else if (responseJSON.has("error")) {
+                            String status = responseJSON.getString("error");
+                            Log.d("PROFILE", "getProfile error: " + status);
+                            DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    UserUtil.clearToken(DiscoverCapsule.this);
+                                    Toast.makeText(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
+                                    startActivity(intent);
+                                    finish();
+                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                 }
                             });
                         }
@@ -536,6 +549,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     can_i_shake = false;
                                     can_i_retrieve_http = false;
                                     can_i_fresh_markers = true;
+                                } else if (responseJSON.has("error")) {
+                                    String status = responseJSON.getString("error");
+                                    Log.d("GETCAPSULE", "getCapsule error: " + status);
+                                    DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            UserUtil.clearToken(DiscoverCapsule.this);
+                                            Toast.makeText(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
+                                            startActivity(intent);
+                                            finish();
+                                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                        }
+                                    });
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -999,6 +1026,20 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
                                 overridePendingTransition(R.anim.pop_up, R.anim.stay);
+                            }
+                        });
+                    } else if (replyJSON.has("error")) {
+                        String status = replyJSON.getString("error");
+                        Log.d("OPENCAPSULE", "openCapsule error: " + status);
+                        DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                UserUtil.clearToken(DiscoverCapsule.this);
+                                Toast.makeText(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
+                                startActivity(intent);
+                                finish();
+                                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                             }
                         });
                     }
