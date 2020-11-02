@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.MenuItem;
@@ -54,6 +55,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, CapsuleCallback{
 
     private ShimmerFrameLayout mShimmerViewContainer;
+
+    private long mLastClickTime = 0;
 
     boolean doubleBackToExitPressedOnce = false;
 
@@ -137,6 +140,11 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         placeholder_retryImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 onGetHistory();
             }
         });
