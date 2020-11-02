@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -84,8 +85,6 @@ import okhttp3.Response;
 public class CreateCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-    private long mLastClickTime = 0;
-
     boolean doubleBackToExitPressedOnce = false;
 
     private boolean mStartRecording = true;
@@ -116,6 +115,11 @@ public class CreateCapsule extends AppCompatActivity implements
     private File imageFile;
 
     JSONObject capsuleInfo = new JSONObject();
+
+    // message section
+    private Toast toast = null;
+    private Snackbar snackbar = null;
+    private long mLastClickTime = 0;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,8 +193,7 @@ public class CreateCapsule extends AppCompatActivity implements
             }
             mStartRecording = !mStartRecording;
         } else {
-            Toast.makeText(getApplicationContext(), "Need permission", Toast.LENGTH_SHORT)
-                    .show();
+            displayToast(getApplicationContext(), "Need permission", Toast.LENGTH_SHORT);
         }
 
     }
@@ -247,8 +250,8 @@ public class CreateCapsule extends AppCompatActivity implements
                         imageFile = ImageUtil.compressImage(this, bitmap,
                                 "create_capsule_output_photo_compressed.jpg");
                         bottomDialog.dismiss();
-                        Toast.makeText(this, "Take the photo successfully",
-                                Toast.LENGTH_SHORT).show();
+                        displayToast(this, "Take the photo successfully",
+                                Toast.LENGTH_SHORT);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -272,7 +275,7 @@ public class CreateCapsule extends AppCompatActivity implements
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
+                    displayToast(this, "You denied the permission", Toast.LENGTH_SHORT);
                 }
                 break;
             default:
@@ -327,10 +330,10 @@ public class CreateCapsule extends AppCompatActivity implements
                     "create_capsule_image_compressed.jpg");
             placeholder.setImageBitmap(bitmap);
             bottomDialog.dismiss();
-            Toast.makeText(this, "Select the image successfully",
-                    Toast.LENGTH_SHORT).show();
+            displayToast(this, "Select the image successfully",
+                    Toast.LENGTH_SHORT);
         } else {
-            Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
+            displayToast(this, "Failed to get image", Toast.LENGTH_SHORT);
         }
     }
 
@@ -340,13 +343,12 @@ public class CreateCapsule extends AppCompatActivity implements
         EditText capsuleTitle = findViewById(R.id.create_capsule_title);
         EditText capsuleContent = findViewById(R.id.create_capsule_content);
         if (capsuleTitle.getText().toString().isEmpty()) {
-            Toast.makeText(CreateCapsule.this, "Please enter the title",
-                    Toast.LENGTH_SHORT).show();
+            displayToast(CreateCapsule.this, "Please enter the title", Toast.LENGTH_SHORT);
             return false;
         }
         if (capsuleContent.getText().toString().isEmpty()) {
-            Toast.makeText(CreateCapsule.this, "Please enter the content",
-                    Toast.LENGTH_SHORT).show();
+            displayToast(CreateCapsule.this, "Please enter the content",
+                    Toast.LENGTH_SHORT);
             return false;
         }
         try {
@@ -407,18 +409,17 @@ public class CreateCapsule extends AppCompatActivity implements
                                 } catch (JSONException json) {
                                     Log.i("Fail to put in json", "Location cannot write " +
                                             "in json");
-                                    Toast.makeText(CreateCapsule.this,
-                                            "Cannot get location",
-                                            Toast.LENGTH_SHORT).show();
+                                    displayToast(CreateCapsule.this, "Please turn on GPS and try again",
+                                            Toast.LENGTH_SHORT);
                                     progressbar.dismiss();
                                 }
 
                             } else {
-                                Toast.makeText(CreateCapsule.this,
-                                        "Cannot get the location!",
-                                        Toast.LENGTH_SHORT).show();
+                                displayToast(CreateCapsule.this,
+                                        "Please turn on GPS and try again",
+                                        Toast.LENGTH_SHORT);
                                 progressbar.dismiss();
-                                Log.i("location error", "Cannot get location");
+                                Log.i("location error", "Please turn on GPS and try again");
                             }
                         }
                     });
@@ -457,7 +458,7 @@ public class CreateCapsule extends AppCompatActivity implements
                                     @Override
                                     public void run() {
                                         UserUtil.clearToken(CreateCapsule.this);
-                                        Toast.makeText(CreateCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                        displayToast(CreateCapsule.this, "Not logged in", Toast.LENGTH_SHORT);
                                         Intent intent = new Intent(CreateCapsule.this, SignIn.class);
                                         startActivity(intent);
                                         finish();
@@ -467,9 +468,8 @@ public class CreateCapsule extends AppCompatActivity implements
                             }
                         }
                     } catch (JSONException e) {
-                        Toast.makeText(CreateCapsule.this,
-                                "Cannot upload audio",
-                                Toast.LENGTH_SHORT).show();
+                        displayToast(CreateCapsule.this, "Cannot upload audio",
+                                Toast.LENGTH_SHORT);
                         e.printStackTrace();
                         progressbar.dismiss();
                     }
@@ -479,9 +479,8 @@ public class CreateCapsule extends AppCompatActivity implements
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(CreateCapsule.this,
-                                    "Cannot upload audio",
-                                    Toast.LENGTH_SHORT).show();
+                            displayToast(CreateCapsule.this, "Cannot upload audio",
+                                    Toast.LENGTH_SHORT);
                             progressbar.dismiss();
                         }
                     });
@@ -528,9 +527,8 @@ public class CreateCapsule extends AppCompatActivity implements
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(CreateCapsule.this,
-                                "Cannot upload img",
-                                Toast.LENGTH_LONG).show();
+                        displayToast(CreateCapsule.this, "Cannot upload img. Please Check your internet",
+                                Toast.LENGTH_LONG);
                         progressbar.dismiss();
                     }
                 }
@@ -539,9 +537,8 @@ public class CreateCapsule extends AppCompatActivity implements
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(CreateCapsule.this,
-                                    "Cannot upload image",
-                                    Toast.LENGTH_SHORT).show();
+                            displayToast(CreateCapsule.this, "Cannot upload image. Please Check your internet",
+                                    Toast.LENGTH_SHORT);
                             progressbar.dismiss();
                         }
                     });
@@ -561,8 +558,7 @@ public class CreateCapsule extends AppCompatActivity implements
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        Toast.makeText(CreateCapsule.this, "Connection fail", Toast.LENGTH_SHORT)
-                                .show();
+                        displayToast(CreateCapsule.this, "Connection fail. Please ckech your internet", Toast.LENGTH_SHORT);
                         progressbar.dismiss();
                     }
                 });
@@ -581,9 +577,8 @@ public class CreateCapsule extends AppCompatActivity implements
                                           @Override
                                           public void run() {
                                               progressbar.dismiss();
-                                              Toast.makeText(CreateCapsule.this,
-                                                      "Create Capsule successfully",
-                                                      Toast.LENGTH_SHORT).show();
+                                              displaySnackbar(drawerLayout, "Create Capsule successfully",
+                                                      Snackbar.LENGTH_SHORT);
                                               TextInputEditText capsuleTitle = findViewById(R.id.create_capsule_title);
                                               TextInputEditText capsuleContent = findViewById(R.id.create_capsule_content);
                                               capsuleTitle.setText("");
@@ -612,7 +607,6 @@ public class CreateCapsule extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     UserUtil.clearToken(CreateCapsule.this);
-                                    Toast.makeText(CreateCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(CreateCapsule.this, SignIn.class);
                                     startActivity(intent);
                                     finish();
@@ -622,9 +616,8 @@ public class CreateCapsule extends AppCompatActivity implements
                         }
                     } else {
                         progressbar.dismiss();
-                        Toast.makeText(CreateCapsule.this,
-                                "Fail to create the capsule",
-                                Toast.LENGTH_SHORT).show();
+                        displaySnackbar(drawerLayout, "Fail to create the capsule",
+                                Snackbar.LENGTH_SHORT);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -768,6 +761,34 @@ public class CreateCapsule extends AppCompatActivity implements
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Display toast in a non-overlap manner
+     *
+     * @param context The context which toast will display at
+     * @param msg     The message to display
+     * @param length  the duration of toast display
+     */
+    private void displayToast(Context context, String msg, int length) {
+        if (toast == null || !toast.getView().isShown()) {
+            toast = Toast.makeText(context, msg, length);
+            toast.show();
+        }
+    }
+
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
         }
     }
 
