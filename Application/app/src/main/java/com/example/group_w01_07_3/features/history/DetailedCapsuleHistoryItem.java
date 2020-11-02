@@ -3,24 +3,16 @@ package com.example.group_w01_07_3.features.history;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.app.ActivityOptionsCompat;
 
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,20 +21,16 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.group_w01_07_3.R;
-import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
-import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     //APP view
-    private CoordinatorLayout constraintLayout;
+    private CoordinatorLayout coordinatorLayout;
     private Toolbar mToolbar;
     private TextView title;
     private TextView date;
@@ -118,7 +106,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     }
 
     private void initView() {
-        constraintLayout = findViewById(R.id.detail_history_mega_layout);
+        coordinatorLayout = findViewById(R.id.detail_history_mega_layout);
         //find view for shimmer placeholder layout
         imageShimmer = findViewById(R.id.history_detail_shimmer_image);
         avatarShimmer = findViewById(R.id.history_detail_shimmer_avatar);
@@ -216,7 +204,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                     Log.d("Debug", "IMAGE - Glide Errored");
-                                    displaySnackbar(constraintLayout,
+                                    displaySnackbar(coordinatorLayout,
                                             "Failed to load the capsule image, please check your internet connection",
                                             Snackbar.LENGTH_LONG);
                                     return false;
@@ -254,7 +242,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             Log.d("Debug", "IMAGE - Glide Errored");
-                            displaySnackbar(constraintLayout,
+                            displaySnackbar(coordinatorLayout,
                                     "Failed to load user avatar of the capsule owner, please check your internet connection",
                                     Snackbar.LENGTH_LONG);
                             return false;
@@ -326,7 +314,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 //                                    "Failed to Load audio, please check your internet connection",
 //                                    Snackbar.LENGTH_LONG);
 //                        }
-                        displaySnackbar(constraintLayout,
+                        displaySnackbar(coordinatorLayout,
                                 "Failed to Load audio, please check your internet connection",
                                 Snackbar.LENGTH_LONG);
                         return false;

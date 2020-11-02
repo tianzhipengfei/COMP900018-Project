@@ -42,6 +42,12 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         return new capsuleCardViewHolder(layout);
     }
 
+    /**
+     * Load data into the positioned item in the recycle view
+     *
+     * @param holder   the view holder of that item
+     * @param position which card in the recycle list
+     */
     @Override
     public void onBindViewHolder(@NonNull capsuleCardViewHolder holder, int position) {
         // animation for the whole card
@@ -86,6 +92,11 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         }
     }
 
+    /**
+     * Get the size of the recyclerlist
+     *
+     * @return size of the recyclerlist
+     */
     @Override
     public int getItemCount() {
         return mData.size();
@@ -97,6 +108,11 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         ConstraintLayout megaCardLayout;
 
 
+        /**
+         * holder of the entire view of capsule card
+         *
+         * @param itemView The view of recycler list card item
+         */
         public capsuleCardViewHolder(View itemView) {
             super(itemView);
             megaCardLayout = itemView.findViewById(R.id.history_capsule_card_layout);
@@ -113,7 +129,8 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
             capsule_image = itemView.findViewById(R.id.history_capsule_card_background);
             original_user_avatar = itemView.findViewById(R.id.history_capsule_original_user_avatar);
 
-            //根据callback,这里设置的view支持transition 【要真正进行transition这个动画，得在主activity的onCapsuleItemClick里吧pair传进去
+            // Based on callback, All view declared here supports shared element transition
+            // But note that actually conduct the animation must set in activity using PAIR
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
