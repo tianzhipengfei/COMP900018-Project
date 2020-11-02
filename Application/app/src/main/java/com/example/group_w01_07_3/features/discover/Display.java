@@ -345,6 +345,7 @@ public class Display extends AppCompatActivity {
 
     /**
      * Stop playing the music and release the resource
+
      */
     private void releaseMediaPlayer() {
         try {
@@ -362,7 +363,6 @@ public class Display extends AppCompatActivity {
     /**
      * Back to the discover capsule page.
      */
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.stay,R.anim.pop_in);

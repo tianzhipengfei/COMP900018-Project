@@ -1108,6 +1108,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
+
     private void displayToast(Context context, String msg, int length) {
         if (toast == null || !toast.getView().isShown()) {
             toast = Toast.makeText(context, msg, length);
