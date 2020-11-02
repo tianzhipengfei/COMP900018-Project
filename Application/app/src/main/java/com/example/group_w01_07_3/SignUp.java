@@ -2,6 +2,7 @@ package com.example.group_w01_07_3;
 
 import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -81,6 +82,9 @@ public class SignUp extends AppCompatActivity {
 
     private ConstraintLayout constraintLayout;
 
+    // message section
+    private Toast toast = null;
+    private Snackbar snackbar = null;
     private long mLastClickTime = 0;
 
     @Override
@@ -318,23 +322,19 @@ public class SignUp extends AppCompatActivity {
 
     private boolean allRequiredFinished(String username, String email, String password, String reEnterPassword, String dob) {
         if (username.isEmpty()) {
-            //Toast.makeText(SignUp.this, "Username is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (email.isEmpty()) {
-            //Toast.makeText(SignUp.this, "Email Address is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (password.isEmpty()) {
-            //Toast.makeText(SignUp.this, "Password is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (reEnterPassword.isEmpty()) {
-            //Toast.makeText(SignUp.this, "Re-enter Password is required", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         } else if (dob.equalsIgnoreCase("Select Birthday")) {
-            Toast.makeText(SignUp.this, "Date of Birth is required", Toast.LENGTH_SHORT).show();
+            displayToast(SignUp.this, "Date of Birth is required", Toast.LENGTH_SHORT);
             signUpButton.setEnabled(true);
             return false;
         }
@@ -349,7 +349,6 @@ public class SignUp extends AppCompatActivity {
             signUpButton.setEnabled(true);
             return false;
         } else if (!password.equals(reEnterPassword)) {
-            //Toast.makeText(SignUp.this, "Re-enter Password does not match Password", Toast.LENGTH_SHORT).show();
             signUpButton.setEnabled(true);
             return false;
         }
@@ -403,7 +402,7 @@ public class SignUp extends AppCompatActivity {
                         avatarImageBtn.setImageBitmap(bitmap);
                         avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "output_photo_compressed.jpg");
                         bottomDialog.dismiss();
-                        Toast.makeText(this, "Take the photo successfully", Toast.LENGTH_SHORT).show();
+                        displayToast(this, "Take the photo successfully", Toast.LENGTH_SHORT);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -426,7 +425,7 @@ public class SignUp extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
+                    displayToast(this, "You denied the permission", Toast.LENGTH_SHORT);
                 }
                 break;
             default:
@@ -479,18 +478,16 @@ public class SignUp extends AppCompatActivity {
             avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "image_compressed.jpg");
             avatarImageBtn.setImageBitmap(bitmap);
             bottomDialog.dismiss();
-            Toast.makeText(this, "Select the image successfully", Toast.LENGTH_SHORT).show();
+            displayToast(this, "Select the image successfully", Toast.LENGTH_SHORT);
         } else {
-            Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
+            displayToast(this, "Failed to get image", Toast.LENGTH_SHORT);
         }
     }
 
     private void onSignUp() {
         boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
         if(!internetFlag){
-            Snackbar snackbar = Snackbar
-                    .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
-            snackbar.show();
+            displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
             signUpButton.setEnabled(true);
             return ;
         }
@@ -508,7 +505,7 @@ public class SignUp extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                                           @Override
                                           public void run() {
-                                              Toast.makeText(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT).show();
+                                              displayToast(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT);
                                               finish();
                                               overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                           }
@@ -522,7 +519,7 @@ public class SignUp extends AppCompatActivity {
                                           public void run() {
                                               usernameET.setText("");
                                               emailET.setText("");
-                                              Toast.makeText(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT).show();
+                                              displayToast(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT);
                                               signUpButton.setEnabled(true);
                                           }
                                       }
@@ -532,7 +529,7 @@ public class SignUp extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                                           @Override
                                           public void run() {
-                                              Toast.makeText(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                              displayToast(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT);
                                               signUpButton.setEnabled(true);
                                           }
                                       }
@@ -549,15 +546,41 @@ public class SignUp extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Snackbar snackbar = Snackbar
-                                .make(constraintLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        displaySnackbar(constraintLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         signUpButton.setEnabled(true);
                     }
                 });
                 return ;
             }
         });
+    }
+
+    /**
+     * Display toast in a non-overlap manner
+     *
+     * @param context The context which toast will display at
+     * @param msg     The message to display
+     * @param length  the duration of toast display
+     */
+    private void displayToast(Context context, String msg, int length) {
+        if (toast == null || !toast.getView().isShown()) {
+            toast = Toast.makeText(context, msg, length);
+            toast.show();
+        }
+    }
+
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
+        }
     }
 
     @Override
