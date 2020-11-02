@@ -636,8 +636,9 @@ public class CreateCapsule extends AppCompatActivity implements
 
         if (getOtherInfo()) {
             progressbar = new ProgressDialog(CreateCapsule.this);
-            progressbar.setTitle("Loading");
+            progressbar.setTitle("Uploading");
             progressbar.setMessage("Creating capsule, please wait....");
+            progressbar.setCancelable(false);
             progressbar.show();
             if (HttpUtil.isOnline(this)) {
                 //collect info;

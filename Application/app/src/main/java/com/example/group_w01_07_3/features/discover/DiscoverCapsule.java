@@ -997,7 +997,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //create a progress bar to notify user to wait for server reply
         final ProgressDialog progress = new ProgressDialog(DiscoverCapsule.this);
         progress.setTitle("Loading");
-        progress.setMessage("Wait for server verficiation");
+        progress.setMessage("Almost there...Opening the capsule may take a few seconds");
+        progress.setCancelable(false);
         progress.show();
         Double lon = curLon;
         Double lat = curLat;
