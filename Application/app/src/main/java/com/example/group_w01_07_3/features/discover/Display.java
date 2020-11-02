@@ -182,9 +182,9 @@ public class Display extends AppCompatActivity {
                     username.setText(name);
                     //check the privacy status of capsule
                     if(private_status==1){
-                        privacy.setText("Public Memory Capsule");
+                        privacy.setText("Public Geo-Capsule");
                     }else{
-                        privacy.setText("Your Private Memory Capsule");
+                        privacy.setText("Your Private  Geo-Capsule");
                     }
 
                     if (audiolink != "null") {

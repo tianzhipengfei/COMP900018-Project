@@ -139,7 +139,7 @@ public class CreateCapsule extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar_create);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("Create Memory Capsule");
+        getSupportActionBar().setTitle("Create Geo-Capsule");
 
         drawerLayout = findViewById(R.id.create_drawer_layout);
 
