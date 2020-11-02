@@ -133,6 +133,13 @@ public class Display extends AppCompatActivity {
             }
         });
 
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer m) {
+                startPlay = !startPlay;
+            }
+        });
+
         if (extra != null) {
             try {
                 JSONObject capsuleInfo = new JSONObject(extra);
@@ -328,7 +335,7 @@ public class Display extends AppCompatActivity {
         try {
             mediaPlayer.setDataSource(audiolink);
             mediaPlayer.prepareAsync();
-            mediaPlayer.setLooping(true);
+            mediaPlayer.setLooping(false);
             //handle the internet loss condition, notify the user about Internet connection failure.
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 //handle media player lose network connection
