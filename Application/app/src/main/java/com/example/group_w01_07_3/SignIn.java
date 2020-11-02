@@ -41,6 +41,8 @@ public class SignIn extends AppCompatActivity {
     private EditText passwordET;
     private CheckBox rememberCB;
     private Button signInButton;
+    private TextView createAccountButton;
+    private ImageView sideAddButton;
 
     // sharedPreference
     private SharedPreferences pref;
@@ -140,6 +142,8 @@ public class SignIn extends AppCompatActivity {
      * sign in logic
      */
     private void onSignIn() {
+        createAccountButton.setEnabled(false);
+        sideAddButton.setEnabled(false);
         HttpUtil.signIn(username.toLowerCase(), password, new okhttp3.Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -171,6 +175,8 @@ public class SignIn extends AppCompatActivity {
                                     passwordET.setText("");
                                     displayToast(SignIn.this, "User does not exist", Toast.LENGTH_SHORT);
                                     signInButton.setEnabled(true);
+                                    createAccountButton.setEnabled(true);
+                                    sideAddButton.setEnabled(true);
                                 }
                             });
                         } else if (status.equalsIgnoreCase("invalidPass - invalid password, try again")) {
@@ -180,6 +186,8 @@ public class SignIn extends AppCompatActivity {
                                     passwordET.setText("");
                                     displayToast(SignIn.this, "Wrong password", Toast.LENGTH_SHORT);
                                     signInButton.setEnabled(true);
+                                    createAccountButton.setEnabled(true);
+                                    sideAddButton.setEnabled(true);
                                 }
                             });
                         } else if (status.equalsIgnoreCase("loginError - cannot login")) {
@@ -189,6 +197,8 @@ public class SignIn extends AppCompatActivity {
                                     displayToast(SignIn.this, "Cannot sign in\n" +
                                             "Please try again ...", Toast.LENGTH_SHORT);
                                     signInButton.setEnabled(true);
+                                    createAccountButton.setEnabled(true);
+                                    sideAddButton.setEnabled(true);
                                 }
                             });
                         }
@@ -208,6 +218,8 @@ public class SignIn extends AppCompatActivity {
                         displaySnackbar(constraintLayout, "Sign in timeout!\n" +
                                 "Please check your Internet and try again ...", Snackbar.LENGTH_LONG);
                         signInButton.setEnabled(true);
+                        createAccountButton.setEnabled(true);
+                        sideAddButton.setEnabled(true);
                     }
                 });
             }
@@ -236,7 +248,7 @@ public class SignIn extends AppCompatActivity {
      */
     private void initJumpToSignUpPage() {
         // jump to sign up page
-        TextView createAccountButton = (TextView) findViewById(R.id.text_create_account);
+        createAccountButton = (TextView) findViewById(R.id.text_create_account);
         createAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,7 +259,7 @@ public class SignIn extends AppCompatActivity {
         });
 
         // jump to sign up page
-        ImageView sideAddButton = (ImageView) findViewById(R.id.sign_in_side_add);
+        sideAddButton = (ImageView) findViewById(R.id.sign_in_side_add);
         sideAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
