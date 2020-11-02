@@ -60,7 +60,9 @@ public class OnBoardingActivity extends AppCompatActivity {
     }
 
     /**
-     * @return
+     * Restore preference data that if onboarding activity has been finished or not
+     *
+     * @return boolean indicator if if onboarding activity has been finished or not
      */
     private boolean restorePrefData() {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
@@ -70,7 +72,7 @@ public class OnBoardingActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     * save preference data that if onboarding activity has been finished or not
      */
     private void savePrefsData() {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
@@ -80,7 +82,7 @@ public class OnBoardingActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     * Initialise the onboarding view content
      */
     private void initOnboardingPager(){
         //initialize views
@@ -94,7 +96,7 @@ public class OnBoardingActivity extends AppCompatActivity {
         onboardingItemList.add(new OnboardingItem("Discover The Past Moments",
                 "Discover nearby recorded memory from yourself and others. Smile for your past and others moments", R.drawable.ic_onboarding_discover));
         onboardingItemList.add(new OnboardingItem("Review The Discovered Memory",
-                "Review your revealed memory capsules from digital memory collection", R.drawable.ic_onboarding_history));
+                "Review your Discovered memory capsules from digital memory gallery", R.drawable.ic_onboarding_history));
 
         onboardingPager = findViewById(R.id.onboarding_Viewpager);
         onboardingViewPagerAdapter = new OnboardingViewPagerAdapter(this, onboardingItemList);
@@ -126,7 +128,7 @@ public class OnBoardingActivity extends AppCompatActivity {
     }
 
     /**
-     *
+     * allow user to click start button and navigate to sign in page
      */
     private void initStartBtn(){
         //apply alert sound
