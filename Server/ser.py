@@ -6,7 +6,7 @@ import random as rand
 from math import sin, cos, sqrt, atan2
 import os
 import mpu
-from profanity_filter import ProfanityFilter
+# from profanity_filter import ProfanityFilter
 
 urls = [
     '/signIn', 'SignIn',
@@ -24,7 +24,7 @@ urls = [
     '/uploadAvatar', 'UploadAvatar'
 ]
 
-pf = ProfanityFilter()
+# pf = ProfanityFilter()
 app = web.application(urls, globals())
 db = web.database(dbn='sqlite', db='test.db')
 
@@ -347,8 +347,8 @@ class CreateCapsule:
         img = i.get('img') 
         audio = i.get('audio') 
 
-        if not pf.is_profane(content):
-            return {'error':'profanity text'}
+        # if not pf.is_profane(content):
+        #     return {'error':'profanity text'}
 
         # Add new capsule into database
         res = db.insert('capsules', cusr=usr, ctime=tim, cpermission=permission, \
@@ -492,7 +492,9 @@ class GetCapsuleHistory:
             # Avoid duplicated 
             cid_list.append(cur_cid)
             cur_capsule = db.query("SELECT * FROM capsules WHERE cid = '{}'".format(cur_cid))[0]
-            res.append(getCapsuleInfo(cur_capsule))
+            cur_capsule = getCapsuleInfo(cur_capsule)
+            cur_capsule['htime'] = his['htime']
+            res.append(cur_capsule)
         return {'success': True, 'hisotry': res}
 
 class UploadImage:
