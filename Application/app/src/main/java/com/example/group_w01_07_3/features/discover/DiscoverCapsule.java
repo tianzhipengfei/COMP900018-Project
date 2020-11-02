@@ -142,6 +142,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private View popview_slide;
     //Message Section
     Toast toast = null;
+    Snackbar snackbar = null;
 
     /**
      * Performs basic application startup logic that happens only once for the entire life of the activity.
@@ -156,7 +157,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //use toolbar at top of screen across all activities
         Toolbar toolbar = findViewById(R.id.toolbar_discover);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Shake & Discover Memory Capsule");
+        getSupportActionBar().setTitle("Shake & Discover Memory");
 
         drawerLayout = findViewById(R.id.discover_drawer_layout);
 
@@ -183,12 +184,15 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
 
-        displayToast(DiscoverCapsule.this,
-                "Let's look for capsules nearby! Shake to refresh capsules", Toast.LENGTH_SHORT);
-
         registerShakeSensor();
     }
 
+    /**
+     * Handle navigation drawer item click event, which navigates user to the destination
+     *
+     * @param item the top level-destination listed at the navigation drawer
+     * @return a boolean indicates if menu item click is done
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawers();
@@ -221,6 +225,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
         return false;
     }
 
+    /**
+     * Update drawer layout header username & avatar. Supports auto retry via OKHTTP
+     */
     private void updateHeader() {
         if (!UserUtil.getToken(DiscoverCapsule.this).isEmpty()) {
             HttpUtil.getProfile(UserUtil.getToken(DiscoverCapsule.this), new okhttp3.Callback() {
@@ -549,6 +556,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     can_i_shake = false;
                                     can_i_retrieve_http = false;
                                     can_i_fresh_markers = true;
+
+                                    displaySnackbar(drawerLayout, "Discovering Memory Capsule...Please Wait", Snackbar.LENGTH_LONG);
                                 } else if (responseJSON.has("error")) {
                                     String status = responseJSON.getString("error");
                                     Log.d("GETCAPSULE", "getCapsule error: " + status);
@@ -572,9 +581,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                             e.printStackTrace();
-                            Snackbar snackbar = Snackbar
-                                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\nReconnecting...", Snackbar.LENGTH_LONG);
-                            snackbar.show();
+                            displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection\nReconnecting...", Snackbar.LENGTH_LONG);
                         }
                     });
                 } catch (JSONException e) {
@@ -653,7 +660,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             counts += 1;
             Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
         }
-        displayToast(DiscoverCapsule.this, "Refresh successfully!", Toast.LENGTH_SHORT);
 
         registerShakeSensor();
     }
@@ -681,30 +687,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
     //The logic is borrowed from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
 
-
-    //double backpressed to exit app
-    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(navigationView)) {
-            drawerLayout.closeDrawer(navigationView);
-        } else {
-            if (doubleBackToExitPressedOnce) {
-                super.onBackPressed();
-                return;
-            }
-
-            this.doubleBackToExitPressedOnce = true;
-            displayToast(this, "Press back again to exit", Toast.LENGTH_SHORT);
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    doubleBackToExitPressedOnce = false;
-                }
-            }, 2000);
-        }
-    }
 
     /**
      * Sets up sensor manager.
@@ -815,6 +797,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     /**
      * Initializes new popup window with inflated view, width, height and location, add dismiss listener.
+     *
      * @param view   inflated view of the popup window
      * @param width  width of popup window
      * @param height  height of popup window
@@ -837,7 +820,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
     /**
-     *the listener receive click event from image view, then dismiss the popup window
+     * The listener receive click event from image view, then dismiss the popup window
+     *
      * @param dismiss image view allows for user's click
      */
     private void initDismissListener(ImageView dismiss){
@@ -853,6 +837,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     /**
      * Adds listener to verfication image view of popup window-slider, check the position of captcha
      * matches the position of puzzle
+     *
      * @param slideValidationView   image of puzzle
      * @param seekbar    the slider with draggable thumb
      */
@@ -881,7 +866,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //add listener to listener to drag of thumb of seekbar
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             /**
-             * notifies clients when the progress level of seekbar has been changed
+             * Notifies clients when the progress level of seekbar has been changed
+             *
              * @param seekBar  progress bar used for verification
              * @param progress The current progress level
              * @param fromUser true if the progress change was initiated by the user
@@ -909,6 +895,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
     /**
      * Initializes animation for shake popup window
+     *
      * @param shakeImg image view of shake popup window
      */
     private void initShakeImageAnimation(final ImageView shakeImg){
@@ -1055,9 +1042,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         //now enable discover shake function
                         popUpShake = false;
                         discover_refresh = true;
-                        Snackbar snackbar = Snackbar
-                                .make(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        displaySnackbar(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                     }
                 });
             }
@@ -1065,6 +1050,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             /**
              * Receives response from server, if the server reply contains success, the request is
              * approved by server, switch to display page.
+             *
              * @param call   a request that has been prepared for execution
              * @param response response received from user
              * @throws IOException exception of reading reply
@@ -1109,10 +1095,31 @@ public class DiscoverCapsule extends AppCompatActivity implements
     }
 
 
+    /**
+     * Display toast in a non-overlap manner
+     *
+     * @param context The context which toast will display at
+     * @param msg The message to display
+     * @param length the duration of toast display
+     */
     private void displayToast(Context context, String msg, int length) {
         if (toast == null || !toast.getView().isShown()) {
             toast = Toast.makeText(context, msg, length);
             toast.show();
+        }
+    }
+
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view view where snackbar will display at
+     * @param msg the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length){
+        if (snackbar == null || !snackbar.getView().isShown()){
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
         }
     }
 
@@ -1148,5 +1155,31 @@ public class DiscoverCapsule extends AppCompatActivity implements
         sensorMgr.unregisterListener(this);
 
         super.onDestroy();
+    }
+
+    /**
+     * Double back pressed to exit app
+     * The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
+     */
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(navigationView)) {
+            drawerLayout.closeDrawer(navigationView);
+        } else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+
+            this.doubleBackToExitPressedOnce = true;
+            displayToast(this, "Press back again to exit", Toast.LENGTH_SHORT);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
     }
 }
