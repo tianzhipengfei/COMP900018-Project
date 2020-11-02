@@ -39,29 +39,30 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
-
+    //APP view
     private Toolbar mToolbar;
-
+    private TextView title;
+    private TextView date;
+    private TextView tag;
+    private TextView content;
+    private TextView username;
+    private ImageView image;
+    private ImageView avatar;
+    private ImageButton voice;
     private ShimmerFrameLayout imageShimmer, avatarShimmer, voiceShimmer;
 
-    TextView title;
-    TextView date;
-    TextView tag;
-    TextView content;
-    TextView username;
-    ImageView image;
-    ImageView avatar;
-    ImageButton voice;
-
+    //Media Player Section
     private MediaPlayer mediaPlayer;
     private Boolean startPlay;
 
-
+    //Capsule Content Section
+    OpenedCapsule item;
     String titleString,dateString,usernameString,contentString;
     int tagIndentifier;
     String imageLocation, avatarLocation, voiceLocation;
 
-    OpenedCapsule item;
+    // Message Section
+    private Snackbar snackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +107,15 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             }
         });
 
+        initView();
+
+        //get the capsule object
+        item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
+
+        loadCapsule(item);
+    }
+
+    private void initView(){
         //find view for shimmer placeholder layout
         imageShimmer = findViewById(R.id.history_detail_shimmer_image);
         avatarShimmer = findViewById(R.id.history_detail_shimmer_avatar);
@@ -122,15 +132,13 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         image = findViewById(R.id.history_detail_image);
         avatar = findViewById(R.id.history_detail_capsule_original_user_avatar);
         voice = findViewById(R.id.history_detail_voice);
-
-        //get the capsule object
-        item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
-
-        loadCapsule(item);
     }
 
-
-    //这里设置的部分都会被update,不管那一块写了transition没有
+    /**
+     * Load all information of the capsule from server or directly from the object.
+     *
+     * @param item The capsule object to be displayed
+     */
     private void loadCapsule(OpenedCapsule item){
         titleString  = item.getCapsule_title();
         dateString = item.getOpened_date();
@@ -160,11 +168,8 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 } else {
                     imageShimmer.stopShimmer();
                     imageShimmer.setVisibility(View.GONE);
-//                    image.requestLayout();
-//                    image.setMinimumHeight(48);
                     android.view.ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
                     layoutParams.height = 48;
-//                    image.setBackgroundColor(0xFFFFFFFF);
                     image.setVisibility(View.VISIBLE);
                 }
 
@@ -188,6 +193,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
     }
 
+    /**
+     * load capsule content image from the 3rd party image server using Glide.
+     */
     private void loadImage(){
         //Must use  this tree observer to load content image
         image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -205,10 +213,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                     Log.d("Debug", "IMAGE - Glide Errored");
-                                    Snackbar.make(findViewById(R.id.detail_history_mega_layout),
+                                    displaySnackbar(findViewById(R.id.detail_history_mega_layout),
                                             "Failed to load the capsule image, please check your internet connection",
-                                            Snackbar.LENGTH_LONG)
-                                            .show();
+                                            Snackbar.LENGTH_LONG);
                                     return false;
                                 }
 
@@ -217,46 +224,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                     imageShimmer.stopShimmer();
                                     imageShimmer.setVisibility(View.GONE);
                                     image.setVisibility(View.VISIBLE);
-
-                                    //looping the shake animation for popup window every 2 seconds
-//                                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DetailedCapsuleHistoryItem.this, R.anim.shake);
-//                                    animation.setAnimationListener(new Animation.AnimationListener() {
-//                                        @Override
-//                                        public void onAnimationStart(Animation animation) {
-//
-//                                        }
-//
-//                                        @Override
-//                                        public void onAnimationEnd(final Animation animation) {
-//                                            new Handler().postDelayed(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-//                                                    image.startAnimation(animation);
-//                                                }
-//                                            },2000);
-//                                        }
-//
-//                                        @Override
-//                                        public void onAnimationRepeat(Animation animation) {
-//
-//                                        }
-//                                    });
-//                                    image.startAnimation(animation);
-
-//                                image.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View view) {
-//                                        Intent intent = new Intent(DetailedCapsuleHistoryItem.this, FullScreenImageUtil.class);
-//                                        intent.putExtra("ImageURL", imageLocation);
-//                                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(DetailedCapsuleHistoryItem.this, image, "capsuleImageTN");
-//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//                                            startActivity(intent,options.toBundle());
-//                                        }
-//                                        else
-//                                            startActivity(intent);
-//                                    }
-//                                });
-
                                     return false;
                                 }
                             })
@@ -270,6 +237,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         });
     }
 
+    /**
+     * load capsule creator avatar from the 3rd party image server using Glide.
+     */
     private void loadAvatar(){
         //avatar view has fix size, so no need to use viewtree
         //use Glide to load avatar, once successful loaded, turn off shimmer and display avatar
@@ -282,10 +252,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             Log.d("Debug", "IMAGE - Glide Errored");
-                            Snackbar.make(findViewById(R.id.detail_history_mega_layout),
+                            displaySnackbar(findViewById(R.id.detail_history_mega_layout),
                                     "Failed to load user avatar of the capsule owner, please check your internet connection",
-                                    Snackbar.LENGTH_LONG)
-                                    .show();
+                                    Snackbar.LENGTH_LONG);
                             return false;
                         }
 
@@ -303,7 +272,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         }
     }
 
-    //TODO: @CHENFU ---- testing purpose only, assume finish loading voice from server takes 3 seconds
+    /**
+     * load voice data of the capsule from server
+     */
     private void loadVoice(){
         //ONLY load if the activity is still alive
         if (!DetailedCapsuleHistoryItem.this.isDestroyed()){
@@ -348,10 +319,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     @Override
                     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
                         if (i==MediaPlayer.MEDIA_ERROR_SERVER_DIED){
-                            Snackbar.make(findViewById(R.id.display_history_mega_layout),
+                            displaySnackbar(findViewById(R.id.display_history_mega_layout),
                                     "Failed to Load audio, please check your internet connection",
-                                    Snackbar.LENGTH_LONG)
-                                    .show();
+                                    Snackbar.LENGTH_LONG);
                         }
                         return false;
                     }
@@ -360,6 +330,20 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
         }
     }
 
@@ -375,7 +359,10 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             mediaPlayer.pause();
         }
     }
-    //stop music if click home button
+
+    /**
+     * stop music if click home button
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -383,7 +370,10 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             mediaPlayer.pause();
         }
     }
-    //stop the music if current page is pause
+
+    /**
+     * stop the music if current page is paused
+     */
     @Override
     protected void onPause() {
         super.onPause();

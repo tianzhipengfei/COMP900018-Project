@@ -109,38 +109,6 @@ public class Display extends AppCompatActivity {
         shimmerAvatar = findViewById(R.id.display_detail_shimmer_avatar);
         shimmerVoice = findViewById(R.id.display_detail_shimmer_voice);
 
-        mediaPlayer = new MediaPlayer();
-        //when audio is loaded successfully, remove the shimmer effect and set audio button to be
-        //visible
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                shimmerVoice.stopShimmer();
-                shimmerVoice.setVisibility(View.GONE);
-                play.setVisibility(View.VISIBLE);
-            }
-        });
-        startPlay = true;
-        //set listener to listener to user's click on audio play button
-        play.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (startPlay) {
-                    mediaPlayer.start();
-                } else {
-                    mediaPlayer.pause();
-                }
-                startPlay = !startPlay;
-            }
-        });
-
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer m) {
-                startPlay = !startPlay;
-            }
-        });
-
         if (extra != null) {
             try {
                 JSONObject capsuleInfo = new JSONObject(extra);
@@ -328,6 +296,38 @@ public class Display extends AppCompatActivity {
      * audio could not be loaded due to internet failure.
      */
     private void loadVoice(){
+        mediaPlayer = new MediaPlayer();
+        //when audio is loaded successfully, remove the shimmer effect and set audio button to be
+        //visible
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                shimmerVoice.stopShimmer();
+                shimmerVoice.setVisibility(View.GONE);
+                play.setVisibility(View.VISIBLE);
+            }
+        });
+        startPlay = true;
+        //set listener to listener to user's click on audio play button
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (startPlay) {
+                    mediaPlayer.start();
+                } else {
+                    mediaPlayer.pause();
+                }
+                startPlay = !startPlay;
+            }
+        });
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer m) {
+                startPlay = !startPlay;
+            }
+        });
+
         try {
             mediaPlayer.setDataSource(audiolink);
             mediaPlayer.prepareAsync();
