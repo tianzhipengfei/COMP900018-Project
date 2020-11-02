@@ -82,6 +82,9 @@ public class SignUp extends AppCompatActivity {
 
     private ConstraintLayout constraintLayout;
 
+    TextView backToSignInText;
+    ImageView sideBackShape;
+
     // message section
     private Toast toast = null;
     private Snackbar snackbar = null;
@@ -301,7 +304,7 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        TextView backToSignInText = (TextView) findViewById(R.id.text_back_sign_in);
+        backToSignInText = (TextView) findViewById(R.id.text_back_sign_in);
         backToSignInText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -310,7 +313,7 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        ImageView sideBackShape = (ImageView) findViewById(R.id.sign_up_side_back);
+        sideBackShape = (ImageView) findViewById(R.id.sign_up_side_back);
         sideBackShape.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -486,10 +489,16 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void onSignUp() {
+        backToSignInText.setEnabled(false);
+        sideBackShape.setEnabled(false);
+        avatarImageBtn.setEnabled(false);
         boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
         if(!internetFlag){
             displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
             signUpButton.setEnabled(true);
+            backToSignInText.setEnabled(true);
+            sideBackShape.setEnabled(true);
+            avatarImageBtn.setEnabled(true);
             return ;
         }
         HttpUtil.signUp(new String[]{username, password, email, dob, avatarFileLink}, new okhttp3.Callback() {
@@ -522,6 +531,9 @@ public class SignUp extends AppCompatActivity {
                                               emailET.setText("");
                                               displayToast(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT);
                                               signUpButton.setEnabled(true);
+                                              backToSignInText.setEnabled(true);
+                                              sideBackShape.setEnabled(true);
+                                              avatarImageBtn.setEnabled(true);
                                           }
                                       }
                         );
@@ -532,6 +544,9 @@ public class SignUp extends AppCompatActivity {
                                           public void run() {
                                               displayToast(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT);
                                               signUpButton.setEnabled(true);
+                                              backToSignInText.setEnabled(true);
+                                              sideBackShape.setEnabled(true);
+                                              avatarImageBtn.setEnabled(true);
                                           }
                                       }
                         );
@@ -549,6 +564,9 @@ public class SignUp extends AppCompatActivity {
                     public void run() {
                         displaySnackbar(constraintLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         signUpButton.setEnabled(true);
+                        backToSignInText.setEnabled(true);
+                        sideBackShape.setEnabled(true);
+                        avatarImageBtn.setEnabled(true);
                     }
                 });
                 return ;
