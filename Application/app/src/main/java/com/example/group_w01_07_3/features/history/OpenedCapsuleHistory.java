@@ -80,7 +80,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     //Placeholder View for Disconnection logic
     TextView placeholder_emptyHistoryText;
     TextView getPlaceholder_retryText;
-    ImageView placeholder_retryImage;
+    ImageView placeholder_retryImage, placeholder_emptyHistoryImage;
 
 
 
@@ -136,6 +136,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         placeholder_emptyHistoryText = findViewById(R.id.history_opened_capsule_no_history_text);
         placeholder_retryImage = findViewById(R.id.history_opened_capsule_plz_retry_img);
         getPlaceholder_retryText = findViewById(R.id.history_opened_capsule_plz_retry_text);
+        placeholder_emptyHistoryImage = findViewById(R.id.history_opened_capsule_no_history_img);
 
         placeholder_retryImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,12 +215,13 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 placeholder_retryImage.setVisibility(View.INVISIBLE);
                                 getPlaceholder_retryText.setVisibility(View.INVISIBLE);
                                 placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
+                                placeholder_emptyHistoryImage.setVisibility(View.INVISIBLE);
 
                                 // response list < records_num_pere_request: no more records
                                 if(records.length() < RECORD_NUM_PER_REQUEST){
                                     recyclerView.setPushRefreshEnable(false);
                                     Snackbar snackbar = Snackbar
-                                            .make(drawerLayout, "No more records", 5000);
+                                            .make(drawerLayout, "No more records", 3000);
                                     snackbar.show();
                                 }
 
@@ -246,9 +248,11 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 if(testingList.size() == 0){
                                     recyclerView.setVisibility(View.INVISIBLE);
                                     placeholder_emptyHistoryText.setVisibility(View.VISIBLE);
+                                    placeholder_emptyHistoryImage.setVisibility(View.VISIBLE);
                                 } else{
                                     recyclerView.setVisibility(View.VISIBLE);
                                     placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
+                                    placeholder_emptyHistoryImage.setVisibility(View.INVISIBLE);
                                     Snackbar snackbar = Snackbar
                                             .make(drawerLayout, "Hi there. Looks like there are no more records", 3000);
                                     snackbar.show();
@@ -284,6 +288,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 placeholder_retryImage.setVisibility(View.INVISIBLE);
                                 getPlaceholder_retryText.setVisibility(View.INVISIBLE);
                                 placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
+                                placeholder_emptyHistoryImage.setVisibility(View.INVISIBLE);
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
@@ -312,6 +317,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                         mShimmerViewContainer.stopShimmer();
                         mShimmerViewContainer.setVisibility(View.INVISIBLE);
                         placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
+                        placeholder_emptyHistoryImage.setVisibility(View.INVISIBLE);
                         if(testingList.size() == 0){
                             recyclerView.setVisibility(View.INVISIBLE);
                             placeholder_retryImage.setVisibility(View.VISIBLE);
