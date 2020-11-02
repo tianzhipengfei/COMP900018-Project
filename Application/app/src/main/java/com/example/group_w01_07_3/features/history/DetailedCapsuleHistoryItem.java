@@ -7,6 +7,7 @@ import androidx.core.app.ActivityOptionsCompat;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,9 +31,12 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
+import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
@@ -48,6 +52,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     ImageView image;
     ImageView avatar;
     ImageButton voice;
+
+    private MediaPlayer mediaPlayer;
+    private Boolean startPlay;
 
 
     String titleString,dateString,usernameString,contentString;
@@ -301,14 +308,91 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         //ONLY load if the activity is still alive
         if (!DetailedCapsuleHistoryItem.this.isDestroyed()){
 
-            new Handler().postDelayed(new Runnable() {
+            mediaPlayer = new MediaPlayer();
+            //when audio is loaded successfully, remove the shimmer effect and set audio button to be
+            //visible
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
-                public void run() {
+                public void onPrepared(MediaPlayer mediaPlayer) {
                     voiceShimmer.stopShimmer();
                     voiceShimmer.setVisibility(View.GONE);
                     voice.setVisibility(View.VISIBLE);
                 }
-            },3000);
+            });
+            startPlay = true;
+            //set listener to listener to user's click on audio play button
+            voice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (startPlay) {
+                        mediaPlayer.start();
+                    } else {
+                        mediaPlayer.pause();
+                    }
+                    startPlay = !startPlay;
+                }
+            });
+
+            try {
+                mediaPlayer.setDataSource(voiceLocation);
+                mediaPlayer.prepareAsync();
+                mediaPlayer.setLooping(true);
+                //handle the internet loss condition, notify the user about Internet connection failure.
+                mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                    //handle media player lose network connection
+                    @Override
+                    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                        if (i==MediaPlayer.MEDIA_ERROR_SERVER_DIED){
+                            Snackbar.make(findViewById(R.id.display_history_mega_layout),
+                                    "Failed to Load audio, please check your internet connection",
+                                    Snackbar.LENGTH_LONG)
+                                    .show();
+                        }
+                        return false;
+                    }
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    voiceShimmer.stopShimmer();
+//                    voiceShimmer.setVisibility(View.GONE);
+//                    voice.setVisibility(View.VISIBLE);
+//                }
+//            },3000);
+        }
+    }
+
+    /**
+     * Back to the discover capsule page.
+     */
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.stay,R.anim.pop_in);
+        //stop the audio play, if the user
+        if(mediaPlayer!=null){
+            mediaPlayer.pause();
+        }
+    }
+    //stop music if click home button
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mediaPlayer!=null){
+            mediaPlayer.pause();
+        }
+    }
+    //stop the music if current page is pause
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mediaPlayer!=null){
+            mediaPlayer.pause();
         }
     }
 
