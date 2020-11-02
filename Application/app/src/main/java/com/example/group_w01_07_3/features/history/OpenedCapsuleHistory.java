@@ -369,10 +369,15 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         Pair<View,String> p10 = Pair.create(navigationBar,Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME); // second arg is the transition string Name
         Pair<View,String> p11 = Pair.create((View)toolbar,"capsuleToolbarTN"); // second arg is the transition string Name
 
+        ActivityOptionsCompat optionsCompat;
         //这里设置的就是到底哪几个view的transition被开启运作
-        ActivityOptionsCompat optionsCompat =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11);
-
+        if (navigationBar == null){
+            optionsCompat =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3,p4,p5,p6,p7,p8,p9,p11);
+        } else{
+            optionsCompat =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11);
+        }
 //        Log.d("optionsCompat", String.valueOf(optionsCompat == null));
 
         // start the activity with scene transition
