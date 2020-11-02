@@ -368,8 +368,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
                         // restart DiscoverCapsule activity if the location permission was granted
+                        finish();
                         Intent intent = new Intent(DiscoverCapsule.this, DiscoverCapsule.class);
                         startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 } else {
                     displayToast(this, "permission denied", Toast.LENGTH_LONG);
