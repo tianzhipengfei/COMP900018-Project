@@ -2,6 +2,7 @@ package com.example.group_w01_07_3;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -38,17 +39,21 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 public class SignIn extends AppCompatActivity {
-
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
+    // APP view
+    private ConstraintLayout constraintLayout;
     private EditText usernameET;
     private EditText passwordET;
     private CheckBox rememberCB;
     private Button signInButton;
 
-    private long mLastClickTime = 0;
+    // preference data
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
-    private ConstraintLayout constraintLayout;
+    // message section
+    private Toast toast = null;
+    private Snackbar snackbar = null;
+    private long mLastClickTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,39 +80,10 @@ public class SignIn extends AppCompatActivity {
             rememberCB.setChecked(true);
         }
 
-
-
-        //先暂时不做这个 sendUsernameToEmailButton
-
         signInButton = (Button) findViewById(R.id.button_sign_in);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-//                ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signin);
-//                progress.show();
-//                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-//                View pageLayout = findViewById(R.id.sign_in_mega_layout);
-//                View root = pageLayout.getRootView();
-//                root.setBackgroundColor(ContextCompat.getColor(SignIn.this, R.color.colorGreyOut));
-//
-//                //Replace this part to login successful or fail, which hide progress bar and display message
-//                //will change background to indicate the process
-//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //Do something here
-//                        ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_signin);
-//                        progress.hide();
-//                        View pageLayout = findViewById(R.id.sign_in_mega_layout);
-//                        View root = pageLayout.getRootView();
-//                        root.setBackgroundColor(ContextCompat.getColor(SignIn.this, R.color.colorResetWhite));
-//                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-//
-//                        Toast.makeText(SignIn.this, "checked state and implement logic accordingly", Toast.LENGTH_SHORT).show();
-//                    }
-//                }, 3000);
 
                 // Preventing multiple clicks, using threshold of 1 second
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
@@ -121,17 +97,15 @@ public class SignIn extends AppCompatActivity {
                 String password = passwordET.getText().toString();
 
                 if (username.isEmpty()) {
-                    Toast.makeText(SignIn.this, "Username is required", Toast.LENGTH_SHORT).show();
+                    displayToast(SignIn.this, "Username is required", Toast.LENGTH_SHORT);
                     signInButton.setEnabled(true);
                 } else if (password.isEmpty()) {
-                    Toast.makeText(SignIn.this, "Password is required", Toast.LENGTH_SHORT).show();
+                    displayToast(SignIn.this, "Password is required", Toast.LENGTH_SHORT);
                     signInButton.setEnabled(true);
                 } else {
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                     if(!internetFlag){
-                        Snackbar snackbar = Snackbar
-                                .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                         signInButton.setEnabled(true);
                         return ;
                     }
@@ -164,7 +138,7 @@ public class SignIn extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(SignIn.this, "Sign in successfully", Toast.LENGTH_SHORT).show();
+                                            displayToast(SignIn.this, "Sign in successfully", Toast.LENGTH_SHORT);
                                             Intent intent = new Intent(SignIn.this, DiscoverCapsule.class);
                                             finish();
                                             startActivity(intent);
@@ -180,7 +154,7 @@ public class SignIn extends AppCompatActivity {
                                                           public void run() {
                                                               usernameET.setText("");
                                                               passwordET.setText("");
-                                                              Toast.makeText(SignIn.this, "userNotExist - user does not exist", Toast.LENGTH_SHORT).show();
+                                                              displayToast(SignIn.this, "userNotExist - user does not exist", Toast.LENGTH_SHORT);
                                                               signInButton.setEnabled(true);
                                                           }
                                                       }
@@ -191,7 +165,7 @@ public class SignIn extends AppCompatActivity {
                                                           @Override
                                                           public void run() {
                                                               passwordET.setText("");
-                                                              Toast.makeText(SignIn.this, "invalidPass - invalid password, try again", Toast.LENGTH_SHORT).show();
+                                                              displayToast(SignIn.this, "invalidPass - invalid password, try again", Toast.LENGTH_SHORT);
                                                               signInButton.setEnabled(true);
                                                           }
                                                       }
@@ -201,7 +175,7 @@ public class SignIn extends AppCompatActivity {
                                         runOnUiThread(new Runnable() {
                                                           @Override
                                                           public void run() {
-                                                              Toast.makeText(SignIn.this, "loginError - cannot login", Toast.LENGTH_SHORT).show();
+                                                              displayToast(SignIn.this, "loginError - cannot login", Toast.LENGTH_SHORT);
                                                               signInButton.setEnabled(true);
                                                           }
                                                       }
@@ -212,7 +186,7 @@ public class SignIn extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(SignIn.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                            displayToast(SignIn.this, "Invalid form, please try again later", Toast.LENGTH_SHORT);
                                             signInButton.setEnabled(true);
                                         }
                                     });
@@ -228,9 +202,7 @@ public class SignIn extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Snackbar snackbar = Snackbar
-                                            .make(constraintLayout, "Sign in timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
-                                    snackbar.show();
+                                    displaySnackbar(constraintLayout, "Sign in timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                                     signInButton.setEnabled(true);
                                 }
                             });
@@ -261,5 +233,33 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
+    }
+
+    /**
+     * Display toast in a non-overlap manner
+     *
+     * @param context The context which toast will display at
+     * @param msg     The message to display
+     * @param length  the duration of toast display
+     */
+    private void displayToast(Context context, String msg, int length) {
+        if (toast == null || !toast.getView().isShown()) {
+            toast = Toast.makeText(context, msg, length);
+            toast.show();
+        }
+    }
+
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
+        }
     }
 }
