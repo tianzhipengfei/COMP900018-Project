@@ -57,9 +57,9 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         holder.opened_date.setText(mData.get(position).getOpened_date());
 
         if (mData.get(position).getTag() == 1){
-            holder.private_tag.setText("Public Memory Capsule");
+            holder.private_tag.setText("Public Geo-Capsule");
         } else {
-            holder.private_tag.setText("Your Private Capsule");
+            holder.private_tag.setText("Your Private Geo-Capsule");
         }
         holder.capsule_content.setText(mData.get(position).getContent());
         holder.username.setText(mData.get(position).getUsername());
