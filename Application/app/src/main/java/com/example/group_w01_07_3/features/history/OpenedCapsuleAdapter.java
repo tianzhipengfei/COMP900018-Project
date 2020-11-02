@@ -44,10 +44,6 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
 
     @Override
     public void onBindViewHolder(@NonNull capsuleCardViewHolder holder, int position) {
-
-        // animation for capsule image
-//        holder.capsule_image.setAnimation(AnimationUtils.loadAnimation(mcontext,R.anim.fade_transition_animation));
-
         // animation for the whole card
         holder.megaCardLayout.setAnimation(AnimationUtils.loadAnimation(mcontext, R.anim.fade_scale_animation));
 
@@ -74,7 +70,10 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
                     .into(holder.capsule_image);
         } else {
             Glide.with(mcontext).clear(holder.capsule_image);
-            holder.capsule_image.setImageResource(R.color.colorGreyOut);
+            Glide.with(mcontext)
+                    .load(R.drawable.history_placeholder)
+                    .centerCrop()
+                    .into(holder.capsule_image);
         }
 
         if (!mData.get(position).getAvatar_url().equals("null")) {

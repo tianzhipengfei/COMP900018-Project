@@ -50,6 +50,7 @@ public class Display extends AppCompatActivity {
     private TextView title;
     private TextView content;
     private ImageButton play;
+    private Snackbar snackbar;
     //private Button stop;
     private int private_status;
     private MediaPlayer mediaPlayer;
@@ -148,8 +149,7 @@ public class Display extends AppCompatActivity {
                 e.printStackTrace();
             }
         } else {
-            Toast.makeText(getApplicationContext(), "There is problem on the opening capsule", Toast.LENGTH_LONG);
-            Log.d(TAG, "onCreate: " + "There is problem on capsule Information");
+            Toast.makeText(getApplicationContext(), "There is problem when opening the capsule", Toast.LENGTH_LONG);
         }
     }
 
@@ -247,11 +247,9 @@ public class Display extends AppCompatActivity {
                              */
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                Log.d("Debug", "IMAGE - Glide Errored");
-                                Snackbar.make(findViewById(R.id.display_history_mega_layout),
+                                displaySnackbar(findViewById(R.id.display_history_mega_layout),
                                         "Failed to load the capsule image, please check your internet connection",
-                                        Snackbar.LENGTH_LONG)
-                                        .show();
+                                        Snackbar.LENGTH_LONG);
                                 return false;
                             }
 
@@ -298,11 +296,9 @@ public class Display extends AppCompatActivity {
                      */
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        Log.d("Debug", "IMAGE - Glide Errored");
-                        Snackbar.make(findViewById(R.id.display_history_mega_layout),
+                        displaySnackbar(findViewById(R.id.display_history_mega_layout),
                                 "Failed to load user avatar of the capsule owner, please check your internet connection",
-                                Snackbar.LENGTH_LONG)
-                                .show();
+                                Snackbar.LENGTH_LONG);
                         return false;
                     }
 
@@ -342,10 +338,9 @@ public class Display extends AppCompatActivity {
                 @Override
                 public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
                     if (i==MediaPlayer.MEDIA_ERROR_SERVER_DIED){
-                        Snackbar.make(findViewById(R.id.display_history_mega_layout),
+                        displaySnackbar(findViewById(R.id.display_history_mega_layout),
                                 "Failed to Load audio, please check your internet connection",
-                                Snackbar.LENGTH_LONG)
-                                .show();
+                                Snackbar.LENGTH_LONG);
                     }
                     return false;
                 }
@@ -353,6 +348,20 @@ public class Display extends AppCompatActivity {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
         }
     }
 
