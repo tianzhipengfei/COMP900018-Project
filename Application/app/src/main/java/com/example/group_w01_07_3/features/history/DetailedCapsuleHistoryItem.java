@@ -331,15 +331,12 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 }
             });
 
-            mediaPlayer.setOnCompletionListener(
-                    new MediaPlayer.OnCompletionListener()
-                    {
-                        @Override
-                        public void onCompletion(MediaPlayer arg0)
-                        {
-                            startPlay = !startPlay;
-                        }
-                    });
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer arg0) {
+                    startPlay = !startPlay;
+                }
+            });
 
             try {
                 mediaPlayer.setDataSource(voiceLocation);
