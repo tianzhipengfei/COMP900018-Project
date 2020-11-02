@@ -81,6 +81,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     ImageView placeholder_retryImage;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +135,13 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         placeholder_emptyHistoryText = findViewById(R.id.history_opened_capsule_no_history_text);
         placeholder_retryImage = findViewById(R.id.history_opened_capsule_plz_retry_img);
 
+        placeholder_retryImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onGetHistory();
+            }
+        });
+
         //set up the recycle view
         openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
@@ -172,7 +180,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                     if (responseJSON.has("success")) {
                         String status = responseJSON.getString("success");
                         Log.d("GET HISTORY", "GET HISTORY success: " + status);
-                        JSONArray records = responseJSON.getJSONArray("hisotry");
+                        final JSONArray records = responseJSON.getJSONArray("hisotry");
                         // contains new records
                         if(records.length() != 0){
                             for (int i=0; i<records.length(); i++) {
@@ -194,7 +202,19 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 // stop animating Shimmer and hide the layout
                                 mShimmerViewContainer.stopShimmer();
                                 mShimmerViewContainer.setVisibility(View.INVISIBLE);
-                                //必须要晚一点设置complete
+
+                                recyclerView.setVisibility(View.VISIBLE);
+                                placeholder_retryImage.setVisibility(View.INVISIBLE);
+                                placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
+
+                                // response list < records_num_pere_request: no more records
+                                if(records.length() < records_num_pere_request){
+                                    recyclerView.setPushRefreshEnable(false);
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "No more records", 5000);
+                                    snackbar.show();
+                                }
+
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -202,7 +222,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                         return;
                                     }
                                 },100);
-
+                                return;
                                 }
                             });
                         }
@@ -213,9 +233,21 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 // stop animating Shimmer and hide the layout
                                 mShimmerViewContainer.stopShimmer();
                                 mShimmerViewContainer.setVisibility(View.INVISIBLE);
-                                Snackbar snackbar = Snackbar
-                                        .make(drawerLayout, "No more records", 5000);
-                                snackbar.show();
+                                placeholder_retryImage.setVisibility(View.INVISIBLE);
+                                if(testingList.size() == 0){
+                                    recyclerView.setVisibility(View.INVISIBLE);
+                                    placeholder_emptyHistoryText.setVisibility(View.VISIBLE);
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "Oooops, no history", 5000);
+                                    snackbar.show();
+                                } else{
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "No more records", 5000);
+                                    snackbar.show();
+                                }
+
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -230,6 +262,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                     } else if (responseJSON.has("error")) {
                         String status = responseJSON.getString("error");
                         Log.d("PROFILE", "getProfile error: " + status);
+                        mShimmerViewContainer.stopShimmer();
+                        mShimmerViewContainer.setVisibility(View.INVISIBLE);
                         OpenedCapsuleHistory.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -239,6 +273,19 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 startActivity(intent);
                                 finish();
                                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+
+                                recyclerView.setVisibility(View.VISIBLE);
+                                placeholder_retryImage.setVisibility(View.INVISIBLE);
+                                placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        recyclerView.setPullLoadMoreCompleted();
+                                        recyclerView.setPushRefreshEnable(false);  //一定要用这个,不然会卡主
+                                        return;
+                                    }
+                                },100);
                             }
                         });
                     } else {
@@ -255,12 +302,38 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 OpenedCapsuleHistory.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        mShimmerViewContainer.stopShimmer();
+                        mShimmerViewContainer.setVisibility(View.INVISIBLE);
+                        placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
+                        if(testingList.size() == 0){
+                            recyclerView.setVisibility(View.INVISIBLE);
+                            placeholder_retryImage.setVisibility(View.VISIBLE);
+                        } else{
+                            recyclerView.setVisibility(View.VISIBLE);
+                            placeholder_retryImage.setVisibility(View.INVISIBLE);
+                        }
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerView.setPullLoadMoreCompleted();
+                                if(testingList.size() % records_num_pere_request != 0){
+                                    recyclerView.setPushRefreshEnable(false);
+                                }
+                                return;
+                            }
+                        },100);
                         Snackbar snackbar = Snackbar
                                 .make(drawerLayout, "Retrieve history timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         snackbar.show();
 
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.INVISIBLE);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerView.setPullLoadMoreCompleted();
+                                return;
+                            }
+                        },100);
 
                     }
                 });
@@ -295,19 +368,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         Pair<View,String> p9 = Pair.create(statusBar,Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME); // second arg is the transition string Name
         Pair<View,String> p10 = Pair.create(navigationBar,Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME); // second arg is the transition string Name
         Pair<View,String> p11 = Pair.create((View)toolbar,"capsuleToolbarTN"); // second arg is the transition string Name
-
-//        Log.d("this", String.valueOf(this == null));
-//        Log.d("p1 == null", String.valueOf(p1 == null));
-//        Log.d("p2 == null", String.valueOf(p2 == null));
-//        Log.d("p3 == null", String.valueOf(p3 == null));
-//        Log.d("p4 == null", String.valueOf(p4 == null));
-//        Log.d("p5 == null", String.valueOf(p5 == null));
-//        Log.d("p6 == null", String.valueOf(p6 == null));
-//        Log.d("p7 == null", String.valueOf(p7 == null));
-//        Log.d("p8 == null", String.valueOf(p8 == null));
-//        Log.d("p9 == null", String.valueOf(p9 == null));
-//        Log.d("p10 == null", String.valueOf(p10 == null));
-//        Log.d("p11 == null", String.valueOf(p11 == null));
 
         //这里设置的就是到底哪几个view的transition被开启运作
         ActivityOptionsCompat optionsCompat =
