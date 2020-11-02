@@ -1,5 +1,7 @@
 package com.example.group_w01_07_3.features.account;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -8,14 +10,17 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.SignIn;
+import com.example.group_w01_07_3.SignUp;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.snackbar.Snackbar;
@@ -48,6 +53,10 @@ public class ChangePassword extends AppCompatActivity {
 
     private ConstraintLayout constraintLayout;
 
+    // message section
+    Toast toast = null;
+    Snackbar snackbar = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +80,27 @@ public class ChangePassword extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+
+
+        ImageView helpImageButton = (ImageView) findViewById(R.id.imageButton_sign_up_question);
+        helpImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String guideline = getString(R.string.registration_password);
+                AlertDialog dialog = new AlertDialog.Builder(ChangePassword.this)
+                        .setIcon(R.drawable.sign_up_rules)
+                        .setTitle("Account Registration Guideline")
+                        .setMessage(guideline)
+                        .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).create();
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
             }
         });
 
@@ -120,29 +150,29 @@ public class ChangePassword extends AppCompatActivity {
 //                }, 3000);
 
                 if (oldPassword.isEmpty()) {
-                    Toast.makeText(ChangePassword.this, "Please enter current password", Toast.LENGTH_SHORT).show();
+                    displayToast(ChangePassword.this, "Please enter the current password", Toast.LENGTH_SHORT);
                     confirmChange.setEnabled(true);
                 } else if (newPassword.isEmpty()) {
-                    Toast.makeText(ChangePassword.this, "Please enter new password", Toast.LENGTH_SHORT).show();
+                    displayToast(ChangePassword.this, "Please enter the new password", Toast.LENGTH_SHORT);
                     confirmChange.setEnabled(true);
                 } else if (reNewPassword.isEmpty()) {
-                    Toast.makeText(ChangePassword.this, "Please repeat new password", Toast.LENGTH_SHORT).show();
+                    displayToast(ChangePassword.this, "Please repeat the new password", Toast.LENGTH_SHORT);
                     confirmChange.setEnabled(true);
                 } else if (!isValidPassword(oldPassword)) {
-                    Toast.makeText(ChangePassword.this, "check your current password", Toast.LENGTH_SHORT).show();
+                    displayToast(ChangePassword.this, "Please check your current password", Toast.LENGTH_SHORT);
                     oldPasswordET.setText("");
                     confirmChange.setEnabled(true);
                 } else if (!isValidPassword(newPassword)) {
-                    Toast.makeText(ChangePassword.this, "invalid new password", Toast.LENGTH_SHORT).show();
+                    displayToast(ChangePassword.this, "invalid new password", Toast.LENGTH_SHORT);
                     newPasswordET.setText("");
                     reNewPasswordET.setText("");
                     confirmChange.setEnabled(true);
                 } else if (!newPassword.equalsIgnoreCase(reNewPassword)) {
-                    Toast.makeText(ChangePassword.this, "repeat new password doesn't match new password", Toast.LENGTH_SHORT).show();
+                    displayToast(ChangePassword.this, "repeat new password doesn't match new password", Toast.LENGTH_SHORT);
                     reNewPasswordET.setText("");
                     confirmChange.setEnabled(true);
                 } else if (oldPassword.equalsIgnoreCase(newPassword)) {
-                    Toast.makeText(ChangePassword.this, "new password is the same as old password", Toast.LENGTH_SHORT).show();
+                    displayToast(ChangePassword.this, "new password is the same as current password", Toast.LENGTH_SHORT);
                     oldPasswordET.setText("");
                     newPasswordET.setText("");
                     reNewPasswordET.setText("");
@@ -150,9 +180,7 @@ public class ChangePassword extends AppCompatActivity {
                 } else {
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                     if(!internetFlag){
-                        Snackbar snackbar = Snackbar
-                                .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                        displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                         confirmChange.setEnabled(true);
                         return ;
                     }
@@ -174,7 +202,7 @@ public class ChangePassword extends AppCompatActivity {
 
     private void onChangePassword() {
         if (UserUtil.getToken(ChangePassword.this).isEmpty()) {
-            Toast.makeText(ChangePassword.this, "no token", Toast.LENGTH_SHORT).show();
+            displayToast(ChangePassword.this, "no token", Toast.LENGTH_SHORT);
         } else {
             HttpUtil.changePassword(UserUtil.getToken(ChangePassword.this), oldPassword, newPassword, new okhttp3.Callback() {
                 @Override
@@ -190,7 +218,7 @@ public class ChangePassword extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(ChangePassword.this, "Change password successfully", Toast.LENGTH_SHORT).show();
+                                    displayToast(ChangePassword.this, "Change password successfully", Toast.LENGTH_SHORT);
                                     finish();
                                     overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
                                 }
@@ -202,7 +230,7 @@ public class ChangePassword extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                                   @Override
                                                   public void run() {
-                                                      Toast.makeText(ChangePassword.this, "Wrong old password", Toast.LENGTH_SHORT).show();
+                                                      displayToast(ChangePassword.this, "Please check your current password input", Toast.LENGTH_SHORT);
                                                       oldPasswordET.setText("");
                                                       confirmChange.setEnabled(true);
                                                   }
@@ -214,7 +242,6 @@ public class ChangePassword extends AppCompatActivity {
                                                   @Override
                                                   public void run() {
                                                       UserUtil.clearToken(ChangePassword.this);
-                                                      Toast.makeText(ChangePassword.this, "Not logged in", Toast.LENGTH_SHORT).show();
                                                       Intent intent = new Intent(ChangePassword.this, SignIn.class);
                                                       startActivity(intent);
                                                       finish();
@@ -228,7 +255,7 @@ public class ChangePassword extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  Toast.makeText(ChangePassword.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                  displayToast(ChangePassword.this, "Invalid form, please try again later", Toast.LENGTH_SHORT);
                                                   confirmChange.setEnabled(true);
                                               }
                                           }
@@ -245,15 +272,41 @@ public class ChangePassword extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Snackbar snackbar = Snackbar
-                                    .make(constraintLayout, "Change password timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
-                            snackbar.show();
+                            displaySnackbar(constraintLayout, "Change password timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                             confirmChange.setEnabled(true);
                         }
                     });
                     return ;
                 }
             });
+        }
+    }
+
+    /**
+     * Display toast in a non-overlap manner
+     *
+     * @param context The context which toast will display at
+     * @param msg     The message to display
+     * @param length  the duration of toast display
+     */
+    private void displayToast(Context context, String msg, int length) {
+        if (toast == null || !toast.getView().isShown()) {
+            toast = Toast.makeText(context, msg, length);
+            toast.show();
+        }
+    }
+
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
         }
     }
 
