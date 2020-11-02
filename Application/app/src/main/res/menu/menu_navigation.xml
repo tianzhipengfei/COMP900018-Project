@@ -14,7 +14,7 @@
             android:icon="@drawable/slidemenu_add"/>
         <item
             android:id="@+id/capsule_history_tab"
-            android:title="Opened Capsule History"
+            android:title="Opened Capsule Gallery"
             android:icon="@drawable/slidemenu_history"/>
         <item
             android:id="@+id/edit_profile_tab"
