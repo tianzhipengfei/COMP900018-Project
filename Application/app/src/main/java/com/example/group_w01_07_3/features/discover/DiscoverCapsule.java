@@ -466,7 +466,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             @Override
                             public void onMapLoaded() {
                                 LatLng latLng2 = new LatLng(lastRequestLat, lastRequestLon);
-                                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 18));
+                                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng2, 16));
                                 lastUpdate_time = System.currentTimeMillis();
                             }
                         });
