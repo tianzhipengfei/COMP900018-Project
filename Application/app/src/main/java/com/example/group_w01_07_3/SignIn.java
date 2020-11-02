@@ -161,39 +161,36 @@ public class SignIn extends AppCompatActivity {
                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                             }
                         });
-                    } else if (responseJSON.has("error")) {
+                    } else if (responseJSON.has("error")) { // error
                         String status = responseJSON.getString("error");
                         if (status.equalsIgnoreCase("userNotExist - user does not exist")) {
                             runOnUiThread(new Runnable() {
-                                              @Override
-                                              public void run() {
-                                                  usernameET.setText("");
-                                                  passwordET.setText("");
-                                                  displayToast(SignIn.this, "User does not exist", Toast.LENGTH_SHORT);
-                                                  signInButton.setEnabled(true);
-                                              }
-                                          }
-                            );
+                                @Override
+                                public void run() {
+                                    usernameET.setText("");
+                                    passwordET.setText("");
+                                    displayToast(SignIn.this, "User does not exist", Toast.LENGTH_SHORT);
+                                    signInButton.setEnabled(true);
+                                }
+                            });
                         } else if (status.equalsIgnoreCase("invalidPass - invalid password, try again")) {
                             runOnUiThread(new Runnable() {
-                                              @Override
-                                              public void run() {
-                                                  passwordET.setText("");
-                                                  displayToast(SignIn.this, "Wrong password", Toast.LENGTH_SHORT);
-                                                  signInButton.setEnabled(true);
-                                              }
-                                          }
-                            );
+                                @Override
+                                public void run() {
+                                    passwordET.setText("");
+                                    displayToast(SignIn.this, "Wrong password", Toast.LENGTH_SHORT);
+                                    signInButton.setEnabled(true);
+                                }
+                            });
                         } else if (status.equalsIgnoreCase("loginError - cannot login")) {
                             runOnUiThread(new Runnable() {
-                                              @Override
-                                              public void run() {
-                                                  displayToast(SignIn.this, "Cannot sign in\n" +
-                                                          "Please try again ...", Toast.LENGTH_SHORT);
-                                                  signInButton.setEnabled(true);
-                                              }
-                                          }
-                            );
+                                @Override
+                                public void run() {
+                                    displayToast(SignIn.this, "Cannot sign in\n" +
+                                            "Please try again ...", Toast.LENGTH_SHORT);
+                                    signInButton.setEnabled(true);
+                                }
+                            });
                         }
                     }
                 } catch (JSONException e) {
@@ -288,4 +285,5 @@ public class SignIn extends AppCompatActivity {
             snackbar.show();
         }
     }
+
 }
