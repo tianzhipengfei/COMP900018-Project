@@ -72,12 +72,11 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
     private List<OpenedCapsule> testingList;
 
-    private int recycleInt = 0; //TODO: 测试用的，记得删除
-
-    private int records_num_pere_request = 5;
+    private int RECORD_NUM_PER_REQUEST = 5;
 
     //Placeholder View for Disconnection logic
     TextView placeholder_emptyHistoryText;
+    TextView getPlaceholder_retryText;
     ImageView placeholder_retryImage;
 
 
@@ -101,20 +100,20 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
 
         //设置主Activity的toolbar, 以及初始化侧滑菜单栏
-        Toolbar toolbar = findViewById(R.id.toolbar_history);
-        setSupportActionBar(toolbar);
+        mToolbar = findViewById(R.id.toolbar_history);
+        setSupportActionBar(mToolbar);
 
-        getSupportActionBar().setTitle("History of Opened Capsules");
+        getSupportActionBar().setTitle("Memory Gallery");
 
         drawerLayout = findViewById(R.id.history_drawer_layout);
 
         //handle the hamburger menu. remember to create two strings
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, mToolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        //设置侧滑菜单栏
+        //navigation drawer setup
         navigationView = findViewById(R.id.nav_view_history);
         navigationView.getMenu().getItem(2).setChecked(true); //setChecked myself
         navigationView.setNavigationItemSelectedListener(this);
@@ -126,7 +125,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
         updateHeader();
 
-        //TODO:Image load请一定一定要用,不要自己写function(不然没法做animation) : [Picasso] 或者 [Glide】. 非常简单,有URL他就帮你load,只要几行代码, 详情请谷歌
         //load everything needed to be displyaed in the list
         recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<OpenedCapsule>();
@@ -134,6 +132,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         //placeholder View
         placeholder_emptyHistoryText = findViewById(R.id.history_opened_capsule_no_history_text);
         placeholder_retryImage = findViewById(R.id.history_opened_capsule_plz_retry_img);
+        getPlaceholder_retryText = findViewById(R.id.history_opened_capsule_plz_retry_text);
 
         placeholder_retryImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,7 +154,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
         this.onGetHistory();
 
-
         recyclerView.setOnPullLoadMoreListener(new PullLoadMoreRecyclerView.PullLoadMoreListener() {
             @Override
             public void onRefresh() {
@@ -170,7 +168,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     }
 
     private void onGetHistory() {
-        HttpUtil.getHistory(UserUtil.getToken(OpenedCapsuleHistory.this), testingList.size(), records_num_pere_request, new okhttp3.Callback() {
+        HttpUtil.getHistory(UserUtil.getToken(OpenedCapsuleHistory.this), testingList.size(), RECORD_NUM_PER_REQUEST, new okhttp3.Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 Log.d("GET HISTORY", "***** GET HISTORY onResponse *****");
@@ -186,7 +184,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                             for (int i=0; i<records.length(); i++) {
                                 JSONObject record = records.getJSONObject(i);
                                 String capsule_title = record.getString("ctitle");
-                                String opened_date = record.getString("htime");
+                                String opened_date = "Opened at: "+ record.getString("htime");
                                 String avatar_url = record.getString("cavatar");
                                 String capsule_url = record.getString("cimage");
                                 int tag = record.getInt("cpermission");
@@ -203,12 +201,14 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 mShimmerViewContainer.stopShimmer();
                                 mShimmerViewContainer.setVisibility(View.INVISIBLE);
 
+                                //show recyclerview, hide all other placeholders
                                 recyclerView.setVisibility(View.VISIBLE);
                                 placeholder_retryImage.setVisibility(View.INVISIBLE);
+                                getPlaceholder_retryText.setVisibility(View.INVISIBLE);
                                 placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
 
                                 // response list < records_num_pere_request: no more records
-                                if(records.length() < records_num_pere_request){
+                                if(records.length() < RECORD_NUM_PER_REQUEST){
                                     recyclerView.setPushRefreshEnable(false);
                                     Snackbar snackbar = Snackbar
                                             .make(drawerLayout, "No more records", 5000);
@@ -233,18 +233,16 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 // stop animating Shimmer and hide the layout
                                 mShimmerViewContainer.stopShimmer();
                                 mShimmerViewContainer.setVisibility(View.INVISIBLE);
+                                getPlaceholder_retryText.setVisibility(View.INVISIBLE);
                                 placeholder_retryImage.setVisibility(View.INVISIBLE);
                                 if(testingList.size() == 0){
                                     recyclerView.setVisibility(View.INVISIBLE);
                                     placeholder_emptyHistoryText.setVisibility(View.VISIBLE);
-                                    Snackbar snackbar = Snackbar
-                                            .make(drawerLayout, "Oooops, no history", 5000);
-                                    snackbar.show();
                                 } else{
                                     recyclerView.setVisibility(View.VISIBLE);
                                     placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
                                     Snackbar snackbar = Snackbar
-                                            .make(drawerLayout, "No more records", 5000);
+                                            .make(drawerLayout, "Hi there. Looks like there are no more records", 3000);
                                     snackbar.show();
                                 }
 
@@ -252,7 +250,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                     @Override
                                     public void run() {
                                         recyclerView.setPullLoadMoreCompleted();
-                                        recyclerView.setPushRefreshEnable(false);  //一定要用这个,不然会卡主
+                                        recyclerView.setPushRefreshEnable(false);
                                         return;
                                     }
                                 },100);
@@ -276,13 +274,14 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
                                 recyclerView.setVisibility(View.VISIBLE);
                                 placeholder_retryImage.setVisibility(View.INVISIBLE);
+                                getPlaceholder_retryText.setVisibility(View.INVISIBLE);
                                 placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         recyclerView.setPullLoadMoreCompleted();
-                                        recyclerView.setPushRefreshEnable(false);  //一定要用这个,不然会卡主
+                                        recyclerView.setPushRefreshEnable(false);
                                         return;
                                     }
                                 },100);
@@ -308,29 +307,36 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                         if(testingList.size() == 0){
                             recyclerView.setVisibility(View.INVISIBLE);
                             placeholder_retryImage.setVisibility(View.VISIBLE);
+                            getPlaceholder_retryText.setVisibility(View.VISIBLE);
                         } else{
                             recyclerView.setVisibility(View.VISIBLE);
                             placeholder_retryImage.setVisibility(View.INVISIBLE);
+                            getPlaceholder_retryText.setVisibility(View.INVISIBLE);
                         }
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 recyclerView.setPullLoadMoreCompleted();
-                                if(testingList.size() % records_num_pere_request != 0){
+                                if(testingList.size() % RECORD_NUM_PER_REQUEST != 0){
                                     recyclerView.setPushRefreshEnable(false);
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "Retrieve history timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    snackbar.show();
                                 }
                                 return;
                             }
                         },100);
-                        Snackbar snackbar = Snackbar
-                                .make(drawerLayout, "Retrieve history timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
-                        snackbar.show();
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 recyclerView.setPullLoadMoreCompleted();
+                                if (testingList.size() != 0){
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "Retrieve history timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    snackbar.show();
+                                }
                                 return;
                             }
                         },100);

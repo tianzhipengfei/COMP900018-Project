@@ -84,14 +84,28 @@
                 android:id="@+id/history_opened_capsule_plz_retry_img"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxHeight="360dp"
+                android:maxHeight="240dp"
                 android:adjustViewBounds="true"
                 android:visibility="invisible"
-                android:src="@drawable/ic_capsule_tap"
+                android:src="@drawable/ic_history_retry"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/history_opened_capsule_plz_retry_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline6"
+                android:text="Internet Error. Please Try Again Once Internet Has Restored"
+                android:visibility="invisible"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/history_opened_capsule_plz_retry_img" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
