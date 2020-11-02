@@ -31,7 +31,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
@@ -54,15 +53,6 @@ import java.util.regex.Pattern;
 
 import okhttp3.Call;
 import okhttp3.Response;
-
-/*
-1. dob不能是今天以后的日期
-2. 3 <= username <= 20，只能由字母数字_组成，只能以字母开头，字母不区分大小写，不能重复
-3. email满足基本格式
-4. password至少8个字符，至少1个大写字母，1个小写字母，1个数字和1个特殊字符
-5. 处理疯狂点击的问题：dobPicker（解决）......
-6. 处理没网的情况
-*/
 
 public class SignUp extends AppCompatActivity {
 
@@ -89,7 +79,7 @@ public class SignUp extends AppCompatActivity {
     private File avatarFile = null;
     private String avatarFileLink = null;
 
-    private DrawerLayout drawerLayout;
+    private ConstraintLayout constraintLayout;
 
     private long mLastClickTime = 0;
 
@@ -98,7 +88,7 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
+        constraintLayout = findViewById(R.id.sign_up_mega_layout);
 
         //don't pop uo keyboard when entering the screen.
         getWindow().setSoftInputMode(
@@ -230,7 +220,7 @@ public class SignUp extends AppCompatActivity {
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                     if(!internetFlag){
                         Snackbar snackbar = Snackbar
-                                .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                                .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         signUpButton.setEnabled(true);
                         return ;
@@ -244,7 +234,7 @@ public class SignUp extends AppCompatActivity {
                         internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                         if(!internetFlag){
                             Snackbar snackbar = Snackbar
-                                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                                    .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                             snackbar.show();
                             signUpButton.setEnabled(true);
                             return ;
@@ -279,7 +269,7 @@ public class SignUp extends AppCompatActivity {
                             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                                 e.printStackTrace();
                                 Snackbar snackbar = Snackbar
-                                    .make(drawerLayout, "Upload avatar timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    .make(constraintLayout, "Upload avatar timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                                 snackbar.show();
                             }
                         });
@@ -499,7 +489,7 @@ public class SignUp extends AppCompatActivity {
         boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
         if(!internetFlag){
             Snackbar snackbar = Snackbar
-                    .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                    .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
             snackbar.show();
             signUpButton.setEnabled(true);
             return ;
@@ -560,7 +550,7 @@ public class SignUp extends AppCompatActivity {
                     @Override
                     public void run() {
                         Snackbar snackbar = Snackbar
-                                .make(drawerLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                .make(constraintLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         signUpButton.setEnabled(true);
                     }
