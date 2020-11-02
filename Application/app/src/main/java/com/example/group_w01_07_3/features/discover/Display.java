@@ -70,8 +70,9 @@ public class Display extends AppCompatActivity {
     private ShimmerFrameLayout shimmerImage, shimmerAvatar, shimmerVoice;
 
     /**
-     *initialize display activity,read the information of capsule need to display, received from
+     * Initialize display activity,read the information of capsule need to display, received from
      * discover page
+     *
      * @param savedInstanceState the data it most recently supplied in onSaveInstanceState(Bundle)
      */
     @Override
@@ -149,6 +150,7 @@ public class Display extends AppCompatActivity {
      * Reads information from intent about content to display,display the information including
      * title, content, date of open the capsule, optional image, optional audio, avater of user,
      * name of user
+     *
      * @param capsuleInfo information need to display, store in an json object
      * @throws JSONException possible exception on information reading
      */
@@ -229,6 +231,7 @@ public class Display extends AppCompatActivity {
                             /**
                              * If the image could not be loaded, display the internet connection error
                              * to user
+                             *
                              * @param e exception containing information about why the request failed
                              * @param model model we were trying to load when the exception occurred
                              * @param target  target we were trying to load the image into
@@ -247,6 +250,7 @@ public class Display extends AppCompatActivity {
 
                             /**
                              * Remove shimmer effect if the image is loaded successfully.
+                             *
                              * @param resource resource that was loaded for the target.
                              * @param model specific model that was used to load the image.
                              * @param target target the model was loaded into.
@@ -278,6 +282,7 @@ public class Display extends AppCompatActivity {
                 .listener(new RequestListener<Drawable>() {
                     /**
                      * Display failure information of loading avatar
+                     *
                      * @param e exception containing information about why the request failed
                      * @param model model we were trying to load when the exception occurred
                      * @param target  target we were trying to load the image into
@@ -296,6 +301,7 @@ public class Display extends AppCompatActivity {
 
                     /**
                      * Remove shimmer effect if the avatar is loaded successfully.
+                     *
                      * @param resource resource that was loaded for the target.
                      * @param model specific model that was used to load the image.
                      * @param target target the model was loaded into.
@@ -343,6 +349,8 @@ public class Display extends AppCompatActivity {
         }
     }
 
+
+
     /**
      * Back to the discover capsule page.
      */
@@ -352,7 +360,7 @@ public class Display extends AppCompatActivity {
         overridePendingTransition(R.anim.stay,R.anim.pop_in);
         //stop the audio play, if the user
         if(mediaPlayer!=null){
-            mediaPlayer.stop();
+            mediaPlayer.pause();
         }
     }
     //stop music if click home button
@@ -360,7 +368,7 @@ public class Display extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if(mediaPlayer!=null){
-            mediaPlayer.stop();
+            mediaPlayer.pause();
         }
     }
     //stop the music if current page is pause 
@@ -368,7 +376,7 @@ public class Display extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if(mediaPlayer!=null){
-            mediaPlayer.stop();
+            mediaPlayer.pause();
         }
     }
 }
