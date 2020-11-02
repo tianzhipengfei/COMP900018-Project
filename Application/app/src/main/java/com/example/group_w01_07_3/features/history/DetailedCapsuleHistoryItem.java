@@ -307,10 +307,8 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     private void loadVoice(){
         //ONLY load if the activity is still alive
         if (!DetailedCapsuleHistoryItem.this.isDestroyed()){
-
             mediaPlayer = new MediaPlayer();
-            //when audio is loaded successfully, remove the shimmer effect and set audio button to be
-            //visible
+            //when audio is loaded successfully, remove the shimmer effect and set audio button to be visible
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mediaPlayer) {
@@ -355,15 +353,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    voiceShimmer.stopShimmer();
-//                    voiceShimmer.setVisibility(View.GONE);
-//                    voice.setVisibility(View.VISIBLE);
-//                }
-//            },3000);
         }
     }
 
@@ -395,10 +384,4 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             mediaPlayer.pause();
         }
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-//    }
 }
