@@ -331,10 +331,20 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 }
             });
 
+            mediaPlayer.setOnCompletionListener(
+                    new MediaPlayer.OnCompletionListener()
+                    {
+                        @Override
+                        public void onCompletion(MediaPlayer arg0)
+                        {
+                            startPlay = !startPlay;
+                        }
+                    });
+
             try {
                 mediaPlayer.setDataSource(voiceLocation);
                 mediaPlayer.prepareAsync();
-                mediaPlayer.setLooping(true);
+                mediaPlayer.setLooping(false);
                 //handle the internet loss condition, notify the user about Internet connection failure.
                 mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                     //handle media player lose network connection
