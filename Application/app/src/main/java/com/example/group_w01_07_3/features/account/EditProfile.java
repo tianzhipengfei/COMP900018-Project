@@ -79,6 +79,7 @@ public class EditProfile extends AppCompatActivity implements
     private TextView usernameDisplay;
     private TextView emailDisplay;
     private TextView dobDisplay;
+    MaterialButton changePasswordBtn;
 
 
     private File newAvatarFile;
@@ -143,14 +144,16 @@ public class EditProfile extends AppCompatActivity implements
         headerUsername = headerview.findViewById(R.id.header_username);
         headerAvatar = headerview.findViewById(R.id.header_avatar);
 
-        MaterialButton changePasswordBtn = (MaterialButton) findViewById(R.id.edit_profile_btn_change_password);
+        changePasswordBtn = (MaterialButton) findViewById(R.id.edit_profile_btn_change_password);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(EditProfile.this, ChangePassword.class);
-                startActivity(intent);
+                if (!EditProfile.this.isDestroyed()) {
+                    Intent intent = new Intent(EditProfile.this, ChangePassword.class);
+                    startActivity(intent);
 //                overridePendingTransition(R.anim.slide_in_right,R.anim.stay);
-                overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                    overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                }
             }
         });
 
@@ -183,9 +186,11 @@ public class EditProfile extends AppCompatActivity implements
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         signOutButton.setEnabled(false);
+                        changePasswordBtn.setEnabled(false);
                         String token = UserUtil.getToken(EditProfile.this);
                         if (token.isEmpty()) {
                             Log.d("SIGNOUT", "Error: no token");
+                            changePasswordBtn.setEnabled(true);
                             Intent intent = new Intent(EditProfile.this, SignIn.class);
                             startActivity(intent);
                             finish();
@@ -196,6 +201,7 @@ public class EditProfile extends AppCompatActivity implements
                                         .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                                 snackbar.show();
                                 signOutButton.setEnabled(true);
+                                changePasswordBtn.setEnabled(true);
                                 Log.d("SIGNOUT", "No Internet Connection");
                                 return;
                             }
@@ -264,6 +270,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     .make(drawerLayout, "Sign out timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                                             snackbar.show();
                                             signOutButton.setEnabled(true);
+                                            changePasswordBtn.setEnabled(true);
                                         }
                                     });
                                     return;

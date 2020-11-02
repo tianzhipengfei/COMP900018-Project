@@ -46,7 +46,7 @@ public class OnBoardingActivity extends AppCompatActivity {
 
         //Check if onBoarding activity has been finished or not
         if (restorePrefData()) {
-            Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class );
+            Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(mainActivity);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();
@@ -65,9 +65,9 @@ public class OnBoardingActivity extends AppCompatActivity {
      * @return boolean indicator if if onboarding activity has been finished or not
      */
     private boolean restorePrefData() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
-        Boolean isIntroActivityOpnendBefore = pref.getBoolean("isIntroOpnend",false);
-        return  isIntroActivityOpnendBefore;
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
+        Boolean isIntroActivityOpnendBefore = pref.getBoolean("isIntroOpnend", false);
+        return isIntroActivityOpnendBefore;
 
     }
 
@@ -75,16 +75,16 @@ public class OnBoardingActivity extends AppCompatActivity {
      * save preference data that if onboarding activity has been finished or not
      */
     private void savePrefsData() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean("isIntroOpnend",true);
+        editor.putBoolean("isIntroOpnend", true);
         editor.commit();
     }
 
     /**
      * Initialise the onboarding view content
      */
-    private void initOnboardingPager(){
+    private void initOnboardingPager() {
         //initialize views
         tabLayout = findViewById(R.id.onboarding_dot);
         btnGetStarted = findViewById(R.id.onboarding_started);
@@ -92,11 +92,11 @@ public class OnBoardingActivity extends AppCompatActivity {
         //crate list data for onboarding pager
         final List<OnboardingItem> onboardingItemList = new ArrayList<>();
         onboardingItemList.add(new OnboardingItem("Record Your Footprint",
-                "Record your footprint anytime, on the spot. The previous footprint is waiting to be discovered.", R.drawable.ic_onboarding_save));
+                "Record your footprint as Geo-capsules anytime, on the spot, which is waiting to be discovered.", R.drawable.ic_onboarding_save));
         onboardingItemList.add(new OnboardingItem("Discover The Past Moments",
-                "Discover nearby recorded footprint from yourself and others. Smile for your past and others moments", R.drawable.ic_onboarding_discover));
+                "Discover nearby Geo-capsules from yourself and others. Smile for your past and others moments", R.drawable.ic_onboarding_discover));
         onboardingItemList.add(new OnboardingItem("Review The Discovered Moments",
-                "Review your discovered Geo-capsules from digital footprint gallery", R.drawable.ic_onboarding_history));
+                "Review your discovered Geo-capsules from Geo-capsules gallery", R.drawable.ic_onboarding_history));
 
         onboardingPager = findViewById(R.id.onboarding_Viewpager);
         onboardingViewPagerAdapter = new OnboardingViewPagerAdapter(this, onboardingItemList);
@@ -108,9 +108,9 @@ public class OnBoardingActivity extends AppCompatActivity {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == onboardingItemList.size() - 1){
+                if (tab.getPosition() == onboardingItemList.size() - 1) {
                     btnGetStarted.setVisibility(View.VISIBLE); //last page show get started button
-                    btnGetStarted.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.top_to_down_fast));
+                    btnGetStarted.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.top_to_down_fast));
                 } else {
                     btnGetStarted.setVisibility(View.INVISIBLE); //last page show get started button
                 }
@@ -130,7 +130,7 @@ public class OnBoardingActivity extends AppCompatActivity {
     /**
      * allow user to click start button and navigate to sign in page
      */
-    private void initStartBtn(){
+    private void initStartBtn() {
         //apply alert sound
         final MediaPlayer mediaPlayer = MediaPlayer.create(OnBoardingActivity.this, R.raw.hero);
         btnGetStarted.setOnClickListener(new View.OnClickListener() {
