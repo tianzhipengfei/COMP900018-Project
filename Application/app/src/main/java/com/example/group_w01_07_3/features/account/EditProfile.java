@@ -1,6 +1,7 @@
 package com.example.group_w01_07_3.features.account;
 
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -90,6 +91,8 @@ public class EditProfile extends AppCompatActivity implements
 
     private Handler handler;
 
+    // message section
+    Toast toast = null;
     private boolean snackbarShowFlag;
 
     @Override
@@ -183,7 +186,6 @@ public class EditProfile extends AppCompatActivity implements
                         String token = UserUtil.getToken(EditProfile.this);
                         if (token.isEmpty()) {
                             Log.d("SIGNOUT", "Error: no token");
-                            Toast.makeText(EditProfile.this, "Error: no token", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(EditProfile.this, SignIn.class);
                             startActivity(intent);
                             finish();
@@ -212,7 +214,7 @@ public class EditProfile extends AppCompatActivity implements
                                                 @Override
                                                 public void run() {
                                                     UserUtil.clearToken(EditProfile.this);
-                                                    Toast.makeText(EditProfile.this, "Sign out successfully", Toast.LENGTH_SHORT).show();
+                                                    displayToast(EditProfile.this, "Sign out successfully", Toast.LENGTH_SHORT);
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
@@ -226,7 +228,7 @@ public class EditProfile extends AppCompatActivity implements
                                                 @Override
                                                 public void run() {
                                                     UserUtil.clearToken(EditProfile.this);
-                                                    Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                                    displayToast(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT);
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
@@ -239,7 +241,7 @@ public class EditProfile extends AppCompatActivity implements
                                                 @Override
                                                 public void run() {
                                                     UserUtil.clearToken(EditProfile.this);
-                                                    Toast.makeText(EditProfile.this, "Invalid form", Toast.LENGTH_SHORT).show();
+                                                    displayToast(EditProfile.this, "Invalid form", Toast.LENGTH_SHORT);
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
@@ -332,7 +334,6 @@ public class EditProfile extends AppCompatActivity implements
                         bottomDialog.dismiss();
 //                        avatarDisplay.setImageBitmap(bitmap);
                         onUploadImage();
-//                        Toast.makeText(this, "Take the photo successfully", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -355,7 +356,7 @@ public class EditProfile extends AppCompatActivity implements
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    Toast.makeText(this, "You denied the permission", Toast.LENGTH_SHORT).show();
+                    displayToast(this, "You denied the permission", Toast.LENGTH_SHORT);
                 }
                 break;
             default:
@@ -410,15 +411,14 @@ public class EditProfile extends AppCompatActivity implements
             onUploadImage();
 //            avatarDisplay.setImageBitmap(bitmap);
             bottomDialog.dismiss();
-//            Toast.makeText(this, "Select the image successfully", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Failed to get image", Toast.LENGTH_SHORT).show();
+            displayToast(this, "Failed to get image", Toast.LENGTH_SHORT);
         }
     }
 
     private void onGetProfile() {
         if (UserUtil.getToken(EditProfile.this).isEmpty()) {
-            Toast.makeText(EditProfile.this, "No token to get profile", Toast.LENGTH_SHORT).show();
+            displayToast(EditProfile.this, "No token to get profile", Toast.LENGTH_SHORT);
             usernameDisplay.setText("null");
             emailDisplay.setText("null");
             dobDisplay.setText("null");
@@ -443,7 +443,6 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  // Toast.makeText(EditProfile.this, "Get profile successfully", Toast.LENGTH_SHORT).show();
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
 
                                                   //only update profile if the activity is still alive
@@ -482,7 +481,7 @@ public class EditProfile extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     UserUtil.clearToken(EditProfile.this);
-                                    Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                    displayToast(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT);
                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                     startActivity(intent);
                                     finish();
@@ -495,7 +494,7 @@ public class EditProfile extends AppCompatActivity implements
                                               @Override
                                               public void run() {
                                                   if (!EditProfile.this.isDestroyed()){
-                                                      Toast.makeText(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_SHORT).show();
+                                                      displayToast(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_LONG);
                                                       usernameDisplay.setText("null");
                                                       emailDisplay.setText("null");
                                                       dobDisplay.setText("null");
@@ -631,7 +630,7 @@ public class EditProfile extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 UserUtil.clearToken(EditProfile.this);
-                                Toast.makeText(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                displayToast(EditProfile.this, "Not logged in", Toast.LENGTH_SHORT);
                                 Intent intent = new Intent(EditProfile.this, SignIn.class);
                                 startActivity(intent);
                                 finish();
@@ -665,6 +664,20 @@ public class EditProfile extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    /**
+     * Display toast in a non-overlap manner
+     *
+     * @param context The context which toast will display at
+     * @param msg     The message to display
+     * @param length  the duration of toast display
+     */
+    private void displayToast(Context context, String msg, int length) {
+        if (toast == null || !toast.getView().isShown()) {
+            toast = Toast.makeText(context, msg, length);
+            toast.show();
+        }
     }
 
     @Override
