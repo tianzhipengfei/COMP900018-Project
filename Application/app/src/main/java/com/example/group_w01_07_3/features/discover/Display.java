@@ -343,21 +343,6 @@ public class Display extends AppCompatActivity {
         }
     }
 
-    /**
-     * Stop music playing when there is need to switch pages or click home button
-     */
-    private void releaseMediaPlayer() {
-        try {
-            if (mediaPlayer != null) {
-                if (mediaPlayer.isPlaying())
-                    mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     /**
@@ -368,19 +353,25 @@ public class Display extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.stay,R.anim.pop_in);
         //stop the audio play, if the user
-        releaseMediaPlayer();
+        if(mediaPlayer!=null){
+            mediaPlayer.pause();
+        }
     }
     //stop music if click home button
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        releaseMediaPlayer();
+        if(mediaPlayer!=null){
+            mediaPlayer.pause();
+        }
     }
     //stop the music if current page is pause 
     @Override
     protected void onPause() {
         super.onPause();
-        releaseMediaPlayer();
+        if(mediaPlayer!=null){
+            mediaPlayer.pause();
+        }
     }
 }
 
