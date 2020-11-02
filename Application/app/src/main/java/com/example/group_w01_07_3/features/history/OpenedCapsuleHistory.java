@@ -54,34 +54,34 @@ import androidx.core.util.Pair;
 public class OpenedCapsuleHistory extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, CapsuleCallback {
 
-    private ShimmerFrameLayout mShimmerViewContainer;
-
-    private long mLastClickTime = 0;
-
-    boolean doubleBackToExitPressedOnce = false;
-
+    // APP View
     private DrawerLayout drawerLayout;
     View headerview;
     TextView headerUsername;
     ShapeableImageView headerAvatar;
-    private String usernameProfileString, avatarProfileString;
-
     PullLoadMoreRecyclerView recyclerView;
-    OpenedCapsuleAdapter openedCapsuleAdapter;
-
     NavigationView navigationView;
-
     private Toolbar mToolbar;
-
-    private List<OpenedCapsule> testingList;
-
-    private int RECORD_NUM_PER_REQUEST = 5;
 
     //Placeholder View for Disconnection logic
     TextView placeholder_emptyHistoryText;
     TextView getPlaceholder_retryText;
     ImageView placeholder_retryImage, placeholder_emptyHistoryImage;
 
+    // data & Content
+    private String usernameProfileString, avatarProfileString;
+    private List<OpenedCapsule> testingList;
+    OpenedCapsuleAdapter openedCapsuleAdapter;
+
+    //shimmer placehodler layout
+    private ShimmerFrameLayout mShimmerViewContainer;
+
+    //Utility
+    private long mLastClickTime = 0;
+    boolean doubleBackToExitPressedOnce = false;
+
+    //number of capsule request from server per update
+    private int RECORD_NUM_PER_REQUEST = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
