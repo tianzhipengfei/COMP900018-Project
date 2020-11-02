@@ -1,4 +1,5 @@
 package com.example.group_w01_07_3.features.discover;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,9 +15,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -42,16 +45,22 @@ import java.net.URL;
 import java.util.Calendar;
 
 public class Display extends AppCompatActivity {
-    private static final String TAG = "Display Activity";
+    //APP View
+    private CoordinatorLayout coordinatorLayout;
+    private TextView username;
+    private ImageView profile;
+    private TextView date;
+    private TextView privacy;
     private Toolbar mToolbar;
-    private JSONObject capsuleInfo;
     private ImageView img;
-    private RecordAudioUtil media;
     private TextView title;
     private TextView content;
     private ImageButton play;
     private Snackbar snackbar;
-    //private Button stop;
+
+    // Content of opened Geo-capsule
+    private JSONObject capsuleInfo;
+    private static final String TAG = "Display Activity";
     private int private_status;
     private MediaPlayer mediaPlayer;
     private String capsuleTitle;
@@ -59,15 +68,12 @@ public class Display extends AppCompatActivity {
     private String imagelink;
     private String audiolink;
     private Boolean startPlay;
-    private TextView username;
-    private ImageView profile;
     private String name;
     private String avater_link;
     private String open_date;
-    private TextView date;
-    private TextView privacy;
+    private RecordAudioUtil media;
 
-    //Shimmer Place hodler Section
+    //Shimmer Place holder Section
     private ShimmerFrameLayout shimmerImage, shimmerAvatar, shimmerVoice;
 
     /**
@@ -97,17 +103,8 @@ public class Display extends AppCompatActivity {
         Bundle extra_information = getIntent().getExtras();
         String extra = getIntent().getStringExtra("capsule");
         Log.d("The intent information", "onCreate: " + extra);
-        privacy=(TextView) findViewById(R.id.display_detail_capsule_private_public_tag);
-        img = (ImageView) findViewById(R.id.display_detail_image);
-        title = (TextView) findViewById(R.id.display_detail_title);
-        content = (TextView) findViewById(R.id.display_detail_content);
-        play = (ImageButton) findViewById(R.id.display_audio_play);
-        username=(TextView) findViewById(R.id.display_detail_username);
-        profile=(ImageView) findViewById(R.id.display_detail_capsule_original_user_avatar);
-        date=(TextView) findViewById(R.id.display_detail_date);
-        shimmerImage = findViewById(R.id.display_detail_shimmer_image);
-        shimmerAvatar = findViewById(R.id.display_detail_shimmer_avatar);
-        shimmerVoice = findViewById(R.id.display_detail_shimmer_voice);
+        
+        initView();
 
         if (extra != null) {
             try {
@@ -122,6 +119,25 @@ public class Display extends AppCompatActivity {
     }
 
     /**
+     * Initialise required layout view
+     */
+    private void initView(){
+        coordinatorLayout = findViewById(R.id.display_history_mega_layout);
+
+        privacy = (TextView) findViewById(R.id.display_detail_capsule_private_public_tag);
+        img = (ImageView) findViewById(R.id.display_detail_image);
+        title = (TextView) findViewById(R.id.display_detail_title);
+        content = (TextView) findViewById(R.id.display_detail_content);
+        play = (ImageButton) findViewById(R.id.display_audio_play);
+        username = (TextView) findViewById(R.id.display_detail_username);
+        profile = (ImageView) findViewById(R.id.display_detail_capsule_original_user_avatar);
+        date = (TextView) findViewById(R.id.display_detail_date);
+        shimmerImage = findViewById(R.id.display_detail_shimmer_image);
+        shimmerAvatar = findViewById(R.id.display_detail_shimmer_avatar);
+        shimmerVoice = findViewById(R.id.display_detail_shimmer_voice);
+    }
+
+    /**
      * Reads information from intent about content to display,display the information including
      * title, content, date of open the capsule, optional image, optional audio, avater of user,
      * name of user
@@ -130,28 +146,28 @@ public class Display extends AppCompatActivity {
      * @throws JSONException possible exception on information reading
      */
     private void display(JSONObject capsuleInfo) throws JSONException {
-        private_status=capsuleInfo.getInt("cpermission");
+        private_status = capsuleInfo.getInt("cpermission");
         capsuleTitle = capsuleInfo.getString("ctitle");
         capsuleContent = capsuleInfo.getString("ccontent");
-        open_date=Calendar.getInstance().getTime().toString();
+        open_date = Calendar.getInstance().getTime().toString();
         imagelink = capsuleInfo.getString("cimage");
         Log.d(TAG, "display: " + "the new image Link" + imagelink);
         audiolink = capsuleInfo.getString("caudio");
-        name=capsuleInfo.getString("cusr");
+        name = capsuleInfo.getString("cusr");
         avater_link = capsuleInfo.getString("cavatar");
 
-        if (!this.isDestroyed()){
+        if (!this.isDestroyed()) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    date.setText( "Opened at: " + open_date);
+                    date.setText("Opened at: " + open_date);
                     title.setText(capsuleTitle);
                     content.setText(capsuleContent);
                     username.setText(name);
                     //check the privacy status of capsule
-                    if(private_status==1){
+                    if (private_status == 1) {
                         privacy.setText("Public Geo-Capsule");
-                    }else{
+                    } else {
                         privacy.setText("Your Private Geo-Capsule");
                     }
 
@@ -163,7 +179,7 @@ public class Display extends AppCompatActivity {
                         shimmerVoice.setVisibility(View.GONE);
                     }
                     //if there is image, load image to image view,otherwise, use place holder image
-                    if (imagelink != "null"){
+                    if (imagelink != "null") {
                         loadImage();
                     } else {
                         shimmerImage.stopShimmer();
@@ -176,7 +192,7 @@ public class Display extends AppCompatActivity {
                     }
                     //if there is avader link, load it to corresponding place, otherwise, use place
                     //holder.
-                    if (avater_link!= "null" ){
+                    if (avater_link != "null") {
                         loadAvatar();
                     } else {
                         shimmerAvatar.stopShimmer();
@@ -190,7 +206,7 @@ public class Display extends AppCompatActivity {
         }
     }
 
-    private void loadImage(){
+    private void loadImage() {
         //Must use  this tree observer to load content image
         img.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -201,7 +217,7 @@ public class Display extends AppCompatActivity {
                 //use Glide to load image, once successful loaded, turn off shimmer and display image
                 Glide.with(Display.this)
                         .load(imagelink)
-                        .apply(new RequestOptions().override(img.getWidth(),0))
+                        .apply(new RequestOptions().override(img.getWidth(), 0))
                         .listener(new RequestListener<Drawable>() {
                             /**
                              * If the image could not be loaded, display the internet connection error
@@ -215,7 +231,7 @@ public class Display extends AppCompatActivity {
                              */
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                displaySnackbar(findViewById(R.id.display_history_mega_layout),
+                                displaySnackbar(coordinatorLayout,
                                         "Failed to load the capsule image, please check your internet connection",
                                         Snackbar.LENGTH_LONG);
                                 return false;
@@ -245,10 +261,10 @@ public class Display extends AppCompatActivity {
     }
 
     /**
-     *  load avater photo to image view to display, handle failure condition,remove shrimmer effect
-     *  if load successfully.
+     * load avater photo to image view to display, handle failure condition,remove shrimmer effect
+     * if load successfully.
      */
-    private void loadAvatar(){
+    private void loadAvatar() {
         //avatar view has fix size, so no need to use viewtree
         Glide.with(this)
                 .load(avater_link)
@@ -264,7 +280,7 @@ public class Display extends AppCompatActivity {
                      */
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        displaySnackbar(findViewById(R.id.display_history_mega_layout),
+                        displaySnackbar(coordinatorLayout,
                                 "Failed to load user avatar of the capsule owner, please check your internet connection",
                                 Snackbar.LENGTH_LONG);
                         return false;
@@ -292,10 +308,9 @@ public class Display extends AppCompatActivity {
     }
 
     /**
-     * load audio to display, the audio could be replayed automatically, handle the situation if
-     * audio could not be loaded due to internet failure.
+     * load audio to display,handle the situation if audio could not be loaded due to internet failure.
      */
-    private void loadVoice(){
+    private void loadVoice() {
         mediaPlayer = new MediaPlayer();
         //when audio is loaded successfully, remove the shimmer effect and set audio button to be
         //visible
@@ -337,8 +352,8 @@ public class Display extends AppCompatActivity {
                 //handle media player lose network connection
                 @Override
                 public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                    if (i==MediaPlayer.MEDIA_ERROR_SERVER_DIED){
-                        displaySnackbar(findViewById(R.id.display_history_mega_layout),
+                    if (i == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
+                        displaySnackbar(coordinatorLayout,
                                 "Failed to Load audio, please check your internet connection",
                                 Snackbar.LENGTH_LONG);
                     }
@@ -366,32 +381,33 @@ public class Display extends AppCompatActivity {
     }
 
 
-
     /**
      * Back to the discover capsule page.
      */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.stay,R.anim.pop_in);
+        overridePendingTransition(R.anim.stay, R.anim.pop_in);
         //stop the audio play, if the user
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
     }
+
     //stop music if click home button
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
     }
-    //stop the music if current page is pause 
+
+    //stop the music if current page is pause
     @Override
     protected void onPause() {
         super.onPause();
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
     }

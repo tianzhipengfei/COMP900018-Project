@@ -3,6 +3,8 @@ package com.example.group_w01_07_3.features.history;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityOptionsCompat;
 
 import android.content.Intent;
@@ -40,6 +42,7 @@ import java.io.IOException;
 
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     //APP view
+    private CoordinatorLayout constraintLayout;
     private Toolbar mToolbar;
     private TextView title;
     private TextView date;
@@ -57,7 +60,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
     //Capsule Content Section
     OpenedCapsule item;
-    String titleString,dateString,usernameString,contentString;
+    String titleString, dateString, usernameString, contentString;
     int tagIndentifier;
     String imageLocation, avatarLocation, voiceLocation;
 
@@ -103,7 +106,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DetailedCapsuleHistoryItem.super.onBackPressed();
-//                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
         });
 
@@ -115,7 +117,8 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         loadCapsule(item);
     }
 
-    private void initView(){
+    private void initView() {
+        constraintLayout = findViewById(R.id.detail_history_mega_layout);
         //find view for shimmer placeholder layout
         imageShimmer = findViewById(R.id.history_detail_shimmer_image);
         avatarShimmer = findViewById(R.id.history_detail_shimmer_avatar);
@@ -139,8 +142,8 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
      *
      * @param item The capsule object to be displayed
      */
-    private void loadCapsule(OpenedCapsule item){
-        titleString  = item.getCapsule_title();
+    private void loadCapsule(OpenedCapsule item) {
+        titleString = item.getCapsule_title();
         dateString = item.getOpened_date();
         tagIndentifier = item.getTag();
         usernameString = item.getUsername();
@@ -157,13 +160,13 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 content.setText(contentString);
                 username.setText(usernameString);
 
-                if(tagIndentifier == 1){
+                if (tagIndentifier == 1) {
                     tag.setText("Public Memory Capsule");
                 } else {
                     tag.setText("Your Private Capsule");
                 }
 
-                if(!imageLocation.equals("null")){
+                if (!imageLocation.equals("null")) {
                     loadImage();
                 } else {
                     imageShimmer.stopShimmer();
@@ -173,7 +176,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     image.setVisibility(View.VISIBLE);
                 }
 
-                if(!avatarLocation.equals("null")){
+                if (!avatarLocation.equals("null")) {
                     loadAvatar();
                 } else {
                     avatarShimmer.stopShimmer();
@@ -182,7 +185,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     avatar.setImageResource(R.drawable.avatar_sample);
                 }
 
-                if(!voiceLocation.equals("null")){
+                if (!voiceLocation.equals("null")) {
                     loadVoice();
                 } else {
                     voiceShimmer.stopShimmer();
@@ -196,7 +199,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     /**
      * load capsule content image from the 3rd party image server using Glide.
      */
-    private void loadImage(){
+    private void loadImage() {
         //Must use  this tree observer to load content image
         image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -205,7 +208,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                 //ONLY load if the activity is still alive
-                if(!DetailedCapsuleHistoryItem.this.isDestroyed()){
+                if (!DetailedCapsuleHistoryItem.this.isDestroyed()) {
                     //use Glide to load image, once successful loaded, turn off shimmer and display image
                     Glide.with(DetailedCapsuleHistoryItem.this)
                             .load(imageLocation)
@@ -213,7 +216,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                     Log.d("Debug", "IMAGE - Glide Errored");
-                                    displaySnackbar(findViewById(R.id.detail_history_mega_layout),
+                                    displaySnackbar(constraintLayout,
                                             "Failed to load the capsule image, please check your internet connection",
                                             Snackbar.LENGTH_LONG);
                                     return false;
@@ -228,8 +231,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                 }
                             })
                             .into(image);
-                }
-                else {
+                } else {
                     Log.d("FINISHED", "run: Activity has been finished, don't load Glide for image");
                 }
 
@@ -240,19 +242,19 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     /**
      * load capsule creator avatar from the 3rd party image server using Glide.
      */
-    private void loadAvatar(){
+    private void loadAvatar() {
         //avatar view has fix size, so no need to use viewtree
         //use Glide to load avatar, once successful loaded, turn off shimmer and display avatar
 
         //ONLY load if the activity is still alive
-        if (!DetailedCapsuleHistoryItem.this.isDestroyed()){
+        if (!DetailedCapsuleHistoryItem.this.isDestroyed()) {
             Glide.with(this)
                     .load(avatarLocation)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             Log.d("Debug", "IMAGE - Glide Errored");
-                            displaySnackbar(findViewById(R.id.detail_history_mega_layout),
+                            displaySnackbar(constraintLayout,
                                     "Failed to load user avatar of the capsule owner, please check your internet connection",
                                     Snackbar.LENGTH_LONG);
                             return false;
@@ -275,9 +277,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     /**
      * load voice data of the capsule from server
      */
-    private void loadVoice(){
+    private void loadVoice() {
         //ONLY load if the activity is still alive
-        if (!DetailedCapsuleHistoryItem.this.isDestroyed()){
+        if (!DetailedCapsuleHistoryItem.this.isDestroyed()) {
             mediaPlayer = new MediaPlayer();
             //when audio is loaded successfully, remove the shimmer effect and set audio button to be visible
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -289,6 +291,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 }
             });
             startPlay = true;
+
             //set listener to listener to user's click on audio play button
             voice.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -318,11 +321,14 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     //handle media player lose network connection
                     @Override
                     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                        if (i==MediaPlayer.MEDIA_ERROR_SERVER_DIED){
-                            displaySnackbar(findViewById(R.id.display_history_mega_layout),
-                                    "Failed to Load audio, please check your internet connection",
-                                    Snackbar.LENGTH_LONG);
-                        }
+//                        if (i == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
+//                            displaySnackbar(findViewById(R.id.display_history_mega_layout),
+//                                    "Failed to Load audio, please check your internet connection",
+//                                    Snackbar.LENGTH_LONG);
+//                        }
+                        displaySnackbar(constraintLayout,
+                                "Failed to Load audio, please check your internet connection",
+                                Snackbar.LENGTH_LONG);
                         return false;
                     }
                 });
@@ -353,9 +359,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.stay,R.anim.pop_in);
+        overridePendingTransition(R.anim.stay, R.anim.pop_in);
         //stop the audio play, if the user
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
     }
@@ -366,7 +372,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
     }
@@ -377,7 +383,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(mediaPlayer!=null){
+        if (mediaPlayer != null) {
             mediaPlayer.pause();
         }
     }
