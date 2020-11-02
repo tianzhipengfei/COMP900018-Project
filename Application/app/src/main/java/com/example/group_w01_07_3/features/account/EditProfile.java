@@ -188,11 +188,13 @@ public class EditProfile extends AppCompatActivity implements
                         signOutButton.setEnabled(false);
                         changePasswordBtn.setEnabled(false);
                         changeAvatarButton.setEnabled(false);
+                        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         String token = UserUtil.getToken(EditProfile.this);
                         if (token.isEmpty()) {
                             Log.d("SIGNOUT", "Error: no token");
                             changePasswordBtn.setEnabled(true);
                             changeAvatarButton.setEnabled(true);
+                            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                             Intent intent = new Intent(EditProfile.this, SignIn.class);
                             startActivity(intent);
                             finish();
@@ -205,6 +207,7 @@ public class EditProfile extends AppCompatActivity implements
                                 signOutButton.setEnabled(true);
                                 changePasswordBtn.setEnabled(true);
                                 changeAvatarButton.setEnabled(true);
+                                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                                 Log.d("SIGNOUT", "No Internet Connection");
                                 return;
                             }
@@ -275,6 +278,7 @@ public class EditProfile extends AppCompatActivity implements
                                             signOutButton.setEnabled(true);
                                             changePasswordBtn.setEnabled(true);
                                             changeAvatarButton.setEnabled(true);
+                                            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                                         }
                                     });
                                     return;
