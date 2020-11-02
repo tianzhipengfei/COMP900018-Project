@@ -84,6 +84,18 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             }
         });
 
+        initView();
+
+        //get the capsule object
+        item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
+
+        loadCapsule(item);
+    }
+
+    /**
+     * Initialize all view required to show the opened Geo-capsule
+     */
+    private void initView() {
         //set up toolbar
         mToolbar = findViewById(R.id.detail_history_capsule_back_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_back);
@@ -97,15 +109,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             }
         });
 
-        initView();
-
-        //get the capsule object
-        item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
-
-        loadCapsule(item);
-    }
-
-    private void initView() {
         coordinatorLayout = findViewById(R.id.detail_history_mega_layout);
         //find view for shimmer placeholder layout
         imageShimmer = findViewById(R.id.history_detail_shimmer_image);
@@ -149,9 +152,9 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 username.setText(usernameString);
 
                 if (tagIndentifier == 1) {
-                    tag.setText("Public Memory Capsule");
+                    tag.setText("Public Geo-Capsule");
                 } else {
-                    tag.setText("Your Private Capsule");
+                    tag.setText("Your Private Geo-Capsule");
                 }
 
                 if (!imageLocation.equals("null")) {
@@ -203,7 +206,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                             .listener(new RequestListener<Drawable>() {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    Log.d("Debug", "IMAGE - Glide Errored");
                                     displaySnackbar(coordinatorLayout,
                                             "Failed to load the capsule image, please check your internet connection",
                                             Snackbar.LENGTH_LONG);
@@ -241,7 +243,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            Log.d("Debug", "IMAGE - Glide Errored");
                             displaySnackbar(coordinatorLayout,
                                     "Failed to load user avatar of the capsule owner, please check your internet connection",
                                     Snackbar.LENGTH_LONG);
@@ -309,11 +310,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     //handle media player lose network connection
                     @Override
                     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-//                        if (i == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
-//                            displaySnackbar(findViewById(R.id.display_history_mega_layout),
-//                                    "Failed to Load audio, please check your internet connection",
-//                                    Snackbar.LENGTH_LONG);
-//                        }
                         displaySnackbar(coordinatorLayout,
                                 "Failed to Load audio, please check your internet connection",
                                 Snackbar.LENGTH_LONG);
