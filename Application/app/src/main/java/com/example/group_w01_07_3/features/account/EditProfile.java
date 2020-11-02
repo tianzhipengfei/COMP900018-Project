@@ -79,7 +79,7 @@ public class EditProfile extends AppCompatActivity implements
     private TextView usernameDisplay;
     private TextView emailDisplay;
     private TextView dobDisplay;
-    MaterialButton changePasswordBtn;
+    MaterialButton changePasswordBtn, changeAvatarButton;
 
 
     private File newAvatarFile;
@@ -157,7 +157,7 @@ public class EditProfile extends AppCompatActivity implements
             }
         });
 
-        MaterialButton changeAvatarButton = (MaterialButton) findViewById(R.id.edit_profile_btn_change_avatar);
+        changeAvatarButton = (MaterialButton) findViewById(R.id.edit_profile_btn_change_avatar);
         changeAvatarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,10 +187,12 @@ public class EditProfile extends AppCompatActivity implements
                     public void onClick(DialogInterface dialog, int which) {
                         signOutButton.setEnabled(false);
                         changePasswordBtn.setEnabled(false);
+                        changeAvatarButton.setEnabled(false);
                         String token = UserUtil.getToken(EditProfile.this);
                         if (token.isEmpty()) {
                             Log.d("SIGNOUT", "Error: no token");
                             changePasswordBtn.setEnabled(true);
+                            changeAvatarButton.setEnabled(true);
                             Intent intent = new Intent(EditProfile.this, SignIn.class);
                             startActivity(intent);
                             finish();
@@ -202,6 +204,7 @@ public class EditProfile extends AppCompatActivity implements
                                 snackbar.show();
                                 signOutButton.setEnabled(true);
                                 changePasswordBtn.setEnabled(true);
+                                changeAvatarButton.setEnabled(true);
                                 Log.d("SIGNOUT", "No Internet Connection");
                                 return;
                             }
@@ -271,6 +274,7 @@ public class EditProfile extends AppCompatActivity implements
                                             snackbar.show();
                                             signOutButton.setEnabled(true);
                                             changePasswordBtn.setEnabled(true);
+                                            changeAvatarButton.setEnabled(true);
                                         }
                                     });
                                     return;
