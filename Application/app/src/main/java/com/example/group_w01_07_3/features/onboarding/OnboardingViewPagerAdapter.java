@@ -24,6 +24,13 @@ public class OnboardingViewPagerAdapter extends PagerAdapter {
         this.onboardingItemList = onboardingItemList;
     }
 
+    /**
+     * Instantiate onboarding view page
+     *
+     * @param container The view group that holder each slider page
+     * @param position The page number of each page
+     * @return
+     */
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
