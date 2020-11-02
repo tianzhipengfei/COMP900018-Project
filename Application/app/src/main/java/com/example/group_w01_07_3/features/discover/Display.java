@@ -184,7 +184,7 @@ public class Display extends AppCompatActivity {
                     if(private_status==1){
                         privacy.setText("Public Geo-Capsule");
                     }else{
-                        privacy.setText("Your Private  Geo-Capsule");
+                        privacy.setText("Your Private Geo-Capsule");
                     }
 
                     if (audiolink != "null") {
