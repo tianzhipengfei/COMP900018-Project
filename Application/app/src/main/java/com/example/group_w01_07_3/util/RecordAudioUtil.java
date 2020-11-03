@@ -84,7 +84,6 @@ public class RecordAudioUtil {
         }
     }
 
-
     /**
      * check the permission to record audio
      *
@@ -120,7 +119,6 @@ public class RecordAudioUtil {
                 }
                 player.prepare();
                 player.start();
-
                 player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer m) {
