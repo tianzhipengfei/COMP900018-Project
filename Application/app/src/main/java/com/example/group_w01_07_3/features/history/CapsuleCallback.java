@@ -4,7 +4,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public interface CapsuleCallback {
-    
+
     //which field we would like to support shared element transition
     void onCapsuleItemClick(
             int pos,
