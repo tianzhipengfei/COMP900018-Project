@@ -138,29 +138,29 @@ public class ChangePassword extends AppCompatActivity {
 
                 // check password logic
                 if (oldPassword.isEmpty()) {
-                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed.\nPlease enter the current password.", Snackbar.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please enter the current password.", Snackbar.LENGTH_SHORT);
                     confirmChangeButton.setEnabled(true);
                 } else if (newPassword.isEmpty()) {
-                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed.\nPlease enter the new password.", Snackbar.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please enter the new password.", Snackbar.LENGTH_SHORT);
                     confirmChangeButton.setEnabled(true);
                 } else if (reNewPassword.isEmpty()) {
-                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed.\nPlease repeat the new password.", Snackbar.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please repeat the new password.", Snackbar.LENGTH_SHORT);
                     confirmChangeButton.setEnabled(true);
                 } else if (!isValidPassword(oldPassword)) {
-                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed.\nIncorrect current password.", Snackbar.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Incorrect current password.", Snackbar.LENGTH_SHORT);
                     oldPasswordET.setText("");
                     confirmChangeButton.setEnabled(true);
                 } else if (!isValidPassword(newPassword)) {
-                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed.\nInvalid new password.", Snackbar.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Invalid new password.", Snackbar.LENGTH_SHORT);
                     newPasswordET.setText("");
                     reNewPasswordET.setText("");
                     confirmChangeButton.setEnabled(true);
                 } else if (!newPassword.equalsIgnoreCase(reNewPassword)) {
-                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed.\nRepeat new password doesn't match new password.", Snackbar.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Repeat new password doesn't match new password.", Snackbar.LENGTH_SHORT);
                     reNewPasswordET.setText("");
                     confirmChangeButton.setEnabled(true);
                 } else if (oldPassword.equalsIgnoreCase(newPassword)) {
-                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed.\nMatching new password and current password.", Snackbar.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Matching new password and current password.", Snackbar.LENGTH_SHORT);
                     oldPasswordET.setText("");
                     newPasswordET.setText("");
                     reNewPasswordET.setText("");
@@ -168,7 +168,7 @@ public class ChangePassword extends AppCompatActivity {
                 } else {
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                     if (!internetFlag) {
-                        MessageUtil.displaySnackbar(constraintLayout, "Change password failed.\nPlease check internet connection.", Snackbar.LENGTH_LONG);
+                        MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please check internet connection.", Snackbar.LENGTH_LONG);
                         confirmChangeButton.setEnabled(true);
                         return;
                     }
@@ -222,7 +222,7 @@ public class ChangePassword extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                                   @Override
                                                   public void run() {
-                                                      MessageUtil.displaySnackbar(constraintLayout, "Change password failed.\nIncorrect current password.", Snackbar.LENGTH_SHORT);
+                                                      MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Incorrect current password.", Snackbar.LENGTH_SHORT);
                                                       oldPasswordET.setText("");
                                                       confirmChangeButton.setEnabled(true);
                                                   }
