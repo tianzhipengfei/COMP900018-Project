@@ -1,18 +1,13 @@
 package com.example.group_w01_07_3.features.create;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
-
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,38 +27,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
-
-import java.util.Calendar;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.SignIn;
 import com.example.group_w01_07_3.features.account.EditProfile;
-import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
-import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
+import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.ImageUtil;
-
 import com.example.group_w01_07_3.util.MessageUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
@@ -75,10 +58,13 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.squareup.picasso.Picasso;
 
-
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -86,48 +72,36 @@ import okhttp3.Response;
 public class CreateCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-    boolean doubleBackToExitPressedOnce = false;
-
-    private boolean mStartRecording = true;
-    boolean mStartPlaying = true;
-
-    private DrawerLayout drawerLayout;
-    View headerview;
-    TextView headerUsername;
-    ShapeableImageView headerAvatar;
-    private String usernameProfileString, avatarProfileString;
-
-    NavigationView navigationView;
-
-    ExtendedFloatingActionButton floatingActionButton;
     private final int REQUEST_PERMISSION_COARSE_LOCATION = 2;
     private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
-
-
+    boolean doubleBackToExitPressedOnce = false;
+    boolean mStartPlaying = true;
+    View headerView;
+    TextView headerUsername;
+    ShapeableImageView headerAvatar;
+    NavigationView navigationView;
+    ExtendedFloatingActionButton floatingActionButton;
+    JSONObject capsuleInfo = new JSONObject();
+    private boolean mStartRecording = true;
+    private DrawerLayout drawerLayout;
+    private String usernameProfileString, avatarProfileString;
     private RecordAudioUtil recorderUtil;
-
     private FusedLocationProviderClient fusedLocationClient;
-
     private int permission = 1;
     private String token;
     private ProgressDialog progressbar;
-
     private BottomDialog bottomDialog;
     private File imageFile;
-
-    JSONObject capsuleInfo = new JSONObject();
-
     // message section
     private long mLastClickTime = 0;
 
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_capsule);
 
         recorderUtil = new RecordAudioUtil(this);
-        UserUtil userUtil = new UserUtil();
-        token = userUtil.getToken(this.getApplicationContext());
+        token = UserUtil.getToken(this.getApplicationContext());
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //don't pop up keyboard automatically when entering the screen.
@@ -143,7 +117,7 @@ public class CreateCapsule extends AppCompatActivity implements
     /**
      * setup navigation view for the activity
      */
-    private void initView(){
+    private void initView() {
         //setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_create);
         setSupportActionBar(toolbar);
@@ -163,14 +137,18 @@ public class CreateCapsule extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
 
         //the logic to find the header, then update the username from server user profile
-        headerview = navigationView.getHeaderView(0);
-        headerUsername = headerview.findViewById(R.id.header_username);
-        headerAvatar = headerview.findViewById(R.id.header_avatar);
+        headerView = navigationView.getHeaderView(0);
+        headerUsername = headerView.findViewById(R.id.header_username);
+        headerAvatar = headerView.findViewById(R.id.header_avatar);
 
         floatingActionButton = findViewById(R.id.create_fab);
     }
 
-
+    /**
+     * create public capsule or private capsule
+     *
+     * @param v view
+     */
     public void whetherPublic(View v) {
         SwitchMaterial permiSwitch = (SwitchMaterial) findViewById(R.id.create_capsule_permission);
         if (permiSwitch.isChecked()) {
@@ -186,7 +164,11 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
-    // for recording and playing audio
+    /**
+     * for recording and playing audio
+     *
+     * @param v view
+     */
     public void recordAudio(View v) {
         // check permission
         if (recorderUtil.checkPermission()) {
@@ -203,11 +185,14 @@ public class CreateCapsule extends AppCompatActivity implements
         } else {
             MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Record audio failed. Need your permission", Snackbar.LENGTH_SHORT, floatingActionButton);
         }
-
     }
 
+    /**
+     * play audio
+     *
+     * @param v view
+     */
     public void playAudio(View v) {
-
         MaterialButton playButton = findViewById(R.id.play_button);
         recorderUtil.onPlay(mStartPlaying);
         if (mStartPlaying) {
@@ -218,25 +203,27 @@ public class CreateCapsule extends AppCompatActivity implements
             playButton.setText("PLAY");
         }
         mStartPlaying = !mStartPlaying;
-
     }
 
+    /**
+     * stop the recorder and the the player
+     */
     public void onStop() {
-
         super.onStop();
         recorderUtil.onStop();
     }
 
-    // For user upload/take picture
+    /**
+     * For user upload/take picture
+     *
+     * @param v view
+     */
     public void takePicture(View v) {
-
         bottomDialog = new BottomDialog(this);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomDialog
                 .getContentView().getLayoutParams();
         params.width = getResources().getDisplayMetrics().widthPixels -
                 DensityUtil.dp2px(this, 16f);
-
-
         params.bottomMargin = DensityUtil.dp2px(this, 8f);
         bottomDialog.getContentView().setLayoutParams(params);
         bottomDialog.setCanceledOnTouchOutside(true);
@@ -245,6 +232,13 @@ public class CreateCapsule extends AppCompatActivity implements
         bottomDialog.show();
     }
 
+    /**
+     * return result of take photo or choose photo
+     *
+     * @param requestCode request code
+     * @param resultCode  result code
+     * @param data        intent data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -273,9 +267,15 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * check permission
+     *
+     * @param requestCode  request code
+     * @param permissions  permissions
+     * @param grantResults grant results
+     */
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 1:
@@ -290,12 +290,20 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * open album to choose a photo
+     */
     private void openAlbum() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
         startActivityForResult(intent, BottomDialog.CHOOSE_PHOTO);
     }
 
+    /**
+     * phone version > 4.4 process picture
+     *
+     * @param data intent data
+     */
     private void handleImageOnKitKat(Intent data) {
         String imagePath = null;
         Uri uri = data.getData();
@@ -317,6 +325,13 @@ public class CreateCapsule extends AppCompatActivity implements
         displayImage(imagePath);
     }
 
+    /**
+     * get image path
+     *
+     * @param uri       uri
+     * @param selection selection
+     * @return image path
+     */
     private String getImagePath(Uri uri, String selection) {
         String path = null;
         Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
@@ -329,6 +344,11 @@ public class CreateCapsule extends AppCompatActivity implements
         return path;
     }
 
+    /**
+     * display image
+     *
+     * @param imagePath image path
+     */
     private void displayImage(String imagePath) {
         ImageView placeholder = (ImageView) findViewById(R.id.create_capsule_piture_preview);
         if (imagePath != null) {
@@ -342,8 +362,12 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
-    // Upload functions
-    // check text info are filled in
+    /**
+     * Upload functions
+     * check text info are filled in
+     *
+     * @return text info are filled in or not
+     */
     private boolean getOtherInfo() {
         EditText capsuleTitle = findViewById(R.id.create_capsule_title);
         EditText capsuleContent = findViewById(R.id.create_capsule_content);
@@ -361,15 +385,17 @@ public class CreateCapsule extends AppCompatActivity implements
             capsuleInfo.put("time", Calendar.getInstance().getTime());
             capsuleInfo.put("permission", permission);
             capsuleInfo.put("tkn", this.token);
-            //for testing
-
         } catch (JSONException e) {
             System.out.print("Problems happen during parsing json objects");
         }
         return true;
     }
 
-    // Get location
+    /**
+     * check location permission
+     *
+     * @return has location permission or not
+     */
     public boolean checkLocationPermission() {
         int fineLocation = ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -396,14 +422,17 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * get location
+     *
+     * @throws JSONException JSONException
+     */
     private void getLocation() throws JSONException {
-
         if (checkLocationPermission()) {
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-
                             if (location != null) {
                                 Log.i("location", location.toString());
                                 try {
@@ -416,7 +445,6 @@ public class CreateCapsule extends AppCompatActivity implements
                                     MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Cannot get your location. Please turn on GPS.", Snackbar.LENGTH_SHORT, floatingActionButton);
                                     progressbar.dismiss();
                                 }
-
                             } else {
                                 MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Cannot get your location. Please turn on GPS.", Snackbar.LENGTH_SHORT, floatingActionButton);
                                 progressbar.dismiss();
@@ -425,33 +453,26 @@ public class CreateCapsule extends AppCompatActivity implements
                         }
                     });
         }
-
-
     }
 
-    // Get audio url
+    /**
+     * get audio url
+     */
     private void uploadAudio() {
         final File audioFile = recorderUtil.getAudioFile();
-
         if (audioFile != null && audioFile.exists()) {
-
             HttpUtil.uploadAudio(token, audioFile, new okhttp3.Callback() {
-
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response)
                         throws IOException {
                     String responseData = response.body().string();
-                    Log.i("AudioHTTP", responseData);
                     try {
                         JSONObject responseJSON = new JSONObject(responseData);
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
-                            Log.i("AudioUrl", status);
                             capsuleInfo.put("audio", responseJSON.getString("file"));
-
                             audioFile.delete();
                             uploadImg();
-
                         } else if (responseJSON.has("error")) {
                             String status = responseJSON.getString("error");
                             if (status.equalsIgnoreCase("Not logged in")) {
@@ -463,7 +484,7 @@ public class CreateCapsule extends AppCompatActivity implements
                                         Intent intent = new Intent(CreateCapsule.this, SignIn.class);
                                         startActivity(intent);
                                         finish();
-                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                     }
                                 });
                             }
@@ -485,39 +506,29 @@ public class CreateCapsule extends AppCompatActivity implements
                     });
                 }
             });
-
         } else {
             uploadImg();
         }
     }
 
-    // Get img url
+    /**
+     * get img url
+     */
     private void uploadImg() {
         if (imageFile != null && imageFile.exists()) {
             HttpUtil.uploadImage(token, imageFile, new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     String responseData = response.body().string();
-                    Log.i("CREATE CAPSULE", responseData);
                     try {
                         JSONObject responseJSON = new JSONObject(responseData);
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
                             if (status == "false") {
-//                                runOnUiThread(new Runnable() {
-//                                    public void run() {
-//                                        progressbar.dismiss();
-//                                        Toast.makeText(CreateCapsule.this,
-//                                                "Upload image fail, repeated upload" ,
-//                                                Toast.LENGTH_LONG);
-//                                    }
-//                                });
-                                Log.i("ImageUrl", status);
                                 System.out.println(responseJSON.getString("images"));
                                 capsuleInfo.put("img", responseJSON.getString("images"));
                                 uploadOther();
                             } else {
-                                Log.i("ImageUrl", status);
                                 JSONObject data = responseJSON.getJSONObject("data");
                                 System.out.println(data.getString("url"));
                                 capsuleInfo.put("img", data.getString("url"));
@@ -546,10 +557,10 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
-    // Upload all info
+    /**
+     * upload all info
+     */
     private void uploadOther() {
-        Log.i("CapsuleInfo", capsuleInfo.toString());
-
         HttpUtil.createCapsule(capsuleInfo, new okhttp3.Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -564,12 +575,10 @@ public class CreateCapsule extends AppCompatActivity implements
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 String responseData = response.body().string();
-                Log.i("CREATECAPSULE", responseData);
                 try {
                     JSONObject responseJSON = new JSONObject(responseData);
                     if (responseJSON.has("success")) {
                         String status = responseJSON.getString("success");
-                        Log.i("CREATECAPSULE", status);
                         runOnUiThread(new Runnable() {
                                           @Override
                                           public void run() {
@@ -607,10 +616,10 @@ public class CreateCapsule extends AppCompatActivity implements
                                     Intent intent = new Intent(CreateCapsule.this, SignIn.class);
                                     startActivity(intent);
                                     finish();
-                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                 }
                             });
-                        } else if(status.equalsIgnoreCase("profanity text")){
+                        } else if (status.equalsIgnoreCase("profanity text")) {
                             progressbar.dismiss();
                             MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Create Geo-capsule failed. Please remove profanity text and try again.",
                                     Snackbar.LENGTH_SHORT, floatingActionButton);
@@ -627,8 +636,13 @@ public class CreateCapsule extends AppCompatActivity implements
         });
     }
 
+    /**
+     * create capsule
+     *
+     * @param v view
+     * @throws JSONException JSONException
+     */
     public void createCapsule(View v) throws JSONException {
-
         // Preventing multiple clicks, using threshold of 1 second
         if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
             return;
@@ -643,17 +657,13 @@ public class CreateCapsule extends AppCompatActivity implements
             progressbar.show();
             if (HttpUtil.isOnline(this)) {
                 //collect info;
-
                 getLocation();
             } else {
                 progressbar.dismiss();
                 MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Create Geo-capsule failed. Please connect to internet first.", Snackbar.LENGTH_LONG, floatingActionButton);
             }
-
-
         }
     }
-
 
     /**
      * Handle navigation drawer item click event, which navigates user to the destination
@@ -691,7 +701,6 @@ public class CreateCapsule extends AppCompatActivity implements
                 return true;
         }
 
-
         return false;
     }
 
@@ -703,14 +712,11 @@ public class CreateCapsule extends AppCompatActivity implements
             HttpUtil.getProfile(UserUtil.getToken(CreateCapsule.this), new okhttp3.Callback() {
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.d("PROFILE", "***** getProfile onResponse *****");
                     String responseData = response.body().string();
-                    Log.d("PROFILE", "getProfile: " + responseData);
                     try {
                         JSONObject responseJSON = new JSONObject(responseData);
                         if (responseJSON.has("success")) {
                             String status = responseJSON.getString("success");
-                            Log.d("PROFILE", "getProfile success: " + status);
                             String userInfo = responseJSON.getString("userInfo");
                             JSONObject userInfoJSON = new JSONObject(userInfo);
                             usernameProfileString = userInfoJSON.getString("uusr");
@@ -730,7 +736,6 @@ public class CreateCapsule extends AppCompatActivity implements
                                     } else {
                                         Log.d("FINISHED", "run: Activity has been finished, don't load Glide for update header avatar & username");
                                     }
-
                                 }
                             });
                         } else if (responseJSON.has("error")) {
@@ -744,7 +749,7 @@ public class CreateCapsule extends AppCompatActivity implements
                                         Intent intent = new Intent(CreateCapsule.this, SignIn.class);
                                         startActivity(intent);
                                         finish();
-                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                     }
                                 });
                             }
@@ -778,7 +783,6 @@ public class CreateCapsule extends AppCompatActivity implements
      */
     @Override
     public void onBackPressed() {
-
         if (drawerLayout.isDrawerOpen(navigationView)) {
             drawerLayout.closeDrawer(navigationView);
         } else {
@@ -799,4 +803,5 @@ public class CreateCapsule extends AppCompatActivity implements
             }, 2000);
         }
     }
+
 }
