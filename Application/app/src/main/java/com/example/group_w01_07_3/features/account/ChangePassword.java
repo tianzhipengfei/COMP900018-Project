@@ -60,14 +60,24 @@ public class ChangePassword extends AppCompatActivity {
 
         setContentView(R.layout.activity_change_password);
 
-        constraintLayout = findViewById(R.id.change_password_mega_layout);
-
         //don't pop uo keyboard when entering the screen.
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
 
+        initView();
+        setupChangePasswordBtn();
+
+    }
+
+    private void initView(){
+        constraintLayout = findViewById(R.id.change_password_mega_layout);
         mToolbar = findViewById(R.id.change_password_back_toolbar);
+        oldPasswordET = (EditText) findViewById(R.id.edittext_change_password_old);
+        newPasswordET = (EditText) findViewById(R.id.edittext_change_password_new);
+        reNewPasswordET = (EditText) findViewById(R.id.edittext_change_password_re_new);
+        confirmChange = (Button) findViewById(R.id.change_password_confirm_button);
+
         mToolbar.setNavigationIcon(R.drawable.ic_back);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Change Password");
@@ -101,11 +111,9 @@ public class ChangePassword extends AppCompatActivity {
             }
         });
 
-        oldPasswordET = (EditText) findViewById(R.id.edittext_change_password_old);
-        newPasswordET = (EditText) findViewById(R.id.edittext_change_password_new);
-        reNewPasswordET = (EditText) findViewById(R.id.edittext_change_password_re_new);
+    }
 
-        confirmChange = (Button) findViewById(R.id.change_password_confirm_button);
+    private void setupChangePasswordBtn(){
         confirmChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,8 +169,8 @@ public class ChangePassword extends AppCompatActivity {
                 }
             }
         });
-
     }
+
 
     private boolean isValidPassword(String password) {
         Pattern p = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\\.#?!@$%^&*-_=+]).{8,}$");

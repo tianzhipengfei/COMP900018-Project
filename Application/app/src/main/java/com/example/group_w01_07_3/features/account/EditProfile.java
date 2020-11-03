@@ -92,45 +92,14 @@ public class EditProfile extends AppCompatActivity implements
     private String dobProfileString;
 
     private Handler handler;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
-
-        //apply alert sound
-        final MediaPlayer mediaPlayer = MediaPlayer.create(EditProfile.this, R.raw.alert);
-
-        avatarDisplay = (ImageView) findViewById(R.id.edit_profile_avatar_display);
-        usernameDisplay = (TextView) findViewById(R.id.edit_profile_username_display);
-        emailDisplay = (TextView) findViewById(R.id.edit_profile_email_display);
-        dobDisplay = (TextView) findViewById(R.id.edit_profile_dob_display);
-
-        //设置主Activity的toolbar, 以及初始化侧滑菜单栏
-        Toolbar toolbar = findViewById(R.id.toolbar_edit_profile);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setTitle("User Profile");
-
-        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
-
-        //handle the hamburger menu. remember to create two strings
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        //设置侧滑菜单栏
-        navigationView = findViewById(R.id.nav_view_edit_profile);
-        navigationView.getMenu().getItem(3).setChecked(true); //setChecked myself
-        navigationView.setNavigationItemSelectedListener(this);
-
-        //the logic to find the header, then update the username from server user profile
-        headerview = navigationView.getHeaderView(0);
-        headerUsername = headerview.findViewById(R.id.header_username);
-        headerAvatar = headerview.findViewById(R.id.header_avatar);
+        initView();
 
         changePasswordBtn = (MaterialButton) findViewById(R.id.edit_profile_btn_change_password);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
@@ -285,6 +254,38 @@ public class EditProfile extends AppCompatActivity implements
         onGetProfile();
     }
 
+    private void initView(){
+        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
+        avatarDisplay = (ImageView) findViewById(R.id.edit_profile_avatar_display);
+        usernameDisplay = (TextView) findViewById(R.id.edit_profile_username_display);
+        emailDisplay = (TextView) findViewById(R.id.edit_profile_email_display);
+        dobDisplay = (TextView) findViewById(R.id.edit_profile_dob_display);
+
+        //setup toolbar and drawer layout
+        Toolbar toolbar = findViewById(R.id.toolbar_edit_profile);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("User Profile");
+
+        //handle the hamburger menu. remember to create two strings
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        //setup navigation view
+        navigationView = findViewById(R.id.nav_view_edit_profile);
+        navigationView.getMenu().getItem(3).setChecked(true); //setChecked myself
+        navigationView.setNavigationItemSelectedListener(this);
+
+        //the logic to find the header, then update the username from server user profile
+        headerview = navigationView.getHeaderView(0);
+        headerUsername = headerview.findViewById(R.id.header_username);
+        headerAvatar = headerview.findViewById(R.id.header_avatar);
+
+        //apply alert sound
+        mediaPlayer = MediaPlayer.create(EditProfile.this, R.raw.alert);
+    }
+
     /**
      * Handle navigation drawer item click event, which navigates user to the destination
      *
@@ -420,7 +421,7 @@ public class EditProfile extends AppCompatActivity implements
 
     private void onGetProfile() {
         if (UserUtil.getToken(EditProfile.this).isEmpty()) {
-            MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed, Corrupted user token, lease reinstall app.", Snackbar.LENGTH_SHORT);
+            MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed. Corrupted user token, please reinstall app.", Snackbar.LENGTH_SHORT);
             usernameDisplay.setText("null");
             emailDisplay.setText("null");
             dobDisplay.setText("null");
