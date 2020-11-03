@@ -1,7 +1,7 @@
 package com.example.group_w01_07_3.features.onboarding;
 
 public class OnboardingItem {
-    
+
     String title, description;
     int introImage;
 
