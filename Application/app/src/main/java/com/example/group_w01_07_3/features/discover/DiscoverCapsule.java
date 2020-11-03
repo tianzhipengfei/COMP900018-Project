@@ -44,6 +44,7 @@ import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.util.FeedbackUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.UserUtil;
+import com.example.group_w01_07_3.util.MessageUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -375,7 +376,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 } else {
-                    displayToast(this, "permission denied", Toast.LENGTH_LONG);
+                    MessageUtil.displayToast(this, "permission denied", Toast.LENGTH_LONG);
                 }
                 return;
             }
@@ -533,7 +534,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         // no matter online or offline
         if (!this.isDestroyed()) {
             if (capsuleInfo.length() == 0) {
-                displayToast(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT);
+                MessageUtil.displayToast(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT);
                 Log.d("CAPSULE", "***** No token to get capsule *****");
                 allCapsules = new JSONArray();
                 selectedCapsule = new JSONObject();
@@ -856,7 +857,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
              * place thumb back to start position.
              */
             public void onFail() {
-                displayToast(popview_slide.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
+                MessageUtil.displayToast(popview_slide.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
                 seekbar.setProgress(0);
             }
         });
@@ -1099,21 +1100,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         });
     }
 
-
-    /**
-     * Display toast in a non-overlap manner
-     *
-     * @param context The context which toast will display at
-     * @param msg     The message to display
-     * @param length  the duration of toast display
-     */
-    private void displayToast(Context context, String msg, int length) {
-        if (toast == null || !toast.getView().isShown()) {
-            toast = Toast.makeText(context, msg, length);
-            toast.show();
-        }
-    }
-
     /**
      * Display snackbar in a non-overlap manner
      *
@@ -1177,7 +1163,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
 
             this.doubleBackToExitPressedOnce = true;
-            displayToast(this, "Press back again to exit", Toast.LENGTH_SHORT);
+            MessageUtil.displayToast(this, "Press back again to exit", Toast.LENGTH_SHORT);
 
             new Handler().postDelayed(new Runnable() {
                 @Override

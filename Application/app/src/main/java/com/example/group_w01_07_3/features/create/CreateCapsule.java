@@ -559,7 +559,7 @@ public class CreateCapsule extends AppCompatActivity implements
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        displayToast(CreateCapsule.this, "Connection fail. Please ckech your internet", Toast.LENGTH_SHORT);
+                        displayToast(CreateCapsule.this, "Connection fail. Please check your internet", Toast.LENGTH_SHORT);
                         progressbar.dismiss();
                     }
                 });
@@ -616,7 +616,7 @@ public class CreateCapsule extends AppCompatActivity implements
                             });
                         } else if(status.equalsIgnoreCase("profanity text")){
                             progressbar.dismiss();
-                            displaySnackbar(drawerLayout, "profanity text",
+                            displaySnackbar(drawerLayout, "Hi there. Look like there are profanity text, please remove them and try again",
                                     Snackbar.LENGTH_SHORT);
                         }
                     } else {
