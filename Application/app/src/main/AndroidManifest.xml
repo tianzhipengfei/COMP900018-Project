@@ -23,7 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".features.history.FullScreenImageUtil" >
+        <activity android:name=".util.FullScreenImageUtil" >
         </activity>
         <activity
             android:screenOrientation="portrait"

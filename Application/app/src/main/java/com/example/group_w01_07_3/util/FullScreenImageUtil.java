@@ -1,4 +1,4 @@
-package com.example.group_w01_07_3.features.history;
+package com.example.group_w01_07_3.util;
 
 import android.os.Bundle;
 import android.transition.Fade;
