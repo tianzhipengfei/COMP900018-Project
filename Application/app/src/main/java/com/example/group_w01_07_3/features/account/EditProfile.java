@@ -286,6 +286,12 @@ public class EditProfile extends AppCompatActivity implements
         onGetProfile();
     }
 
+    /**
+     * Handle navigation drawer item click event, which navigates user to the destination
+     *
+     * @param item the top level-destination listed at the navigation drawer
+     * @return a boolean indicates if menu item click is done
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -650,8 +656,10 @@ public class EditProfile extends AppCompatActivity implements
         super.onDestroy();
     }
 
-    //double backpressed to exit app
-    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    /**
+     * Double back pressed to exit app
+     * The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
+     */
     @Override
     public void onBackPressed() {
         if(drawerLayout.isDrawerOpen(navigationView)){

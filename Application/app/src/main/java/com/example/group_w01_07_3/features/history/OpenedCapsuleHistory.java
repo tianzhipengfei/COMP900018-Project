@@ -186,6 +186,10 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         });
     }
 
+    /**
+     * Retrieve previously opened Geo-capsules, with auto scroll-up update capability
+     * The function is couped with comprehensive connectivity check that handled all scenarios
+     */
     private void onGetHistory() {
         HttpUtil.getHistory(UserUtil.getToken(OpenedCapsuleHistory.this), testingList.size(), RECORD_NUM_PER_REQUEST, new okhttp3.Callback() {
             @Override
@@ -198,7 +202,8 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                         String status = responseJSON.getString("success");
                         Log.d("GET HISTORY", "GET HISTORY success: " + status);
                         final JSONArray records = responseJSON.getJSONArray("hisotry");
-                        // contains new records
+
+                        // server response contains new records
                         if (records.length() != 0) {
                             for (int i = 0; i < records.length(); i++) {
                                 JSONObject record = records.getJSONObject(i);
@@ -364,6 +369,19 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
     }
 
+    /**
+     * Display details of the clicked Geo-capsule with shared element transition
+     *
+     * @param pos position of the card in the list
+     * @param title capsule title
+     * @param date opened date
+     * @param capImage capsule image
+     * @param privateTag private or public capsule tag
+     * @param content content of the Geo-capsule
+     * @param avatar creator avatar
+     * @param by text "by"
+     * @param username creator username
+     */
     @Override
     public void onCapsuleItemClick(int pos, TextView title, TextView date, ImageView capImage, TextView privateTag, TextView content, ImageView avatar, TextView by, TextView username) {
         // create intent and send book object to Details activity
@@ -408,6 +426,12 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             startActivity(intent);
     }
 
+    /**
+     * Handle navigation drawer item click event, which navigates user to the destination
+     *
+     * @param item the top level-destination listed at the navigation drawer
+     * @return a boolean indicates if menu item click is done
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         drawerLayout.closeDrawers();
@@ -442,6 +466,9 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         return false;
     }
 
+    /**
+     * Update drawer layout header username & avatar. Supports auto retry via OKHTTP
+     */
     private void updateHeader() {
         if (!UserUtil.getToken(OpenedCapsuleHistory.this).isEmpty()) {
             HttpUtil.getProfile(UserUtil.getToken(OpenedCapsuleHistory.this), new okhttp3.Callback() {
@@ -515,8 +542,10 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         }
     }
 
-    //double backpressed to exit app
-    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    /**
+     * Double back pressed to exit app
+     * The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(navigationView)) {

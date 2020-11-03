@@ -769,8 +769,10 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
-    //double backpressed to exit app
-    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
+    /**
+     * Double back pressed to exit app
+     * The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
+     */
     @Override
     public void onBackPressed() {
 
