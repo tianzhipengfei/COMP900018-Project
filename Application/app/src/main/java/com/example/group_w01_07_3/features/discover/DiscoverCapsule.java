@@ -69,6 +69,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -1017,7 +1018,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
             request.put("tkn", token);
             request.put("lat", mLastLocation.getLatitude());
             request.put("lon", mLastLocation.getLongitude());
-            request.put("time", Calendar.getInstance().getTime());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            request.put("time",sdf.format(Calendar.getInstance().getTime()));
             request.put("cid", selectedCapsule.get("cid"));
             Log.d("PopUpWindow", "onMarkerClick: " + "Information of request" + request.toString());
         } catch (JSONException e) {
