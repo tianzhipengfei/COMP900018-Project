@@ -29,6 +29,7 @@ import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.MessageUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -286,7 +287,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 UserUtil.clearToken(OpenedCapsuleHistory.this);
-                                Toast.makeText(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                MessageUtil.displayToast(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT);
                                 Intent intent = new Intent(OpenedCapsuleHistory.this, SignIn.class);
                                 startActivity(intent);
                                 finish();
@@ -491,7 +492,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     UserUtil.clearToken(OpenedCapsuleHistory.this);
-                                    Toast.makeText(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                    MessageUtil.displayToast(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT);
                                     Intent intent = new Intent(OpenedCapsuleHistory.this, SignIn.class);
                                     startActivity(intent);
                                     finish();
@@ -535,7 +536,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             }
 
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+            MessageUtil.displayToast(this, "Press back again to exit", Toast.LENGTH_SHORT);
 
             new Handler().postDelayed(new Runnable() {
 
