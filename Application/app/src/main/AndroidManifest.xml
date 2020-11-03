@@ -25,8 +25,14 @@
         android:theme="@style/AppTheme" >
         <activity android:name=".features.history.FullScreenImageUtil" >
         </activity>
-        <activity android:name=".features.onboarding.OnBoardingActivity" />
-        <activity android:name=".LaunchActivity" >
+        <activity
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:name=".features.onboarding.OnBoardingActivity" />
+        <activity
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:name=".LaunchActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

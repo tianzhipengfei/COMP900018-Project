@@ -127,20 +127,12 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     }
 
     /**
-     * Load all information of the capsule from server or directly from the object.
+     * Load all information of the Geo-capsule from server or directly from the object.
      *
      * @param item The capsule object to be displayed
      */
     private void loadCapsule(OpenedCapsule item) {
-        titleString = item.getCapsule_title();
-        dateString = item.getOpened_date();
-        tagIndentifier = item.getTag();
-        usernameString = item.getUsername();
-        contentString = item.getContent();
-
-        imageLocation = item.getCapsule_url();
-        avatarLocation = item.getAvatar_url();
-        voiceLocation = item.getVoice_url();
+        extractCapsuleInfo();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -186,6 +178,21 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     }
 
     /**
+     * Extract capsule information from the object.
+     */
+    private void extractCapsuleInfo() {
+        titleString = item.getCapsule_title();
+        dateString = item.getOpened_date();
+        tagIndentifier = item.getTag();
+        usernameString = item.getUsername();
+        contentString = item.getContent();
+
+        imageLocation = item.getCapsule_url();
+        avatarLocation = item.getAvatar_url();
+        voiceLocation = item.getVoice_url();
+    }
+
+    /**
      * load capsule content image from the 3rd party image server using Glide.
      */
     private void loadImage() {
@@ -205,7 +212,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                     MessageUtil.displaySnackbar(coordinatorLayout,
-                                            "Failed to load the capsule image, please check your internet connection",
+                                            "Failed to load the capsule image. Please check internet connection.",
                                             Snackbar.LENGTH_LONG);
                                     return false;
                                 }
@@ -242,7 +249,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             MessageUtil.displaySnackbar(coordinatorLayout,
-                                    "Failed to load user avatar of the capsule owner, please check your internet connection",
+                                    "Failed to load Geo-capsule creator avatar. Please check internet connection.",
                                     Snackbar.LENGTH_LONG);
                             return false;
                         }
@@ -309,7 +316,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     @Override
                     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
                         MessageUtil.displaySnackbar(coordinatorLayout,
-                                "Failed to Load audio, please check your internet connection",
+                                "Failed to Load audio. Please check internet connection.",
                                 Snackbar.LENGTH_LONG);
                         return false;
                     }

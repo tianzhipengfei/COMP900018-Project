@@ -8,6 +8,10 @@ import android.transition.Fade;
 import android.view.Window;
 import android.widget.ImageView;
 
+/**
+ * This class will display image in full screen view upon clicking
+ * But due to issue of overriding shared element transition, this class is not used
+ */
 public class FullScreenImageUtil extends AppCompatActivity {
     private String imageURL;
     private ImageView imageView;

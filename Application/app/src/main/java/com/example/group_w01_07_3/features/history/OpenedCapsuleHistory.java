@@ -82,7 +82,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     boolean doubleBackToExitPressedOnce = false;
 
     //number of capsule request from server per update
-    private int RECORD_NUM_PER_REQUEST = 5;
+    private int RECORD_NUM_PER_REQUEST = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -235,13 +235,15 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                     // response list < records_num_pere_request: no more records
                                     if (records.length() < RECORD_NUM_PER_REQUEST) {
                                         recyclerView.setPushRefreshEnable(false);
-                                        MessageUtil.displaySnackbar(drawerLayout, "No more records", Snackbar.LENGTH_LONG);
+                                        MessageUtil.displaySnackbar(drawerLayout, "Retrieve gallery records Complete. No more records found.", Snackbar.LENGTH_LONG);
                                     }
 
+                                    //inform list that fresh has completed. due to library bug, must delay at least 0.1 s, otherwise will freeze.
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
                                             recyclerView.setPullLoadMoreCompleted();
+                                            MessageUtil.displaySnackbar(drawerLayout, "Retrieve gallery records Complete.", Snackbar.LENGTH_LONG);
                                             return;
                                         }
                                     }, 100);
@@ -249,6 +251,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 }
                             });
                         } else {
+                            // If server response no record reamining for user
                             OpenedCapsuleHistory.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -257,15 +260,18 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                     mShimmerViewContainer.setVisibility(View.INVISIBLE);
                                     getPlaceholder_retryText.setVisibility(View.INVISIBLE);
                                     placeholder_retryImage.setVisibility(View.INVISIBLE);
+
+                                    //If this is no record found from server and current list is empty, means that user has empty gallery
                                     if (testingList.size() == 0) {
                                         recyclerView.setVisibility(View.INVISIBLE);
                                         placeholder_emptyHistoryText.setVisibility(View.VISIBLE);
                                         placeholder_emptyHistoryImage.setVisibility(View.VISIBLE);
                                     } else {
+                                        // Otherwise user has reached the last page of the gallery
                                         recyclerView.setVisibility(View.VISIBLE);
                                         placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
                                         placeholder_emptyHistoryImage.setVisibility(View.INVISIBLE);
-                                        MessageUtil.displaySnackbar(drawerLayout, "Hi there. Looks like there are no more records", Snackbar.LENGTH_LONG);
+                                        MessageUtil.displaySnackbar(drawerLayout, "Retrieve gallery records Complete. No more records found.", Snackbar.LENGTH_LONG);
                                     }
 
                                     new Handler().postDelayed(new Runnable() {
@@ -287,27 +293,30 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                         OpenedCapsuleHistory.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (!OpenedCapsuleHistory.this.isDestroyed()){
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    placeholder_retryImage.setVisibility(View.INVISIBLE);
+                                    getPlaceholder_retryText.setVisibility(View.INVISIBLE);
+                                    placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
+                                    placeholder_emptyHistoryImage.setVisibility(View.INVISIBLE);
+
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            recyclerView.setPullLoadMoreCompleted();
+                                            recyclerView.setPushRefreshEnable(false);
+                                            return;
+                                        }
+                                    }, 100);
+                                }
+
+                                //force quit to sign in page if not logged in somehow
                                 UserUtil.clearToken(OpenedCapsuleHistory.this);
                                 MessageUtil.displayToast(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT);
                                 Intent intent = new Intent(OpenedCapsuleHistory.this, SignIn.class);
                                 startActivity(intent);
                                 finish();
                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-
-                                recyclerView.setVisibility(View.VISIBLE);
-                                placeholder_retryImage.setVisibility(View.INVISIBLE);
-                                getPlaceholder_retryText.setVisibility(View.INVISIBLE);
-                                placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
-                                placeholder_emptyHistoryImage.setVisibility(View.INVISIBLE);
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        recyclerView.setPullLoadMoreCompleted();
-                                        recyclerView.setPushRefreshEnable(false);
-                                        return;
-                                    }
-                                }, 100);
                             }
                         });
                     } else {
@@ -344,7 +353,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 recyclerView.setPullLoadMoreCompleted();
                                 if (testingList.size() % RECORD_NUM_PER_REQUEST != 0) {
                                     recyclerView.setPushRefreshEnable(false);
-                                    MessageUtil.displaySnackbar(drawerLayout, "Retrieve gallery timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    MessageUtil.displaySnackbar(drawerLayout, "Retrieve gallery timeout. Please check Internet connection.", Snackbar.LENGTH_LONG);
                                 }
                                 return;
                             }
@@ -355,7 +364,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                             public void run() {
                                 recyclerView.setPullLoadMoreCompleted();
                                 if (testingList.size() != 0) {
-                                    MessageUtil.displaySnackbar(drawerLayout, "Retrieve gallery timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    MessageUtil.displaySnackbar(drawerLayout, "Retrieve gallery timeout. Please check Internet connection.", Snackbar.LENGTH_LONG);
                                 }
                                 return;
                             }
@@ -409,6 +418,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         Pair<View, String> p11 = Pair.create((View) toolbar, "capsuleToolbarTN");
 
         ActivityOptionsCompat optionsCompat;
+
         //Here we setup which view will activate shared element transition.
         //Note that some phone will hide navigation bar, so need to make a null check
         if (navigationBar == null) {
@@ -511,7 +521,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     UserUtil.clearToken(OpenedCapsuleHistory.this);
-                                    MessageUtil.displayToast(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT);
                                     Intent intent = new Intent(OpenedCapsuleHistory.this, SignIn.class);
                                     startActivity(intent);
                                     finish();

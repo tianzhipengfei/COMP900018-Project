@@ -15,12 +15,11 @@ import com.example.group_w01_07_3.features.onboarding.OnBoardingActivity;
 
 public class LaunchActivity extends AppCompatActivity {
 
-    private  static int SPLASH_TIME_OUT = 2000; //animation duration
-
-    Animation logoAnim, textAnim;
-
     ImageView logo;
     TextView title, subtitle;
+    Animation logoAnim, textAnim;
+    private  static int SPLASH_TIME_OUT = 2000; //animation duration
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +45,6 @@ public class LaunchActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                /*
-                For the final version, app will follow three steps on launch
-                Step0: Launch Screen (A.K.A: Splash Screen)
-                Step1: Paper OnBoarding Screen(Slider picture feature introduction): first time open APP only
-                Step2: Login(Authentication successfully)
-                Step3: Discover Page(Homepage)
-                */
                 Intent intent = new Intent(LaunchActivity.this, OnBoardingActivity.class);
                 startActivity(intent);
                 finish();
