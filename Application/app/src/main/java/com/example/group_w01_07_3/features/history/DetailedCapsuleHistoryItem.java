@@ -23,6 +23,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.util.MessageUtil;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -51,9 +52,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     String titleString, dateString, usernameString, contentString;
     int tagIndentifier;
     String imageLocation, avatarLocation, voiceLocation;
-
-    // Message Section
-    private Snackbar snackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,7 +204,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                             .listener(new RequestListener<Drawable>() {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    displaySnackbar(coordinatorLayout,
+                                    MessageUtil.displaySnackbar(coordinatorLayout,
                                             "Failed to load the capsule image, please check your internet connection",
                                             Snackbar.LENGTH_LONG);
                                     return false;
@@ -243,7 +241,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            displaySnackbar(coordinatorLayout,
+                            MessageUtil.displaySnackbar(coordinatorLayout,
                                     "Failed to load user avatar of the capsule owner, please check your internet connection",
                                     Snackbar.LENGTH_LONG);
                             return false;
@@ -310,7 +308,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     //handle media player lose network connection
                     @Override
                     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                        displaySnackbar(coordinatorLayout,
+                        MessageUtil.displaySnackbar(coordinatorLayout,
                                 "Failed to Load audio, please check your internet connection",
                                 Snackbar.LENGTH_LONG);
                         return false;
@@ -320,20 +318,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    /**
-     * Display snackbar in a non-overlap manner
-     *
-     * @param view   view where snackbar will display at
-     * @param msg    the message to display
-     * @param length the duration of snackbar display
-     */
-    private void displaySnackbar(View view, String msg, int length) {
-        if (snackbar == null || !snackbar.getView().isShown()) {
-            snackbar = Snackbar.make(view, msg, length);
-            snackbar.show();
         }
     }
 

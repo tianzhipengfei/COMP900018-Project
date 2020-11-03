@@ -137,9 +137,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private View popupview_tap;
     private View popupview_shake;
     private View popview_slide;
-    // message section
-    Toast toast = null;
-    Snackbar snackbar = null;
 
     /**
      * Performs basic application startup logic that happens only once for the entire life of the activity.
@@ -557,7 +554,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     can_i_retrieve_http = false;
                                     can_i_fresh_markers = true;
 
-                                    displaySnackbar(drawerLayout, "Discovering Memory Capsule...Please Wait", Snackbar.LENGTH_LONG);
+                                    MessageUtil.displaySnackbar(drawerLayout, "Discovering Memory Capsule...Please Wait", Snackbar.LENGTH_LONG);
                                 } else if (responseJSON.has("error")) {
                                     String status = responseJSON.getString("error");
                                     Log.d("GETCAPSULE", "getCapsule error: " + status);
@@ -581,7 +578,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                             e.printStackTrace();
-                            displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection\nReconnecting...", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection\nReconnecting...", Snackbar.LENGTH_LONG);
                         }
                     });
                 } catch (JSONException e) {
@@ -1041,7 +1038,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         //now enable discover shake function
                         popUpShake = false;
                         discover_refresh = true;
-                        displaySnackbar(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                        MessageUtil.displaySnackbar(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                     }
                 });
             }
@@ -1098,20 +1095,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 }
             }
         });
-    }
-
-    /**
-     * Display snackbar in a non-overlap manner
-     *
-     * @param view   view where snackbar will display at
-     * @param msg    the message to display
-     * @param length the duration of snackbar display
-     */
-    private void displaySnackbar(View view, String msg, int length) {
-        if (snackbar == null || !snackbar.getView().isShown()) {
-            snackbar = Snackbar.make(view, msg, length);
-            snackbar.show();
-        }
     }
 
     /**
