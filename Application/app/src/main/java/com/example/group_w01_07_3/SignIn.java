@@ -11,7 +11,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -33,6 +32,9 @@ import java.util.Objects;
 import okhttp3.Call;
 import okhttp3.Response;
 
+/**
+ * SignIn Activity
+ */
 public class SignIn extends AppCompatActivity {
 
     // App view
@@ -41,6 +43,7 @@ public class SignIn extends AppCompatActivity {
     private EditText passwordET;
     private CheckBox rememberCB;
     private Button signInButton;
+
     private TextView createAccountButton;
     private ImageView sideAddButton;
 
