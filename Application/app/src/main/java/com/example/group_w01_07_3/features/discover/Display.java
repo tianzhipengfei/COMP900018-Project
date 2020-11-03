@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Display extends AppCompatActivity {
@@ -139,7 +140,10 @@ public class Display extends AppCompatActivity {
         private_status = capsuleInfo.getInt("cpermission");
         capsuleTitle = capsuleInfo.getString("ctitle");
         capsuleContent = capsuleInfo.getString("ccontent");
-        open_date = Calendar.getInstance().getTime().toString();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+        open_date = sdf.format(Calendar.getInstance().getTime());
+
         imagelink = capsuleInfo.getString("cimage");
         Log.d(TAG, "display: " + "the new image Link" + imagelink);
         audiolink = capsuleInfo.getString("caudio");
