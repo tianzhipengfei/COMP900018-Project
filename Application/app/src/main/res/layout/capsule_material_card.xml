@@ -103,7 +103,7 @@
                     android:typeface="normal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_tag" />
+                    app:layout_constraintTop_toBottomOf="@+id/history_opened_capsule_openDate" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/history_opened_capsule_content"
