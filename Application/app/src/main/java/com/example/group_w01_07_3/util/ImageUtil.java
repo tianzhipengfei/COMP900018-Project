@@ -39,11 +39,15 @@ public class ImageUtil {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos); // compress 30%
         int options = 30;
-        while (baos.toByteArray().length / 1024 > 100) {
-            // loop to determine if the compressed image is larger than 100kb, and continue to compress if larger
+        while (baos.toByteArray().length / 1024 > 500) {
+            // loop to determine if the compressed image is larger than 500kb, and continue to compress if larger
             baos.reset(); // clear baos
             options -= 5; // every time reduce by 5
-            bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos); // compress options% and store the compressed data in baos
+            if (options == 5){
+                break;
+            } else {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos); // compress options% and store the compressed data in baos
+            }
         }
         File file = new File(context.getExternalCacheDir(), filename); // image file
         try {
