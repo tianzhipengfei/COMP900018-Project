@@ -1,10 +1,5 @@
 package com.example.group_w01_07_3.features.history;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -16,6 +11,11 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -30,6 +30,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.IOException;
 
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
+
     //APP view
     private CoordinatorLayout coordinatorLayout;
     private Toolbar mToolbar;
@@ -229,7 +230,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 } else {
                     Log.d("FINISHED", "run: Activity has been finished, don't load Glide for image");
                 }
-
             }
         });
     }
@@ -240,7 +240,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
     private void loadAvatar() {
         //avatar view has fix size, so no need to use viewtree
         //use Glide to load avatar, once successful loaded, turn off shimmer and display avatar
-
         //ONLY load if the activity is still alive
         if (!DetailedCapsuleHistoryItem.this.isDestroyed()) {
             Glide.with(this)
@@ -321,7 +320,6 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                         return false;
                     }
                 });
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -362,4 +360,5 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             mediaPlayer.pause();
         }
     }
+
 }
