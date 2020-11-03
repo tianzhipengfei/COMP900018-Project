@@ -5,13 +5,28 @@ import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 
+/**
+ * FeedbackUtil is used when need vibrate feedback
+ */
 public class FeedbackUtil {
+
     private Context context;
+
+    /**
+     * constructor
+     *
+     * @param context context
+     */
     public FeedbackUtil(Context context) {
         this.context = context;
     }
 
-    public static void vibrate(Context context){
+    /**
+     * vibrate feedback method
+     *
+     * @param context context
+     */
+    public static void vibrate(Context context) {
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -21,4 +36,5 @@ public class FeedbackUtil {
             v.vibrate(200);
         }
     }
+
 }
