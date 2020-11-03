@@ -615,8 +615,9 @@ public class CreateCapsule extends AppCompatActivity implements
                                 }
                             });
                         } else if(status.equalsIgnoreCase("profanity text")){
-                            System.out.println("profanity text");
-                            System.out.println(capsuleInfo.toString());
+                            progressbar.dismiss();
+                            displaySnackbar(drawerLayout, "profanity text",
+                                    Snackbar.LENGTH_SHORT);
                         }
                     } else {
                         progressbar.dismiss();
