@@ -64,6 +64,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import okhttp3.Call;
@@ -408,7 +409,10 @@ public class CreateCapsule extends AppCompatActivity implements
         try {
             capsuleInfo.put("title", capsuleTitle.getText());
             capsuleInfo.put("content", capsuleContent.getText());
-            capsuleInfo.put("time", Calendar.getInstance().getTime());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+            capsuleInfo.put("time", sdf.format(Calendar.getInstance().getTime()));
+
             capsuleInfo.put("permission", permission);
             capsuleInfo.put("tkn", this.token);
         } catch (JSONException e) {
