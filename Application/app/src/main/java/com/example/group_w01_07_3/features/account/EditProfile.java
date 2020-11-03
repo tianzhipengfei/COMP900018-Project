@@ -189,7 +189,7 @@ public class EditProfile extends AppCompatActivity implements
                         } else {
                             boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                             if(!internetFlag){
-                                MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                                MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout. Please check Internet connection", Snackbar.LENGTH_LONG);
                                 signOutButton.setEnabled(true);
                                 changePasswordBtn.setEnabled(true);
                                 changeAvatarButton.setEnabled(true);
@@ -239,7 +239,6 @@ public class EditProfile extends AppCompatActivity implements
                                                 @Override
                                                 public void run() {
                                                     UserUtil.clearToken(EditProfile.this);
-                                                    MessageUtil.displayToast(EditProfile.this, "Invalid form", Toast.LENGTH_SHORT);
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
@@ -258,7 +257,7 @@ public class EditProfile extends AppCompatActivity implements
                                     EditProfile.this.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                            MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout. Please check Internet connection", Snackbar.LENGTH_LONG);
                                             signOutButton.setEnabled(true);
                                             changePasswordBtn.setEnabled(true);
                                             changeAvatarButton.setEnabled(true);
@@ -333,10 +332,8 @@ public class EditProfile extends AppCompatActivity implements
                 if (resultCode == RESULT_OK) {
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(BottomDialog.imageUri));
-//                        avatarDisplay.setImageBitmap(bitmap);
                         newAvatarFile = ImageUtil.compressImage(EditProfile.this, bitmap, "output_photo_compressed.jpg");
                         bottomDialog.dismiss();
-//                        avatarDisplay.setImageBitmap(bitmap);
                         onUploadImage();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -361,7 +358,7 @@ public class EditProfile extends AppCompatActivity implements
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    MessageUtil.displayToast(this, "You denied the permission", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(drawerLayout, "You denied the permission.", Snackbar.LENGTH_SHORT);
                 }
                 break;
             default:
@@ -417,13 +414,13 @@ public class EditProfile extends AppCompatActivity implements
 //            avatarDisplay.setImageBitmap(bitmap);
             bottomDialog.dismiss();
         } else {
-            MessageUtil.displayToast(this, "Failed to get image", Toast.LENGTH_SHORT);
+            MessageUtil.displaySnackbar(drawerLayout, "Failed to take the picture.", Snackbar.LENGTH_SHORT);
         }
     }
 
     private void onGetProfile() {
         if (UserUtil.getToken(EditProfile.this).isEmpty()) {
-            MessageUtil.displayToast(EditProfile.this, "No token to get profile", Toast.LENGTH_SHORT);
+            MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed, Corrupted user token, lease reinstall app.", Snackbar.LENGTH_SHORT);
             usernameDisplay.setText("null");
             emailDisplay.setText("null");
             dobDisplay.setText("null");
@@ -497,7 +494,7 @@ public class EditProfile extends AppCompatActivity implements
                                               @Override
                                               public void run() {
                                                   if (!EditProfile.this.isDestroyed()){
-                                                      MessageUtil.displayToast(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_LONG);
+                                                      MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed, Invalid form, please try again later.", Snackbar.LENGTH_SHORT);
                                                       usernameDisplay.setText("null");
                                                       emailDisplay.setText("null");
                                                       dobDisplay.setText("null");
@@ -523,7 +520,7 @@ public class EditProfile extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 Log.d("RETRY", "run: RETRY onGetProfile");
-                                MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                                MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed, please check internet connection. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
                                 onGetProfile();
                             }
                         },3000);
@@ -567,7 +564,7 @@ public class EditProfile extends AppCompatActivity implements
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbar(drawerLayout, "Upload avatar image failed, please check internet connection. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
 
                             onUploadImage();
                         }
@@ -641,7 +638,7 @@ public class EditProfile extends AppCompatActivity implements
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbar(drawerLayout, "Change Avatar failed. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
 
                             onChangeAvatar();
                         }

@@ -323,7 +323,7 @@ public class SignUp extends AppCompatActivity {
             signUpButton.setEnabled(true);
             return false;
         } else if (dob.equalsIgnoreCase("Select Birthday")) {
-            MessageUtil.displayToast(SignUp.this, "Date of Birth is required", Toast.LENGTH_SHORT);
+            MessageUtil.displaySnackbar(constraintLayout, "Sign up failed. Date of Birth is required.", Snackbar.LENGTH_SHORT);
             signUpButton.setEnabled(true);
             return false;
         }
@@ -391,7 +391,6 @@ public class SignUp extends AppCompatActivity {
                         avatarImageBtn.setImageBitmap(bitmap);
                         avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "output_photo_compressed.jpg");
                         bottomDialog.dismiss();
-                        MessageUtil.displayToast(this, "Take the photo successfully", Toast.LENGTH_SHORT);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -415,7 +414,7 @@ public class SignUp extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    MessageUtil.displayToast(this, "You denied the permission", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "You denied the permission.", Snackbar.LENGTH_SHORT);
                 }
                 break;
             default:
@@ -468,9 +467,8 @@ public class SignUp extends AppCompatActivity {
             avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "image_compressed.jpg");
             avatarImageBtn.setImageBitmap(bitmap);
             bottomDialog.dismiss();
-            MessageUtil.displayToast(this, "Select the image successfully", Toast.LENGTH_SHORT);
         } else {
-            MessageUtil.displayToast(this, "Failed to get image", Toast.LENGTH_SHORT);
+            MessageUtil.displaySnackbar(constraintLayout, "Failed to take the picture. Please try again", Snackbar.LENGTH_SHORT);
         }
     }
 
@@ -480,7 +478,7 @@ public class SignUp extends AppCompatActivity {
         avatarImageBtn.setEnabled(false);
         boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
         if(!internetFlag){
-            MessageUtil.displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+            MessageUtil.displaySnackbar(constraintLayout, "Sign up Failed. Please turn on the internet.", Snackbar.LENGTH_LONG);
             signUpButton.setEnabled(true);
             backToSignInText.setEnabled(true);
             sideBackShape.setEnabled(true);
@@ -515,7 +513,7 @@ public class SignUp extends AppCompatActivity {
                                           public void run() {
                                               usernameET.setText("");
                                               emailET.setText("");
-                                              MessageUtil.displayToast(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT);
+                                              MessageUtil.displaySnackbar(constraintLayout, "Sign up failed. Username or Email Address already exists.", Snackbar.LENGTH_SHORT);
                                               signUpButton.setEnabled(true);
                                               backToSignInText.setEnabled(true);
                                               sideBackShape.setEnabled(true);
@@ -528,7 +526,7 @@ public class SignUp extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                                           @Override
                                           public void run() {
-                                              MessageUtil.displayToast(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT);
+                                              MessageUtil.displaySnackbar(constraintLayout, "Sign up Failed. Please try again later.", Snackbar.LENGTH_SHORT);
                                               signUpButton.setEnabled(true);
                                               backToSignInText.setEnabled(true);
                                               sideBackShape.setEnabled(true);
@@ -548,7 +546,7 @@ public class SignUp extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        MessageUtil.displaySnackbar(constraintLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                        MessageUtil.displaySnackbar(constraintLayout, "Sign up timeout. Please check Internet connection.", Snackbar.LENGTH_LONG);
                         signUpButton.setEnabled(true);
                         backToSignInText.setEnabled(true);
                         sideBackShape.setEnabled(true);
