@@ -80,7 +80,9 @@ public class EditProfile extends AppCompatActivity implements
     private TextView usernameDisplay;
     private TextView emailDisplay;
     private TextView dobDisplay;
-    MaterialButton changePasswordBtn, changeAvatarButton;
+    private MaterialButton changePasswordBtn;
+    private MaterialButton changeAvatarButton;
+    private MaterialButton signOutButton;
 
 
     private File newAvatarFile;
@@ -105,10 +107,26 @@ public class EditProfile extends AppCompatActivity implements
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setAllEnabledFalse();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(400);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setAllEnabledTrue();
+                            }
+                        });
+                    }
+                }).start();
                 if (!EditProfile.this.isDestroyed()) {
                     Intent intent = new Intent(EditProfile.this, ChangePassword.class);
                     startActivity(intent);
-//                overridePendingTransition(R.anim.slide_in_right,R.anim.stay);
                     overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 }
             }
@@ -131,7 +149,7 @@ public class EditProfile extends AppCompatActivity implements
             }
         });
 
-        final MaterialButton signOutButton = (MaterialButton) findViewById(R.id.button_acct_sign_out);
+        signOutButton = (MaterialButton) findViewById(R.id.button_acct_sign_out);
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,15 +160,12 @@ public class EditProfile extends AppCompatActivity implements
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        signOutButton.setEnabled(false);
-                        changePasswordBtn.setEnabled(false);
-                        changeAvatarButton.setEnabled(false);
+                        setAllEnabledFalse();
                         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
                         String token = UserUtil.getToken(EditProfile.this);
                         if (token.isEmpty()) {
                             Log.d("SIGNOUT", "Error: no token");
-                            changePasswordBtn.setEnabled(true);
-                            changeAvatarButton.setEnabled(true);
+                            setAllEnabledTrue();
                             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                             Intent intent = new Intent(EditProfile.this, SignIn.class);
                             startActivity(intent);
@@ -159,9 +174,7 @@ public class EditProfile extends AppCompatActivity implements
                             boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                             if(!internetFlag){
                                 MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout. Please check Internet connection", Snackbar.LENGTH_LONG);
-                                signOutButton.setEnabled(true);
-                                changePasswordBtn.setEnabled(true);
-                                changeAvatarButton.setEnabled(true);
+                                setAllEnabledTrue();
                                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                                 Log.d("SIGNOUT", "No Internet Connection");
                                 return;
@@ -227,9 +240,7 @@ public class EditProfile extends AppCompatActivity implements
                                         @Override
                                         public void run() {
                                             MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout. Please check Internet connection", Snackbar.LENGTH_LONG);
-                                            signOutButton.setEnabled(true);
-                                            changePasswordBtn.setEnabled(true);
-                                            changeAvatarButton.setEnabled(true);
+                                            setAllEnabledTrue();
                                             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
                                         }
                                     });
@@ -679,6 +690,18 @@ public class EditProfile extends AppCompatActivity implements
                 }
             }, 2000);
         }
+    }
+
+    private void setAllEnabledFalse() {
+        signOutButton.setEnabled(false);
+        changePasswordBtn.setEnabled(false);
+        changeAvatarButton.setEnabled(false);
+    }
+
+    private void setAllEnabledTrue() {
+        signOutButton.setEnabled(true);
+        changePasswordBtn.setEnabled(true);
+        changeAvatarButton.setEnabled(true);
     }
 
 }
