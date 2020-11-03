@@ -1,6 +1,5 @@
 package com.example.group_w01_07_3;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -49,7 +48,6 @@ public class SignIn extends AppCompatActivity {
     private SharedPreferences pref;
 
     // message section
-    private Toast toast = null;
     private Snackbar snackbar = null;
     private long mLastClickTime = 0;
 

@@ -1,8 +1,6 @@
 package com.example.group_w01_07_3;
 
-import android.app.Activity;
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,10 +19,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,34 +54,25 @@ import okhttp3.Response;
 
 public class SignUp extends AppCompatActivity {
 
+    TextView backToSignInText;
+    ImageView sideBackShape;
     private MaterialDatePicker<Long> picker;
     private Button dobPicker;
     private String dob;
-
     private EditText usernameET;
     private String username;
-
     private EditText emailET;
     private String email;
-
     private EditText passwordET;
     private String password;
-
     private EditText reEnterPasswordET;
     private String reEnterPassword;
-
     private ImageView avatarImageBtn;
     private BottomDialog bottomDialog;
     private Button signUpButton;
-
     private File avatarFile = null;
     private String avatarFileLink = null;
-
     private ConstraintLayout constraintLayout;
-
-    TextView backToSignInText;
-    ImageView sideBackShape;
-
     // message section
     private Toast toast = null;
     private Snackbar snackbar = null;
@@ -203,17 +190,17 @@ public class SignUp extends AppCompatActivity {
                 TextInputLayout passwordWrapper = (TextInputLayout) findViewById(R.id.sign_up_password_input_layout);
                 TextInputLayout rePasswordWrapper = (TextInputLayout) findViewById(R.id.sign_up_reenter_password_input_layout);
 
-                if (username.isEmpty() || !isValidUsername(username)){
+                if (username.isEmpty() || !isValidUsername(username)) {
                     usernameWrapper.setError("Not a valid Username");
                 } else {
                     usernameWrapper.setErrorEnabled(false);
                 }
-                if (email.isEmpty() || !isValidEmail(email)){
+                if (email.isEmpty() || !isValidEmail(email)) {
                     emailWrapper.setError("Not a valid Email Address");
-                } else{
+                } else {
                     emailWrapper.setErrorEnabled(false);
                 }
-                if (password.isEmpty() || !isValidPassword(password)){
+                if (password.isEmpty() || !isValidPassword(password)) {
                     passwordWrapper.setError("Not a valid Password");
                 } else {
                     passwordWrapper.setErrorEnabled(false);
@@ -226,12 +213,12 @@ public class SignUp extends AppCompatActivity {
 
                 if (allRequiredFinished(username, email, password, reEnterPassword, dob)) {
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
-                    if(!internetFlag){
+                    if (!internetFlag) {
                         Snackbar snackbar = Snackbar
                                 .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                         snackbar.show();
                         signUpButton.setEnabled(true);
-                        return ;
+                        return;
                     }
                     Log.d("SIGNUP", "username: " + username);
                     Log.d("SIGNUP", "email: " + email);
@@ -240,12 +227,12 @@ public class SignUp extends AppCompatActivity {
                     Log.d("SIGNUP", "dob: " + dob);
                     if (avatarFile != null) {
                         internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
-                        if(!internetFlag){
+                        if (!internetFlag) {
                             Snackbar snackbar = Snackbar
                                     .make(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                             snackbar.show();
                             signUpButton.setEnabled(true);
-                            return ;
+                            return;
                         }
                         HttpUtil.uploadAvatar(username, avatarFile, new okhttp3.Callback() {
                             @Override
@@ -277,7 +264,7 @@ public class SignUp extends AppCompatActivity {
                             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                                 e.printStackTrace();
                                 Snackbar snackbar = Snackbar
-                                    .make(constraintLayout, "Upload avatar timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                        .make(constraintLayout, "Upload avatar timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                                 snackbar.show();
                             }
                         });
@@ -310,16 +297,16 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
 
         sideBackShape = (ImageView) findViewById(R.id.sign_up_side_back);
-        sideBackShape.setOnClickListener(new View.OnClickListener(){
+        sideBackShape.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
-                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
     }
@@ -494,13 +481,13 @@ public class SignUp extends AppCompatActivity {
         sideBackShape.setEnabled(false);
         avatarImageBtn.setEnabled(false);
         boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
-        if(!internetFlag){
+        if (!internetFlag) {
             displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
             signUpButton.setEnabled(true);
             backToSignInText.setEnabled(true);
             sideBackShape.setEnabled(true);
             avatarImageBtn.setEnabled(true);
-            return ;
+            return;
         }
         HttpUtil.signUp(new String[]{username, password, email, dob, avatarFileLink}, new okhttp3.Callback() {
             @Override
@@ -570,7 +557,7 @@ public class SignUp extends AppCompatActivity {
                         avatarImageBtn.setEnabled(true);
                     }
                 });
-                return ;
+                return;
             }
         });
     }
@@ -596,7 +583,7 @@ public class SignUp extends AppCompatActivity {
         startActivity(new Intent(SignUp.this, SignIn.class));
 
         //(destination, origion)
-        overridePendingTransition(R.anim.slide_in_left,android.R.anim.slide_out_right);
+        overridePendingTransition(R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 
 }
