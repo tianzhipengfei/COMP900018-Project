@@ -194,7 +194,7 @@ public class ChangePassword extends AppCompatActivity {
     }
 
     /**
-     * Change Password
+     * Change Password logic
      */
     private void onChangePassword() {
         if (UserUtil.getToken(ChangePassword.this).isEmpty()) {
