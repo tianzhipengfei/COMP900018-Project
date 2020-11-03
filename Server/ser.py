@@ -347,7 +347,7 @@ class CreateCapsule:
         img = i.get('img') 
         audio = i.get('audio') 
 
-        if not pf.is_profane(content):
+        if pf.is_profane(content) or pf.is_profane(title) :
             return {'error':'profanity text'}
 
         # Add new capsule into database
