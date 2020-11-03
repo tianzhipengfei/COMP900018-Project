@@ -21,6 +21,9 @@ import com.example.group_w01_07_3.R;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * BottomDialog is a dialog used to take a photo and choose a photo from the gallery
+ */
 public class BottomDialog extends Dialog implements View.OnClickListener {
 
     public static final int TAKE_PHOTO = 1; // case take photo
