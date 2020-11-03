@@ -1162,5 +1162,5 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }, 2000);
         }
     }
-    
+
 }
