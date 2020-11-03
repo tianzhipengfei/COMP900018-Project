@@ -5,6 +5,11 @@ import android.content.SharedPreferences;
 
 public class UserUtil {
 
+    /**
+     * store user token by using CaesarCipher
+     * @param context
+     * @param token
+     */
     public static void setToken(Context context, String token) {
         SharedPreferences pref = context.getSharedPreferences("user_token", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
