@@ -54,6 +54,10 @@ public class ChangePassword extends AppCompatActivity {
 
     private ConstraintLayout constraintLayout;
 
+    // message section
+    Toast toast = null;
+    Snackbar snackbar = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +92,7 @@ public class ChangePassword extends AppCompatActivity {
                 String guideline = getString(R.string.registration_password);
                 AlertDialog dialog = new AlertDialog.Builder(ChangePassword.this)
                         .setIcon(R.drawable.sign_up_rules)
-                        .setTitle("Password Reset Guideline")
+                        .setTitle("Account Registration Guideline")
                         .setMessage(guideline)
                         .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
                             @Override
@@ -177,7 +181,7 @@ public class ChangePassword extends AppCompatActivity {
                 } else {
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                     if(!internetFlag){
-                        MessageUtil.displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                        displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
                         confirmChange.setEnabled(true);
                         return ;
                     }
@@ -269,13 +273,27 @@ public class ChangePassword extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            MessageUtil.displaySnackbar(constraintLayout, "Change password timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                            displaySnackbar(constraintLayout, "Change password timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                             confirmChange.setEnabled(true);
                         }
                     });
                     return ;
                 }
             });
+        }
+    }
+
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
         }
     }
 

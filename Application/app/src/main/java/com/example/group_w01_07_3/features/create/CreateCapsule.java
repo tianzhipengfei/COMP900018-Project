@@ -118,6 +118,8 @@ public class CreateCapsule extends AppCompatActivity implements
     JSONObject capsuleInfo = new JSONObject();
 
     // message section
+    private Toast toast = null;
+    private Snackbar snackbar = null;
     private long mLastClickTime = 0;
 
 
@@ -577,7 +579,7 @@ public class CreateCapsule extends AppCompatActivity implements
                                           @Override
                                           public void run() {
                                               progressbar.dismiss();
-                                              MessageUtil.displaySnackbar(drawerLayout, "Create Capsule successfully",
+                                              displaySnackbar(drawerLayout, "Create Capsule successfully",
                                                       Snackbar.LENGTH_SHORT);
                                               TextInputEditText capsuleTitle = findViewById(R.id.create_capsule_title);
                                               TextInputEditText capsuleContent = findViewById(R.id.create_capsule_content);
@@ -615,12 +617,12 @@ public class CreateCapsule extends AppCompatActivity implements
                             });
                         } else if(status.equalsIgnoreCase("profanity text")){
                             progressbar.dismiss();
-                            MessageUtil.displaySnackbar(drawerLayout, "Hi there. Look like there are profanity text, please remove them and try again",
+                            displaySnackbar(drawerLayout, "Hi there. Look like there are profanity text, please remove them and try again",
                                     Snackbar.LENGTH_SHORT);
                         }
                     } else {
                         progressbar.dismiss();
-                        MessageUtil.displaySnackbar(drawerLayout, "Fail to create the capsule",
+                        displaySnackbar(drawerLayout, "Fail to create the capsule",
                                 Snackbar.LENGTH_SHORT);
                     }
                 } catch (JSONException e) {
