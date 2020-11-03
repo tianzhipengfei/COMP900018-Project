@@ -130,6 +130,23 @@ public class EditProfile extends AppCompatActivity implements
         changeAvatarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setAllEnabledFalse();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(400);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setAllEnabledTrue();
+                            }
+                        });
+                    }
+                }).start();
                 // (Modified) From: https://github.com/jianjunxiao/BottomDialog
                 bottomDialog = new BottomDialog(EditProfile.this);
                 ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomDialog.getContentView().getLayoutParams();

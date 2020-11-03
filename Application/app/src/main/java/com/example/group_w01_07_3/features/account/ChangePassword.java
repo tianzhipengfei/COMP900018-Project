@@ -88,7 +88,6 @@ public class ChangePassword extends AppCompatActivity {
             }
         });
 
-
         ImageView helpImageButton = (ImageView) findViewById(R.id.imageButton_sign_up_question);
         helpImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
