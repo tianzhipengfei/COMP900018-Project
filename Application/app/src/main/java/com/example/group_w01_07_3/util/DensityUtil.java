@@ -12,8 +12,10 @@ public class DensityUtil {
 
     /**
      * dp -> px
-     * @param context
-     * @param dpVal
+     *
+     * @param context context
+     * @param dpVal   dp value
+     * @return px value
      */
     public static int dp2px(Context context, float dpVal) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpVal,
@@ -22,8 +24,10 @@ public class DensityUtil {
 
     /**
      * sp -> px
-     * @param context
-     * @param spVal
+     *
+     * @param context context
+     * @param spVal   sp value
+     * @return px value
      */
     public static int sp2px(Context context, float spVal) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spVal,
@@ -32,8 +36,10 @@ public class DensityUtil {
 
     /**
      * px -> dp
-     * @param context
-     * @param pxVal
+     *
+     * @param context context
+     * @param pxVal   px value
+     * @return dp value
      */
     public static float px2dp(Context context, float pxVal) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -42,8 +48,10 @@ public class DensityUtil {
 
     /**
      * px -> sp
-     * @param context
-     * @param pxVal
+     *
+     * @param context context
+     * @param pxVal   px value
+     * @return sp value
      */
     public static float px2sp(Context context, float pxVal) {
         return (pxVal / context.getResources().getDisplayMetrics().scaledDensity);
