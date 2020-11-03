@@ -19,10 +19,21 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * ImageUtil is useful to compress image and get image bitmap from Http image url
+ */
 public class ImageUtil {
 
-    private static Bitmap urlBitmap;
+    private static Bitmap urlBitmap; // image bitmap from Http image url
 
+    /**
+     * compress image
+     *
+     * @param context  context
+     * @param bitmap   image bitmap
+     * @param filename image filename
+     * @return
+     */
     public static File compressImage(Context context, Bitmap bitmap, String filename) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
@@ -48,6 +59,12 @@ public class ImageUtil {
         return file;
     }
 
+    /**
+     * get image bitmap from Http image url
+     *
+     * @param urlString Http image url
+     * @return image bitmap
+     */
     public static Bitmap getHttpImage(String urlString) {
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
