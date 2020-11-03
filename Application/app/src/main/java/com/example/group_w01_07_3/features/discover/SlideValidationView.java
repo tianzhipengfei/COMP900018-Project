@@ -1,7 +1,9 @@
 package com.example.group_w01_07_3.features.discover;
 /**
  * Modified from https://github.com/SamanLan/SlideValidation
+ * Additional thought and perfection has been added
  */
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -17,7 +19,9 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
+
 import com.example.group_w01_07_3.R;
+
 import java.util.Random;
 /*
 Puzzle for slider pop-up window
@@ -26,7 +30,8 @@ Puzzle for slider pop-up window
 public class SlideValidationView extends androidx.appcompat.widget.AppCompatImageView {
 
     /**
-     *Constructor for puzzle
+     * Constructor for puzzle
+     *
      * @param context global information about slide validation view
      */
     public SlideValidationView(Context context) {
@@ -35,13 +40,14 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
     }
 
     /**
-     *Constructor of puzzle, accept special attributes to change style of puzzle
+     * Constructor of puzzle, accept special attributes to change style of puzzle
+     *
      * @param context global information about puzzle
-     * @param attrs  attibutes about style of puzzle
+     * @param attrs   attibutes about style of puzzle
      */
     public SlideValidationView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        TypedArray typedArray=context.obtainStyledAttributes(attrs, R.styleable.SlideValidationView);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SlideValidationView);
         validationSize = (int) typedArray.getDimension(R.styleable.SlideValidationView_validationSize, 0);
         typedArray.recycle();
         init(context);
@@ -49,11 +55,13 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
 
     /**
      * set context value to a class variable
+     *
      * @param context global information about puzzle
      */
     private void init(Context context) {
         this.mContext = context;
     }
+
     Context mContext;
     /*
     width and height of thumb of seekbar
@@ -76,7 +84,8 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
 
     /**
      * Customs  the view of puzzle.
-     * @param widthMeasureSpec customized  width of puzzle
+     *
+     * @param widthMeasureSpec  customized  width of puzzle
      * @param heightMeasureSpec customized height of puzzle
      */
     @Override
@@ -85,12 +94,13 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
     }
 
     /**
-     *Assign a size and position to all of children of slide validation view.
+     * Assign a size and position to all of children of slide validation view.
+     *
      * @param changed a new size or position for this view
-     * @param left Left position, relative to parent
-     * @param top Top position, relative to parent
-     * @param right Right position, relative to parent
-     * @param bottom Bottom position, relative to parent
+     * @param left    Left position, relative to parent
+     * @param top     Top position, relative to parent
+     * @param right   Right position, relative to parent
+     * @param bottom  Bottom position, relative to parent
      */
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -100,6 +110,7 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
     /**
      * Draw the shader and verification slider on the validation image view to create
      * puzzle
+     *
      * @param canvas the validation image to be drawn
      */
     @Override
@@ -134,8 +145,9 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
 
     /**
      * Change the size of image to produce puzzle
-     * @param w new width
-     * @param h new height
+     *
+     * @param w    new width
+     * @param h    new height
      * @param oldw old width
      * @param oldh old height
      */
@@ -153,7 +165,7 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
         validationPath = new Path();
         //size of validation slider
         if (validationSize == 0) {
-            validationSize = width/6;
+            validationSize = width / 6;
         }
         circleSize = validationSize / 3;
         //staring point of the validation slider
@@ -180,11 +192,12 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
 
     /**
      * add Semicircle effect of border of the verification slider
+     *
      * @param validationPath the border of verficatrion slide
-     * @param beginX x value of starting point
-     * @param beginY y value of starintg point
-     * @param isleftRight true if the border is left or right border
-     * @param type 0 if right corner, 1 if left corner
+     * @param beginX         x value of starting point
+     * @param beginY         y value of starintg point
+     * @param isleftRight    true if the border is left or right border
+     * @param type           0 if right corner, 1 if left corner
      */
     private void creatRandomArc(Path validationPath, int beginX, int beginY, boolean isleftRight, int type) {
         RectF rectF;
@@ -214,8 +227,9 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
 
     /**
      * draw the verification slide
-     * @param canvas painting place
-     * @param paint   the  brush to draw
+     *
+     * @param canvas           painting place
+     * @param paint            the  brush to draw
      * @param mMaskShadowPaint the shadow of verification slide
      */
     //
@@ -228,8 +242,9 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
 
     /**
      * create mask of verification slider on image
-     * @param mBitmap image of puzzle
-     * @param mask the border of the verification slider
+     *
+     * @param mBitmap    image of puzzle
+     * @param mask       the border of the verification slider
      * @param mMaskPaint painter to draw the mask
      * @return
      */
@@ -246,6 +261,7 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
 
     /**
      * Set the moving distance of the slider
+     *
      * @param howMuch show as %
      */
     public void setOffsetX(float howMuch) {
@@ -282,8 +298,10 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
             setOffsetX(0);
         }
     }
+
     /**
      * Set listener to see if user movement is success or not
+     *
      * @param listener motion listener to trace the movement of seekbar
      */
     public void setListener(SlideListener listener) {
@@ -292,8 +310,9 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
 
     /**
      * change dp to px, based on mobile resolution
-     *  @param context global information of validation view
-     *  @param dp resolution unit of image
+     *
+     * @param context global information of validation view
+     * @param dp      resolution unit of image
      */
     public static int dp2px(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
@@ -302,8 +321,9 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
 
     /**
      * change from px to dp, based on mobile resolution.
-     *  @param context global information of validation view
-     *  @param px resolution unit of image
+     *
+     * @param context global information of validation view
+     * @param px      resolution unit of image
      */
     public static int px2dp(Context context, float px) {
         final float scale = context.getResources().getDisplayMetrics().density;

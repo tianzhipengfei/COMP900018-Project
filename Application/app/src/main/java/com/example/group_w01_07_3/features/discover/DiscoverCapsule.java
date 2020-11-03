@@ -162,7 +162,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     /**
      * Initialise navigation view
      */
-    private void initView(){
+    private void initView() {
         //use toolbar at top of screen across all activities
         Toolbar toolbar = findViewById(R.id.toolbar_discover);
         setSupportActionBar(toolbar);
@@ -537,7 +537,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         // no matter online or offline
         if (!this.isDestroyed()) {
             if (capsuleInfo.length() == 0) {
-                MessageUtil.displayToast(DiscoverCapsule.this, "No token to get capsule", Toast.LENGTH_SHORT);
+                MessageUtil.displaySnackbar(drawerLayout, "Discover nearby Geo-capsule Failed. No user token to proceed.", Snackbar.LENGTH_SHORT);
                 Log.d("CAPSULE", "***** No token to get capsule *****");
                 allCapsules = new JSONArray();
                 selectedCapsule = new JSONObject();
@@ -1082,7 +1082,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 discover_refresh = true;
 
                                 // If no capsules on map, refresh
-                                if(mCapsuleMarkers.size() == 0){
+                                if (mCapsuleMarkers.size() == 0) {
                                     can_i_shake = false;
                                     can_i_retrieve_http = true;
                                     can_i_fresh_markers = false;
