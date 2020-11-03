@@ -95,17 +95,16 @@ public class SignIn extends AppCompatActivity {
                 password = passwordET.getText().toString();
 
                 if (username.isEmpty()) { // check username
-                    MessageUtil.displayToast(SignIn.this, "Username is required", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Sign in Failed. Please enter your username.", Snackbar.LENGTH_SHORT);
                     signInButton.setEnabled(true);
                 } else if (password.isEmpty()) { // check password
-                    MessageUtil.displayToast(SignIn.this, "Password is required", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Sign in Failed. Please enter your password.", Snackbar.LENGTH_SHORT);
                     signInButton.setEnabled(true);
                 } else {
                     // check Internet connection
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                     if (!internetFlag) {
-                        MessageUtil.displaySnackbar(constraintLayout, "Oops! Looks like you lost Internet connection.\n" +
-                                "Please connect to the Internet and try again ...", Snackbar.LENGTH_LONG);
+                        MessageUtil.displaySnackbar(constraintLayout, "Sign in Failed. Please turn on the internet.", Snackbar.LENGTH_LONG);
                         signInButton.setEnabled(true);
                         return;
                     }
@@ -156,7 +155,6 @@ public class SignIn extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                MessageUtil.displayToast(SignIn.this, "Sign in successfully", Toast.LENGTH_SHORT);
                                 Intent intent = new Intent(SignIn.this, DiscoverCapsule.class);
                                 startActivity(intent);
                                 finish();
@@ -171,7 +169,7 @@ public class SignIn extends AppCompatActivity {
                                 public void run() {
                                     usernameET.setText("");
                                     passwordET.setText("");
-                                    MessageUtil.displayToast(SignIn.this, "User does not exist", Toast.LENGTH_SHORT);
+                                    MessageUtil.displaySnackbar(constraintLayout, "Sign in Failed. Username does not exist.", Snackbar.LENGTH_SHORT);
                                     signInButton.setEnabled(true);
                                     createAccountButton.setEnabled(true);
                                     sideAddButton.setEnabled(true);
@@ -182,7 +180,7 @@ public class SignIn extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     passwordET.setText("");
-                                    MessageUtil.displayToast(SignIn.this, "Wrong password", Toast.LENGTH_SHORT);
+                                    MessageUtil.displaySnackbar(constraintLayout, "Sign in failed. Incorrect password.", Snackbar.LENGTH_SHORT);
                                     signInButton.setEnabled(true);
                                     createAccountButton.setEnabled(true);
                                     sideAddButton.setEnabled(true);
@@ -192,8 +190,7 @@ public class SignIn extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    MessageUtil.displayToast(SignIn.this, "Cannot sign in\n" +
-                                            "Please try again ...", Toast.LENGTH_SHORT);
+                                    MessageUtil.displaySnackbar(constraintLayout, "Sign in failed. Please check internet connection.", Snackbar.LENGTH_SHORT);
                                     signInButton.setEnabled(true);
                                     createAccountButton.setEnabled(true);
                                     sideAddButton.setEnabled(true);
@@ -213,8 +210,7 @@ public class SignIn extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        MessageUtil.displaySnackbar(constraintLayout, "Sign in timeout!\n" +
-                                "Please check your Internet and try again ...", Snackbar.LENGTH_LONG);
+                        MessageUtil.displaySnackbar(constraintLayout, "Sign in timeout. Please check Internet connection", Snackbar.LENGTH_LONG);
                         signInButton.setEnabled(true);
                         createAccountButton.setEnabled(true);
                         sideAddButton.setEnabled(true);

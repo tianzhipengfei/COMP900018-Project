@@ -60,14 +60,24 @@ public class ChangePassword extends AppCompatActivity {
 
         setContentView(R.layout.activity_change_password);
 
-        constraintLayout = findViewById(R.id.change_password_mega_layout);
-
         //don't pop uo keyboard when entering the screen.
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
 
+        initView();
+        setupChangePasswordBtn();
+
+    }
+
+    private void initView(){
+        constraintLayout = findViewById(R.id.change_password_mega_layout);
         mToolbar = findViewById(R.id.change_password_back_toolbar);
+        oldPasswordET = (EditText) findViewById(R.id.edittext_change_password_old);
+        newPasswordET = (EditText) findViewById(R.id.edittext_change_password_new);
+        reNewPasswordET = (EditText) findViewById(R.id.edittext_change_password_re_new);
+        confirmChange = (Button) findViewById(R.id.change_password_confirm_button);
+
         mToolbar.setNavigationIcon(R.drawable.ic_back);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Change Password");
@@ -101,11 +111,9 @@ public class ChangePassword extends AppCompatActivity {
             }
         });
 
-        oldPasswordET = (EditText) findViewById(R.id.edittext_change_password_old);
-        newPasswordET = (EditText) findViewById(R.id.edittext_change_password_new);
-        reNewPasswordET = (EditText) findViewById(R.id.edittext_change_password_re_new);
+    }
 
-        confirmChange = (Button) findViewById(R.id.change_password_confirm_button);
+    private void setupChangePasswordBtn(){
         confirmChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,55 +129,31 @@ public class ChangePassword extends AppCompatActivity {
                 newPassword = newPasswordET.getText().toString();
                 reNewPassword = reNewPasswordET.getText().toString();
 
-//                ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_confirm_change_password);
-//                progress.show();
-//                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-//                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-//                View pageLayout = findViewById(R.id.change_password_mega_layout);
-//                View root = pageLayout.getRootView();
-//                root.setBackgroundColor(ContextCompat.getColor(ChangePassword.this, R.color.colorGreyOut));
-//
-//                //Replace this part to login successful or fail, which hide progress bar and display message
-//                //will change background to indicate the process
-//                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        //Do something here
-//                        ProgressIndicator progress = (ProgressIndicator) findViewById(R.id.progressCircleDeterminate_confirm_change_password);
-//                        progress.hide();
-//                        View pageLayout = findViewById(R.id.change_password_mega_layout);
-//                        View root = pageLayout.getRootView();
-//                        root.setBackgroundColor(ContextCompat.getColor(ChangePassword.this, R.color.colorResetWhite));
-//                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-//
-//                        Toast.makeText(ChangePassword.this, "checked state and implement logic accordingly", Toast.LENGTH_SHORT).show();
-//                    }
-//                }, 3000);
-
+                //TODO: @CHENFU, can use switch tp handle this long if statement
                 if (oldPassword.isEmpty()) {
-                    MessageUtil.displayToast(ChangePassword.this, "Please enter the current password", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please enter the current password.", Snackbar.LENGTH_SHORT);
                     confirmChange.setEnabled(true);
                 } else if (newPassword.isEmpty()) {
-                    MessageUtil.displayToast(ChangePassword.this, "Please enter the new password", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please enter the new password.", Snackbar.LENGTH_SHORT);
                     confirmChange.setEnabled(true);
                 } else if (reNewPassword.isEmpty()) {
-                    MessageUtil.displayToast(ChangePassword.this, "Please repeat the new password", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please repeat the new password.", Snackbar.LENGTH_SHORT);
                     confirmChange.setEnabled(true);
                 } else if (!isValidPassword(oldPassword)) {
-                    MessageUtil.displayToast(ChangePassword.this, "Please check your current password", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Incorrect current password.", Snackbar.LENGTH_SHORT);
                     oldPasswordET.setText("");
                     confirmChange.setEnabled(true);
                 } else if (!isValidPassword(newPassword)) {
-                    MessageUtil.displayToast(ChangePassword.this, "invalid new password", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Invalid new password.", Snackbar.LENGTH_SHORT);
                     newPasswordET.setText("");
                     reNewPasswordET.setText("");
                     confirmChange.setEnabled(true);
                 } else if (!newPassword.equalsIgnoreCase(reNewPassword)) {
-                    MessageUtil.displayToast(ChangePassword.this, "repeat new password doesn't match new password", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Repeat new password doesn't match new password.", Snackbar.LENGTH_SHORT);
                     reNewPasswordET.setText("");
                     confirmChange.setEnabled(true);
                 } else if (oldPassword.equalsIgnoreCase(newPassword)) {
-                    MessageUtil.displayToast(ChangePassword.this, "new password is the same as current password", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Matching new password and current password.", Snackbar.LENGTH_SHORT);
                     oldPasswordET.setText("");
                     newPasswordET.setText("");
                     reNewPasswordET.setText("");
@@ -177,7 +161,7 @@ public class ChangePassword extends AppCompatActivity {
                 } else {
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                     if(!internetFlag){
-                        MessageUtil.displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                        MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please check internet connection.", Snackbar.LENGTH_LONG);
                         confirmChange.setEnabled(true);
                         return ;
                     }
@@ -185,8 +169,8 @@ public class ChangePassword extends AppCompatActivity {
                 }
             }
         });
-
     }
+
 
     private boolean isValidPassword(String password) {
         Pattern p = Pattern.compile("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\\.#?!@$%^&*-_=+]).{8,}$");
@@ -199,7 +183,7 @@ public class ChangePassword extends AppCompatActivity {
 
     private void onChangePassword() {
         if (UserUtil.getToken(ChangePassword.this).isEmpty()) {
-            MessageUtil.displayToast(ChangePassword.this, "no token", Toast.LENGTH_SHORT);
+            MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Corrupted user token, lease reinstall app", Snackbar.LENGTH_SHORT);
         } else {
             HttpUtil.changePassword(UserUtil.getToken(ChangePassword.this), oldPassword, newPassword, new okhttp3.Callback() {
                 @Override
@@ -227,7 +211,7 @@ public class ChangePassword extends AppCompatActivity {
                                 runOnUiThread(new Runnable() {
                                                   @Override
                                                   public void run() {
-                                                      MessageUtil.displayToast(ChangePassword.this, "Please check your current password input", Toast.LENGTH_SHORT);
+                                                      MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please input a valid password.", Snackbar.LENGTH_SHORT);
                                                       oldPasswordET.setText("");
                                                       confirmChange.setEnabled(true);
                                                   }
@@ -252,7 +236,7 @@ public class ChangePassword extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  MessageUtil.displayToast(ChangePassword.this, "Invalid form, please try again later", Toast.LENGTH_SHORT);
+                                                  MessageUtil.displaySnackbar(constraintLayout, "Change password timeout. Invalid form.", Snackbar.LENGTH_SHORT);
                                                   confirmChange.setEnabled(true);
                                               }
                                           }
@@ -269,7 +253,7 @@ public class ChangePassword extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            MessageUtil.displaySnackbar(constraintLayout, "Change password timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbar(constraintLayout, "Change password timeout. Please check Internet connection.", Snackbar.LENGTH_LONG);
                             confirmChange.setEnabled(true);
                         }
                     });
