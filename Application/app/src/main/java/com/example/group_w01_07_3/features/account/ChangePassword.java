@@ -88,7 +88,7 @@ public class ChangePassword extends AppCompatActivity {
                 String guideline = getString(R.string.registration_password);
                 AlertDialog dialog = new AlertDialog.Builder(ChangePassword.this)
                         .setIcon(R.drawable.sign_up_rules)
-                        .setTitle("Account Registration Guideline")
+                        .setTitle("Password Reset Guideline")
                         .setMessage(guideline)
                         .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
                             @Override
