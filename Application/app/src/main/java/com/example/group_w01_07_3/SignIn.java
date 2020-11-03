@@ -1,6 +1,5 @@
 package com.example.group_w01_07_3;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
