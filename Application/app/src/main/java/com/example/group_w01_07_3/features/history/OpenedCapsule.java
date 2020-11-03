@@ -16,7 +16,7 @@ public class OpenedCapsule implements Serializable {
     String username;
     String voice_url;
 
-    public OpenedCapsule(){
+    public OpenedCapsule() {
 
     }
 
