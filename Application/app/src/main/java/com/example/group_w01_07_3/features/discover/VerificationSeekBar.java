@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
 public class VerificationSeekBar extends AppCompatSeekBar {
+
     private boolean isInterception = true;
 
     /**
@@ -51,4 +52,5 @@ public class VerificationSeekBar extends AppCompatSeekBar {
         }
         return super.onTouchEvent(event);
     }
+
 }
