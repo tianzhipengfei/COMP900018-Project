@@ -6,7 +6,7 @@ import random as rand
 from math import sin, cos, sqrt, atan2
 import os
 import mpu
-
+from profanity_filter import ProfanityFilter
 
 urls = [
     '/signIn', 'SignIn',
@@ -24,6 +24,7 @@ urls = [
     '/uploadAvatar', 'UploadAvatar'
 ]
 
+pf = ProfanityFilter()
 app = web.application(urls, globals())
 db = web.database(dbn='sqlite', db='test.db')
 
@@ -75,6 +76,8 @@ db.query('''
         REFERENCES capsules(cid)
     );
 ''')
+
+
 
 def genToken():
     r = rand.random()
@@ -344,6 +347,9 @@ class CreateCapsule:
         img = i.get('img') 
         audio = i.get('audio') 
 
+        if pf.is_profane(content) or pf.is_profane(title) :
+            return {'error':'profanity text'}
+
         # Add new capsule into database
         res = db.insert('capsules', cusr=usr, ctime=tim, cpermission=permission, \
             clat=lat, clon=lon, ccontent=content, ctitle=title, cimage=img, \
@@ -475,7 +481,7 @@ class GetCapsuleHistory:
         history_num = int(i.get('num')) if i.get('num') else 5
 
         query = "SELECT * FROM capsules_history where husr='{}' ORDER BY\
-         htime DESC LIMIT {}, {}".format(usr, str(start_index), str(start_index+history_num))
+         htime DESC LIMIT {}, {}".format(usr, str(start_index), str(history_num))
         capsules_his = db.query(query)
         res = []
         cid_list = []
@@ -486,7 +492,9 @@ class GetCapsuleHistory:
             # Avoid duplicated 
             cid_list.append(cur_cid)
             cur_capsule = db.query("SELECT * FROM capsules WHERE cid = '{}'".format(cur_cid))[0]
-            res.append(getCapsuleInfo(cur_capsule))
+            cur_capsule = getCapsuleInfo(cur_capsule)
+            cur_capsule['htime'] = his['htime']
+            res.append(cur_capsule)
         return {'success': True, 'hisotry': res}
 
 class UploadImage:
