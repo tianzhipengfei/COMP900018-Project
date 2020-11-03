@@ -327,5 +327,5 @@ public class SlideValidationView extends androidx.appcompat.widget.AppCompatImag
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (px / scale + 0.5F);
     }
-    
+
 }
