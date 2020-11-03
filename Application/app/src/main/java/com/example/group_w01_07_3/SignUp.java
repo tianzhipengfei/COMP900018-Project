@@ -36,6 +36,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.group_w01_07_3.util.DensityUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.ImageUtil;
+import com.example.group_w01_07_3.util.MessageUtil;
 import com.example.group_w01_07_3.widget.BottomDialog;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -337,7 +338,7 @@ public class SignUp extends AppCompatActivity {
             signUpButton.setEnabled(true);
             return false;
         } else if (dob.equalsIgnoreCase("Select Birthday")) {
-            displayToast(SignUp.this, "Date of Birth is required", Toast.LENGTH_SHORT);
+            MessageUtil.displayToast(SignUp.this, "Date of Birth is required", Toast.LENGTH_SHORT);
             signUpButton.setEnabled(true);
             return false;
         }
@@ -405,7 +406,7 @@ public class SignUp extends AppCompatActivity {
                         avatarImageBtn.setImageBitmap(bitmap);
                         avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "output_photo_compressed.jpg");
                         bottomDialog.dismiss();
-                        displayToast(this, "Take the photo successfully", Toast.LENGTH_SHORT);
+                        MessageUtil.displayToast(this, "Take the photo successfully", Toast.LENGTH_SHORT);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -429,7 +430,7 @@ public class SignUp extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    displayToast(this, "You denied the permission", Toast.LENGTH_SHORT);
+                    MessageUtil.displayToast(this, "You denied the permission", Toast.LENGTH_SHORT);
                 }
                 break;
             default:
@@ -482,9 +483,9 @@ public class SignUp extends AppCompatActivity {
             avatarFile = ImageUtil.compressImage(SignUp.this, bitmap, "image_compressed.jpg");
             avatarImageBtn.setImageBitmap(bitmap);
             bottomDialog.dismiss();
-            displayToast(this, "Select the image successfully", Toast.LENGTH_SHORT);
+            MessageUtil.displayToast(this, "Select the image successfully", Toast.LENGTH_SHORT);
         } else {
-            displayToast(this, "Failed to get image", Toast.LENGTH_SHORT);
+            MessageUtil.displayToast(this, "Failed to get image", Toast.LENGTH_SHORT);
         }
     }
 
@@ -515,7 +516,7 @@ public class SignUp extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                                           @Override
                                           public void run() {
-                                              displayToast(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT);
+                                              MessageUtil.displayToast(SignUp.this, "Sign up successfully", Toast.LENGTH_SHORT);
                                               finish();
                                               overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                           }
@@ -529,7 +530,7 @@ public class SignUp extends AppCompatActivity {
                                           public void run() {
                                               usernameET.setText("");
                                               emailET.setText("");
-                                              displayToast(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT);
+                                              MessageUtil.displayToast(SignUp.this, "Username or Email Address exists", Toast.LENGTH_SHORT);
                                               signUpButton.setEnabled(true);
                                               backToSignInText.setEnabled(true);
                                               sideBackShape.setEnabled(true);
@@ -542,7 +543,7 @@ public class SignUp extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                                           @Override
                                           public void run() {
-                                              displayToast(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT);
+                                              MessageUtil.displayToast(SignUp.this, "Invalid form, please try again later", Toast.LENGTH_SHORT);
                                               signUpButton.setEnabled(true);
                                               backToSignInText.setEnabled(true);
                                               sideBackShape.setEnabled(true);
@@ -572,20 +573,6 @@ public class SignUp extends AppCompatActivity {
                 return ;
             }
         });
-    }
-
-    /**
-     * Display toast in a non-overlap manner
-     *
-     * @param context The context which toast will display at
-     * @param msg     The message to display
-     * @param length  the duration of toast display
-     */
-    private void displayToast(Context context, String msg, int length) {
-        if (toast == null || !toast.getView().isShown()) {
-            toast = Toast.makeText(context, msg, length);
-            toast.show();
-        }
     }
 
     /**

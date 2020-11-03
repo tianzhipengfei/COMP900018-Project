@@ -29,6 +29,7 @@ import com.example.group_w01_07_3.features.account.EditProfile;
 import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.MessageUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -63,7 +64,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     NavigationView navigationView;
     private Toolbar mToolbar;
 
-    //Placeholder View for Disconnection logic
+    // Placeholder View for Disconnection logic
     TextView placeholder_emptyHistoryText;
     TextView getPlaceholder_retryText;
     ImageView placeholder_retryImage, placeholder_emptyHistoryImage;
@@ -76,7 +77,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     //shimmer placehodler layout
     private ShimmerFrameLayout mShimmerViewContainer;
 
-    //Utility
+    // Utility
     private long mLastClickTime = 0;
     boolean doubleBackToExitPressedOnce = false;
 
@@ -99,7 +100,20 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
 
         setContentView(R.layout.activity_opened_capsule_history);
 
+        initView();
 
+        updateHeader();
+
+        initList();
+
+        this.onGetHistory();
+
+    }
+
+    /**
+     * Initialise all views for the gallery
+     */
+    private void initView(){
         //Application toolbar setup
         mToolbar = findViewById(R.id.toolbar_history);
         setSupportActionBar(mToolbar);
@@ -123,13 +137,12 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         headerUsername = headerview.findViewById(R.id.header_username);
         headerAvatar = headerview.findViewById(R.id.header_avatar);
 
-        updateHeader();
-
         //load everything needed to be displyaed in the list
         recyclerView = findViewById(R.id.history_opened_capsule_list);
         testingList = new ArrayList<OpenedCapsule>();
 
         //placeholder View
+        mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
         placeholder_emptyHistoryText = findViewById(R.id.history_opened_capsule_no_history_text);
         placeholder_retryImage = findViewById(R.id.history_opened_capsule_plz_retry_img);
         getPlaceholder_retryText = findViewById(R.id.history_opened_capsule_plz_retry_text);
@@ -146,7 +159,12 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 onGetHistory();
             }
         });
+    }
 
+    /**
+     * Initialise recycler list that holder data of opened Geo-capsules. set scroll up refresh func
+     */
+    private void initList(){
         //set up the recycle view
         openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
@@ -154,11 +172,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         recyclerView.setPullRefreshEnable(false);
         recyclerView.setFooterViewText("Loading More...Please Wait");
 
-        mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
-
         testingList.clear();
-
-        this.onGetHistory();
 
         recyclerView.setOnPullLoadMoreListener(new PullLoadMoreRecyclerView.PullLoadMoreListener() {
             @Override
@@ -170,7 +184,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 onGetHistory();
             }
         });
-
     }
 
     private void onGetHistory() {
@@ -274,7 +287,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 UserUtil.clearToken(OpenedCapsuleHistory.this);
-                                Toast.makeText(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                MessageUtil.displayToast(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT);
                                 Intent intent = new Intent(OpenedCapsuleHistory.this, SignIn.class);
                                 startActivity(intent);
                                 finish();
@@ -331,7 +344,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 if (testingList.size() % RECORD_NUM_PER_REQUEST != 0) {
                                     recyclerView.setPushRefreshEnable(false);
                                     Snackbar snackbar = Snackbar
-                                            .make(drawerLayout, "Retrieve history timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                            .make(drawerLayout, "Retrieve gallery timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                                     snackbar.show();
                                 }
                                 return;
@@ -344,7 +357,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 recyclerView.setPullLoadMoreCompleted();
                                 if (testingList.size() != 0) {
                                     Snackbar snackbar = Snackbar
-                                            .make(drawerLayout, "Retrieve history timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                            .make(drawerLayout, "Retrieve gallery timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                                     snackbar.show();
                                 }
                                 return;
@@ -479,7 +492,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     UserUtil.clearToken(OpenedCapsuleHistory.this);
-                                    Toast.makeText(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                    MessageUtil.displayToast(OpenedCapsuleHistory.this, "Not logged in", Toast.LENGTH_SHORT);
                                     Intent intent = new Intent(OpenedCapsuleHistory.this, SignIn.class);
                                     startActivity(intent);
                                     finish();
@@ -523,7 +536,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             }
 
             this.doubleBackToExitPressedOnce = true;
-            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+            MessageUtil.displayToast(this, "Press back again to exit", Toast.LENGTH_SHORT);
 
             new Handler().postDelayed(new Runnable() {
 

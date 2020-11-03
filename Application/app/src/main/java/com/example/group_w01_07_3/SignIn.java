@@ -20,6 +20,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.CaesarCipherUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
+import com.example.group_w01_07_3.util.MessageUtil;
 import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -97,10 +98,10 @@ public class SignIn extends AppCompatActivity {
                 password = passwordET.getText().toString();
 
                 if (username.isEmpty()) { // check username
-                    displayToast(SignIn.this, "Username is required", Toast.LENGTH_SHORT);
+                    MessageUtil.displayToast(SignIn.this, "Username is required", Toast.LENGTH_SHORT);
                     signInButton.setEnabled(true);
                 } else if (password.isEmpty()) { // check password
-                    displayToast(SignIn.this, "Password is required", Toast.LENGTH_SHORT);
+                    MessageUtil.displayToast(SignIn.this, "Password is required", Toast.LENGTH_SHORT);
                     signInButton.setEnabled(true);
                 } else {
                     // check Internet connection
@@ -158,7 +159,7 @@ public class SignIn extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                displayToast(SignIn.this, "Sign in successfully", Toast.LENGTH_SHORT);
+                                MessageUtil.displayToast(SignIn.this, "Sign in successfully", Toast.LENGTH_SHORT);
                                 Intent intent = new Intent(SignIn.this, DiscoverCapsule.class);
                                 startActivity(intent);
                                 finish();
@@ -173,7 +174,7 @@ public class SignIn extends AppCompatActivity {
                                 public void run() {
                                     usernameET.setText("");
                                     passwordET.setText("");
-                                    displayToast(SignIn.this, "User does not exist", Toast.LENGTH_SHORT);
+                                    MessageUtil.displayToast(SignIn.this, "User does not exist", Toast.LENGTH_SHORT);
                                     signInButton.setEnabled(true);
                                     createAccountButton.setEnabled(true);
                                     sideAddButton.setEnabled(true);
@@ -184,7 +185,7 @@ public class SignIn extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     passwordET.setText("");
-                                    displayToast(SignIn.this, "Wrong password", Toast.LENGTH_SHORT);
+                                    MessageUtil.displayToast(SignIn.this, "Wrong password", Toast.LENGTH_SHORT);
                                     signInButton.setEnabled(true);
                                     createAccountButton.setEnabled(true);
                                     sideAddButton.setEnabled(true);
@@ -194,7 +195,7 @@ public class SignIn extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    displayToast(SignIn.this, "Cannot sign in\n" +
+                                    MessageUtil.displayToast(SignIn.this, "Cannot sign in\n" +
                                             "Please try again ...", Toast.LENGTH_SHORT);
                                     signInButton.setEnabled(true);
                                     createAccountButton.setEnabled(true);
@@ -268,20 +269,6 @@ public class SignIn extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
-    }
-
-    /**
-     * Display toast in a non-overlap manner
-     *
-     * @param context The context which toast will display at
-     * @param msg     The message to display
-     * @param length  the duration of toast display
-     */
-    private void displayToast(Context context, String msg, int length) {
-        if (toast == null || !toast.getView().isShown()) {
-            toast = Toast.makeText(context, msg, length);
-            toast.show();
-        }
     }
 
     /**
