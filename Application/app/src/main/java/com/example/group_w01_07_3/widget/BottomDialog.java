@@ -48,6 +48,7 @@ public class BottomDialog extends Dialog implements View.OnClickListener {
 
     /**
      * click which view: camera, gallery, cancel
+     *
      * @param view camera, gallery, cancel
      */
     @Override
@@ -91,6 +92,7 @@ public class BottomDialog extends Dialog implements View.OnClickListener {
 
     /**
      * get the bottom dialog content view
+     *
      * @return content view
      */
     public View getContentView() {
