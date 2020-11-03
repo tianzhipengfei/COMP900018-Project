@@ -1079,7 +1079,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 discover_refresh = true;
 
                                 // If no capsules on map, refresh
-                                if (mCapsuleMarkers.size() == 0) {
+                                if(mCapsuleMarkers.size() == 0){
                                     can_i_shake = false;
                                     can_i_retrieve_http = true;
                                     can_i_fresh_markers = false;

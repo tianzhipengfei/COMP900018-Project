@@ -614,6 +614,10 @@ public class CreateCapsule extends AppCompatActivity implements
                                     overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                 }
                             });
+                        } else if(status.equalsIgnoreCase("profanity text")){
+                            progressbar.dismiss();
+                            displaySnackbar(drawerLayout, "profanity text",
+                                    Snackbar.LENGTH_SHORT);
                         }
                     } else {
                         progressbar.dismiss();
