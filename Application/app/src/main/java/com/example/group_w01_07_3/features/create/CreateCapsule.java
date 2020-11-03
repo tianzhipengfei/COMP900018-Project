@@ -69,36 +69,35 @@ import java.util.Calendar;
 import okhttp3.Call;
 import okhttp3.Response;
 
+/**
+ * Create Capsule Activity
+ */
 public class CreateCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-    private String token;
-    // APP view
-    private DrawerLayout drawerLayout;
+    //parameters
+    private final int REQUEST_PERMISSION_COARSE_LOCATION = 2;
+    private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
     View headerView;
     TextView headerUsername;
     ShapeableImageView headerAvatar;
     NavigationView navigationView;
     ExtendedFloatingActionButton floatingActionButton;
+    boolean mStartPlaying = true;
+    // capsule content
+    JSONObject capsuleInfo = new JSONObject();
+    boolean doubleBackToExitPressedOnce = false;
+    private String token;
+    // APP view
+    private DrawerLayout drawerLayout;
     private BottomDialog bottomDialog;
     private ProgressDialog progressbar;
-
     // location & audio utility section
     private FusedLocationProviderClient fusedLocationClient;
-    boolean mStartPlaying = true;
     private boolean mStartRecording = true;
     private String usernameProfileString, avatarProfileString;
     private RecordAudioUtil recorderUtil;
     private File imageFile;
-
-    // capsule content
-    JSONObject capsuleInfo = new JSONObject();
-
-    //parameters
-    private final int REQUEST_PERMISSION_COARSE_LOCATION = 2;
-    private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
-    boolean doubleBackToExitPressedOnce = false;
-
     private int permission = 1;
 
     // message section
@@ -175,10 +174,18 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * get mStartPlaying
+     * @return mStartPlaying
+     */
     public boolean getmStartPlaying() {
         return mStartPlaying;
     }
 
+    /**
+     * set mStartPlaying
+     * @param mStartPlaying mStartPlaying
+     */
     public void setmStartPlaying(boolean mStartPlaying) {
         this.mStartPlaying = mStartPlaying;
     }
@@ -626,7 +633,6 @@ public class CreateCapsule extends AppCompatActivity implements
                                           }
                                       }
                         );
-
                     } else if (responseJSON.has("error")) {
                         String status = responseJSON.getString("error");
                         if (status.equalsIgnoreCase("Not logged in")) {
@@ -827,12 +833,18 @@ public class CreateCapsule extends AppCompatActivity implements
         }
     }
 
+    /**
+     * destroy delete the recorded audio file
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         deleteAudioFile();
     }
 
+    /**
+     * delete the recorded audio file audio file
+     */
     public void deleteAudioFile() {
         if (recorderUtil.getAudioFile().exists()) {
             recorderUtil.getAudioFile().delete();
