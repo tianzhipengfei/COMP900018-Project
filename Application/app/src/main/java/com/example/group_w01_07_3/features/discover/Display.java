@@ -103,7 +103,7 @@ public class Display extends AppCompatActivity {
         Bundle extra_information = getIntent().getExtras();
         String extra = getIntent().getStringExtra("capsule");
         Log.d("The intent information", "onCreate: " + extra);
-        
+
         initView();
 
         if (extra != null) {
@@ -121,7 +121,7 @@ public class Display extends AppCompatActivity {
     /**
      * Initialise required layout view
      */
-    private void initView(){
+    private void initView() {
         coordinatorLayout = findViewById(R.id.display_history_mega_layout);
 
         privacy = (TextView) findViewById(R.id.display_detail_capsule_private_public_tag);
@@ -187,10 +187,9 @@ public class Display extends AppCompatActivity {
                         img.requestLayout();
                         img.setMinimumHeight(48);
                         img.setVisibility(View.VISIBLE);
-
-//                    img.setImageResource(R.drawable.gradient_1);
                     }
-                    //if there is avader link, load it to corresponding place, otherwise, use place
+
+                    //if there is avatar link, load it to corresponding place, otherwise, use place
                     //holder.
                     if (avater_link != "null") {
                         loadAvatar();
@@ -206,6 +205,9 @@ public class Display extends AppCompatActivity {
         }
     }
 
+    /**
+     * Load image of the Geo-capsule, using Glide, reinforced by auto loading once internet restored
+     */
     private void loadImage() {
         //Must use  this tree observer to load content image
         img.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -232,7 +234,7 @@ public class Display extends AppCompatActivity {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                 MessageUtil.displaySnackbar(coordinatorLayout,
-                                        "Failed to load the capsule image, please check your internet connection",
+                                        "Failed to load the capsule image. Please check internet connection.",
                                         Snackbar.LENGTH_LONG);
                                 return false;
                             }
@@ -261,41 +263,22 @@ public class Display extends AppCompatActivity {
     }
 
     /**
-     * load avater photo to image view to display, handle failure condition,remove shrimmer effect
-     * if load successfully.
+     * load avatar photo to image view to display, handle failure condition,remove shimmer effect
+     * if loaded successfully.
      */
     private void loadAvatar() {
         //avatar view has fix size, so no need to use viewtree
         Glide.with(this)
                 .load(avater_link)
                 .listener(new RequestListener<Drawable>() {
-                    /**
-                     * Display failure information of loading avatar
-                     *
-                     * @param e exception containing information about why the request failed
-                     * @param model model we were trying to load when the exception occurred
-                     * @param target  target we were trying to load the image into
-                     * @param isFirstResource true if this exception is for the first resource to load.
-                     * @return
-                     */
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         MessageUtil.displaySnackbar(coordinatorLayout,
-                                "Failed to load user avatar of the capsule owner, please check your internet connection",
+                                "Failed to load Geo-capsule creator avatar. Please check internet connection.",
                                 Snackbar.LENGTH_LONG);
                         return false;
                     }
 
-                    /**
-                     * Remove shimmer effect if the avatar is loaded successfully.
-                     *
-                     * @param resource resource that was loaded for the target.
-                     * @param model specific model that was used to load the image.
-                     * @param target target the model was loaded into.
-                     * @param dataSource the resource was loaded from.
-                     * @param isFirstResource true if this is the first resource to in this load to be loaded into the target
-                     * @return
-                     */
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                         shimmerAvatar.stopShimmer();
@@ -354,7 +337,7 @@ public class Display extends AppCompatActivity {
                 public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
                     if (i == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
                         MessageUtil.displaySnackbar(coordinatorLayout,
-                                "Failed to Load audio, please check your internet connection",
+                                "Failed to Load audio. Please check internet connection.",
                                 Snackbar.LENGTH_LONG);
                     }
                     return false;
@@ -379,7 +362,9 @@ public class Display extends AppCompatActivity {
         }
     }
 
-    //stop music if click home button
+    /**
+     * stop audio playback if activity has been finished
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -388,7 +373,9 @@ public class Display extends AppCompatActivity {
         }
     }
 
-    //stop the music if current page is pause
+    /**
+     * stop audio playback if current page is paused
+     */
     @Override
     protected void onPause() {
         super.onPause();

@@ -43,7 +43,7 @@ public class ImageUtil {
             // loop to determine if the compressed image is larger than 500kb, and continue to compress if larger
             baos.reset(); // clear baos
             options -= 5; // every time reduce by 5
-            if (options == 5){
+            if (options == 5) {
                 break;
             } else {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos); // compress options% and store the compressed data in baos

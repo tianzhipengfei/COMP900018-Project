@@ -29,6 +29,7 @@ public class LocationUtil {
 
     /**
      * constructor
+     *
      * @param activity activity
      */
     public LocationUtil(AppCompatActivity activity) {
@@ -40,6 +41,7 @@ public class LocationUtil {
 
     /**
      * check the location permission
+     *
      * @return has the location permission or not
      */
     private boolean checkLocationPermission() {
@@ -70,6 +72,7 @@ public class LocationUtil {
 
     /**
      * get the location
+     *
      * @return location
      */
     public Location getLocation() {

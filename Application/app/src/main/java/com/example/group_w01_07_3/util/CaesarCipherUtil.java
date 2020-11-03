@@ -9,8 +9,9 @@ public class CaesarCipherUtil {
 
     /**
      * CaesarCipherUtil encrypt
+     *
      * @param original the string to be encrypted
-     * @param key encryption key
+     * @param key      encryption key
      * @return encrypted string
      */
     public static String encrypt(String original, int key) {
@@ -27,8 +28,9 @@ public class CaesarCipherUtil {
 
     /**
      * CaesarCipherUtil decrypt
+     *
      * @param encryptedData the string to be decrypted
-     * @param key decryption key
+     * @param key           decryption key
      * @return decrypted string
      */
     public static String decrypt(String encryptedData, int key) {
