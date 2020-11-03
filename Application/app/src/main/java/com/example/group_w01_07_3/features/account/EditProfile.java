@@ -92,45 +92,14 @@ public class EditProfile extends AppCompatActivity implements
     private String dobProfileString;
 
     private Handler handler;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
-
-        //apply alert sound
-        final MediaPlayer mediaPlayer = MediaPlayer.create(EditProfile.this, R.raw.alert);
-
-        avatarDisplay = (ImageView) findViewById(R.id.edit_profile_avatar_display);
-        usernameDisplay = (TextView) findViewById(R.id.edit_profile_username_display);
-        emailDisplay = (TextView) findViewById(R.id.edit_profile_email_display);
-        dobDisplay = (TextView) findViewById(R.id.edit_profile_dob_display);
-
-        //设置主Activity的toolbar, 以及初始化侧滑菜单栏
-        Toolbar toolbar = findViewById(R.id.toolbar_edit_profile);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setTitle("User Profile");
-
-        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
-
-        //handle the hamburger menu. remember to create two strings
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        //设置侧滑菜单栏
-        navigationView = findViewById(R.id.nav_view_edit_profile);
-        navigationView.getMenu().getItem(3).setChecked(true); //setChecked myself
-        navigationView.setNavigationItemSelectedListener(this);
-
-        //the logic to find the header, then update the username from server user profile
-        headerview = navigationView.getHeaderView(0);
-        headerUsername = headerview.findViewById(R.id.header_username);
-        headerAvatar = headerview.findViewById(R.id.header_avatar);
+        initView();
 
         changePasswordBtn = (MaterialButton) findViewById(R.id.edit_profile_btn_change_password);
         changePasswordBtn.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +158,7 @@ public class EditProfile extends AppCompatActivity implements
                         } else {
                             boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                             if(!internetFlag){
-                                MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                                MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout. Please check Internet connection", Snackbar.LENGTH_LONG);
                                 signOutButton.setEnabled(true);
                                 changePasswordBtn.setEnabled(true);
                                 changeAvatarButton.setEnabled(true);
@@ -239,7 +208,6 @@ public class EditProfile extends AppCompatActivity implements
                                                 @Override
                                                 public void run() {
                                                     UserUtil.clearToken(EditProfile.this);
-                                                    MessageUtil.displayToast(EditProfile.this, "Invalid form", Toast.LENGTH_SHORT);
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
@@ -258,7 +226,7 @@ public class EditProfile extends AppCompatActivity implements
                                     EditProfile.this.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                            MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout. Please check Internet connection", Snackbar.LENGTH_LONG);
                                             signOutButton.setEnabled(true);
                                             changePasswordBtn.setEnabled(true);
                                             changeAvatarButton.setEnabled(true);
@@ -284,6 +252,38 @@ public class EditProfile extends AppCompatActivity implements
         });
 
         onGetProfile();
+    }
+
+    private void initView(){
+        drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
+        avatarDisplay = (ImageView) findViewById(R.id.edit_profile_avatar_display);
+        usernameDisplay = (TextView) findViewById(R.id.edit_profile_username_display);
+        emailDisplay = (TextView) findViewById(R.id.edit_profile_email_display);
+        dobDisplay = (TextView) findViewById(R.id.edit_profile_dob_display);
+
+        //setup toolbar and drawer layout
+        Toolbar toolbar = findViewById(R.id.toolbar_edit_profile);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("User Profile");
+
+        //handle the hamburger menu. remember to create two strings
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        //setup navigation view
+        navigationView = findViewById(R.id.nav_view_edit_profile);
+        navigationView.getMenu().getItem(3).setChecked(true); //setChecked myself
+        navigationView.setNavigationItemSelectedListener(this);
+
+        //the logic to find the header, then update the username from server user profile
+        headerview = navigationView.getHeaderView(0);
+        headerUsername = headerview.findViewById(R.id.header_username);
+        headerAvatar = headerview.findViewById(R.id.header_avatar);
+
+        //apply alert sound
+        mediaPlayer = MediaPlayer.create(EditProfile.this, R.raw.alert);
     }
 
     /**
@@ -333,10 +333,8 @@ public class EditProfile extends AppCompatActivity implements
                 if (resultCode == RESULT_OK) {
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(BottomDialog.imageUri));
-//                        avatarDisplay.setImageBitmap(bitmap);
                         newAvatarFile = ImageUtil.compressImage(EditProfile.this, bitmap, "output_photo_compressed.jpg");
                         bottomDialog.dismiss();
-//                        avatarDisplay.setImageBitmap(bitmap);
                         onUploadImage();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -361,7 +359,7 @@ public class EditProfile extends AppCompatActivity implements
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    MessageUtil.displayToast(this, "You denied the permission", Toast.LENGTH_SHORT);
+                    MessageUtil.displaySnackbar(drawerLayout, "You denied the permission.", Snackbar.LENGTH_SHORT);
                 }
                 break;
             default:
@@ -417,13 +415,13 @@ public class EditProfile extends AppCompatActivity implements
 //            avatarDisplay.setImageBitmap(bitmap);
             bottomDialog.dismiss();
         } else {
-            MessageUtil.displayToast(this, "Failed to get image", Toast.LENGTH_SHORT);
+            MessageUtil.displaySnackbar(drawerLayout, "Failed to take the picture.", Snackbar.LENGTH_SHORT);
         }
     }
 
     private void onGetProfile() {
         if (UserUtil.getToken(EditProfile.this).isEmpty()) {
-            MessageUtil.displayToast(EditProfile.this, "No token to get profile", Toast.LENGTH_SHORT);
+            MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed. Corrupted user token, please reinstall app.", Snackbar.LENGTH_SHORT);
             usernameDisplay.setText("null");
             emailDisplay.setText("null");
             dobDisplay.setText("null");
@@ -497,7 +495,7 @@ public class EditProfile extends AppCompatActivity implements
                                               @Override
                                               public void run() {
                                                   if (!EditProfile.this.isDestroyed()){
-                                                      MessageUtil.displayToast(EditProfile.this, "Invalid form, please try again later", Toast.LENGTH_LONG);
+                                                      MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed, Invalid form, please try again later.", Snackbar.LENGTH_SHORT);
                                                       usernameDisplay.setText("null");
                                                       emailDisplay.setText("null");
                                                       dobDisplay.setText("null");
@@ -523,7 +521,7 @@ public class EditProfile extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 Log.d("RETRY", "run: RETRY onGetProfile");
-                                MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                                MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed, please check internet connection. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
                                 onGetProfile();
                             }
                         },3000);
@@ -567,7 +565,7 @@ public class EditProfile extends AppCompatActivity implements
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbar(drawerLayout, "Upload avatar image failed, please check internet connection. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
 
                             onUploadImage();
                         }
@@ -641,7 +639,7 @@ public class EditProfile extends AppCompatActivity implements
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbar(drawerLayout, "Change Avatar failed. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
 
                             onChangeAvatar();
                         }
