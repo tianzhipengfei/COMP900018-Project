@@ -373,5 +373,5 @@ public class Display extends AppCompatActivity {
             mediaPlayer.pause();
         }
     }
-    
+
 }

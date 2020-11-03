@@ -43,8 +43,8 @@ import com.example.group_w01_07_3.features.create.CreateCapsule;
 import com.example.group_w01_07_3.features.history.OpenedCapsuleHistory;
 import com.example.group_w01_07_3.util.FeedbackUtil;
 import com.example.group_w01_07_3.util.HttpUtil;
-import com.example.group_w01_07_3.util.UserUtil;
 import com.example.group_w01_07_3.util.MessageUtil;
+import com.example.group_w01_07_3.util.UserUtil;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -80,6 +80,7 @@ import okhttp3.Response;
 
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
+
     // app view
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -1161,4 +1162,5 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }, 2000);
         }
     }
+    
 }
