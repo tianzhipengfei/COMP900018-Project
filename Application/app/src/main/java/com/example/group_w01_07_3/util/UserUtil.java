@@ -3,6 +3,9 @@ package com.example.group_w01_07_3.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+/**
+ * UserUtil is used to set user token, get user token and clear user token
+ */
 public class UserUtil {
 
     /**
