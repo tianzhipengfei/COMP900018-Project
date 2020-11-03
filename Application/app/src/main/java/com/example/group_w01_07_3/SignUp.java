@@ -147,7 +147,7 @@ public class SignUp extends AppCompatActivity {
         dobPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dobPicker.setEnabled(false);
+                dobPicker.setEnabled(false); // prevent crazy clicks
                 new Thread(new Runnable() {
                     @Override
                     public void run() {

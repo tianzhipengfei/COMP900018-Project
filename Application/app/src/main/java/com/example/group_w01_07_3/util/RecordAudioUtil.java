@@ -152,6 +152,25 @@ public class RecordAudioUtil {
      * start recoding the audio
      */
     private void startRecording() {
+        final MaterialButton recordButton = context.findViewById(R.id.record_button);
+        recordButton.setEnabled(false); // prevent crazy clicks
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        recordButton.setEnabled(true);
+                    }
+                });
+            }
+        }).start();
+
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
