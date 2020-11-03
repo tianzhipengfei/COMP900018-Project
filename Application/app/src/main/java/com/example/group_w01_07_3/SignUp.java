@@ -87,8 +87,6 @@ public class SignUp extends AppCompatActivity {
     ImageView sideBackShape;
 
     // message section
-    private Toast toast = null;
-    private Snackbar snackbar = null;
     private long mLastClickTime = 0;
 
     @Override
@@ -495,7 +493,7 @@ public class SignUp extends AppCompatActivity {
         avatarImageBtn.setEnabled(false);
         boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
         if(!internetFlag){
-            displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+            MessageUtil.displaySnackbar(constraintLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
             signUpButton.setEnabled(true);
             backToSignInText.setEnabled(true);
             sideBackShape.setEnabled(true);
@@ -563,7 +561,7 @@ public class SignUp extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        displaySnackbar(constraintLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                        MessageUtil.displaySnackbar(constraintLayout, "Sign up timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
                         signUpButton.setEnabled(true);
                         backToSignInText.setEnabled(true);
                         sideBackShape.setEnabled(true);
@@ -573,20 +571,6 @@ public class SignUp extends AppCompatActivity {
                 return ;
             }
         });
-    }
-
-    /**
-     * Display snackbar in a non-overlap manner
-     *
-     * @param view   view where snackbar will display at
-     * @param msg    the message to display
-     * @param length the duration of snackbar display
-     */
-    private void displaySnackbar(View view, String msg, int length) {
-        if (snackbar == null || !snackbar.getView().isShown()) {
-            snackbar = Snackbar.make(view, msg, length);
-            snackbar.show();
-        }
     }
 
     @Override

@@ -49,8 +49,6 @@ public class SignIn extends AppCompatActivity {
     private SharedPreferences pref;
 
     // message section
-    private Toast toast = null;
-    private Snackbar snackbar = null;
     private long mLastClickTime = 0;
 
     // user info
@@ -107,7 +105,7 @@ public class SignIn extends AppCompatActivity {
                     // check Internet connection
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                     if (!internetFlag) {
-                        displaySnackbar(constraintLayout, "Oops! Looks like you lost Internet connection.\n" +
+                        MessageUtil.displaySnackbar(constraintLayout, "Oops! Looks like you lost Internet connection.\n" +
                                 "Please connect to the Internet and try again ...", Snackbar.LENGTH_LONG);
                         signInButton.setEnabled(true);
                         return;
@@ -216,7 +214,7 @@ public class SignIn extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        displaySnackbar(constraintLayout, "Sign in timeout!\n" +
+                        MessageUtil.displaySnackbar(constraintLayout, "Sign in timeout!\n" +
                                 "Please check your Internet and try again ...", Snackbar.LENGTH_LONG);
                         signInButton.setEnabled(true);
                         createAccountButton.setEnabled(true);
@@ -270,19 +268,4 @@ public class SignIn extends AppCompatActivity {
             }
         });
     }
-
-    /**
-     * Display snackbar in a non-overlap manner
-     *
-     * @param view   view where snackbar will display at
-     * @param msg    the message to display
-     * @param length the duration of snackbar display
-     */
-    private void displaySnackbar(View view, String msg, int length) {
-        if (snackbar == null || !snackbar.getView().isShown()) {
-            snackbar = Snackbar.make(view, msg, length);
-            snackbar.show();
-        }
-    }
-
 }
