@@ -93,17 +93,26 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private Marker selectedMarker;
     private Marker mCurrLocationMarker;
     private Hashtable<Marker, Object> mCapsuleMarkers = new Hashtable<Marker, Object>();
-    private boolean if_connected = false;
     private boolean can_i_shake = false;
     private boolean can_i_retrieve_http = true;
     private boolean can_i_fresh_markers = false;
-    // location permission
-    private LocationRequest mLocationRequest;
-    private FusedLocationProviderClient mFusedLocationClient;
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    // google map's location permission
     private GoogleMap mGoogleMap;
+    private LocationRequest mLocationRequest;
+    private final int PER_SECOND = 1000; // (unit: ms)
+    private int locationUpdateInterval = 5 * PER_SECOND;
+    private FusedLocationProviderClient mFusedLocationClient;
     private SupportMapFragment mapFrag;
-    private boolean disable_camera = true;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    // last requested location
+    private Location mLastLocation;
+    private double lastRequestLat = 360.0;
+    private double lastRequestLon = 360.0;
+    private long lastUpdate_time;
+    private double curLat = 360.0;
+    private double curLon = 360.0;
+    // distance capsules request interval (unit: degree)
+    private double distanceThresholdToRequest = 5.55;
     // shake event
     public SensorManager sensorMgr;
     private boolean discover_refresh = true;
@@ -116,23 +125,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private float last_move_y = 0;
     private float last_move_z = 0;
     private int open_shake_time = 0;
-
-    private static final int MAX_PAUSE_BETWEEN_SHAKES = 200;  // unit: default 200 ms
-    private static final int NUM_SHAKES = 5; //5,valid shake how many times to open capsule
-    private static final float COSINE = (float) 0.5; //0.5,cosine,rotation angle,0.8, 45" --> PHONE IS MORE SENSITIVE THAN EMULATOR, SMALLER THE HARDER
-    private static final float FORCE_THRESHOLD = (float) 10; //rotation force, this is rotation force threshold on open capsule. --> PHONE IS MORE SENSITIVE THAN EMULATOR, THE BIGGER THE HARDER
-    // last requested location
-    private Location mLastLocation;
-    private double lastRequestLat = 360.0;
-    private double lastRequestLon = 360.0;
-    private long lastUpdate_time;
-    private double curLat = 360.0;
-    private double curLon = 360.0;
-    // time interval for updating current location (unit: ms)
-    private final int PER_SECOND = 1000;
-    private int locationUpdateInterval = 5 * PER_SECOND;
-    // distance capsules request interval (unit: degree)
-    private double distanceThresholdToRequest = 5.55;
+    private static final int MAX_PAUSE_BETWEEN_SHAKES = 200;  // (unit: ms)
+    private static final int NUM_SHAKES = 5;
+    private static final float COSINE = (float) 0.5; // rotation angle
+    private static final float FORCE_THRESHOLD = (float) 10; // rotation force threshold
     // pop-up window
     private boolean popUpShake = false;
     private PopupWindow pw;
@@ -140,14 +136,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private View popupview_tap;
     private View popupview_shake;
     private View popview_slide;
-    //Message Section
+    // message section
     Toast toast = null;
     Snackbar snackbar = null;
 
     /**
      * Performs basic application startup logic that happens only once for the entire life of the activity.
      *
-     * @param savedInstanceState: a Bundle object containing the activity's previously saved state
+     * @param savedInstanceState a Bundle object containing the activity's previously saved state
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,7 +153,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //use toolbar at top of screen across all activities
         Toolbar toolbar = findViewById(R.id.toolbar_discover);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Shake & Discover Memory");
+        getSupportActionBar().setTitle("Shake Phone & Discover");
 
         drawerLayout = findViewById(R.id.discover_drawer_layout);
 
@@ -179,7 +175,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
         updateHeader();
 
-        //get current Location in GoogleMap using FusedLocationProviderClient
+        // main entry point for location services integration
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
@@ -273,7 +269,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
                                     startActivity(intent);
                                     finish();
-                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                 }
                             });
                         }
@@ -303,7 +299,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     /**
      * Called when the map is ready to be used.
      *
-     * @param googleMap: a non-null instance of a GoogleMap that defines the callback
+     * @param googleMap a non-null instance of a GoogleMap that defines the callback
      */
     @SuppressLint("MissingPermission")
     @Override
@@ -357,13 +353,14 @@ public class DiscoverCapsule extends AppCompatActivity implements
     /**
      * Callback for receiving the results for permission requests.
      *
-     * @param requestCode the request intent that came back
-     * @param permissions the requested permissions
+     * @param requestCode  the request intent that came back
+     * @param permissions  the requested permissions
      * @param grantResults the grant results for the corresponding permissions
      */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length > 0
@@ -372,8 +369,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
                         // restart DiscoverCapsule activity if the location permission was granted
+                        finish();
                         Intent intent = new Intent(DiscoverCapsule.this, DiscoverCapsule.class);
                         startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 } else {
                     displayToast(this, "permission denied", Toast.LENGTH_LONG);
@@ -439,7 +438,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     /**
      * Stores user's current location in 'capsuleInfo' which will be later used to make an HTTP get request
      *
-     * @param locationResult user's location history
+     * @param locationResult a user's location history
      */
     private void updateCapsuleRequestLocation(LocationResult locationResult) {
         List<Location> locationList = locationResult.getLocations();
@@ -569,7 +568,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                             Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
                                             startActivity(intent);
                                             finish();
-                                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                         }
                                     });
                                 }
@@ -631,8 +630,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mGoogleMap.clear();
         Log.d("CAPSULEMARKER", "allCapsules: " + allCapsules);
 
-        // for testing
-        int counts = 0;
+        int num_capsules = 0;
 
         //place capsule markers on google maps
         for (int i = 0; i < allCapsules.length(); i++) {
@@ -656,9 +654,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            // for testing
-            counts += 1;
-            Log.d("CAPSULEMARKER", "refresh_counts: " + counts);
+
+            num_capsules += 1;
+            Log.d("CAPSULEMARKER", "refresh_counts: " + num_capsules);
         }
 
         registerShakeSensor();
@@ -670,7 +668,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
      * @param location user's current location
      */
     private void drawGoogleMapLayout(Location location) {
-        // default location Googleplex: 37.4219983 -122.084
+        // default location Googleplex: 37.4219983 latitude -122.084 longitude
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -686,7 +684,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         mCurrLocationMarker.showInfoWindow();
     }
     //The logic is borrowed from https://stackoverflow.com/questions/44992014/how-to-get-current-location-in-googlemap-using-fusedlocationproviderclient
-
 
     /**
      * Sets up sensor manager.
@@ -800,9 +797,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
      *
      * @param view   inflated view of the popup window
      * @param width  width of popup window
-     * @param height  height of popup window
+     * @param height height of popup window
      */
-    private void initPopWindow(View view, int width, int height){
+    private void initPopWindow(View view, int width, int height) {
         pw = new PopupWindow(view, width, height, true);
         pw.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
@@ -824,7 +821,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
      *
      * @param dismiss image view allows for user's click
      */
-    private void initDismissListener(ImageView dismiss){
+    private void initDismissListener(ImageView dismiss) {
         dismiss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -838,10 +835,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
      * Adds listener to verfication image view of popup window-slider, check the position of captcha
      * matches the position of puzzle
      *
-     * @param slideValidationView   image of puzzle
-     * @param seekbar    the slider with draggable thumb
+     * @param slideValidationView image of puzzle
+     * @param seekbar             the slider with draggable thumb
      */
-    private void initSlideVerificationListener(final SlideValidationView slideValidationView, final VerificationSeekBar seekbar){
+    private void initSlideVerificationListener(final SlideValidationView slideValidationView, final VerificationSeekBar seekbar) {
         slideValidationView.setListener(new SlideListener() {
 
             /**
@@ -898,7 +895,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
      *
      * @param shakeImg image view of shake popup window
      */
-    private void initShakeImageAnimation(final ImageView shakeImg){
+    private void initShakeImageAnimation(final ImageView shakeImg) {
         //looping the shake animation for popup window every 2 seconds
         AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DiscoverCapsule.this, R.anim.shake);
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -1001,7 +998,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
         //create a progress bar to notify user to wait for server reply
         final ProgressDialog progress = new ProgressDialog(DiscoverCapsule.this);
         progress.setTitle("Loading");
-        progress.setMessage("Wait for server verficiation");
+        progress.setMessage("Almost there...Opening the capsule may take a few seconds");
+        progress.setCancelable(false);
         progress.show();
         Double lon = curLon;
         Double lat = curLat;
@@ -1090,7 +1088,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
                                 intent.putExtra("capsule", selectedCapsule.toString());
                                 startActivity(intent);
-                                overridePendingTransition(R.anim.pop_up,R.anim.stay);
+                                overridePendingTransition(R.anim.pop_up, R.anim.stay);
                             }
                         });
                     }
@@ -1106,8 +1104,8 @@ public class DiscoverCapsule extends AppCompatActivity implements
      * Display toast in a non-overlap manner
      *
      * @param context The context which toast will display at
-     * @param msg The message to display
-     * @param length the duration of toast display
+     * @param msg     The message to display
+     * @param length  the duration of toast display
      */
     private void displayToast(Context context, String msg, int length) {
         if (toast == null || !toast.getView().isShown()) {
@@ -1119,12 +1117,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
     /**
      * Display snackbar in a non-overlap manner
      *
-     * @param view view where snackbar will display at
-     * @param msg the message to display
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
      * @param length the duration of snackbar display
      */
-    private void displaySnackbar(View view, String msg, int length){
-        if (snackbar == null || !snackbar.getView().isShown()){
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
             snackbar = Snackbar.make(view, msg, length);
             snackbar.show();
         }

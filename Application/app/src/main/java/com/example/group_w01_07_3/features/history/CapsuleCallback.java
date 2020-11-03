@@ -5,7 +5,7 @@ import android.widget.TextView;
 
 public interface CapsuleCallback {
 
-    //这里写想要支持transition的field
+    //which field we would like to support shared element transition
     void onCapsuleItemClick(
             int pos,
             TextView title,

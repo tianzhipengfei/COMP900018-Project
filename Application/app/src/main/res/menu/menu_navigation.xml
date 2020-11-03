@@ -6,15 +6,15 @@
         <item
 
             android:id="@+id/discover_capsule_tab"
-            android:title="Discover Memory Capsule"
+            android:title="Discover Geo-Capsule"
             android:icon="@drawable/slidemenu_discover"/>
         <item
             android:id="@+id/create_capsule_tab"
-            android:title="Create Memory Capsule"
+            android:title="Create Geo-Capsule"
             android:icon="@drawable/slidemenu_add"/>
         <item
             android:id="@+id/capsule_history_tab"
-            android:title="Opened Capsule History"
+            android:title="Opened Geo-Capsule Gallery"
             android:icon="@drawable/slidemenu_history"/>
         <item
             android:id="@+id/edit_profile_tab"

@@ -3,21 +3,16 @@ package com.example.group_w01_07_3.features.history;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityOptionsCompat;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
+import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
 import android.transition.Fade;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,35 +21,39 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.group_w01_07_3.R;
-import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
-import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
-
+    //APP view
+    private CoordinatorLayout coordinatorLayout;
     private Toolbar mToolbar;
-
+    private TextView title;
+    private TextView date;
+    private TextView tag;
+    private TextView content;
+    private TextView username;
+    private ImageView image;
+    private ImageView avatar;
+    private ImageButton voice;
     private ShimmerFrameLayout imageShimmer, avatarShimmer, voiceShimmer;
 
-    TextView title;
-    TextView date;
-    TextView tag;
-    TextView content;
-    TextView username;
-    ImageView image;
-    ImageView avatar;
-    ImageButton voice;
+    //Media Player Section
+    private MediaPlayer mediaPlayer;
+    private Boolean startPlay;
 
-
-    String titleString,dateString,usernameString,contentString;
+    //Capsule Content Section
+    OpenedCapsule item;
+    String titleString, dateString, usernameString, contentString;
     int tagIndentifier;
     String imageLocation, avatarLocation, voiceLocation;
 
-    OpenedCapsule item;
+    // Message Section
+    private Snackbar snackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +84,18 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             }
         });
 
+        initView();
+
+        //get the capsule object
+        item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
+
+        loadCapsule(item);
+    }
+
+    /**
+     * Initialize all view required to show the opened Geo-capsule
+     */
+    private void initView() {
         //set up toolbar
         mToolbar = findViewById(R.id.detail_history_capsule_back_toolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_back);
@@ -95,10 +106,10 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DetailedCapsuleHistoryItem.super.onBackPressed();
-//                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
         });
 
+        coordinatorLayout = findViewById(R.id.detail_history_mega_layout);
         //find view for shimmer placeholder layout
         imageShimmer = findViewById(R.id.history_detail_shimmer_image);
         avatarShimmer = findViewById(R.id.history_detail_shimmer_avatar);
@@ -115,17 +126,15 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         image = findViewById(R.id.history_detail_image);
         avatar = findViewById(R.id.history_detail_capsule_original_user_avatar);
         voice = findViewById(R.id.history_detail_voice);
-
-        //get the capsule object
-        item = (OpenedCapsule) getIntent().getExtras().getSerializable("capsuleObject");
-
-        loadCapsule(item);
     }
 
-
-    //这里设置的部分都会被update,不管那一块写了transition没有
-    private void loadCapsule(OpenedCapsule item){
-        titleString  = item.getCapsule_title();
+    /**
+     * Load all information of the capsule from server or directly from the object.
+     *
+     * @param item The capsule object to be displayed
+     */
+    private void loadCapsule(OpenedCapsule item) {
+        titleString = item.getCapsule_title();
         dateString = item.getOpened_date();
         tagIndentifier = item.getTag();
         usernameString = item.getUsername();
@@ -142,26 +151,23 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 content.setText(contentString);
                 username.setText(usernameString);
 
-                if(tagIndentifier == 1){
-                    tag.setText("Public Memory Capsule");
+                if (tagIndentifier == 1) {
+                    tag.setText("Public Geo-Capsule");
                 } else {
-                    tag.setText("Your Private Capsule");
+                    tag.setText("Your Private Geo-Capsule");
                 }
 
-                if(!imageLocation.equals("null")){
+                if (!imageLocation.equals("null")) {
                     loadImage();
                 } else {
                     imageShimmer.stopShimmer();
                     imageShimmer.setVisibility(View.GONE);
-//                    image.requestLayout();
-//                    image.setMinimumHeight(48);
                     android.view.ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
                     layoutParams.height = 48;
-//                    image.setBackgroundColor(0xFFFFFFFF);
                     image.setVisibility(View.VISIBLE);
                 }
 
-                if(!avatarLocation.equals("null")){
+                if (!avatarLocation.equals("null")) {
                     loadAvatar();
                 } else {
                     avatarShimmer.stopShimmer();
@@ -170,7 +176,7 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                     avatar.setImageResource(R.drawable.avatar_sample);
                 }
 
-                if(!voiceLocation.equals("null")){
+                if (!voiceLocation.equals("null")) {
                     loadVoice();
                 } else {
                     voiceShimmer.stopShimmer();
@@ -181,7 +187,10 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
     }
 
-    private void loadImage(){
+    /**
+     * load capsule content image from the 3rd party image server using Glide.
+     */
+    private void loadImage() {
         //Must use  this tree observer to load content image
         image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -190,18 +199,16 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                 image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                 //ONLY load if the activity is still alive
-                if(!DetailedCapsuleHistoryItem.this.isDestroyed()){
+                if (!DetailedCapsuleHistoryItem.this.isDestroyed()) {
                     //use Glide to load image, once successful loaded, turn off shimmer and display image
                     Glide.with(DetailedCapsuleHistoryItem.this)
                             .load(imageLocation)
                             .listener(new RequestListener<Drawable>() {
                                 @Override
                                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    Log.d("Debug", "IMAGE - Glide Errored");
-                                    Snackbar.make(findViewById(R.id.detail_history_mega_layout),
+                                    displaySnackbar(coordinatorLayout,
                                             "Failed to load the capsule image, please check your internet connection",
-                                            Snackbar.LENGTH_LONG)
-                                            .show();
+                                            Snackbar.LENGTH_LONG);
                                     return false;
                                 }
 
@@ -210,52 +217,11 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
                                     imageShimmer.stopShimmer();
                                     imageShimmer.setVisibility(View.GONE);
                                     image.setVisibility(View.VISIBLE);
-
-                                    //looping the shake animation for popup window every 2 seconds
-//                                    AnimationSet animation = (AnimationSet) AnimationUtils.loadAnimation(DetailedCapsuleHistoryItem.this, R.anim.shake);
-//                                    animation.setAnimationListener(new Animation.AnimationListener() {
-//                                        @Override
-//                                        public void onAnimationStart(Animation animation) {
-//
-//                                        }
-//
-//                                        @Override
-//                                        public void onAnimationEnd(final Animation animation) {
-//                                            new Handler().postDelayed(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-//                                                    image.startAnimation(animation);
-//                                                }
-//                                            },2000);
-//                                        }
-//
-//                                        @Override
-//                                        public void onAnimationRepeat(Animation animation) {
-//
-//                                        }
-//                                    });
-//                                    image.startAnimation(animation);
-
-//                                image.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View view) {
-//                                        Intent intent = new Intent(DetailedCapsuleHistoryItem.this, FullScreenImageUtil.class);
-//                                        intent.putExtra("ImageURL", imageLocation);
-//                                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(DetailedCapsuleHistoryItem.this, image, "capsuleImageTN");
-//                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//                                            startActivity(intent,options.toBundle());
-//                                        }
-//                                        else
-//                                            startActivity(intent);
-//                                    }
-//                                });
-
                                     return false;
                                 }
                             })
                             .into(image);
-                }
-                else {
+                } else {
                     Log.d("FINISHED", "run: Activity has been finished, don't load Glide for image");
                 }
 
@@ -263,22 +229,23 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         });
     }
 
-    private void loadAvatar(){
+    /**
+     * load capsule creator avatar from the 3rd party image server using Glide.
+     */
+    private void loadAvatar() {
         //avatar view has fix size, so no need to use viewtree
         //use Glide to load avatar, once successful loaded, turn off shimmer and display avatar
 
         //ONLY load if the activity is still alive
-        if (!DetailedCapsuleHistoryItem.this.isDestroyed()){
+        if (!DetailedCapsuleHistoryItem.this.isDestroyed()) {
             Glide.with(this)
                     .load(avatarLocation)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            Log.d("Debug", "IMAGE - Glide Errored");
-                            Snackbar.make(findViewById(R.id.detail_history_mega_layout),
+                            displaySnackbar(coordinatorLayout,
                                     "Failed to load user avatar of the capsule owner, please check your internet connection",
-                                    Snackbar.LENGTH_LONG)
-                                    .show();
+                                    Snackbar.LENGTH_LONG);
                             return false;
                         }
 
@@ -296,25 +263,112 @@ public class DetailedCapsuleHistoryItem extends AppCompatActivity {
         }
     }
 
-    //TODO: @CHENFU ---- testing purpose only, assume finish loading voice from server takes 3 seconds
-    private void loadVoice(){
+    /**
+     * load voice data of the capsule from server
+     */
+    private void loadVoice() {
         //ONLY load if the activity is still alive
-        if (!DetailedCapsuleHistoryItem.this.isDestroyed()){
-
-            new Handler().postDelayed(new Runnable() {
+        if (!DetailedCapsuleHistoryItem.this.isDestroyed()) {
+            mediaPlayer = new MediaPlayer();
+            //when audio is loaded successfully, remove the shimmer effect and set audio button to be visible
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
-                public void run() {
+                public void onPrepared(MediaPlayer mediaPlayer) {
                     voiceShimmer.stopShimmer();
                     voiceShimmer.setVisibility(View.GONE);
                     voice.setVisibility(View.VISIBLE);
                 }
-            },3000);
+            });
+            startPlay = true;
+
+            //set listener to listener to user's click on audio play button
+            voice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (startPlay) {
+                        mediaPlayer.start();
+                    } else {
+                        mediaPlayer.pause();
+                    }
+                    startPlay = !startPlay;
+                }
+            });
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer arg0) {
+                    startPlay = !startPlay;
+                }
+            });
+
+            try {
+                mediaPlayer.setDataSource(voiceLocation);
+                mediaPlayer.prepareAsync();
+                mediaPlayer.setLooping(false);
+                //handle the internet loss condition, notify the user about Internet connection failure.
+                mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                    //handle media player lose network connection
+                    @Override
+                    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                        displaySnackbar(coordinatorLayout,
+                                "Failed to Load audio, please check your internet connection",
+                                Snackbar.LENGTH_LONG);
+                        return false;
+                    }
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-//    }
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
+        }
+    }
+
+    /**
+     * Back to the discover capsule page.
+     */
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.stay, R.anim.pop_in);
+        //stop the audio play, if the user
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+        }
+    }
+
+    /**
+     * stop music if click home button
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+        }
+    }
+
+    /**
+     * stop the music if current page is paused
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mediaPlayer != null) {
+            mediaPlayer.pause();
+        }
+    }
 }

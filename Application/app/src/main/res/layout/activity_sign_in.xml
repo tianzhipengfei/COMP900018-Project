@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Memory Cpasule for Surprise"
+                android:text="Geo-Capsule for Surprise"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline5"
                 android:textSize="24sp"

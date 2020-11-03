@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Memory Capsule</string>
+    <string name="app_name"> Geo-Capsule</string>
     <string name="title_activity_home">MainActivity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
@@ -33,5 +33,13 @@
         "\n"
         "6. Date of Birth (required)\n"
         "   * Cannot be a date after today\n"
+    </string>
+
+    <string name="registration_password">
+        "Password (required)\n"
+        " * Contain at least 8 Characters\n"
+        " * Must contain at least 1 uppercase letter,\n"
+        "   1 lowercase letter, 1 number\n"
+        "   and 1 special character\n"
     </string>
 </resources>

@@ -39,7 +39,10 @@
             android:name=".features.discover.DiscoverCapsule" />
         <activity android:name=".features.discover.Display" />
         <activity android:name=".features.create.CreateCapsule" />
-        <activity android:name=".features.history.OpenedCapsuleHistory" />
+        <activity
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"
+            android:name=".features.history.OpenedCapsuleHistory" />
         <activity android:name=".features.history.DetailedCapsuleHistoryItem" />
         <activity
             android:name=".features.account.EditProfile"
