@@ -772,22 +772,9 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     /**
-     * Display snackbar in a non-overlap manner
-     *
-     * @param view   view where snackbar will display at
-     * @param msg    the message to display
-     * @param length the duration of snackbar display
+     * Double back pressed to exit app
+     * The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activit
      */
-    private void displaySnackbar(View view, String msg, int length) {
-        if (snackbar == null || !snackbar.getView().isShown()) {
-            snackbar = Snackbar.make(view, msg, length);
-            snackbar.show();
-        }
-    }
-
-
-    //double backpressed to exit app
-    //The logic is borrowed from https://stackoverflow.com/questions/8430805/clicking-the-back-button-twice-to-exit-an-activity
     @Override
     public void onBackPressed() {
 
