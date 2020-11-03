@@ -72,26 +72,35 @@ import okhttp3.Response;
 public class CreateCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
-    private final int REQUEST_PERMISSION_COARSE_LOCATION = 2;
-    private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
-    boolean doubleBackToExitPressedOnce = false;
-    boolean mStartPlaying = true;
+    private String token;
+    // APP view
+    private DrawerLayout drawerLayout;
     View headerView;
     TextView headerUsername;
     ShapeableImageView headerAvatar;
     NavigationView navigationView;
     ExtendedFloatingActionButton floatingActionButton;
-    JSONObject capsuleInfo = new JSONObject();
+    private BottomDialog bottomDialog;
+    private ProgressDialog progressbar;
+
+    // location & audio utility section
+    private FusedLocationProviderClient fusedLocationClient;
+    boolean mStartPlaying = true;
     private boolean mStartRecording = true;
-    private DrawerLayout drawerLayout;
     private String usernameProfileString, avatarProfileString;
     private RecordAudioUtil recorderUtil;
-    private FusedLocationProviderClient fusedLocationClient;
-    private int permission = 1;
-    private String token;
-    private ProgressDialog progressbar;
-    private BottomDialog bottomDialog;
     private File imageFile;
+
+    // capsule content
+    JSONObject capsuleInfo = new JSONObject();
+
+    //parameters
+    private final int REQUEST_PERMISSION_COARSE_LOCATION = 2;
+    private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
+    boolean doubleBackToExitPressedOnce = false;
+
+    private int permission = 1;
+
     // message section
     private long mLastClickTime = 0;
 
@@ -576,7 +585,8 @@ public class CreateCapsule extends AppCompatActivity implements
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        MessageUtil.displayToast(CreateCapsule.this, "Connection fail. Please check your internet", Toast.LENGTH_SHORT);
+                        MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Connection fail. Please check your internet.",
+                                Snackbar.LENGTH_SHORT, floatingActionButton);
                         progressbar.dismiss();
                     }
                 });
