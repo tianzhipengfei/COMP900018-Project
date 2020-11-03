@@ -1,20 +1,24 @@
 package com.example.group_w01_07_3.features.history;
 
-import com.bumptech.glide.Glide;
-import com.example.group_w01_07_3.R;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.view.Window;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.bumptech.glide.Glide;
+import com.example.group_w01_07_3.R;
 
 /**
  * This class will display image in full screen view upon clicking
  * But due to issue of overriding shared element transition, this class is not used
  */
 public class FullScreenImageUtil extends AppCompatActivity {
+
     private String imageURL;
     private ImageView imageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,4 +40,5 @@ public class FullScreenImageUtil extends AppCompatActivity {
                 .load(imageURL)
                 .into(imageView);
     }
+
 }
