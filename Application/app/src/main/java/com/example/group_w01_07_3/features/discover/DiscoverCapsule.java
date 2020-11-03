@@ -263,7 +263,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     UserUtil.clearToken(DiscoverCapsule.this);
-                                    Toast.makeText(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                    MessageUtil.displayToast(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT);
                                     Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
                                     startActivity(intent);
                                     finish();
@@ -562,7 +562,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                         @Override
                                         public void run() {
                                             UserUtil.clearToken(DiscoverCapsule.this);
-                                            Toast.makeText(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT).show();
+                                            MessageUtil.displayToast(DiscoverCapsule.this, "Not logged in", Toast.LENGTH_SHORT);
                                             Intent intent = new Intent(DiscoverCapsule.this, SignIn.class);
                                             startActivity(intent);
                                             finish();
