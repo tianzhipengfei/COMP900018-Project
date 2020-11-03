@@ -15,6 +15,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+/**
+ * LocationUtil is used to get location
+ */
 public class LocationUtil {
 
     private final int REQUEST_PERMISSION_COARSE_LOCATION = 2;
@@ -24,6 +27,10 @@ public class LocationUtil {
     private Location lo;
     private FusedLocationProviderClient fusedLocationClient;
 
+    /**
+     * constructor
+     * @param activity activity
+     */
     public LocationUtil(AppCompatActivity activity) {
         context = activity;
         lm = (LocationManager) context.getApplicationContext().
@@ -31,6 +38,10 @@ public class LocationUtil {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
     }
 
+    /**
+     * check the location permission
+     * @return has the location permission or not
+     */
     private boolean checkLocationPermission() {
         int fineLocation = ActivityCompat.checkSelfPermission(
                 context, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -57,6 +68,10 @@ public class LocationUtil {
         }
     }
 
+    /**
+     * get the location
+     * @return location
+     */
     public Location getLocation() {
         if (checkLocationPermission()) {
             fusedLocationClient.getLastLocation()
@@ -66,7 +81,7 @@ public class LocationUtil {
                             if (location != null) {
                                 lo = location;
                                 Log.i("location", location.toString());
-                                // Logic to handle location object
+                                // logic to handle location object
                             } else {
                                 Log.i("location error", "Cannot get location");
                             }
