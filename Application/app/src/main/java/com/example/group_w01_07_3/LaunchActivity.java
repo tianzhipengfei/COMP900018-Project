@@ -1,7 +1,5 @@
 package com.example.group_w01_07_3;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,15 +9,16 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.group_w01_07_3.features.onboarding.OnBoardingActivity;
 
 public class LaunchActivity extends AppCompatActivity {
 
+    private static int SPLASH_TIME_OUT = 2000; //animation duration
     ImageView logo;
     TextView title, subtitle;
     Animation logoAnim, textAnim;
-    private  static int SPLASH_TIME_OUT = 2000; //animation duration
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +49,6 @@ public class LaunchActivity extends AppCompatActivity {
                 finish();
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
-        },SPLASH_TIME_OUT);
+        }, SPLASH_TIME_OUT);
     }
 }
