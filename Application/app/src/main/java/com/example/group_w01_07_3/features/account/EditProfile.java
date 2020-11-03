@@ -1,7 +1,6 @@
 package com.example.group_w01_07_3.features.account;
 
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -63,17 +62,12 @@ public class EditProfile extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
 
     boolean doubleBackToExitPressedOnce = false;
-
-    private Toolbar mToolbar;
-
-    private DrawerLayout drawerLayout;
     View headerview;
     TextView headerUsername;
     ShapeableImageView headerAvatar;
-
     NavigationView navigationView;
-
-
+    private Toolbar mToolbar;
+    private DrawerLayout drawerLayout;
     private BottomDialog bottomDialog;
 
     private ImageView avatarDisplay;
@@ -127,7 +121,7 @@ public class EditProfile extends AppCompatActivity implements
                 if (!EditProfile.this.isDestroyed()) {
                     Intent intent = new Intent(EditProfile.this, ChangePassword.class);
                     startActivity(intent);
-                    overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 }
             }
         });
@@ -136,6 +130,23 @@ public class EditProfile extends AppCompatActivity implements
         changeAvatarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setAllEnabledFalse();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(400);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setAllEnabledTrue();
+                            }
+                        });
+                    }
+                }).start();
                 // (Modified) From: https://github.com/jianjunxiao/BottomDialog
                 bottomDialog = new BottomDialog(EditProfile.this);
                 ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomDialog.getContentView().getLayoutParams();
@@ -172,7 +183,7 @@ public class EditProfile extends AppCompatActivity implements
                             finish();
                         } else {
                             boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
-                            if(!internetFlag){
+                            if (!internetFlag) {
                                 MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout. Please check Internet connection", Snackbar.LENGTH_LONG);
                                 setAllEnabledTrue();
                                 drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -198,7 +209,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
-                                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                                 }
                                             });
                                         } else if (responseJSON.has("error")) {
@@ -212,7 +223,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
-                                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                                 }
                                             });
                                         } else {
@@ -224,7 +235,7 @@ public class EditProfile extends AppCompatActivity implements
                                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                                     startActivity(intent);
                                                     finish();
-                                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                                 }
                                             });
                                         }
@@ -265,7 +276,7 @@ public class EditProfile extends AppCompatActivity implements
         onGetProfile();
     }
 
-    private void initView(){
+    private void initView() {
         drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
         avatarDisplay = (ImageView) findViewById(R.id.edit_profile_avatar_display);
         usernameDisplay = (TextView) findViewById(R.id.edit_profile_username_display);
@@ -314,19 +325,19 @@ public class EditProfile extends AppCompatActivity implements
             case R.id.discover_capsule_tab:
                 intent = new Intent(EditProfile.this, DiscoverCapsule.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.create_capsule_tab:
                 intent = new Intent(EditProfile.this, CreateCapsule.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.capsule_history_tab:
                 intent = new Intent(EditProfile.this, OpenedCapsuleHistory.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
                 return true;
             case R.id.edit_profile_tab:
@@ -460,12 +471,12 @@ public class EditProfile extends AppCompatActivity implements
                                                   Log.d("PROFILE", "avatarProfileString: " + avatarProfileString);
 
                                                   //only update profile if the activity is still alive
-                                                  if (!EditProfile.this.isDestroyed()){
+                                                  if (!EditProfile.this.isDestroyed()) {
                                                       if (!(avatarProfileString == "null")) {
-                                                              //TODO: use Glide solved previus problem of not loaded avatar
-                                                              Glide.with(EditProfile.this)
-                                                                      .load(avatarProfileString)
-                                                                      .into(avatarDisplay);
+                                                          //TODO: use Glide solved previus problem of not loaded avatar
+                                                          Glide.with(EditProfile.this)
+                                                                  .load(avatarProfileString)
+                                                                  .into(avatarDisplay);
                                                           Picasso.with(EditProfile.this)
                                                                   .load(avatarProfileString)
                                                                   .fit()
@@ -497,7 +508,7 @@ public class EditProfile extends AppCompatActivity implements
                                     Intent intent = new Intent(EditProfile.this, SignIn.class);
                                     startActivity(intent);
                                     finish();
-                                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                 }
                             });
                         } else {
@@ -505,7 +516,7 @@ public class EditProfile extends AppCompatActivity implements
                             runOnUiThread(new Runnable() {
                                               @Override
                                               public void run() {
-                                                  if (!EditProfile.this.isDestroyed()){
+                                                  if (!EditProfile.this.isDestroyed()) {
                                                       MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed, Invalid form, please try again later.", Snackbar.LENGTH_SHORT);
                                                       usernameDisplay.setText("null");
                                                       emailDisplay.setText("null");
@@ -527,7 +538,7 @@ public class EditProfile extends AppCompatActivity implements
                     //retry to get profile every 3 seconds. handle the case that enter the activity
                     //with no internet at all(which okHTTP will not retry for you)
                     // don't attempt to retry if activity has already been finished
-                    if(!EditProfile.this.isDestroyed()){
+                    if (!EditProfile.this.isDestroyed()) {
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -535,7 +546,7 @@ public class EditProfile extends AppCompatActivity implements
                                 MessageUtil.displaySnackbar(drawerLayout, "Fetch profile failed, please check internet connection. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
                                 onGetProfile();
                             }
-                        },3000);
+                        }, 3000);
                     }
                 }
             });
@@ -572,7 +583,7 @@ public class EditProfile extends AppCompatActivity implements
                 e.printStackTrace();
                 //retry to upload avatar every 3 seconds. handle the case that enter the activity
                 //with no internet at all(which okHTTP will not retry for you)
-                if (!EditProfile.this.isDestroyed()){
+                if (!EditProfile.this.isDestroyed()) {
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -580,7 +591,7 @@ public class EditProfile extends AppCompatActivity implements
 
                             onUploadImage();
                         }
-                    },3000);
+                    }, 3000);
                 }
 
 //                // If don't want to retry automatically, please comment above if condition and code and uncomment code below
@@ -607,7 +618,7 @@ public class EditProfile extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 //Update main page avatar
-                                if (!EditProfile.this.isDestroyed()){
+                                if (!EditProfile.this.isDestroyed()) {
                                     //TODO: use Glide solved previus problem of not loaded avatar
                                     Glide.with(EditProfile.this)
                                             .load(newAvatarString)
@@ -632,7 +643,7 @@ public class EditProfile extends AppCompatActivity implements
                                 Intent intent = new Intent(EditProfile.this, SignIn.class);
                                 startActivity(intent);
                                 finish();
-                                overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                             }
                         });
                     }
@@ -646,7 +657,7 @@ public class EditProfile extends AppCompatActivity implements
                 e.printStackTrace();
                 //retry to update avatar display every 3 seconds. handle the case that enter the activity
                 //with no internet at all(which okHTTP will not retry for you)
-                if (!EditProfile.this.isDestroyed()){
+                if (!EditProfile.this.isDestroyed()) {
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -654,7 +665,7 @@ public class EditProfile extends AppCompatActivity implements
 
                             onChangeAvatar();
                         }
-                    },3000);
+                    }, 3000);
                 }
             }
         });
@@ -671,9 +682,9 @@ public class EditProfile extends AppCompatActivity implements
      */
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(navigationView)){
+        if (drawerLayout.isDrawerOpen(navigationView)) {
             drawerLayout.closeDrawer(navigationView);
-        }else {
+        } else {
             if (doubleBackToExitPressedOnce) {
                 super.onBackPressed();
                 return;
@@ -686,7 +697,7 @@ public class EditProfile extends AppCompatActivity implements
 
                 @Override
                 public void run() {
-                    doubleBackToExitPressedOnce=false;
+                    doubleBackToExitPressedOnce = false;
                 }
             }, 2000);
         }

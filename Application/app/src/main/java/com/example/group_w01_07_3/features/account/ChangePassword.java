@@ -1,6 +1,5 @@
 package com.example.group_w01_07_3.features.account;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +19,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.SignIn;
-import com.example.group_w01_07_3.SignUp;
 import com.example.group_w01_07_3.util.HttpUtil;
 import com.example.group_w01_07_3.util.MessageUtil;
 import com.example.group_w01_07_3.util.UserUtil;
@@ -70,7 +68,7 @@ public class ChangePassword extends AppCompatActivity {
 
     }
 
-    private void initView(){
+    private void initView() {
         constraintLayout = findViewById(R.id.change_password_mega_layout);
         mToolbar = findViewById(R.id.change_password_back_toolbar);
         oldPasswordET = (EditText) findViewById(R.id.edittext_change_password_old);
@@ -89,7 +87,6 @@ public class ChangePassword extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
 
         ImageView helpImageButton = (ImageView) findViewById(R.id.imageButton_sign_up_question);
         helpImageButton.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +110,7 @@ public class ChangePassword extends AppCompatActivity {
 
     }
 
-    private void setupChangePasswordBtn(){
+    private void setupChangePasswordBtn() {
         confirmChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -160,10 +157,10 @@ public class ChangePassword extends AppCompatActivity {
                     confirmChange.setEnabled(true);
                 } else {
                     boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
-                    if(!internetFlag){
+                    if (!internetFlag) {
                         MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Please check internet connection.", Snackbar.LENGTH_LONG);
                         confirmChange.setEnabled(true);
-                        return ;
+                        return;
                     }
                     onChangePassword();
                 }
@@ -201,7 +198,7 @@ public class ChangePassword extends AppCompatActivity {
                                 public void run() {
                                     MessageUtil.displayToast(ChangePassword.this, "Change password successfully", Toast.LENGTH_SHORT);
                                     finish();
-                                    overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+                                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                                 }
                             });
                         } else if (responseJSON.has("error")) {
@@ -226,7 +223,7 @@ public class ChangePassword extends AppCompatActivity {
                                                       Intent intent = new Intent(ChangePassword.this, SignIn.class);
                                                       startActivity(intent);
                                                       finish();
-                                                      overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                                      overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                                   }
                                               }
                                 );
@@ -257,7 +254,7 @@ public class ChangePassword extends AppCompatActivity {
                             confirmChange.setEnabled(true);
                         }
                     });
-                    return ;
+                    return;
                 }
             });
         }
@@ -266,6 +263,6 @@ public class ChangePassword extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }
