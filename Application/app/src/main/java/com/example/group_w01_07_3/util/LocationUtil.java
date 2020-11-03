@@ -12,21 +12,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import org.json.JSONException;
-
-import java.util.List;
-
 public class LocationUtil {
-    private AppCompatActivity context;
 
-    LocationManager lm;
     private final int REQUEST_PERMISSION_COARSE_LOCATION = 2;
     private final int REQUEST_PERMISSION_FINE_LOCATION = 1;
+    private LocationManager lm;
+    private AppCompatActivity context;
     private Location lo;
     private FusedLocationProviderClient fusedLocationClient;
 
@@ -34,7 +28,7 @@ public class LocationUtil {
         context = activity;
         lm = (LocationManager) context.getApplicationContext().
                 getSystemService(Context.LOCATION_SERVICE);
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);;
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
     }
 
     private boolean checkLocationPermission() {
@@ -63,37 +57,27 @@ public class LocationUtil {
         }
     }
 
-
     public Location getLocation() {
-
         if (checkLocationPermission()) {
-
-
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(context, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
-
                             if (location != null) {
                                 lo = location;
-                                Log.i("location",location.toString());
-
+                                Log.i("location", location.toString());
                                 // Logic to handle location object
-                            }else{
-                                Log.i("location error","Cannot get location");
+                            } else {
+                                Log.i("location error", "Cannot get location");
                             }
                         }
                     });
-
-
             return lo;
-        }else {
+        } else {
             Toast.makeText(context.getApplicationContext(), "Need permission", Toast.LENGTH_SHORT)
                     .show();
             return null;
         }
-
     }
-
 
 }

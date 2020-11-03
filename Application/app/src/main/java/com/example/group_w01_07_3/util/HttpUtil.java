@@ -8,22 +8,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.File;
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class HttpUtil {
 
@@ -69,7 +62,7 @@ public class HttpUtil {
     }
 
     public static void uploadAvatar(String username, File avatarFile, okhttp3.Callback callback) {
-        OkHttpClient client =  new OkHttpClient.Builder()
+        OkHttpClient client = new OkHttpClient.Builder()
                 .callTimeout(UPLOAD_TIMEOUT_SECOND, TimeUnit.SECONDS)
                 .build();
         RequestBody requestBody = new MultipartBody.Builder()
@@ -133,7 +126,7 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
-    public static void getCapsule(String token, JSONObject capsuleInfo,okhttp3.Callback callback) throws JSONException {
+    public static void getCapsule(String token, JSONObject capsuleInfo, okhttp3.Callback callback) throws JSONException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(HttpUtil.address + "discoverCapsule?" + "tkn=" + token
@@ -146,7 +139,7 @@ public class HttpUtil {
     }
 
     public static void uploadImage(String token, File avatarFile, okhttp3.Callback callback) {
-        OkHttpClient client =  new OkHttpClient.Builder()
+        OkHttpClient client = new OkHttpClient.Builder()
                 .callTimeout(UPLOAD_TIMEOUT_SECOND, TimeUnit.SECONDS)
                 .build();
         RequestBody requestBody = new MultipartBody.Builder()
@@ -183,7 +176,7 @@ public class HttpUtil {
         client.newCall(request).enqueue(callback);
     }
 
-    public static void createCapsule(JSONObject capsuleInfo,okhttp3.Callback callback){
+    public static void createCapsule(JSONObject capsuleInfo, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
                 .build();
@@ -214,13 +207,14 @@ public class HttpUtil {
                 .build();
         client.newCall(request).enqueue(callback);
     }
-    public static void openCapsule(JSONObject requestInfo,okhttp3.Callback callback){
+
+    public static void openCapsule(JSONObject requestInfo, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .callTimeout(POST_TIMEOUT_SECOND, TimeUnit.SECONDS)
                 .build();
         RequestBody requestBody = RequestBody.create(requestInfo.toString(), HttpUtil.JSON);
-        Request request=new Request.Builder()
-                .url(HttpUtil.address+"openCapsule")
+        Request request = new Request.Builder()
+                .url(HttpUtil.address + "openCapsule")
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(callback);

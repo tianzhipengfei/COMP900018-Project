@@ -5,16 +5,20 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * RecordAudioUtil is used to record the audio and play the audio
+ */
 public class RecordAudioUtil {
 
+    // for record audio
     private static final String LOG_TAG = "AudioRecordTest";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private static String fileName = null;
@@ -22,30 +26,39 @@ public class RecordAudioUtil {
     private AppCompatActivity context;
     private MediaRecorder recorder = null;
     private MediaPlayer player = null;
-    private boolean stream  = false;
+    private boolean stream = false;
 
-    // Requesting permission to RECORD_AUDIO
+    // requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
-    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
-
-    public RecordAudioUtil(AppCompatActivity activity){
-
+    /**
+     * constructor
+     *
+     * @param activity activity that needs record audio
+     */
+    public RecordAudioUtil(AppCompatActivity activity) {
         context = activity;
         fileName = context.getApplicationContext().getExternalCacheDir().getAbsolutePath();
         fileName += "/capsuleRecording.aac";
-
     }
 
-    public RecordAudioUtil(String filePath ){
-
+    /**
+     * constructor
+     *
+     * @param filePath filePath of the file
+     */
+    public RecordAudioUtil(String filePath) {
         fileName = filePath;
         stream = true;
-
     }
 
+    /**
+     * record audio
+     *
+     * @param start whether to start or stop
+     */
     public void onRecord(boolean start) {
-
         if (start) {
             startRecording();
         } else {
@@ -53,6 +66,11 @@ public class RecordAudioUtil {
         }
     }
 
+    /**
+     * play audio
+     *
+     * @param start whether start or stop
+     */
     public void onPlay(boolean start) {
         if (start) {
             startPlaying();
@@ -62,29 +80,36 @@ public class RecordAudioUtil {
     }
 
 
-    public boolean checkPermission(){
+    /**
+     * check the permission to record audio
+     *
+     * @return is permitted or not
+     */
+    public boolean checkPermission() {
         int recordPermit = ActivityCompat.checkSelfPermission(
                 context, Manifest.permission.RECORD_AUDIO);
         if (recordPermit != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(context, new String[]{
-                    Manifest.permission.RECORD_AUDIO},REQUEST_PERMISSION_AUDIO);
+                    Manifest.permission.RECORD_AUDIO}, REQUEST_PERMISSION_AUDIO);
         }
 
-        if(ActivityCompat.checkSelfPermission(
+        if (ActivityCompat.checkSelfPermission(
                 context, Manifest.permission.RECORD_AUDIO)
-                == PackageManager.PERMISSION_GRANTED){
+                == PackageManager.PERMISSION_GRANTED) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
+    /**
+     * start playing the audio
+     */
     private void startPlaying() {
         player = new MediaPlayer();
-
         try {
             player.setDataSource(fileName);
-            if(stream==true){
+            if (stream == true) {
                 player.setAudioStreamType(AudioManager.STREAM_MUSIC);
             }
             player.prepare();
@@ -94,46 +119,61 @@ public class RecordAudioUtil {
         }
     }
 
+    /**
+     * stop playing the audio
+     */
     private void stopPlaying() {
         player.release();
         player = null;
     }
 
+    /**
+     * start recoding the audio
+     */
     private void startRecording() {
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
         recorder.setOutputFile(fileName);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-
         try {
             recorder.prepare();
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
-
         recorder.start();
     }
 
+    /**
+     * stop recording the audio
+     */
     private void stopRecording() {
         recorder.stop();
         recorder.release();
         recorder = null;
     }
-    public void onStop(){
+
+    /**
+     * stop the recorder and the the player
+     */
+    public void onStop() {
         if (recorder != null) {
             recorder.release();
             recorder = null;
         }
-
         if (player != null) {
             player.release();
             player = null;
         }
     }
-    public File getAudioFile(){
+
+    /**
+     * get the recorded audio file
+     *
+     * @return the recorded audio file
+     */
+    public File getAudioFile() {
         return new File(fileName);
     }
 
 }
-    
