@@ -1,8 +1,5 @@
 package com.example.group_w01_07_3.features.onboarding;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -11,8 +8,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.group_w01_07_3.MainActivity;
 import com.example.group_w01_07_3.R;
@@ -30,6 +28,7 @@ import java.util.List;
  * Tutorial: https://www.youtube.com/watch?v=pwcG6npiXyo&t=79s
  */
 public class OnBoardingActivity extends AppCompatActivity {
+
     // App View
     private TabLayout tabLayout;
     private ViewPager onboardingPager;

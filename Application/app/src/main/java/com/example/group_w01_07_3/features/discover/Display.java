@@ -1,16 +1,11 @@
 package com.example.group_w01_07_3.features.discover;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,24 +23,19 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.group_w01_07_3.R;
-import com.example.group_w01_07_3.features.history.DetailedCapsuleHistoryItem;
-import com.example.group_w01_07_3.util.ImageUtil;
 import com.example.group_w01_07_3.util.MessageUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
-import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.snackbar.Snackbar;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Calendar;
 
 public class Display extends AppCompatActivity {
+
     //APP View
     private CoordinatorLayout coordinatorLayout;
     private TextView username;
@@ -383,5 +373,5 @@ public class Display extends AppCompatActivity {
             mediaPlayer.pause();
         }
     }
-}
 
+}

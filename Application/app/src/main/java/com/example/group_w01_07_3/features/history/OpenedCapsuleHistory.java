@@ -1,13 +1,5 @@
 package com.example.group_w01_07_3.features.history;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +14,15 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.SignIn;
@@ -49,8 +50,6 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Response;
-
-import androidx.core.util.Pair;
 
 public class OpenedCapsuleHistory extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, CapsuleCallback {
@@ -88,7 +87,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         //Define Transition, used specifically during shared element transition
         Window window = getWindow();
         window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
@@ -107,13 +105,12 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         initList();
 
         this.onGetHistory();
-
     }
 
     /**
      * Initialise all views for the gallery
      */
-    private void initView(){
+    private void initView() {
         //Application toolbar setup
         mToolbar = findViewById(R.id.toolbar_history);
         setSupportActionBar(mToolbar);
@@ -164,7 +161,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     /**
      * Initialise recycler list that holder data of opened Geo-capsules. set scroll up refresh func
      */
-    private void initList(){
+    private void initList() {
         //set up the recycle view
         openedCapsuleAdapter = new OpenedCapsuleAdapter(this, testingList, this);
         recyclerView.setAdapter(openedCapsuleAdapter);
@@ -293,7 +290,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                         OpenedCapsuleHistory.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (!OpenedCapsuleHistory.this.isDestroyed()){
+                                if (!OpenedCapsuleHistory.this.isDestroyed()) {
                                     recyclerView.setVisibility(View.VISIBLE);
                                     placeholder_retryImage.setVisibility(View.INVISIBLE);
                                     getPlaceholder_retryText.setVisibility(View.INVISIBLE);
@@ -381,15 +378,15 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
     /**
      * Display details of the clicked Geo-capsule with shared element transition
      *
-     * @param pos position of the card in the list
-     * @param title capsule title
-     * @param date opened date
-     * @param capImage capsule image
+     * @param pos        position of the card in the list
+     * @param title      capsule title
+     * @param date       opened date
+     * @param capImage   capsule image
      * @param privateTag private or public capsule tag
-     * @param content content of the Geo-capsule
-     * @param avatar creator avatar
-     * @param by text "by"
-     * @param username creator username
+     * @param content    content of the Geo-capsule
+     * @param avatar     creator avatar
+     * @param by         text "by"
+     * @param username   creator username
      */
     @Override
     public void onCapsuleItemClick(int pos, TextView title, TextView date, ImageView capImage, TextView privateTag, TextView content, ImageView avatar, TextView by, TextView username) {
@@ -471,7 +468,6 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                 finish();
                 return true;
         }
-
 
         return false;
     }
@@ -577,4 +573,5 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
             }, 2000);
         }
     }
+    
 }

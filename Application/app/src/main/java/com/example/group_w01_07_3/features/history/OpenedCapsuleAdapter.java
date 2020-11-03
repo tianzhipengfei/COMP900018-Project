@@ -1,7 +1,6 @@
 package com.example.group_w01_07_3.features.history;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.group_w01_07_3.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -107,7 +105,6 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
         TextView capsule_title, opened_date, private_tag, capsule_content, static_text_by, username;
         ConstraintLayout megaCardLayout;
 
-
         /**
          * holder of the entire view of capsule card
          *
@@ -139,4 +136,5 @@ public class OpenedCapsuleAdapter extends RecyclerView.Adapter<OpenedCapsuleAdap
             });
         }
     }
+
 }

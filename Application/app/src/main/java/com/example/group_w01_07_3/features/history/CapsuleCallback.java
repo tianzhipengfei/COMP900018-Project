@@ -17,4 +17,5 @@ public interface CapsuleCallback {
             TextView by,
             TextView username
     );
+
 }

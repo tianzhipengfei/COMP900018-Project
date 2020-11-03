@@ -3,14 +3,13 @@ package com.example.group_w01_07_3.features.discover;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.SeekBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
 public class VerificationSeekBar extends AppCompatSeekBar {
+
     private boolean isInterception = true;
 
     /**
@@ -53,4 +52,5 @@ public class VerificationSeekBar extends AppCompatSeekBar {
         }
         return super.onTouchEvent(event);
     }
+
 }

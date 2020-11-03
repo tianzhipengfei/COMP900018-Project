@@ -28,14 +28,14 @@ public class OnboardingViewPagerAdapter extends PagerAdapter {
      * Instantiate onboarding view page
      *
      * @param container The view group that holder each slider page
-     * @param position The page number of each page
+     * @param position  The page number of each page
      * @return
      */
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layoutScreen = inflater.inflate(R.layout.onboarding_pager_layout,null);
+        View layoutScreen = inflater.inflate(R.layout.onboarding_pager_layout, null);
 
         ImageView imgSlide = layoutScreen.findViewById(R.id.intro_img);
         TextView title = layoutScreen.findViewById(R.id.intro_title);
@@ -62,6 +62,7 @@ public class OnboardingViewPagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        container.removeView((View)object);
+        container.removeView((View) object);
     }
+
 }
