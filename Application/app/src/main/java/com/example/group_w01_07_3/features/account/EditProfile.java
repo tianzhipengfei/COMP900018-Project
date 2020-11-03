@@ -96,15 +96,6 @@ public class EditProfile extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //set transition
-        // make sure to do this before setContentView or else the app will crash
-//        Window window = getWindow();
-//        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-//        window.setEnterTransition(new Slide());
-//        window.setExitTransition(new Slide());
-//
-//
         setContentView(R.layout.activity_edit_profile);
 
         drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
