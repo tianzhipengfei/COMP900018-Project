@@ -582,7 +582,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                             e.printStackTrace();
-                            MessageUtil.displaySnackbar(drawerLayout, "Discover nearby Geo-capsule Failed. Please check internet connection.", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbar(drawerLayout, "Discover nearby Geo-capsule Failed. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
                         }
                     });
                 } catch (JSONException e) {
