@@ -166,6 +166,8 @@ public class CreateCapsule extends AppCompatActivity implements
         headerview = navigationView.getHeaderView(0);
         headerUsername = headerview.findViewById(R.id.header_username);
         headerAvatar = headerview.findViewById(R.id.header_avatar);
+
+        floatingActionButton = findViewById(R.id.create_fab);
     }
 
 
@@ -199,7 +201,7 @@ public class CreateCapsule extends AppCompatActivity implements
             }
             mStartRecording = !mStartRecording;
         } else {
-            MessageUtil.displaySnackbar(drawerLayout, "Record audio failed. Need your permission", Snackbar.LENGTH_SHORT);
+            MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Record audio failed. Need your permission", Snackbar.LENGTH_SHORT, floatingActionButton);
         }
 
     }
@@ -280,7 +282,7 @@ public class CreateCapsule extends AppCompatActivity implements
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openAlbum();
                 } else {
-                    MessageUtil.displaySnackbar(drawerLayout, "You denied the permission", Snackbar.LENGTH_SHORT);
+                    MessageUtil.displaySnackbarWithAnchor(drawerLayout, "You denied the permission", Snackbar.LENGTH_SHORT, floatingActionButton);
                 }
                 break;
             default:
@@ -336,7 +338,7 @@ public class CreateCapsule extends AppCompatActivity implements
             placeholder.setImageBitmap(bitmap);
             bottomDialog.dismiss();
         } else {
-            MessageUtil.displaySnackbar(drawerLayout, "Failed to take the photo. Please take another picture.", Snackbar.LENGTH_SHORT);
+            MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Failed to take the photo. Please take another picture.", Snackbar.LENGTH_SHORT, floatingActionButton);
         }
     }
 
@@ -346,11 +348,11 @@ public class CreateCapsule extends AppCompatActivity implements
         EditText capsuleTitle = findViewById(R.id.create_capsule_title);
         EditText capsuleContent = findViewById(R.id.create_capsule_content);
         if (capsuleTitle.getText().toString().isEmpty()) {
-            MessageUtil.displaySnackbar(drawerLayout, "Create Geo-capsule failed. Please give your capsule a title.", Snackbar.LENGTH_SHORT);
+            MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Create Geo-capsule failed. Please give your capsule a title.", Snackbar.LENGTH_SHORT, floatingActionButton);
             return false;
         }
         if (capsuleContent.getText().toString().isEmpty()) {
-            MessageUtil.displaySnackbar(drawerLayout, "Create Geo-capsule failed. Please fill in some content.", Snackbar.LENGTH_SHORT);
+            MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Create Geo-capsule failed. Please fill in some content.", Snackbar.LENGTH_SHORT, floatingActionButton);
             return false;
         }
         try {
@@ -411,12 +413,12 @@ public class CreateCapsule extends AppCompatActivity implements
                                 } catch (JSONException json) {
                                     Log.i("Fail to put in json", "Location cannot write " +
                                             "in json");
-                                    MessageUtil.displaySnackbar(drawerLayout, "Cannot get your location. Please turn on GPS.", Snackbar.LENGTH_SHORT);
+                                    MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Cannot get your location. Please turn on GPS.", Snackbar.LENGTH_SHORT, floatingActionButton);
                                     progressbar.dismiss();
                                 }
 
                             } else {
-                                MessageUtil.displaySnackbar(drawerLayout, "Cannot get your location. Please turn on GPS.", Snackbar.LENGTH_SHORT);
+                                MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Cannot get your location. Please turn on GPS.", Snackbar.LENGTH_SHORT, floatingActionButton);
                                 progressbar.dismiss();
                                 Log.i("location error", "Please turn on GPS and try again");
                             }
@@ -467,7 +469,7 @@ public class CreateCapsule extends AppCompatActivity implements
                             }
                         }
                     } catch (JSONException e) {
-                        MessageUtil.displaySnackbar(drawerLayout, "Upload audio failed. Corrupted audio file, please record again.", Snackbar.LENGTH_SHORT);
+                        MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Upload audio failed. Corrupted audio file, please record again.", Snackbar.LENGTH_SHORT, floatingActionButton);
                         e.printStackTrace();
                         progressbar.dismiss();
                     }
@@ -477,7 +479,7 @@ public class CreateCapsule extends AppCompatActivity implements
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            MessageUtil.displaySnackbar(drawerLayout, "Upload audio failed. Please check internet connection.", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Upload audio failed. Please check internet connection.", Snackbar.LENGTH_LONG, floatingActionButton);
                             progressbar.dismiss();
                         }
                     });
@@ -524,7 +526,7 @@ public class CreateCapsule extends AppCompatActivity implements
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        MessageUtil.displaySnackbar(drawerLayout, "Upload image failed. Please check internet connection.", Snackbar.LENGTH_LONG);
+                        MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Upload image failed. Please check internet connection.", Snackbar.LENGTH_LONG, floatingActionButton);
                         progressbar.dismiss();
                     }
                 }
@@ -533,7 +535,7 @@ public class CreateCapsule extends AppCompatActivity implements
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            MessageUtil.displaySnackbar(drawerLayout, "Create Geo-capsule failed. Please check internet connection.", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Create Geo-capsule failed. Please check internet connection.", Snackbar.LENGTH_LONG, floatingActionButton);
                             progressbar.dismiss();
                         }
                     });
@@ -572,8 +574,8 @@ public class CreateCapsule extends AppCompatActivity implements
                                           @Override
                                           public void run() {
                                               progressbar.dismiss();
-                                              MessageUtil.displaySnackbar(drawerLayout, "Create Geo-capsule Successfully.",
-                                                      Snackbar.LENGTH_SHORT);
+                                              MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Create Geo-capsule Successfully.",
+                                                      Snackbar.LENGTH_SHORT, floatingActionButton);
                                               TextInputEditText capsuleTitle = findViewById(R.id.create_capsule_title);
                                               TextInputEditText capsuleContent = findViewById(R.id.create_capsule_content);
                                               capsuleTitle.setText("");
@@ -610,13 +612,13 @@ public class CreateCapsule extends AppCompatActivity implements
                             });
                         } else if(status.equalsIgnoreCase("profanity text")){
                             progressbar.dismiss();
-                            MessageUtil.displaySnackbar(drawerLayout, "Create Geo-capsule failed. Please remove profanity text and try again.",
-                                    Snackbar.LENGTH_SHORT);
+                            MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Create Geo-capsule failed. Please remove profanity text and try again.",
+                                    Snackbar.LENGTH_SHORT, floatingActionButton);
                         }
                     } else {
                         progressbar.dismiss();
-                        MessageUtil.displaySnackbar(drawerLayout, "Create Geo-capsule failed. Please try again later.",
-                                Snackbar.LENGTH_SHORT);
+                        MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Create Geo-capsule failed. Please try again later.",
+                                Snackbar.LENGTH_SHORT, floatingActionButton);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -645,7 +647,7 @@ public class CreateCapsule extends AppCompatActivity implements
                 getLocation();
             } else {
                 progressbar.dismiss();
-                MessageUtil.displaySnackbar(drawerLayout, "Create Geo-capsule failed. Please connect to internet first.", Snackbar.LENGTH_LONG);
+                MessageUtil.displaySnackbarWithAnchor(drawerLayout, "Create Geo-capsule failed. Please connect to internet first.", Snackbar.LENGTH_LONG, floatingActionButton);
             }
 
 

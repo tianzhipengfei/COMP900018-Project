@@ -44,4 +44,19 @@ public class MessageUtil {
         }
     }
 
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    public static void displaySnackbarWithAnchor(View view, String msg, int length, View anchorView) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.setAnchorView(anchorView);
+            snackbar.show();
+        }
+    }
+
 }

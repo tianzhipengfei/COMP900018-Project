@@ -148,6 +148,21 @@ public class DiscoverCapsule extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discover_capsule);
 
+        initView();
+        updateHeader();
+
+        // main entry point for location services integration
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFrag.getMapAsync(this);
+
+        registerShakeSensor();
+    }
+
+    /**
+     * Initialise navigation view
+     */
+    private void initView(){
         //use toolbar at top of screen across all activities
         Toolbar toolbar = findViewById(R.id.toolbar_discover);
         setSupportActionBar(toolbar);
@@ -170,15 +185,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
         headerview = navigationView.getHeaderView(0);
         headerUsername = headerview.findViewById(R.id.header_username);
         headerAvatar = headerview.findViewById(R.id.header_avatar);
-
-        updateHeader();
-
-        // main entry point for location services integration
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFrag.getMapAsync(this);
-
-        registerShakeSensor();
     }
 
     /**
@@ -373,7 +379,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 } else {
-                    MessageUtil.displayToast(this, "permission denied", Toast.LENGTH_LONG);
+                    MessageUtil.displaySnackbar(drawerLayout, "Location permission denied...", Snackbar.LENGTH_LONG);
                 }
                 return;
             }
@@ -553,8 +559,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     can_i_shake = false;
                                     can_i_retrieve_http = false;
                                     can_i_fresh_markers = true;
-
-                                    MessageUtil.displaySnackbar(drawerLayout, "Discovering Memory Capsule...Please Wait", Snackbar.LENGTH_LONG);
                                 } else if (responseJSON.has("error")) {
                                     String status = responseJSON.getString("error");
                                     Log.d("GETCAPSULE", "getCapsule error: " + status);
@@ -578,7 +582,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                             e.printStackTrace();
-                            MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection\nReconnecting...", Snackbar.LENGTH_LONG);
+                            MessageUtil.displaySnackbar(drawerLayout, "Discover nearby Geo-capsule Failed. Please check internet connection.", Snackbar.LENGTH_LONG);
                         }
                     });
                 } catch (JSONException e) {
@@ -719,6 +723,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 RequestSending();
             } else {
                 FeedbackUtil.vibrate(this);
+                MessageUtil.displaySnackbar(drawerLayout, "Discovering Memory Capsule...Please Wait", Snackbar.LENGTH_LONG);
                 // shake to refresh capsules
                 can_i_shake = false;
                 can_i_retrieve_http = true;
@@ -742,10 +747,10 @@ public class DiscoverCapsule extends AppCompatActivity implements
             addShakeSuccessCount(values);
         }
     }
-    //The logic is borrowed from https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android
 
     /**
      * Counts the number of shakes.
+     * The logic is studied from https://stackoverflow.com/questions/5271448/how-to-detect-shake-event-with-android, with own perfection
      *
      * @param values the values of x,y,z for the shake sensor
      */
@@ -854,7 +859,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
              * place thumb back to start position.
              */
             public void onFail() {
-                MessageUtil.displayToast(popview_slide.getContext(), "Almost there!Please try again", Toast.LENGTH_SHORT);
+                MessageUtil.displaySnackbar(drawerLayout, "Puzzle completion failed. Please try again.", Snackbar.LENGTH_SHORT);
                 seekbar.setProgress(0);
             }
         });
@@ -1038,7 +1043,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                         //now enable discover shake function
                         popUpShake = false;
                         discover_refresh = true;
-                        MessageUtil.displaySnackbar(drawerLayout, "Open capsule timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                        MessageUtil.displaySnackbar(drawerLayout, "Open Geo-capsule timeout. Please check Internet connection", Snackbar.LENGTH_LONG);
                     }
                 });
             }
