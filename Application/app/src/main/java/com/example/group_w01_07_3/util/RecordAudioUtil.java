@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * RecordAudioUtil is used to record audio
+ * RecordAudioUtil is used to record the audio and play the audio
  */
 public class RecordAudioUtil {
 
