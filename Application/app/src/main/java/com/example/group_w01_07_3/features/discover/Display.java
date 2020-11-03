@@ -30,7 +30,6 @@ import com.bumptech.glide.request.target.Target;
 import com.example.group_w01_07_3.R;
 import com.example.group_w01_07_3.features.history.DetailedCapsuleHistoryItem;
 import com.example.group_w01_07_3.util.ImageUtil;
-import com.example.group_w01_07_3.util.MessageUtil;
 import com.example.group_w01_07_3.util.RecordAudioUtil;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -57,6 +56,7 @@ public class Display extends AppCompatActivity {
     private TextView title;
     private TextView content;
     private ImageButton play;
+    private Snackbar snackbar;
 
     // Content of opened Geo-capsule
     private JSONObject capsuleInfo;
@@ -231,7 +231,7 @@ public class Display extends AppCompatActivity {
                              */
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                MessageUtil.displaySnackbar(coordinatorLayout,
+                                displaySnackbar(coordinatorLayout,
                                         "Failed to load the capsule image, please check your internet connection",
                                         Snackbar.LENGTH_LONG);
                                 return false;
@@ -280,7 +280,7 @@ public class Display extends AppCompatActivity {
                      */
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        MessageUtil.displaySnackbar(coordinatorLayout,
+                        displaySnackbar(coordinatorLayout,
                                 "Failed to load user avatar of the capsule owner, please check your internet connection",
                                 Snackbar.LENGTH_LONG);
                         return false;
@@ -353,7 +353,7 @@ public class Display extends AppCompatActivity {
                 @Override
                 public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
                     if (i == MediaPlayer.MEDIA_ERROR_SERVER_DIED) {
-                        MessageUtil.displaySnackbar(coordinatorLayout,
+                        displaySnackbar(coordinatorLayout,
                                 "Failed to Load audio, please check your internet connection",
                                 Snackbar.LENGTH_LONG);
                     }
@@ -365,6 +365,21 @@ public class Display extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Display snackbar in a non-overlap manner
+     *
+     * @param view   view where snackbar will display at
+     * @param msg    the message to display
+     * @param length the duration of snackbar display
+     */
+    private void displaySnackbar(View view, String msg, int length) {
+        if (snackbar == null || !snackbar.getView().isShown()) {
+            snackbar = Snackbar.make(view, msg, length);
+            snackbar.show();
+        }
+    }
+
 
     /**
      * Back to the discover capsule page.

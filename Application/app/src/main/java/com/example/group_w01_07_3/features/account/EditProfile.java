@@ -93,9 +93,22 @@ public class EditProfile extends AppCompatActivity implements
 
     private Handler handler;
 
+    // message section
+    Toast toast = null;
+    private boolean snackbarShowFlag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //set transition
+        // make sure to do this before setContentView or else the app will crash
+//        Window window = getWindow();
+//        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+//        window.setEnterTransition(new Slide());
+//        window.setExitTransition(new Slide());
+//
+//
         setContentView(R.layout.activity_edit_profile);
 
         drawerLayout = findViewById(R.id.edit_profile_drawer_layout);
@@ -189,7 +202,9 @@ public class EditProfile extends AppCompatActivity implements
                         } else {
                             boolean internetFlag = HttpUtil.isNetworkConnected(getApplicationContext());
                             if(!internetFlag){
-                                MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                                Snackbar snackbar = Snackbar
+                                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", Snackbar.LENGTH_LONG);
+                                snackbar.show();
                                 signOutButton.setEnabled(true);
                                 changePasswordBtn.setEnabled(true);
                                 changeAvatarButton.setEnabled(true);
@@ -258,7 +273,9 @@ public class EditProfile extends AppCompatActivity implements
                                     EditProfile.this.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            MessageUtil.displaySnackbar(drawerLayout, "Sign out timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                            Snackbar snackbar = Snackbar
+                                                    .make(drawerLayout, "Sign out timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                            snackbar.show();
                                             signOutButton.setEnabled(true);
                                             changePasswordBtn.setEnabled(true);
                                             changeAvatarButton.setEnabled(true);
@@ -283,6 +300,7 @@ public class EditProfile extends AppCompatActivity implements
             }
         });
 
+        snackbarShowFlag = true;
         onGetProfile();
     }
 
@@ -465,6 +483,8 @@ public class EditProfile extends AppCompatActivity implements
                                                       usernameDisplay.setText(usernameProfileString);
                                                       emailDisplay.setText(emailProfileString);
                                                       dobDisplay.setText(dobProfileString);
+
+                                                      snackbarShowFlag = true;
                                                   } else {
                                                       Log.d("FINISHED", "run: Activity has been finished, don't load Glide for profile avatar & other info");
                                                   }
@@ -495,6 +515,7 @@ public class EditProfile extends AppCompatActivity implements
                                                       usernameDisplay.setText("null");
                                                       emailDisplay.setText("null");
                                                       dobDisplay.setText("null");
+                                                      snackbarShowFlag = true;
                                                   }
                                               }
                                           }
@@ -517,7 +538,12 @@ public class EditProfile extends AppCompatActivity implements
                             @Override
                             public void run() {
                                 Log.d("RETRY", "run: RETRY onGetProfile");
-                                MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                                if (snackbarShowFlag){
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", 5000);
+                                    snackbar.show();
+                                    snackbarShowFlag = false;
+                                }
                                 onGetProfile();
                             }
                         },3000);
@@ -543,9 +569,11 @@ public class EditProfile extends AppCompatActivity implements
                         JSONObject data = responseJSON.getJSONObject("data");
                         newAvatarString = data.getString("url");
                         onChangeAvatar();
+                        snackbarShowFlag = true;
                     } else if (code.equalsIgnoreCase("image_repeated")) {
                         newAvatarString = responseJSON.getString("images");
                         onChangeAvatar();
+                        snackbarShowFlag = true;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -561,7 +589,12 @@ public class EditProfile extends AppCompatActivity implements
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
+                            if (snackbarShowFlag){
+                                Snackbar snackbar = Snackbar
+                                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", 3000);
+                                snackbar.show();
+                                snackbarShowFlag = false;
+                            }
 
                             onUploadImage();
                         }
@@ -601,6 +634,7 @@ public class EditProfile extends AppCompatActivity implements
                                     Glide.with(EditProfile.this)
                                             .load(newAvatarString)
                                             .into(headerAvatar);
+                                    snackbarShowFlag = true;
                                 } else {
                                     Log.d("FINISHED", "run: Activity has been finished, don't load Glide for avatar during onChangeAvatar");
                                 }
@@ -635,8 +669,12 @@ public class EditProfile extends AppCompatActivity implements
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            MessageUtil.displaySnackbar(drawerLayout, "Oops. Looks like you lost Internet connection...\nPlease check your internet", Snackbar.LENGTH_LONG);
-
+                            if (snackbarShowFlag){
+                                Snackbar snackbar = Snackbar
+                                        .make(drawerLayout, "Oops. Looks like you lost Internet connection\n Please connect to Internet and try again...", 3000);
+                                snackbar.show();
+                                snackbarShowFlag = false;
+                            }
                             onChangeAvatar();
                         }
                     },3000);

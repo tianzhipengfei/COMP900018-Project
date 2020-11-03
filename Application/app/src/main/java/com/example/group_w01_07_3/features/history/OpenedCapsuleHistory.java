@@ -230,7 +230,9 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                     // response list < records_num_pere_request: no more records
                                     if (records.length() < RECORD_NUM_PER_REQUEST) {
                                         recyclerView.setPushRefreshEnable(false);
-                                        MessageUtil.displaySnackbar(drawerLayout, "No more records", Snackbar.LENGTH_LONG);
+                                        Snackbar snackbar = Snackbar
+                                                .make(drawerLayout, "No more records", 3000);
+                                        snackbar.show();
                                     }
 
                                     new Handler().postDelayed(new Runnable() {
@@ -260,7 +262,9 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                         recyclerView.setVisibility(View.VISIBLE);
                                         placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
                                         placeholder_emptyHistoryImage.setVisibility(View.INVISIBLE);
-                                        MessageUtil.displaySnackbar(drawerLayout, "Hi there. Looks like there are no more records", Snackbar.LENGTH_LONG);
+                                        Snackbar snackbar = Snackbar
+                                                .make(drawerLayout, "Hi there. Looks like there are no more records", 3000);
+                                        snackbar.show();
                                     }
 
                                     new Handler().postDelayed(new Runnable() {
@@ -339,7 +343,9 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 recyclerView.setPullLoadMoreCompleted();
                                 if (testingList.size() % RECORD_NUM_PER_REQUEST != 0) {
                                     recyclerView.setPushRefreshEnable(false);
-                                    MessageUtil.displaySnackbar(drawerLayout, "Retrieve gallery timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "Retrieve gallery timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    snackbar.show();
                                 }
                                 return;
                             }
@@ -350,7 +356,9 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                             public void run() {
                                 recyclerView.setPullLoadMoreCompleted();
                                 if (testingList.size() != 0) {
-                                    MessageUtil.displaySnackbar(drawerLayout, "Retrieve gallery timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    Snackbar snackbar = Snackbar
+                                            .make(drawerLayout, "Retrieve gallery timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
+                                    snackbar.show();
                                 }
                                 return;
                             }
