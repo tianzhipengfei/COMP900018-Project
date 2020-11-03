@@ -104,6 +104,8 @@ public class CreateCapsule extends AppCompatActivity implements
         token = UserUtil.getToken(this.getApplicationContext());
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+        deleteAudioFile();
+
         //don't pop up keyboard automatically when entering the screen.
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
@@ -162,6 +164,14 @@ public class CreateCapsule extends AppCompatActivity implements
         } else {
             permiSwitch.setText("Create your Private Geo-Capsule");
         }
+    }
+
+    public boolean getmStartPlaying() {
+        return mStartPlaying;
+    }
+
+    public void setmStartPlaying(boolean mStartPlaying) {
+        this.mStartPlaying = mStartPlaying;
     }
 
     /**
@@ -602,6 +612,7 @@ public class CreateCapsule extends AppCompatActivity implements
                                                       }
                                                   });
                                               }
+                                              deleteAudioFile();
                                           }
                                       }
                         );
@@ -613,6 +624,7 @@ public class CreateCapsule extends AppCompatActivity implements
                                 @Override
                                 public void run() {
                                     UserUtil.clearToken(CreateCapsule.this);
+                                    deleteAudioFile();
                                     Intent intent = new Intent(CreateCapsule.this, SignIn.class);
                                     startActivity(intent);
                                     finish();
@@ -788,6 +800,7 @@ public class CreateCapsule extends AppCompatActivity implements
         } else {
             if (doubleBackToExitPressedOnce) {
                 super.onBackPressed();
+                deleteAudioFile();
                 return;
             }
 
@@ -801,6 +814,18 @@ public class CreateCapsule extends AppCompatActivity implements
                     doubleBackToExitPressedOnce = false;
                 }
             }, 2000);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        deleteAudioFile();
+    }
+
+    public void deleteAudioFile() {
+        if (recorderUtil.getAudioFile().exists()) {
+            recorderUtil.getAudioFile().delete();
         }
     }
 

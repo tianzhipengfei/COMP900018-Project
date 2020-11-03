@@ -6,9 +6,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import com.example.group_w01_07_3.R;
+import com.example.group_w01_07_3.features.create.CreateCapsule;
+import com.google.android.material.button.MaterialButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,16 +111,34 @@ public class RecordAudioUtil {
      * start playing the audio
      */
     private void startPlaying() {
-        player = new MediaPlayer();
-        try {
-            player.setDataSource(fileName);
-            if (stream == true) {
-                player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        if (getAudioFile().exists()) {
+            player = new MediaPlayer();
+            try {
+                player.setDataSource(fileName);
+                if (stream == true) {
+                    player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                }
+                player.prepare();
+                player.start();
+
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer m) {
+                        MaterialButton playButton = context.findViewById(R.id.play_button);
+                        playButton.setIconResource(R.drawable.voice_play);
+                        playButton.setText("PLAY");
+                        ((CreateCapsule) context).setmStartPlaying(!((CreateCapsule) context).getmStartPlaying());
+                    }
+                });
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "prepare() failed");
             }
-            player.prepare();
-            player.start();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+        } else {
+            MaterialButton playButton = context.findViewById(R.id.play_button);
+            playButton.setIconResource(R.drawable.voice_play);
+            playButton.setText("PLAY");
+            MessageUtil.displayToast(this.context, "You haven't recorded the audio", Toast.LENGTH_SHORT);
+            ((CreateCapsule) context).setmStartPlaying(!((CreateCapsule) context).getmStartPlaying());
         }
     }
 
