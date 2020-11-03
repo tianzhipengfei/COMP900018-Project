@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.group_w01_07_3.features.discover.DiscoverCapsule;
 import com.example.group_w01_07_3.util.UserUtil;
 
+/**
+ * MainActivity to decide SignIn or not
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
