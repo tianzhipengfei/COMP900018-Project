@@ -156,6 +156,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private View popupview_tap;
     private View popupview_shake;
     private View popview_slide;
+    private boolean if_pause = false;
 
     /**
      * Performs basic application startup logic that happens only once for the entire life of the activity.
@@ -574,10 +575,33 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 JSONObject responseJSON = new JSONObject(responseData);
                                 if (responseJSON.has("success")) {
                                     allCapsules = responseJSON.getJSONArray("capsules");
-                                    // refresh capsules only after receiving http response
-                                    can_i_shake = false;
-                                    can_i_retrieve_http = false;
-                                    can_i_fresh_markers = true;
+
+                                    if (allCapsules.length()==0) {
+                                        Snackbar snackbar = Snackbar.make(drawerLayout, "Looks like there is no capsule around. Be the first one to leave a footprint", Snackbar.LENGTH_LONG)
+                                        .setAction("Create", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent intent = new Intent(DiscoverCapsule.this, CreateCapsule.class);
+                                                startActivity(intent);
+                                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                                                finish();
+                                            }
+                                        });
+                                        snackbar.show();
+
+                                        Log.d("TAG", "onResponse: length is 0");
+                                        if (discover_refresh && !if_pause){
+                                            registerShakeSensor();
+                                        }
+                                        can_i_shake = true;
+                                        can_i_retrieve_http = false;
+                                        can_i_fresh_markers = false;
+                                    } else {
+                                        // refresh capsules only after receiving http response
+                                        can_i_shake = false;
+                                        can_i_retrieve_http = false;
+                                        can_i_fresh_markers = true;
+                                    }
                                 } else if (responseJSON.has("error")) {
                                     String status = responseJSON.getString("error");
                                     Log.d("GETCAPSULE", "getCapsule error: " + status);
@@ -634,11 +658,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 }, 2000);
             }
-            if (mCapsuleMarkers.isEmpty()) {
-                can_i_shake = false;
-                can_i_retrieve_http = true;
-                can_i_fresh_markers = false;
-            }
+//            if (mCapsuleMarkers.isEmpty()) {
+//                can_i_shake = false;
+//                can_i_retrieve_http = true;
+//                can_i_fresh_markers = false;
+//            }
         }
     }
 
@@ -680,7 +704,9 @@ public class DiscoverCapsule extends AppCompatActivity implements
             Log.d("CAPSULEMARKER", "refresh_counts: " + num_capsules);
         }
 
-        registerShakeSensor();
+        if (!if_pause){
+            registerShakeSensor();
+        }
     }
 
     /**
@@ -1101,6 +1127,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 //now enable discover shake function
                                 popUpShake = false;
                                 discover_refresh = true;
+                                sensorMgr.unregisterListener(DiscoverCapsule.this);
 
                                 // If no capsules on map, refresh
                                 if (mCapsuleMarkers.size() == 0) {
@@ -1128,6 +1155,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
      */
     @Override
     protected void onResume() {
+        if_pause = false;
         super.onResume();
         Log.d("shake", "onResume from Discover: called, registerShakeSensor");
         registerShakeSensor();
@@ -1138,6 +1166,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
      */
     @Override
     public void onPause() {
+        if_pause = true;
         Log.d("shake", "onPause from Discover: called, unregisterListener");
         sensorMgr.unregisterListener(this);
         popUpShake = false;
