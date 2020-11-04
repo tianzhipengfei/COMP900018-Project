@@ -91,11 +91,11 @@ public class OnBoardingActivity extends AppCompatActivity {
         //crate list data for onboarding pager
         final List<OnboardingItem> onboardingItemList = new ArrayList<>();
         onboardingItemList.add(new OnboardingItem("Record Your Footprints",
-                "Record your footprint as Geo-capsules anytime, on the spot, which is waiting to be discovered.", R.drawable.ic_onboarding_save));
+                "Record your footprints as Geo-capsules anytime, on the spot, which are waiting to be discovered.", R.drawable.ic_onboarding_save));
         onboardingItemList.add(new OnboardingItem("Discover The Past Moments",
-                "Discover nearby Geo-capsules from yourself and others. Smile for your past and others moments", R.drawable.ic_onboarding_discover));
+                "Discover nearby Geo-capsules from yourself and others. Smile for your past and others' moments.", R.drawable.ic_onboarding_discover));
         onboardingItemList.add(new OnboardingItem("Review The Discovered Moments",
-                "Review your discovered Geo-capsules from Geo-capsules gallery", R.drawable.ic_onboarding_history));
+                "Review your discovered Geo-capsules from opened Geo-capsule gallery.", R.drawable.ic_onboarding_history));
 
         onboardingPager = findViewById(R.id.onboarding_Viewpager);
         onboardingViewPagerAdapter = new OnboardingViewPagerAdapter(this, onboardingItemList);
