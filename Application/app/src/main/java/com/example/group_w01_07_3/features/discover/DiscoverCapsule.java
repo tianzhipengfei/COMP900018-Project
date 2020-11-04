@@ -577,7 +577,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     allCapsules = responseJSON.getJSONArray("capsules");
 
                                     if (allCapsules.length()==0) {
-                                        Snackbar snackbar = Snackbar.make(drawerLayout, "Looks like there is no capsule around. Be the first one to leave a footprint", Snackbar.LENGTH_LONG)
+                                        Snackbar snackbar = Snackbar.make(drawerLayout, "No capsule found. Create one.", Snackbar.LENGTH_LONG)
                                         .setAction("Create", new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
