@@ -157,11 +157,11 @@ public class ChangePassword extends AppCompatActivity {
                     newPasswordET.setText("");
                     reNewPasswordET.setText("");
                     confirmChangeButton.setEnabled(true);
-                } else if (!newPassword.equalsIgnoreCase(reNewPassword)) {
+                } else if (!newPassword.equals(reNewPassword)) {
                     MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Repeat new password doesn't match new password.", Snackbar.LENGTH_SHORT);
                     reNewPasswordET.setText("");
                     confirmChangeButton.setEnabled(true);
-                } else if (oldPassword.equalsIgnoreCase(newPassword)) {
+                } else if (oldPassword.equals(newPassword)) {
                     MessageUtil.displaySnackbar(constraintLayout, "Change password failed. Matching new password and current password.", Snackbar.LENGTH_SHORT);
                     oldPasswordET.setText("");
                     newPasswordET.setText("");
