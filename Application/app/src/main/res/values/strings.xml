@@ -30,8 +30,7 @@
         "5. Re-enter Password (required)\n"
         "   * Must match with the previous input\n"
         "\n"
-        "6. Date of Birth (required)\n"
-        "   * Cannot be a date after today\n"
+        "6. Date of Birth (required)"
     </string>
 
     <string name="registration_password">
