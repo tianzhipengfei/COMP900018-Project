@@ -19,7 +19,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 /**
- * HttpUtil uses Http protocol to access server
+ * HttpUtil uses Http protocol to access server. Mostly powered by OkHTTP
  */
 public class HttpUtil {
 
@@ -28,7 +28,7 @@ public class HttpUtil {
     private static final MediaType JPG = MediaType.parse("image/jpg");
     private static final MediaType AAC = MediaType.parse("audio/aac");
 
-    // server address and smmsURL
+    // server address & third party image holder server: smms URL
     private static String address = "https://www.tianzhipengfei.xin/mobile/";
     private static String smmsURL = "https://sm.ms/api/v2/upload";
 

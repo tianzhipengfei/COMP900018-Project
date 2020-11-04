@@ -35,6 +35,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+/**
+ * Display opened Geo-capsule and stop placeholder shimmer effect
+ */
 public class Display extends AppCompatActivity {
 
     //APP View

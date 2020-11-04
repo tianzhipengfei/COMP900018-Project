@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.group_w01_07_3.features.onboarding.OnBoardingActivity;
 
+/**
+ * Displaying app launch animation for 2 seconds, and direct firs time user to onboarding page
+ */
 public class LaunchActivity extends AppCompatActivity {
 
     private static int SPLASH_TIME_OUT = 2000; //animation duration

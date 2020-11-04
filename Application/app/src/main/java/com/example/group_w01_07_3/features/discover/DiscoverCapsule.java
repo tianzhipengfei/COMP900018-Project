@@ -79,6 +79,23 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+/**
+ * User will discover Geo-capsule and use three ways to open they to see the content.
+ * The first time user enter the activity, map will automatically retrieve maximum of 20 capsules on the map,
+ * within a carefully defined rage around current user location.
+ *
+ * To refresh capsule discovery, users just need to shake their phone that powered by carefully handled scenarios and parameters
+ * There are also auto refresh mechanism when certain conditions meet:
+ * [a] when user has opened all capsules on the map
+ * [b] when user left the current capsule span range
+ *
+ * There are three ways to opened the capsule that enhances motivation, while each way has 1/3 possibility to be enabled.
+ * [1] shake phone to open(carefully handle, shake open capsule will not refresh its parent: map
+ * [2] tap to open
+ * [3] puzzle completion open
+ *
+ * Best connectivity handling with out capability has been made to ensure activity behaves correctly when lost and restore connection
+ */
 public class DiscoverCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, SensorListener {
 

@@ -36,7 +36,9 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 /**
- * Change Password Activity
+ * Change Password Activity. User should input current password correctly, then enter new password
+ * twice inorder to change it.
+ * Decent connectivity handling has been made.
  */
 public class ChangePassword extends AppCompatActivity {
 
@@ -62,7 +64,7 @@ public class ChangePassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
 
-        //don't pop uo keyboard when entering the screen.
+        //don't pop up keyboard when entering the screen.
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
         );
@@ -118,7 +120,7 @@ public class ChangePassword extends AppCompatActivity {
     }
 
     /**
-     * initialize change password button
+     * initialize change password button. Show error text for typical scenarios
      */
     private void setupChangePasswordBtn() {
         confirmChangeButton.setOnClickListener(new View.OnClickListener() {
@@ -194,7 +196,7 @@ public class ChangePassword extends AppCompatActivity {
     }
 
     /**
-     * Change Password logic
+     * Change Password logic. Wait for server response and provide error or success feedback to user
      */
     private void onChangePassword() {
         if (UserUtil.getToken(ChangePassword.this).isEmpty()) {

@@ -71,7 +71,9 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 /**
- * Create Capsule Activity
+ * Create Capsule Activity. User will create their Geo-capsule in this page. The input filed including:
+ * Title, Capsule text content with content moderation at server end. Plus one image & audio file.
+ * Internet connectivity handling has been concentrated to handling as many issue as we discovered.
  */
 public class CreateCapsule extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -260,7 +262,8 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     /**
-     * return result of take photo or choose photo
+     * return result of take photo or choose photo.
+     * Photo is compressed automatically 5% each time via a 500kb interval to reduce server load
      *
      * @param requestCode request code
      * @param resultCode  result code
@@ -295,7 +298,7 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     /**
-     * check permission
+     * check permission of accessing device storage
      *
      * @param requestCode  request code
      * @param permissions  permissions
@@ -453,7 +456,7 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     /**
-     * get location
+     * get location is a compulsory step , since Geo-capsule will be created to current user location.
      *
      * @throws JSONException JSONException
      */
@@ -486,7 +489,7 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     /**
-     * get audio url
+     * Upload audio url to server. If successful, continue to upload image
      */
     private void uploadAudio() {
         final File audioFile = recorderUtil.getAudioFile();
@@ -542,7 +545,7 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     /**
-     * get img url
+     * Upload img url to server. If successful, continue to upload text information
      */
     private void uploadImg() {
         if (imageFile != null && imageFile.exists()) {
@@ -588,7 +591,7 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     /**
-     * upload all info
+     * Upload all text info to server
      */
     private void uploadOther() {
         HttpUtil.createCapsule(capsuleInfo, new okhttp3.Callback() {
@@ -669,7 +672,7 @@ public class CreateCapsule extends AppCompatActivity implements
     }
 
     /**
-     * create capsule
+     * create capsule and dismiss progress bar.
      *
      * @param v view
      * @throws JSONException JSONException
