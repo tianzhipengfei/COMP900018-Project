@@ -209,7 +209,7 @@ public class SignUp extends AppCompatActivity {
                 String guideline = getString(R.string.registration_help);
                 AlertDialog dialog = new AlertDialog.Builder(SignUp.this)
                         .setIcon(R.drawable.sign_up_rules)
-                        .setTitle("Account Registration Guideline")
+                        .setTitle("Registration Guideline")
                         .setMessage(guideline)
                         .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
                             @Override
