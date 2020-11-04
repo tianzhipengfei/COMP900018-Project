@@ -147,6 +147,8 @@ public class SignUp extends AppCompatActivity {
         dobPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                preventMultipleClicks();
+
                 dobPicker.setEnabled(false); // prevent crazy clicks
                 new Thread(new Runnable() {
                     @Override
@@ -164,6 +166,7 @@ public class SignUp extends AppCompatActivity {
                         });
                     }
                 }).start();
+
                 picker.show(getSupportFragmentManager(), picker.toString());
             }
         });
@@ -183,6 +186,26 @@ public class SignUp extends AppCompatActivity {
         helpImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                preventMultipleClicks();
+
+                helpImageButton.setEnabled(false); // prevent crazy clicks
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                helpImageButton.setEnabled(true);
+                            }
+                        });
+                    }
+                }).start();
+
                 String guideline = getString(R.string.registration_help);
                 AlertDialog dialog = new AlertDialog.Builder(SignUp.this)
                         .setIcon(R.drawable.sign_up_rules)
@@ -208,6 +231,26 @@ public class SignUp extends AppCompatActivity {
         avatarImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                preventMultipleClicks();
+
+                avatarImageBtn.setEnabled(false); // prevent crazy clicks
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                avatarImageBtn.setEnabled(true);
+                            }
+                        });
+                    }
+                }).start();
+
                 // BottomDialog: take a photo, choose a photo from the gallery, cancel
                 // (Modified) From: https://github.com/jianjunxiao/BottomDialog
                 bottomDialog = new BottomDialog(SignUp.this);
@@ -231,11 +274,7 @@ public class SignUp extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Preventing multiple clicks, using threshold of 2 second
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
+                preventMultipleClicks();
 
                 setAllEnabledFalse();
 
@@ -341,6 +380,7 @@ public class SignUp extends AppCompatActivity {
         backToSignInText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                preventMultipleClicks();
                 finish();
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
@@ -350,6 +390,7 @@ public class SignUp extends AppCompatActivity {
         sideBackShape.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                preventMultipleClicks();
                 finish();
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
@@ -674,6 +715,17 @@ public class SignUp extends AppCompatActivity {
     public void onBackPressed() {
         finish();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    /**
+     * preventing multiple clicks, using a threshold of 1 second
+     */
+    private void preventMultipleClicks() {
+        // preventing multiple clicks, using a threshold of 1 second
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
     }
 
 }
