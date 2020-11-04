@@ -90,7 +90,7 @@ public class OnBoardingActivity extends AppCompatActivity {
 
         //crate list data for onboarding pager
         final List<OnboardingItem> onboardingItemList = new ArrayList<>();
-        onboardingItemList.add(new OnboardingItem("Record Your Footprint",
+        onboardingItemList.add(new OnboardingItem("Record Your Footprints",
                 "Record your footprint as Geo-capsules anytime, on the spot, which is waiting to be discovered.", R.drawable.ic_onboarding_save));
         onboardingItemList.add(new OnboardingItem("Discover The Past Moments",
                 "Discover nearby Geo-capsules from yourself and others. Smile for your past and others moments", R.drawable.ic_onboarding_discover));
