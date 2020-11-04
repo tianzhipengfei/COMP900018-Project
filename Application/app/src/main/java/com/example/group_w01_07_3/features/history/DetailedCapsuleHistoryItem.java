@@ -29,6 +29,10 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 
+/**
+ * Display the clicked item in Geo-capsule gallery. For image field and audio field, placeholder
+ * shimmer effect will be disabled once data is ready.
+ */
 public class DetailedCapsuleHistoryItem extends AppCompatActivity {
 
     //APP view

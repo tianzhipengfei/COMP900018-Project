@@ -51,6 +51,12 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Response;
 
+/**
+ * Class to display Opened Geo-capsule Gallery using recyclerview with scroll up load more functionality.
+ * Each attempt of refreshing will request 8 Opened Geo-capsules from server.
+ *
+ * Comprehensive connectivity problem and meaningful history list related messages has been handled.
+ */
 public class OpenedCapsuleHistory extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, CapsuleCallback {
 
@@ -248,7 +254,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                                 }
                             });
                         } else {
-                            // If server response no record reamining for user
+                            // If server response no record remaining for user
                             OpenedCapsuleHistory.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -334,11 +340,14 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
                         mShimmerViewContainer.setVisibility(View.INVISIBLE);
                         placeholder_emptyHistoryText.setVisibility(View.INVISIBLE);
                         placeholder_emptyHistoryImage.setVisibility(View.INVISIBLE);
+
+                        //if current list is empty and internet error occurred, show placeholder retry image
                         if (testingList.size() == 0) {
                             recyclerView.setVisibility(View.INVISIBLE);
                             placeholder_retryImage.setVisibility(View.VISIBLE);
                             getPlaceholder_retryText.setVisibility(View.VISIBLE);
                         } else {
+                            // if there are records displayed on the list, wait for later snackbar notification
                             recyclerView.setVisibility(View.VISIBLE);
                             placeholder_retryImage.setVisibility(View.INVISIBLE);
                             getPlaceholder_retryText.setVisibility(View.INVISIBLE);
@@ -395,8 +404,7 @@ public class OpenedCapsuleHistory extends AppCompatActivity implements
         Intent intent = new Intent(this, DetailedCapsuleHistoryItem.class);
         intent.putExtra("capsuleObject", testingList.get(pos));
 
-        // shared Animation setup
-        // let's import the Pair class
+        // shared Animation setup using Pair
         Pair<View, String> p1 = Pair.create((View) title, "capsuleTitleTN");
         Pair<View, String> p2 = Pair.create((View) date, "capsuleDateTN");
         Pair<View, String> p3 = Pair.create((View) capImage, "capsuleImageTN");
