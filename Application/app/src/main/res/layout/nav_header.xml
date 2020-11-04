@@ -16,12 +16,13 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginStart="8dp"
-        app:shapeAppearanceOverlay="@style/circleImageView"
-        app:strokeWidth="2dp"
-        tools:srcCompat="@drawable/avatar_sample"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/circleImageView"
+        app:srcCompat="@drawable/avatar_sample"
+        app:strokeWidth="2dp"
+        tools:srcCompat="@drawable/avatar_sample">
 
 
     </com.google.android.material.imageview.ShapeableImageView>
