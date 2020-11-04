@@ -104,7 +104,7 @@ public class CreateCapsule extends AppCompatActivity implements
     private int permission = 1;
 
     // message section
-    private long mLastClickTime = 0;
+    private long mLastClickTime = SystemClock.elapsedRealtime();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +249,12 @@ public class CreateCapsule extends AppCompatActivity implements
      */
     public void takePicture(View v) {
         bottomDialog = new BottomDialog(this);
+        // Preventing multiple clicks, using threshold of 1 second
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 300) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bottomDialog
                 .getContentView().getLayoutParams();
         params.width = getResources().getDisplayMetrics().widthPixels -
