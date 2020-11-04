@@ -26,7 +26,6 @@
         "   * Contain at least 8 Characters\n"
         "   * Must contain at least 1 uppercase letter,\n"
         "     1 lowercase letter, 1 number\n"
-        "     and 1 special character\n"
         "\n"
         "5. Re-enter Password (required)\n"
         "   * Must match with the previous input\n"
@@ -40,6 +39,5 @@
         " * Contain at least 8 Characters\n"
         " * Must contain at least 1 uppercase letter,\n"
         "   1 lowercase letter, 1 number\n"
-        "   and 1 special character\n"
     </string>
 </resources>
