@@ -672,10 +672,7 @@ public class SignUp extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // go back to sign in, as it is single instance, we are not creating a new one
-        finish();
-        startActivity(new Intent(SignUp.this, SignIn.class));
-        // (destination, origin)
+        super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 

@@ -56,8 +56,7 @@
         <activity android:name=".features.account.ChangePassword" />
         <activity android:name=".SignUp" />
         <activity
-            android:name=".SignIn"
-            android:launchMode="singleInstance" />
+            android:name=".SignIn" />
         <activity android:name=".MainActivity" >
         </activity>
 
