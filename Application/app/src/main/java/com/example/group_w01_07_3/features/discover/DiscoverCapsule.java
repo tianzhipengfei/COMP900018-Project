@@ -574,10 +574,22 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                 JSONObject responseJSON = new JSONObject(responseData);
                                 if (responseJSON.has("success")) {
                                     allCapsules = responseJSON.getJSONArray("capsules");
-                                    // refresh capsules only after receiving http response
-                                    can_i_shake = false;
-                                    can_i_retrieve_http = false;
-                                    can_i_fresh_markers = true;
+
+                                    if (allCapsules.length()==0) {
+                                        MessageUtil.displaySnackbar(drawerLayout, "Looks like there is no capsule around. Be the first one to leave footprint", Snackbar.LENGTH_LONG);
+                                        Log.d("TAG", "onResponse: length is 0");
+                                        if (discover_refresh){
+                                            registerShakeSensor();
+                                        }
+                                        can_i_shake = true;
+                                        can_i_retrieve_http = false;
+                                        can_i_fresh_markers = false;
+                                    } else {
+                                        // refresh capsules only after receiving http response
+                                        can_i_shake = false;
+                                        can_i_retrieve_http = false;
+                                        can_i_fresh_markers = true;
+                                    }
                                 } else if (responseJSON.has("error")) {
                                     String status = responseJSON.getString("error");
                                     Log.d("GETCAPSULE", "getCapsule error: " + status);
@@ -634,11 +646,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     }
                 }, 2000);
             }
-            if (mCapsuleMarkers.isEmpty()) {
-                can_i_shake = false;
-                can_i_retrieve_http = true;
-                can_i_fresh_markers = false;
-            }
+//            if (mCapsuleMarkers.isEmpty()) {
+//                can_i_shake = false;
+//                can_i_retrieve_http = true;
+//                can_i_fresh_markers = false;
+//            }
         }
     }
 
