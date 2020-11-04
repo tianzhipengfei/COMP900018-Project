@@ -61,7 +61,9 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 /**
- * Edit Profile Activity
+ * Edit Profile Activity. Displays username, email, dob on the page. also allows users to navigate to
+ * change password page, as well as change their account avatar.
+ * Decent connectivity handling has been made.
  */
 public class EditProfile extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener {
@@ -233,7 +235,7 @@ public class EditProfile extends AppCompatActivity implements
     }
 
     /**
-     * initialize sign out button
+     * initialize sign out button with material alert dialog, with alert sound
      */
     public void initSignOutButton() {
         signOutButton = (MaterialButton) findViewById(R.id.button_acct_sign_out);
@@ -282,7 +284,7 @@ public class EditProfile extends AppCompatActivity implements
     }
 
     /**
-     * sign out logic
+     * sign out logic. Redirect user to sign in activity once received response
      *
      * @param token user token
      */
@@ -504,7 +506,8 @@ public class EditProfile extends AppCompatActivity implements
     }
 
     /**
-     * get profile logic
+     * get profile logic. Retrieve everything required to display user profile with retry mechanism.
+     * Glide is used to support image loading.
      */
     private void onGetProfile() {
         if (UserUtil.getToken(EditProfile.this).isEmpty()) {
@@ -635,16 +638,12 @@ public class EditProfile extends AppCompatActivity implements
                         }
                     }, 3000);
                 }
-//                // If don't want to retry automatically, please comment above if condition and code and uncomment code below
-//                Snackbar snackbar = Snackbar
-//                        .make(drawerLayout, "Upload avatar timeout, please check your Internet and try again", Snackbar.LENGTH_LONG);
-//                snackbar.show();
             }
         });
     }
 
     /**
-     * change avatar logic
+     * change avatar logic. Once changed, profile page will automatically update current avatar to new one
      */
     private void onChangeAvatar() {
         // token null
