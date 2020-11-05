@@ -102,6 +102,12 @@ public class ChangePassword extends AppCompatActivity {
         helpImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Preventing multiple clicks, using threshold of 1 second
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 String guideline = getString(R.string.registration_password);
                 AlertDialog dialog = new AlertDialog.Builder(ChangePassword.this)
                         .setIcon(R.drawable.sign_up_rules)
