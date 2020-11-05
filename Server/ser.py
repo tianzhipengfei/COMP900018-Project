@@ -6,7 +6,7 @@ import random as rand
 from math import sin, cos, sqrt, atan2
 import os
 import mpu
-from profanity_filter import ProfanityFilter
+from better_profanity import profanity
 
 urls = [
     '/signIn', 'SignIn',
@@ -24,7 +24,6 @@ urls = [
     '/uploadAvatar', 'UploadAvatar'
 ]
 
-pf = ProfanityFilter()
 app = web.application(urls, globals())
 db = web.database(dbn='sqlite', db='test.db')
 
@@ -347,7 +346,7 @@ class CreateCapsule:
         img = i.get('img') 
         audio = i.get('audio') 
 
-        if pf.is_profane(content) or pf.is_profane(title) :
+        if profanity.contains_profanity(content) or profanity.contains_profanity(title) :
             return {'error':'profanity text'}
 
         # Add new capsule into database
