@@ -173,7 +173,7 @@ public class CreateCapsule extends AppCompatActivity implements
         if (permission == 1) {
             permiSwitch.setText("Create publicly visible Geo-Capsule");
         } else {
-            permiSwitch.setText("Create your private Geo-Capsule");
+            permiSwitch.setText("Create your private Geo-Capsule    ");
         }
     }
 
