@@ -566,6 +566,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                     String token = UserUtil.getToken(DiscoverCapsule.this);
                     Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
                     MessageUtil.displaySnackbar(drawerLayout, "Discovering Memory Capsule...Please Wait", 5000);
+                    can_i_retrieve_http = false;
                     HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -626,6 +627,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                            can_i_retrieve_http = true;
                             MessageUtil.dismiss(drawerLayout);
                             e.printStackTrace();
                             MessageUtil.displaySnackbar(drawerLayout, "Discover nearby Geo-capsule Failed. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
