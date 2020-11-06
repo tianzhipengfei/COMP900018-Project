@@ -120,7 +120,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
     private GoogleMap mGoogleMap;
     private LocationRequest mLocationRequest;
     private final int PER_SECOND = 1000; // (unit: ms)
-    private int locationUpdateInterval = 5 * PER_SECOND;
+    private int locationUpdateInterval = 1 * PER_SECOND;
     private FusedLocationProviderClient mFusedLocationClient;
     private SupportMapFragment mapFrag;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -565,9 +565,11 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 try {
                     String token = UserUtil.getToken(DiscoverCapsule.this);
                     Log.i("SENDING-REQUEST", "capsuleInfo:" + capsuleInfo);
+                    MessageUtil.displaySnackbar(drawerLayout, "Discovering Memory Capsule...Please Wait", 5000);
                     HttpUtil.getCapsule(token, capsuleInfo, new Callback() {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                            MessageUtil.dismiss(drawerLayout);
                             Log.d("RECEIVED-CAPSULE", "***** getCapsule onResponse *****");
                             String responseData = response.body().string();
                             Log.i("RECEIVED-CAPSULE", "responseData:" + responseData);
@@ -624,6 +626,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
 
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                            MessageUtil.dismiss(drawerLayout);
                             e.printStackTrace();
                             MessageUtil.displaySnackbar(drawerLayout, "Discover nearby Geo-capsule Failed. Retry in 3 seconds.", Snackbar.LENGTH_LONG);
                         }
@@ -766,7 +769,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 RequestSending();
             } else {
                 FeedbackUtil.vibrate(this);
-                MessageUtil.displaySnackbar(drawerLayout, "Discovering Memory Capsule...Please Wait", Snackbar.LENGTH_LONG);
+//                MessageUtil.displaySnackbar(drawerLayout, "Discovering Memory Capsule...Please Wait", Snackbar.LENGTH_LONG);
                 // shake to refresh capsules
                 can_i_shake = false;
                 can_i_retrieve_http = true;

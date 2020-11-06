@@ -60,4 +60,10 @@ public class MessageUtil {
         }
     }
 
+    public static void dismiss(View view){
+        if (snackbar != null || snackbar.getView().isShown()) {
+            snackbar.dismiss();
+        }
+    }
+
 }
