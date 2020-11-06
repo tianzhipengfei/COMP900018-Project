@@ -604,6 +604,12 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                         can_i_shake = false;
                                         can_i_retrieve_http = false;
                                         can_i_fresh_markers = true;
+                                        DiscoverCapsule.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                check_ifCanRefreshMarkers();
+                                            }
+                                        });
                                     }
                                 } else if (responseJSON.has("error")) {
                                     String status = responseJSON.getString("error");
@@ -776,6 +782,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 can_i_shake = false;
                 can_i_retrieve_http = true;
                 can_i_fresh_markers = false;
+                requestCapsuleInfo();
             }
         }
 
