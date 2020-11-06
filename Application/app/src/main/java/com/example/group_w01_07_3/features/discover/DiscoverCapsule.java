@@ -684,7 +684,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
                 Double lat = objects.getDouble("clat");
                 Double lng = objects.getDouble("clon");
                 Integer permission = objects.getInt("cpermission");
-                Log.d("CAPSULEMARKER", "cpermission:" + permission);
 
                 LatLng lat_Lng = new LatLng(lat, lng);
                 MarkerOptions capsuleMarker = new MarkerOptions();
@@ -701,7 +700,6 @@ public class DiscoverCapsule extends AppCompatActivity implements
             }
 
             num_capsules += 1;
-            Log.d("CAPSULEMARKER", "refresh_counts: " + num_capsules);
         }
 
         if (!if_pause){
@@ -1134,6 +1132,7 @@ public class DiscoverCapsule extends AppCompatActivity implements
                                     can_i_shake = false;
                                     can_i_retrieve_http = true;
                                     can_i_fresh_markers = false;
+                                    MessageUtil.displaySnackbar(drawerLayout, "No capsules, refresh automatically...", Snackbar.LENGTH_LONG);
                                 }
 
                                 Intent intent = new Intent(DiscoverCapsule.this, Display.class);
